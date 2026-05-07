@@ -5,6 +5,13 @@ description: Score job opportunities out of 100 and classify whether Matt should
 
 # Fit Scoring Skill
 
+## Project Defaults
+- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
+- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
+- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
+- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+
 ## Purpose
 Score roles out of 100 and classify pursuit effort.
 
@@ -35,6 +42,7 @@ Score roles out of 100 and classify pursuit effort.
 - Decision rationale
 - Missing information
 - Next action
+- Teal Excitement score using 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1
 
 ## Safety
 Do not let Teal keyword match override strategic fit or claim safety.

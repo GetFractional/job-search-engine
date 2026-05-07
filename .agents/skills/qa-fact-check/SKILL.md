@@ -5,6 +5,13 @@ description: Audit job-search assets for factual accuracy, claim safety, tone, A
 
 # QA And Fact-Check Skill
 
+## Project Defaults
+- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
+- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
+- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
+- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+
 ## Purpose
 Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role fit, and overstatement.
 
@@ -27,9 +34,12 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 2. Check every story against the Story Bank or Canonical Profile.
 3. Check role lane alignment.
 4. Remove overclaiming and unsupported ownership.
-5. Check recruiter comprehension and ATS clarity.
-6. Check tone: human, calm, specific, commercially intelligent.
-7. Flag anything requiring user confirmation.
+5. Check brand and employer context so client-specific metrics are not floating under unrelated entities.
+6. Check for duplicate or near-duplicate positioning across summary, highlights, and experience.
+7. Check recruiter comprehension and ATS clarity.
+8. Check tone: human, calm, specific, commercially intelligent.
+9. Remove em dashes and AI-sounding phrasing.
+10. Flag anything requiring user confirmation.
 
 ## Output
 - QA verdict
@@ -40,3 +50,4 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 
 ## Safety
 Do not mark an asset ready if any required claim is unsupported.
+Do not mark an asset ready if a strong metric is technically true but contextually misleading.

@@ -23,6 +23,7 @@ If a file conflicts with the Canonical Profile or Metrics Ledger, use the safer 
 
 ## Default Positioning
 Matt is a systems-driven growth and revenue operator who builds the infrastructure behind measurable growth.
+When a summary or headline references tenure, anchor it to the factual timeline: Matt has worked in marketing since 2007. Do not compress that into stale shorthand like `15+ years`.
 
 Default fit emphasis:
 - Revenue Operations
@@ -71,6 +72,7 @@ Each role analysis must include:
 
 ## Claim Safety
 Never invent metrics.
+Do not round or understate tenure in summaries. If years of experience are mentioned, use `in marketing since 2007`, `working in marketing since 2007`, or the exact year-derived count only if it is current and calculated correctly.
 
 Before using any number:
 1. Check the Metrics Ledger.
@@ -109,39 +111,56 @@ Do not use externally unless validated:
 - claims implying Matt alone drove sales-led outcomes
 
 ## Workflow Order
+For any job-search request, first classify the starting scenario with `$job-search-scenarios`.
+
 For a new role, use this order:
 
 1. Role intake
 2. Role lane classification
 3. Quick fit score
-4. Company and hiring-team research
+4. Company, hiring-team, market, and competition research
 5. Research brief
-6. Final fit scorecard
+6. Final fit scorecard and Teal Excitement score
 7. Resume strategy
-8. Tailored two-page resume
-9. Cover letter
-10. Outreach pack
+8. Teal Resume Builder optimization
+9. Tailored two-page resume export
+10. Teal Cover Letter generation/export
 11. Application answers
-12. Interview pack
-13. Post-interview follow-up
-14. Compensation and offer strategy
+12. Outreach pack, only if useful and approved before sending
+13. Interview pack
+14. Post-interview follow-up
+15. Compensation and offer strategy
 
 Do not create final assets until the research brief is complete and the role is worth pursuing.
 
 ## Easy Trigger Workflows
 When the user asks to find jobs:
 1. Use Quick mode by default.
-2. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
-3. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
-4. Recommend which jobs should be saved/bookmarked in Teal through the Chrome extension.
-5. Do not apply or message anyone.
+2. Use Google Chrome and TealHQ, including Teal Job Search, saved searches, relevant job boards, and the Teal Chrome extension when bookmarking is needed.
+3. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
+4. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
+5. Bookmark strong roles in Teal when operating Chrome with approval.
+6. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
+7. Do not apply or message anyone.
+
+When the user asks to score saved jobs:
+1. Use Google Chrome and app.tealhq.com.
+2. Open each Teal record with no or stale Excitement score.
+3. Read the JD and source URL, verify the posting is still active when feasible, run lane and fit scoring, set Excitement, and add concise notes.
+4. Do not draft assets unless the user asks or the role clears the pursue threshold.
 
 When the user asks to apply to a job:
 1. Use Standard mode by default.
-2. Require the full JD, Teal record, or application URL.
-3. Run intake, lane classification, fit score, research brief, resume strategy, draft assets, and QA.
-4. Prepare application answers and outreach if useful.
-5. Stop for approval before submission or external messages.
+2. Use Google Chrome and app.tealhq.com as the operating surface.
+3. Require or locate the Teal record, full JD, or application URL.
+4. Open the Teal record, score it if needed, verify the saved source is still active, and move it to Applying when asset work starts.
+5. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
+6. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
+7. Use Job Matcher and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms.
+8. Open the Cover Letter tab, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate/edit the letter.
+9. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`.
+10. Prepare application answers and outreach if useful.
+11. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
 
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.
@@ -170,7 +189,15 @@ Model defaults:
 - Final high-stakes resume, interview, compensation, or ambiguous strategy: `GPT-5.5`, medium or high reasoning.
 
 ## TealHQ Rules
-Use TealHQ as the operating system wherever possible, through the official UI, Chrome extension, and supported export/import features.
+Use TealHQ as the operating system wherever possible, through Google Chrome, the official UI, Chrome extension, and supported export/import features.
+
+Use Matt's Google Chrome browser for job boards, Teal, LinkedIn, company sites, and application forms. Prefer Chrome over the in-app browser when login state, Cloudflare, human challenge prompts, or extension behavior matter.
+
+Operate like a careful human:
+- use direct visible navigation
+- avoid rapid-fire actions, repeated reloads, and guessed URL grids
+- do not bypass CAPTCHA, Cloudflare, login, permissions, or paywalls
+- pause on challenge prompts or unexpected account/security warnings
 
 Do not:
 - invent or assume a Teal API
@@ -196,6 +223,17 @@ Maintain Teal records with:
 - asset status
 - interview status
 
+Default application answers when the form asks and no contradictory evidence exists:
+- authorized to work in the U.S.: yes
+- sponsorship now or later: no
+- current state: TN
+- relocation: open for the right opportunity, paid relocation preferred
+- family or relatives at target employer: no
+- previously worked at target employer: no unless evidence says otherwise
+- gender/race: white male only for voluntary self-ID when approved
+- pronouns: he/him only when asked
+- veteran status: not a veteran
+
 ## Human Approval Gates
 Ask for explicit approval before:
 - submitting an application
@@ -208,6 +246,7 @@ Ask for explicit approval before:
 - providing reference contact info
 - accepting or declining interviews
 - negotiating compensation externally
+- answering sensitive voluntary self-ID fields unless the user has provided standing permission
 
 Drafting, analysis, scoring, research, recommendations, and QA can proceed without approval.
 
@@ -232,9 +271,10 @@ For coding-style implementation threads, also include:
 - Risks
 
 ## Skill Routing
-This project includes local skill playbooks under `/Users/mattdimock/Documents/Jobs/Job Search/skills`.
+This project includes official local skill playbooks under `/Users/mattdimock/Documents/Jobs/Job Search/.agents/skills`.
 
 Use them as task-specific operating guides:
+- job-search-scenarios
 - profile-understanding
 - role-intake
 - role-lane-classification
@@ -270,7 +310,7 @@ The current trusted source set is:
 - `08_reference_sheet.md`
 - Wealth Dynamics report, internal style only
 
-Do not rewrite source-of-truth files during normal job applications. If the user asks to optimize the source set, use `skills/source-optimization/SKILL.md`, produce a proposed change plan first, and ask approval before editing source files.
+Do not rewrite source-of-truth files during normal job applications. If the user asks to optimize the source set, use `.agents/skills/source-optimization/SKILL.md`, produce a proposed change plan first, and ask approval before editing source files.
 
 ## Operating Cadence
 Daily:
