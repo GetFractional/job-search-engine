@@ -11,7 +11,7 @@ description: Draft tailored two-page resumes using the selected role lane, job-t
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- When the summary references tenure, default to `in marketing since 2007`. Do not use stale shorthand like `15+ years`.
+- When the summary references tenure, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
 Create a tailored two-page resume using the correct lane, job-title language, validated metrics, and clean professional formatting.
@@ -35,7 +35,7 @@ Create a tailored two-page resume using the correct lane, job-title language, va
    - 805-620-2826 | mattdim805@gmail.com | linkedin.com/in/mattdimock/
    - Target Title: `[Exact Role Title]`
 2. Write a concise 2-line summary.
-   - If tenure is mentioned, say `in marketing since 2007` or use a correctly calculated current count.
+   - If tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026.
 3. Add core strengths and selected highlights.
 4. Use reverse-chronological experience.
 5. Categorize tools and systems.

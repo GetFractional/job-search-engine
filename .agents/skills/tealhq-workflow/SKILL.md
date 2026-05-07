@@ -15,7 +15,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - Prefer reusing existing Teal bullets, summaries, and selected content before drafting new copy.
 - If score improvement requires editing shared Teal bullets or summaries, present the proposed changes for approval before mutating shared content unless the user explicitly asked for direct mutation.
 - Confirm the live application form requirements early so optional work such as cover-letter drafting only happens when the target flow supports or needs it.
-- When editing a Teal summary, default tenure framing to `in marketing since 2007`. Do not use stale shorthand like `15+ years`.
+- When editing a Teal summary, calculate tenure from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
 Determine how to use Teal features for each job-search stage.

@@ -29,7 +29,7 @@ For resume and cover-letter work:
 - do not place detached performance bullets under unrelated entities such as `Get Fractional` when the proof belongs to another brand
 - if cross-client consulting proof is used, either name the brand when appropriate or rewrite the bullet at the consulting-layer outcome without borrowing isolated client metrics out of context
 - remove redundant lines that restate the same positioning, especially repeated consulting-summary lines or overlapping summary bullets
-- when tenure is mentioned, use `in marketing since 2007` or a correctly calculated current count, never stale shorthand like `15+ years`
+- when tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026, never stale shorthand like `15+ years`
 - never use em dashes in final assets
 - avoid AI-sounding phrasing, hype, or theatrical self-branding
 

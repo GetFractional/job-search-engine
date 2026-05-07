@@ -11,7 +11,7 @@ description: Create role-specific resume strategy before drafting, including pos
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- Default tenure framing for summaries and headlines to `in marketing since 2007`. Do not use stale shorthand like `15+ years`.
+- Default tenure framing for summaries and headlines to the exact current count calculated from the Sep 2007 National Positions start date, currently `18 years of marketing experience` as of May 7, 2026. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
 Create a role-specific resume strategy before drafting.
@@ -48,7 +48,7 @@ Create a role-specific resume strategy before drafting.
    - propose summary edits
    - Skills & Interests additions
 13. Call out optional work that should wait until the live application proves it is needed, especially cover letters.
-14. If the summary mentions years of experience, use `since 2007` language or a correctly calculated current count.
+14. If the summary mentions years of experience, calculate from the Sep 2007 National Positions start date and use the correctly calculated current count.
 
 ## Output
 - Resume strategy brief

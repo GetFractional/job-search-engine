@@ -11,7 +11,7 @@ description: Understand Matt's canonical profile, safe claims, validated metrics
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- For tenure framing, default to factual calendar language: Matt has worked in marketing since 2007. Do not substitute rounded shorthand like `15+ years`.
+- For tenure framing, calculate from Matt's Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026. Do not substitute rounded shorthand like `15+ years`.
 
 ## Purpose
 Understand who Matt is, what he has done, what claims are safe, and which proof points are strongest for a role.
@@ -35,7 +35,7 @@ Understand who Matt is, what he has done, what claims are safe, and which proof 
 4. Select 2 to 4 strongest proof themes from the Story Bank.
 5. Label claims as Validated, Estimated, Inferred, Weak, Missing, Risky, or Do not use externally.
 6. Translate internal operating-style notes into practical working preferences, never external branding.
-7. If an asset summary references experience length, express it as `in marketing since 2007` or an exact current calculation, not an outdated shorthand count.
+7. If an asset summary references experience length, calculate from the Sep 2007 National Positions start date and use the exact current count, currently `18 years of marketing experience` as of May 7, 2026.
 
 ## Output
 - Short profile summary

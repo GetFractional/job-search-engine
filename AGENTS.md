@@ -23,7 +23,7 @@ If a file conflicts with the Canonical Profile or Metrics Ledger, use the safer 
 
 ## Default Positioning
 Matt is a systems-driven growth and revenue operator who builds the infrastructure behind measurable growth.
-When a summary or headline references tenure, anchor it to the factual timeline: Matt has worked in marketing since 2007. Do not compress that into stale shorthand like `15+ years`.
+When a summary or headline references tenure, calculate from Matt's first marketing role at National Positions, which began in Sep 2007. As of May 7, 2026, the accurate count is `18 years of marketing experience`. Do not use stale shorthand like `15+ years`.
 
 Default fit emphasis:
 - Revenue Operations
@@ -72,7 +72,7 @@ Each role analysis must include:
 
 ## Claim Safety
 Never invent metrics.
-Do not round or understate tenure in summaries. If years of experience are mentioned, use `in marketing since 2007`, `working in marketing since 2007`, or the exact year-derived count only if it is current and calculated correctly.
+Do not round or understate tenure in summaries. If years of experience are mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count. As of May 7, 2026, that is `18 years of marketing experience`.
 
 Before using any number:
 1. Check the Metrics Ledger.
