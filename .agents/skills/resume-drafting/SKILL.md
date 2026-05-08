@@ -11,7 +11,7 @@ description: Draft tailored two-page resumes using the selected role lane, job-t
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- When the summary references tenure, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026. Do not use stale shorthand like `15+ years`.
+- When the summary references tenure, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years in marketing` as of May 7, 2026. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
 Create a tailored two-page resume using the correct lane, job-title language, validated metrics, and clean professional formatting.
@@ -35,7 +35,7 @@ Create a tailored two-page resume using the correct lane, job-title language, va
    - 805-620-2826 | mattdim805@gmail.com | linkedin.com/in/mattdimock/
    - Target Title: `[Exact Role Title]`
 2. Write a concise 2-line summary.
-   - If tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026.
+   - If tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years in marketing` as of May 7, 2026.
 3. Add core strengths and selected highlights.
 4. Use reverse-chronological experience.
 5. Categorize tools and systems.
@@ -46,16 +46,19 @@ Create a tailored two-page resume using the correct lane, job-title language, va
 10. Use Job Matcher and Analyzer to improve truthful keyword coverage, especially hard skills, soft skills, platforms, tools, and role-specific terms.
 11. Prefer existing Teal bullets and summary lines first. Treat Teal as a shared bullet library, not as isolated per-resume text.
 12. If score improvement requires mutating shared bullets or summaries, propose the exact edits first and get approval before saving them.
-13. Prefer adding missing role language through real bullets and summary lines before dumping terms into Skills & Interests.
-14. Keep brand-specific metrics under the correct employer or clearly named client context.
-15. Remove duplicate or near-duplicate lines across headline, summary, highlights, and experience.
-16. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
-17. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
-18. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
+13. Update `Skills & Interests` into role-specific categories that showcase the highest-value truthful skills for the target role.
+14. Prefer adding missing role language through real bullets and summary lines before dumping terms into Skills & Interests, but use categorized skills to close safe gaps that do not belong in bullets.
+15. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or category change.
+16. Keep brand-specific metrics under the correct employer or clearly named client context.
+17. Remove duplicate or near-duplicate lines across headline, summary, highlights, and experience.
+18. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
+19. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
+20. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
 
 ## Output
 - Tailored resume draft
 - Claim safety notes
+- Final role-specific skills/category structure
 - Teal Job Matcher follow-up items
 - Proposed shared-bullet or summary edits, if needed for score improvement
 

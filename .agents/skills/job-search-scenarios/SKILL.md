@@ -29,7 +29,7 @@ For resume and cover-letter work:
 - do not place detached performance bullets under unrelated entities such as `Get Fractional` when the proof belongs to another brand
 - if cross-client consulting proof is used, either name the brand when appropriate or rewrite the bullet at the consulting-layer outcome without borrowing isolated client metrics out of context
 - remove redundant lines that restate the same positioning, especially repeated consulting-summary lines or overlapping summary bullets
-- when tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years of marketing experience` as of May 7, 2026, never stale shorthand like `15+ years`
+- when tenure is mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count, currently `18 years in marketing` as of May 7, 2026, never stale shorthand like `15+ years`
 - never use em dashes in final assets
 - avoid AI-sounding phrasing, hype, or theatrical self-branding
 
@@ -84,10 +84,12 @@ For application work, do not finish until these are handled or explicitly blocke
 - resume opened in Resume Builder
 - Job Matcher reviewed for missing hard and soft skills
 - Analyzer reviewed when visible, with a best-effort plan to improve truthful Match and Analyzer scores before final export
+- `Skills & Interests` reorganized into role-specific categories, not left as a flat generic list
 - existing Teal bullets and summary lines reused first
 - proposed shared-bullet or summary edits surfaced for approval before mutating shared library content
 - Content Editor updated naturally, without stuffing
 - missing truthful keywords grouped into hard skills, soft skills, business terms, and platform/tool terms before editing
+- reflected skills updated to showcase the highest-value truthful terms for that role before final export
 - duplicate or near-duplicate bullets removed before final export
 - brand-specific metrics checked for context fit before final export
 - Skills & Interests updated with high-value truthful skills

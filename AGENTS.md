@@ -23,7 +23,7 @@ If a file conflicts with the Canonical Profile or Metrics Ledger, use the safer 
 
 ## Default Positioning
 Matt is a systems-driven growth and revenue operator who builds the infrastructure behind measurable growth.
-When a summary or headline references tenure, calculate from Matt's first marketing role at National Positions, which began in Sep 2007. As of May 7, 2026, the accurate count is `18 years of marketing experience`. Do not use stale shorthand like `15+ years`.
+When a summary or headline references tenure, calculate from Matt's first marketing role at National Positions, which began in Sep 2007. As of May 7, 2026, the accurate count is `18 years in marketing`. Do not use stale shorthand like `15+ years`.
 
 Default fit emphasis:
 - Revenue Operations
@@ -72,7 +72,7 @@ Each role analysis must include:
 
 ## Claim Safety
 Never invent metrics.
-Do not round or understate tenure in summaries. If years of experience are mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count. As of May 7, 2026, that is `18 years of marketing experience`.
+Do not round or understate tenure in summaries. If years of experience are mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count. As of May 7, 2026, that is `18 years in marketing`.
 
 Before using any number:
 1. Check the Metrics Ledger.
@@ -222,6 +222,14 @@ Maintain Teal records with:
 - follow-up date
 - asset status
 - interview status
+
+For every Teal resume before export:
+- run Job Matcher and Analyzer after the first role-specific draft is attached
+- update `Skills & Interests` into role-specific categories rather than a flat skill list
+- prioritize truthful missing hard skills first, then supporting soft skills, business terms, and platforms/tools
+- make the reflected skills match the actual mandate of the role, not a generic master-resume mix
+- re-check Job Matcher and Analyzer after each meaningful skills/category pass
+- do not add unsupported role-native terms just to chase score
 
 Default application answers when the form asks and no contradictory evidence exists:
 - authorized to work in the U.S.: yes
