@@ -79,6 +79,7 @@ Use this ladder before doing expensive work:
 ### Application Answers
 - Prepare answers after the live form is known.
 - Keep a reusable answer library, but always adapt to the role.
+- Prefer manual, source-backed contact entry over browser autofill when autofill suggests stale addresses, outdated profiles, or mismatched location history.
 - When compensation is not listed, use `$150,000`.
 - If the posted range does not reach `$120,000`, keep the minimum at `$150,000`.
 

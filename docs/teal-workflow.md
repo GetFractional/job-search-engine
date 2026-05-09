@@ -79,8 +79,9 @@ When the user says "apply to this job":
 20. If the live form accepts an optional cover letter and the role is viable, prepare one by default with a custom prompt.
 21. Export the resume and cover letter as separate files.
 22. Prepare application answers.
-23. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
-24. Stop before final submission until the user approves the exact action and destination.
+23. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
+24. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
+25. Stop before final submission until the user approves the exact action and destination.
 
 ## Job Tracker Fields
 Maintain:
