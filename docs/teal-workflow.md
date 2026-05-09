@@ -78,10 +78,14 @@ When the user says "apply to this job":
 19. Aim to fill two full pages without spilling onto a third.
 20. If the live form accepts an optional cover letter and the role is viable, prepare one by default with a custom prompt.
 21. Export the resume and cover letter as separate files.
-22. Prepare application answers.
-23. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
-24. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
-25. Stop before final submission until the user approves the exact action and destination.
+22. Rename exported files to the strict local naming standard before upload: `{Company} - {Role} - Matt Dimock - Resume` and `{Company} - {Role} - Matt Dimock - Cover Letter`.
+23. Prepare application answers.
+24. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
+25. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
+26. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
+27. Close stale or no-longer-needed Chrome tabs opened during the workflow.
+28. End the run with estimated token usage, main cost drivers, new learnings, and the protocol changes made from those learnings.
+29. Stop before final submission until the user approves the exact action and destination.
 
 ## Job Tracker Fields
 Maintain:
@@ -120,7 +124,7 @@ For each role:
 12. If Job Matcher shows the draft is well below the recommended score, keep iterating on summary and bullet language before treating the draft as ready.
 13. Before adding a new bullet, check whether an existing bullet already communicates the same proof, channel mix, or business outcome. If yes, replace or rewrite instead of adding a near-duplicate.
 14. Use Analyzer before export when available.
-15. Export PDF and verify the downloaded file name.
+15. Export PDF, verify the downloaded file name, and rename generic exports before upload.
 
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:

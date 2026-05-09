@@ -29,13 +29,17 @@ Create concise, credible, persuasive cover letters that explain the business pro
 - Recipient, if known
 
 ## Process
-1. Identify company-specific reason for interest.
-2. Identify the business problem the role likely solves.
-3. Select 1 to 2 safe proof points.
-4. Explain why Matt fits the stage and mandate.
-5. End with a calm CTA.
-6. In Teal, use the Cover Letter tab, choose medium for standard roles or long for executive/research-heavy roles, and use a custom prompt grounded in the research brief.
-7. Export or copy the finished letter and name it `{Company} - {Role} - Matt Dimock - Cover Letter`.
+1. Confirm the live application accepts a cover letter, or confirm the user wants one prepared anyway.
+2. Identify company-specific reason for interest.
+3. Identify the business problem the role likely solves.
+4. Select 1 to 2 safe proof points.
+5. Explain why Matt fits the stage and mandate.
+6. End with a calm CTA.
+7. In Teal, use the Cover Letter tab, choose medium for standard roles or long for executive/research-heavy roles, and use a custom prompt grounded in the research brief.
+8. Export or copy the finished letter and name it `{Company} - {Role} - Matt Dimock - Cover Letter`.
+
+## Workflow Rule
+For viable roles where the live application flow supports an optional cover letter, create one by default unless the user explicitly skips it or the role is too weak to justify the extra work.
 
 ## Output
 - Cover letter brief

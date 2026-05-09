@@ -60,11 +60,14 @@ Determine how to use Teal features for each job-search stage.
 19. When the company uses tools Matt has actually used, surface those tools naturally in the Teal resume, skills, or cover letter when they improve fit.
 20. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or skills/category update.
 21. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
-22. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
-23. Define what Codex should prepare before Teal entry.
-24. Define what must be manually confirmed in Teal.
-25. Identify approval gates, including explicit user approval before any live submission.
-26. Create a concise Teal update checklist.
+22. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
+23. Rename Teal exports to the strict local naming standard before upload or delivery.
+24. Close stale or duplicate Chrome tabs opened during the run once they are no longer needed.
+25. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
+26. Define what Codex should prepare before Teal entry.
+27. Define what must be manually confirmed in Teal.
+28. Identify approval gates, including explicit user approval before any live submission.
+29. Create a concise Teal update checklist.
 
 ## Output
 - Teal workflow recommendation
@@ -76,6 +79,7 @@ Determine how to use Teal features for each job-search stage.
 - Role-specific `Skills & Interests` category plan
 - Proposed shared-bullet or summary edits, if score improvement is blocked by missing truthful terms
 - Redundancy-replacement plan for any overlapping bullets or summary lines
+- Estimated tokens used, main token drivers, new learnings, and fixes applied to the workflow
 
 ## Safety
 Do not invent a Teal API. Do not bypass Teal permissions or submit actions without approval.

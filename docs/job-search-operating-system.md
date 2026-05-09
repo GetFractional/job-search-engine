@@ -34,11 +34,14 @@ Use one ongoing project chat for searches and operating cadence. Use a new chat 
 9. Draft role-specific assets only after research and scoring justify the effort.
 10. For viable roles, create an optional cover letter by default when the form accepts one, unless the user explicitly skips it or the asset would clearly add more risk than value.
 11. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
-12. Submit, message, or update externally only after explicit user approval.
-13. Track every next action and follow-up in Teal.
-14. Prepare interview packs only after the role is active or clearly worth pursuing.
-15. Preserve compensation leverage through research, careful language, and staged disclosure.
-16. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
+12. Rename assets to the strict naming standard before upload or delivery.
+13. Submit, message, or update externally only after explicit user approval.
+14. Track every next action and follow-up in Teal.
+15. Prepare interview packs only after the role is active or clearly worth pursuing.
+16. Preserve compensation leverage through research, careful language, and staged disclosure.
+17. Close stale browser tabs and duplicate source paths continuously to reduce system drag and operator confusion.
+18. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
+19. End each run with token estimate, main cost drivers, new learnings, protocol fixes, and the cheapest reliable next step.
 
 ## Find Jobs Workflow
 Default to Quick mode.

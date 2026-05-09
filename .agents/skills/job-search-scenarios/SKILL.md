@@ -153,6 +153,10 @@ Use these only when the form asks and the user has not overridden them:
 - gender/race: white male only for voluntary self-ID when the user has approved answering
 - pronouns: he/him only when asked
 - veteran status: not a veteran
+- disability status: no
+- ethnicity: not Hispanic or Latino
+- race: White
+- government clearance: no
 
 ## Output
 Always end with:
@@ -160,6 +164,9 @@ Always end with:
 - asset status
 - downloaded file paths if any
 - estimated tokens used in the response
+- main token drivers
+- new learnings and insights
+- fixes applied to the protocol from those learnings
 - unanswered questions or approval gates
 - how to verify
 - risks and rollback

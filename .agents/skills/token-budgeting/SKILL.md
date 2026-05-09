@@ -13,7 +13,9 @@ description: Estimate and control token usage for job-search workflows, includin
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
 - Report an estimated token budget in every job-search response by default, even when the user did not explicitly ask for token guidance.
 - Keep token reporting concise: per-turn estimate, main cost drivers, and the cheapest reliable next step.
-- Do not create optional assets such as cover letters until the live application flow, JD, or user instruction shows they are actually needed.
+- Include a short protocol-optimization note in every closeout: what was learned, what changed, and how that should reduce future token waste or improve outcomes.
+- Inspect the live application flow early so optional assets are chosen intentionally, not reflexively.
+- For viable application targets, default to creating an optional cover letter when the application accepts one, unless the role is low-fit, the user explicitly skips it, or the added asset would create more risk than value.
 
 ## Purpose
 Estimate and control token usage for job search, application, interview, and offer workflows.
@@ -38,8 +40,10 @@ Estimate and control token usage for job search, application, interview, and off
 4. Recommend the cheapest reliable model/reasoning level.
 5. Identify ways to reduce token use without reducing decision quality.
 6. For batches, triage first and reserve deep work for top roles only.
-7. For application work, call out any avoidable work before doing it, especially optional cover letters, duplicate research passes, or score tuning that will not change the submission package.
-8. Provide a per-response estimate, not only a workflow-total estimate.
+7. For application work, call out any avoidable work before doing it, especially duplicate research passes, redundant score tuning, or low-value edits that will not change the submission package.
+8. Treat application-page inspection as a token-saving step. It should determine the minimum required asset set and the highest-value optional asset set before deep drafting begins.
+9. Provide a per-response estimate, not only a workflow-total estimate.
+10. Tie the estimate to the actual work done in the turn, such as source reads, live form inspection, Teal edits, and browser operations.
 
 ## Output
 - Recommended mode
@@ -49,6 +53,8 @@ Estimate and control token usage for job search, application, interview, and off
 - Workflows remaining, if quota is known
 - Token-saving steps
 - Main token drivers
+- New learnings that should change the workflow
+- Fixes applied from those learnings
 
 ## Safety
 Do not claim live remaining quota unless it is visible in the session or provided by the user. Treat all token counts as estimates.

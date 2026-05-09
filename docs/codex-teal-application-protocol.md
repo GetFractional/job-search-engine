@@ -52,6 +52,21 @@ If any of those create a hard mismatch, stop. Do not build assets just because T
 10. Fill the form.
 11. Hold submission for approval, unless the operating policy is later changed.
 
+## Continuous Improvement Loop
+Every run should improve the protocol, not just execute it.
+
+Before closing a job-search turn:
+- estimate tokens used in the turn
+- name the main token drivers
+- record the most important new learnings from the run
+- state what will change in the protocol because of those learnings
+- make the change immediately when it is a safe workflow, skill, or doc update
+
+When updating docs or skills:
+- replace superseded guidance instead of stacking duplicate rules
+- remove or rewrite stale guidance when current evidence invalidates it
+- prefer fewer clearer rules over additive clutter
+
 ## Effort Gates
 Use this ladder before doing expensive work:
 
@@ -82,12 +97,22 @@ Use this ladder before doing expensive work:
 - Prefer manual, source-backed contact entry over browser autofill when autofill suggests stale addresses, outdated profiles, or mismatched location history.
 - When compensation is not listed, use `$150,000`.
 - If the posted range does not reach `$120,000`, keep the minimum at `$150,000`.
+- Fill safe pre-submit application questions by default when the user has provided standing facts, including sponsorship, veteran status, ethnicity, race, disability, and government-clearance questions. Stop only at submission.
+
+## Asset Naming
+Use one strict local naming standard before upload or delivery:
+- Resume: `{Company} - {Role} - Matt Dimock - Resume`
+- Cover Letter: `{Company} - {Role} - Matt Dimock - Cover Letter`
+- Application brief folder: `{company-slug}-{role-slug}`
+
+Do not upload generic exports such as `{Role} at {Company}.pdf` when a correctly named local file can be produced first.
 
 ## Teal UX Heuristics
 - Prefer the fastest truthful action inside Teal.
 - Reuse selected existing bullets before drafting new ones.
 - When Job Matcher exposes direct actions for missing skills, such as adding the skill or creating a bullet, use those only if they improve truthful coverage without creating redundancy.
 - Treat Teal shared content carefully. A summary or bullet edit may affect multiple resumes.
+- Keep Chrome tab count lean. Close tabs opened for failed roles, duplicate sources, and finished research paths once they are no longer needed.
 
 ## QA Gate
 Do not call a package ready until all three assets pass:

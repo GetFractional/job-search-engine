@@ -11,6 +11,7 @@ description: Audit job-search assets for factual accuracy, claim safety, tone, A
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+- Treat redundancy as a QA failure. If two lines materially repeat the same claim, the asset is not ready until the overlap is removed or rewritten.
 
 ## Purpose
 Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role fit, and overstatement.
@@ -36,10 +37,12 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 4. Remove overclaiming and unsupported ownership.
 5. Check brand and employer context so client-specific metrics are not floating under unrelated entities.
 6. Check for duplicate or near-duplicate positioning across summary, highlights, and experience.
-7. Check recruiter comprehension and ATS clarity.
-8. Check tone: human, calm, specific, commercially intelligent.
-9. Remove em dashes and AI-sounding phrasing.
-10. Flag anything requiring user confirmation.
+7. Check whether any newly added bullet only restates an existing bullet with slightly different wording. If so, keep the stronger line and flag the weaker one for replacement.
+8. Check recruiter comprehension and ATS clarity.
+9. Check tone: human, calm, specific, commercially intelligent.
+10. Remove em dashes and AI-sounding phrasing.
+11. Check asset naming before upload or delivery. Generic export names fail QA.
+12. Flag anything requiring user confirmation.
 
 ## Output
 - QA verdict
@@ -47,6 +50,7 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 - Optional improvements
 - Claim safety table
 - Approval readiness
+- Redundancy findings, including exact lines that should be merged, replaced, or removed
 
 ## Safety
 Do not mark an asset ready if any required claim is unsupported.

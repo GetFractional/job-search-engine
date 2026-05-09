@@ -183,7 +183,7 @@ When the user asks to apply to a job:
 12. When the company uses tools Matt has actually used, reflect those tools naturally in the resume, skills, or cover letter when they improve fit and remain truthful.
 13. Aim to fill two full resume pages without spilling onto a third.
 17. Open the Cover Letter tab only when the live form supports it, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate or edit the letter.
-18. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`.
+18. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`, and rename generic Teal exports before upload.
 19. Prepare application answers and outreach if useful.
 20. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
 
@@ -270,9 +270,12 @@ Default application answers when the form asks and no contradictory evidence exi
 - relocation: open for the right opportunity, paid relocation preferred
 - family or relatives at target employer: no
 - previously worked at target employer: no unless evidence says otherwise
-- gender/race: white male only for voluntary self-ID when approved
+- gender/race: white male
+- ethnicity: not Hispanic or Latino
 - pronouns: he/him only when asked
 - veteran status: not a veteran
+- disability status: no
+- government clearance: no
 - desired salary when no posted range exists: `$150,000`
 
 ## Human Approval Gates
@@ -304,6 +307,12 @@ End task responses with:
 ### Verification
 ### Risks + Rollback
 ### Next actions
+
+For job-search runs, also include:
+- estimated tokens used
+- main token drivers
+- new learnings and insights
+- protocol fixes applied from those learnings
 
 For coding-style implementation threads, also include:
 - How to verify
