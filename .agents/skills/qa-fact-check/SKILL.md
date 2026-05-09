@@ -38,11 +38,14 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 5. Check brand and employer context so client-specific metrics are not floating under unrelated entities.
 6. Check for duplicate or near-duplicate positioning across summary, highlights, and experience.
 7. Check whether any newly added bullet only restates an existing bullet with slightly different wording. If so, keep the stronger line and flag the weaker one for replacement.
-8. Check recruiter comprehension and ATS clarity.
-9. Check tone: human, calm, specific, commercially intelligent.
-10. Remove em dashes and AI-sounding phrasing.
-11. Check asset naming before upload or delivery. Generic export names fail QA.
-12. Flag anything requiring user confirmation.
+8. For every newly added JD or Job Matcher term, verify evidence source, best placement, and non-duplication.
+9. Flag soft skills that are unsupported by a bullet, story, scope signal, or clearly implied cross-functional behavior.
+10. Run a two-page tradeoff check. If the resume is dense or spills, cut low-signal skills, duplicated concepts, or weak category items before cutting differentiated proof.
+11. Check recruiter comprehension and ATS clarity.
+12. Check tone: human, calm, specific, commercially intelligent.
+13. Remove em dashes and AI-sounding phrasing.
+14. Check asset naming before upload or delivery. Generic export names fail QA.
+15. Flag anything requiring user confirmation.
 
 ## Output
 - QA verdict

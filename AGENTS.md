@@ -175,17 +175,19 @@ When the user asks to apply to a job:
 7. Move the role to Applying only after it clears the live viability gate and asset work is actually starting.
 8. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
 9. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
-7. Use Job Matcher and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms.
-8. Make the summary state mandate fit plainly and name relevant industries or business contexts when that increases relevance for the target role.
-9. Build enough role-specific reflected skills to cover the mandate thoroughly, with a default target of at least 24 truthful skills across 5 to 6 role-specific categories and a preferred target around 28 when the proof and layout support it cleanly.
-10. Preserve or add adjacent high-value strengths that fit Matt's actual lane even when the JD does not list them explicitly, especially systems thinking, reporting, workflow automation, operating cadence, and human-in-the-loop AI leverage.
-11. When relevant and source-backed, include operator-level AI and workflow architecture language such as AI-assisted workflows, agentic research, automation systems, and connected tool fluency.
-12. When the company uses tools Matt has actually used, reflect those tools naturally in the resume, skills, or cover letter when they improve fit and remain truthful.
-13. Aim to fill two full resume pages without spilling onto a third.
-17. Open the Cover Letter tab only when the live form supports it, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate or edit the letter.
-18. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`, and rename generic Teal exports before upload.
-19. Prepare application answers and outreach if useful.
-20. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
+10. Use Job Matcher and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms.
+11. Harvest Job Matcher gaps into hard skills, soft skills, business terms, platforms/tools, and noise before editing. Map each kept term to proof and to one best destination.
+12. Make the summary state mandate fit plainly and name relevant industries or business contexts when that increases relevance for the target role.
+13. Build enough role-specific reflected skills to cover the mandate thoroughly, with a default target of at least 24 truthful skills across 5 to 6 role-specific categories and a preferred target around 28 when the proof and layout support it cleanly.
+14. Soft skills require evidence, scope, or cross-functional behavior. Do not add them just because they appear in the JD.
+15. Preserve or add adjacent high-value strengths that fit Matt's actual lane even when the JD does not list them explicitly, especially systems thinking, reporting, workflow automation, operating cadence, and human-in-the-loop AI leverage.
+16. When relevant and source-backed, include operator-level AI and workflow architecture language such as AI-assisted workflows, agentic research, automation systems, and connected tool fluency.
+17. When the company uses tools Matt has actually used, reflect those tools naturally in the resume, skills, or cover letter when they improve fit and remain truthful.
+18. Protect the two-page limit by shortening weak or redundant copy before cutting differentiated proof.
+19. Open the Cover Letter tab only when the live form supports it, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate or edit the letter.
+20. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`, and rename generic Teal exports before upload.
+21. Prepare application answers and outreach if useful.
+22. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID unless the user explicitly allows submission in the active turn.
 
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.

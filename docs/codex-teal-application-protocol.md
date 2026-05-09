@@ -82,8 +82,13 @@ Use this ladder before doing expensive work:
 ### Resume
 - Use Job Matcher and Analyzer as gap tools, not as the goal.
 - Put the most important truthful JD terms into the title, summary, and selected recent bullets first.
+- Harvest missing JD and Job Matcher terms into hard skills, soft skills, business terms, and platforms/tools, then assign each one best destination.
 - Use Skills & Interests to broaden reflected coverage, not to hide a weak summary.
+- Treat 24 to 28 reflected skills as a coverage target, not a quota.
+- Soft skills only count when they are backed by real proof, role scope, cross-functional behavior, or a clearly readable systems context.
 - Treat redundancy as failure. If two bullets say nearly the same thing, keep the stronger one and reclaim the slot.
+- The resume fails if high-value JD terms exist only in skills categories while the summary and bullets still read generic.
+- The resume fails if keyword coverage is achieved through vague filler, low-context standalone skills, or duplicate proof.
 - If categorized skills are active, the resume must not also ship with an uncategorized top skill row.
 - Use one canonical term per concept within a resume, for example `GA4` or `Google Analytics 4`, not both.
 - Keep skill categories mutually exclusive where practical so the taxonomy reads cleanly and does not repeat the same concept in two places.
@@ -217,3 +222,20 @@ Minimum standard:
 - percent of viable applications with full asset pack
 - percent of applications passing QA on first pass
 - strongest-converting role lanes
+
+## Measurement
+- Log meaningful `Standard` and `Deep` runs in [job-search-protocol-benchmark.md](/Users/mattdimock/Documents/Jobs/Job%20Search/docs/job-search-protocol-benchmark.md).
+- Record protocol rule changes in [job-search-protocol-change-log.md](/Users/mattdimock/Documents/Jobs/Job%20Search/docs/job-search-protocol-change-log.md).
+- Score the pre-submit package consistently across:
+  - ATS fit
+  - asset quality
+  - page discipline
+  - workflow efficiency
+  - submission readiness
+
+## Prompt Design Rules
+- Keep workflow prompts direct and structured. Use short sections, explicit objectives, and clear constraints before adding examples or edge cases.
+- Use delimiter-based sections for long prompts so source hierarchy, approval gates, and output requirements stay easy to follow.
+- Do not force chain-of-thought phrasing like `think step by step`. Ask for the deliverable, the evaluation criteria, and the decision output instead.
+- Use heavier model and reasoning settings for protocol redesign, ambiguous research, and high-stakes QA, not for every routine application step.
+- Keep a benchmark and change-log loop so prompt changes are measured, not guessed.

@@ -61,19 +61,25 @@ Create a tailored two-page resume using the correct lane, job-title language, va
 19. Remove weak standalone skills that do not carry useful meaning by themselves, such as orphaned `Landing Pages` style terms, and replace them with stronger role-native concepts or tools.
 20. Remove vague filler skills like `Website Optimization` when a sharper role-native term or stronger adjacent proof can carry the same meaning more credibly.
 21. Prefer adding missing role language through real bullets and summary lines before dumping terms into Skills & Interests, but use categorized skills to close safe gaps that do not belong in bullets.
-22. When the role hinges on terms like retention, onboarding, nurture, segmentation, lifecycle, customer journey, KPIs, automation, channel mix, collaboration, coaching, or platform fluency, look for the cleanest truthful place to express them in prose instead of leaving them implied.
-23. When relevant and source-backed, include operator-level AI, workflow automation, and tool-orchestration language in a grounded way that reinforces execution leverage and human oversight.
-24. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit rather than hiding them in a generic tool pile.
-25. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or category change.
-25. If Teal shows a recommended Match Score threshold, keep iterating until the resume either clears that floor or the remaining gaps would require unsupported claims.
-26. Keep brand-specific metrics under the correct employer or clearly named client context.
-27. Remove duplicate or near-duplicate lines across headline, summary, highlights, experience, and skills categories.
-28. When two bullets draw on the same underlying proof, keep the stronger version and either cut or materially reframe the weaker one so each selected bullet earns distinct space.
-29. If the resume underfills two pages, add stronger relevant proof, older but relevant experience, broader truthful skill coverage, or relevant tool fluency before shrinking the format.
-30. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
-31. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
-32. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
-33. Do not upload a file until the local name matches the required format exactly.
+22. Use a placement ladder for missing truthful terms:
+   - first, strengthen an existing selected bullet
+   - second, strengthen the summary
+   - third, improve the skills taxonomy
+   - fourth, leave the term for the cover letter or application answer if it does not belong on the resume
+23. When the role hinges on terms like retention, onboarding, nurture, segmentation, lifecycle, customer journey, KPIs, automation, channel mix, collaboration, coaching, ownership, systems thinking, analytical thinking, or platform fluency, look for the cleanest truthful place to express them in prose instead of leaving them implied.
+24. When relevant and source-backed, include operator-level AI, workflow automation, and tool-orchestration language in a grounded way that reinforces execution leverage and human oversight.
+25. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit rather than hiding them in a generic tool pile.
+26. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or category change.
+27. If Teal shows a recommended Match Score threshold, keep iterating until the resume either clears that floor or the remaining gaps would require unsupported claims.
+28. Keep brand-specific metrics under the correct employer or clearly named client context.
+29. Remove duplicate or near-duplicate lines across headline, summary, highlights, experience, and skills categories.
+30. When two bullets draw on the same underlying proof, keep the stronger version and either cut or materially reframe the weaker one so each selected bullet earns distinct space.
+31. Use page-budget discipline. If a new term pushes the resume toward a third page, shorten or replace lower-value copy before removing high-signal mandate language.
+32. If the resume underfills two pages, add stronger relevant proof, older but relevant experience, broader truthful skill coverage, or relevant tool fluency before shrinking the format.
+33. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
+34. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
+35. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
+36. Do not upload a file until the local name matches the required format exactly.
 
 ## Output
 - Tailored resume draft

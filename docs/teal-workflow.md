@@ -74,18 +74,21 @@ When the user says "apply to this job":
 15. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit.
 16. Before saving any new summary line or bullet, compare it against the existing selected content and remove overlap. Replace the weaker line instead of stacking two versions of the same proof.
 17. When Teal exposes direct missing-skill actions, such as adding a skill or generating a bullet from Job Matcher, use them only when they produce truthful, non-redundant coverage faster than manual editing.
-18. Use the relevant local skills, not just Teal mechanics, when the workflow calls for them. Minimum application stack usually includes `role-intake`, `role-lane-classification`, `company-research`, `resume-strategy`, `resume-drafting`, `qa-fact-check`, and `application-answer`.
-19. Aim to fill two full pages without spilling onto a third.
-20. If the live form accepts an optional cover letter and the role is viable, prepare one by default with a custom prompt.
-21. Export the resume and cover letter as separate files.
-22. Rename exported files to the strict local naming standard before upload: `{Company} - {Role} - Matt Dimock - Resume` and `{Company} - {Role} - Matt Dimock - Cover Letter`.
-23. Prepare application answers.
-24. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
-25. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
-26. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
-27. Close stale or no-longer-needed Chrome tabs opened during the workflow.
-28. End the run with estimated token usage, main cost drivers, new learnings, and the protocol changes made from those learnings.
-29. Stop before final submission until the user approves the exact action and destination.
+18. Build a missing-term coverage map from the JD and Job Matcher, grouped into hard skills, soft skills, business terms, and platforms/tools. Mark each term as prose first, skills-category fit, external-asset only, or noise.
+19. Use the relevant local skills, not just Teal mechanics, when the workflow calls for them. Minimum application stack usually includes `role-intake`, `role-lane-classification`, `company-research`, `resume-strategy`, `resume-drafting`, `qa-fact-check`, and `application-answer`.
+20. Aim to fill two full pages without spilling onto a third.
+21. When a useful new term or phrase pushes the resume to three pages, shorten or replace weaker copy before dropping high-value mandate language.
+22. If the live form accepts an optional cover letter and the role is viable, prepare one by default with a custom prompt.
+23. Export the resume and cover letter as separate files.
+24. Rename exported files to the strict local naming standard before upload: `{Company} - {Role} - Matt Dimock - Resume` and `{Company} - {Role} - Matt Dimock - Cover Letter`.
+25. Prepare application answers.
+26. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
+27. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
+28. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
+29. If the protocol itself changed during the run, add one benchmark row and one change-log note so later chats can measure whether the change improved outcomes.
+30. Close stale or no-longer-needed Chrome tabs opened during the workflow.
+31. End the run with estimated token usage, main cost drivers, new learnings, and the protocol changes made from those learnings.
+32. Stop before final submission until the user approves the exact action and destination.
 
 ## Job Tracker Fields
 Maintain:

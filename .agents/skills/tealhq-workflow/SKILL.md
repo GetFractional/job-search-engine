@@ -46,34 +46,41 @@ Determine how to use Teal features for each job-search stage.
 5. For viable roles, if the application accepts an optional cover letter, prepare one by default unless the user explicitly skips it or the role is too weak to justify the added asset.
 6. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
 7. When Teal exposes faster UI actions for a missing term, such as adding the skill directly or creating a bullet from the missing-skill list, prefer the shortest truthful path that improves the resume without adding redundant copy.
-8. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
-9. Prioritize the highest-signal truthful JD terms that can be reflected in live prose, especially the summary and recent experience bullets, before treating them as skills-only terms.
-10. Update the summary so it states mandate fit plainly and names relevant industries or business contexts when that improves relevance.
-11. Use selected bullets to surface missing mandate language that is truthful and specific, such as lifecycle, retention, onboarding, segmentation, engagement, automation, reporting, customer-success partnership, channel mix, experimentation, or tool fluency.
-12. Before adding a new bullet or summary line, compare it against existing selected content and nearby bullets. If the meaning materially overlaps, replace or rewrite the weaker line instead of keeping both.
-13. If the visible Match Score is below the role's recommended floor, keep iterating through summary and bullet wording before assuming the draft is good enough.
-14. Ban weak or cryptic shorthand metrics in Teal summaries. If the line needs explanation to land, rewrite it or remove it.
-15. Update `Skills & Interests` into role-specific categories that reflect the resume's actual mandate and highest-value truthful terms.
-16. If categorized skills are active, do not leave an uncategorized top skill row selected. Turn those uncategorized chips off locally on the resume before export.
-17. Use one canonical label per concept inside a single resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless there is a deliberate reason.
-18. Use checkbox-only toggles when cleaning Teal skill chips. Do not use chip delete actions unless the user explicitly wants the skill removed from work history across all resumes.
-19. Category names must match the role's actual mandate. Replace inherited or generic buckets that no longer fit, and do not leave weak categories like `SEO, CRO & Conversion` on lifecycle-first roles unless the JD truly requires them.
-20. Remove low-signal standalone skills that do not carry enough meaning by themselves, such as `Landing Pages`, when a stronger role-native term or tool can fill the space more credibly.
-21. Remove vague filler skills like `Website Optimization` when a stronger role-native term can carry the same evidence more clearly.
-22. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the proof and layout support it cleanly.
-23. Use extra second-page capacity for stronger adjacent proof, broader high-value skill coverage, and relevant tool fluency before compressing the layout.
-24. When relevant and source-backed, reflect AI-assisted workflows, agentic research, automation systems, and human oversight as part of Matt's operator profile.
-24. When the company uses tools Matt has actually used, surface those tools naturally in the Teal resume, skills, or cover letter when they improve fit.
-25. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or skills/category update.
-26. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
-27. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
-28. Rename Teal exports to the strict local naming standard before upload or delivery.
-29. Close stale or duplicate Chrome tabs opened during the run once they are no longer needed.
-30. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
-31. Define what Codex should prepare before Teal entry.
-32. Define what must be manually confirmed in Teal.
-33. Identify approval gates, including explicit user approval before any live submission.
-34. Create a concise Teal update checklist.
+8. Build a missing-term coverage map from the JD and Job Matcher, grouped into hard skills, soft skills, business terms, and platforms/tools. Mark each term as:
+   - prose first
+   - skills category fit
+   - external asset only
+   - noise to ignore
+9. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
+10. Prioritize the highest-signal truthful JD terms that can be reflected in live prose, especially the summary and recent experience bullets, before treating them as skills-only terms.
+11. Update the summary so it states mandate fit plainly and names relevant industries or business contexts when that improves relevance.
+12. Use selected bullets to surface missing mandate language that is truthful and specific, such as lifecycle, retention, onboarding, segmentation, engagement, automation, reporting, customer-success partnership, channel mix, experimentation, ownership, coaching, systems thinking, analytical thinking, or tool fluency.
+13. Before adding a new bullet or summary line, compare it against existing selected content and nearby bullets. If the meaning materially overlaps, replace or rewrite the weaker line instead of keeping both.
+14. If the visible Match Score is below the role's recommended floor, keep iterating through summary and bullet wording before assuming the draft is good enough.
+15. Ban weak or cryptic shorthand metrics in Teal summaries. If the line needs explanation to land, rewrite it or remove it.
+16. Update `Skills & Interests` into role-specific categories that reflect the resume's actual mandate and highest-value truthful terms.
+17. If categorized skills are active, do not leave an uncategorized top skill row selected. Turn those uncategorized chips off locally on the resume before export.
+18. Use one canonical label per concept inside a single resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless there is a deliberate reason.
+19. Use checkbox-only toggles when cleaning Teal skill chips. Do not use chip delete actions unless the user explicitly wants the skill removed from work history across all resumes.
+20. Category names must match the role's actual mandate. Replace inherited or generic buckets that no longer fit, and do not leave weak categories like `SEO, CRO & Conversion` on lifecycle-first roles unless the JD truly requires them.
+21. Remove low-signal standalone skills that do not carry enough meaning by themselves, such as `Landing Pages`, when a stronger role-native term or tool can fill the space more credibly.
+22. Remove vague filler skills like `Website Optimization` when a stronger role-native term can carry the same evidence more clearly.
+23. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the proof and layout support it cleanly.
+24. Use extra second-page capacity for stronger adjacent proof, broader high-value skill coverage, and relevant tool fluency before compressing the layout.
+25. Use page-budget discipline inside Teal. When a useful new phrase pushes the draft to three pages, shorten or replace weaker text before dropping high-value mandate language.
+26. When relevant and source-backed, reflect AI-assisted workflows, agentic research, automation systems, and human oversight as part of Matt's operator profile.
+27. When the company uses tools Matt has actually used, surface those tools naturally in the Teal resume, skills, or cover letter when they improve fit.
+28. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or skills/category update.
+29. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
+30. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
+31. Rename Teal exports to the strict local naming standard before upload or delivery.
+32. Close stale or duplicate Chrome tabs opened during the run once they are no longer needed.
+33. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
+34. Record one benchmark row and one change-log note when the protocol itself is changed, so future chats can measure whether the new rule improved outcomes.
+35. Define what Codex should prepare before Teal entry.
+36. Define what must be manually confirmed in Teal.
+37. Identify approval gates, including explicit user approval before any live submission.
+38. Create a concise Teal update checklist.
 
 ## Output
 - Teal workflow recommendation
