@@ -57,20 +57,23 @@ Determine how to use Teal features for each job-search stage.
 16. If categorized skills are active, do not leave an uncategorized top skill row selected. Turn those uncategorized chips off locally on the resume before export.
 17. Use one canonical label per concept inside a single resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless there is a deliberate reason.
 18. Use checkbox-only toggles when cleaning Teal skill chips. Do not use chip delete actions unless the user explicitly wants the skill removed from work history across all resumes.
-19. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the proof and layout support it cleanly.
-20. Use extra second-page capacity for stronger adjacent proof, broader high-value skill coverage, and relevant tool fluency before compressing the layout.
-21. When relevant and source-backed, reflect AI-assisted workflows, agentic research, automation systems, and human oversight as part of Matt's operator profile.
-22. When the company uses tools Matt has actually used, surface those tools naturally in the Teal resume, skills, or cover letter when they improve fit.
-23. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or skills/category update.
-24. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
-25. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
-26. Rename Teal exports to the strict local naming standard before upload or delivery.
-27. Close stale or duplicate Chrome tabs opened during the run once they are no longer needed.
-28. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
-29. Define what Codex should prepare before Teal entry.
-30. Define what must be manually confirmed in Teal.
-31. Identify approval gates, including explicit user approval before any live submission.
-32. Create a concise Teal update checklist.
+19. Category names must match the role's actual mandate. Replace inherited or generic buckets that no longer fit, and do not leave weak categories like `SEO, CRO & Conversion` on lifecycle-first roles unless the JD truly requires them.
+20. Remove low-signal standalone skills that do not carry enough meaning by themselves, such as `Landing Pages`, when a stronger role-native term or tool can fill the space more credibly.
+21. Remove vague filler skills like `Website Optimization` when a stronger role-native term can carry the same evidence more clearly.
+22. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the proof and layout support it cleanly.
+23. Use extra second-page capacity for stronger adjacent proof, broader high-value skill coverage, and relevant tool fluency before compressing the layout.
+24. When relevant and source-backed, reflect AI-assisted workflows, agentic research, automation systems, and human oversight as part of Matt's operator profile.
+24. When the company uses tools Matt has actually used, surface those tools naturally in the Teal resume, skills, or cover letter when they improve fit.
+25. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or skills/category update.
+26. Prefer manual, source-backed contact entry on live forms when browser autofill suggests stale addresses, outdated profiles, or mismatched location history.
+27. Fill safe pre-submit application questions by default when the user has provided standing facts, including veteran, disability, ethnicity, race, and government-clearance questions.
+28. Rename Teal exports to the strict local naming standard before upload or delivery.
+29. Close stale or duplicate Chrome tabs opened during the run once they are no longer needed.
+30. Run a final external-asset QA pass across resume, cover letter, and prepared application answers before calling the package ready.
+31. Define what Codex should prepare before Teal entry.
+32. Define what must be manually confirmed in Teal.
+33. Identify approval gates, including explicit user approval before any live submission.
+34. Create a concise Teal update checklist.
 
 ## Output
 - Teal workflow recommendation

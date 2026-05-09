@@ -125,8 +125,11 @@ For each role:
 13. Before adding a new bullet, check whether an existing bullet already communicates the same proof, channel mix, or business outcome. If yes, replace or rewrite instead of adding a near-duplicate.
 14. If categorized `Skills & Interests` are active, turn off any uncategorized top skill row before export.
 15. Use one canonical label per concept within the resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless there is a specific reason to preserve the alternate wording.
-16. Use Analyzer before export when available.
-17. Export PDF, verify the downloaded file name, and rename generic exports before upload.
+16. Make category names reflect the role's actual mandate. Do not keep inherited or weak catch-all buckets that no longer fit the job.
+17. Remove low-context standalone skills that are not strong enough by themselves, such as `Landing Pages`, unless the role makes them directly relevant.
+18. Remove vague filler skills like `Website Optimization` when a stronger role-native term can express the same truth more cleanly.
+19. Use Analyzer before export when available.
+20. Export PDF, verify the downloaded file name, and rename generic exports before upload.
 
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:
