@@ -123,8 +123,10 @@ For each role:
 11. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the resume still reads cleanly.
 12. If Job Matcher shows the draft is well below the recommended score, keep iterating on summary and bullet language before treating the draft as ready.
 13. Before adding a new bullet, check whether an existing bullet already communicates the same proof, channel mix, or business outcome. If yes, replace or rewrite instead of adding a near-duplicate.
-14. Use Analyzer before export when available.
-15. Export PDF, verify the downloaded file name, and rename generic exports before upload.
+14. If categorized `Skills & Interests` are active, turn off any uncategorized top skill row before export.
+15. Use one canonical label per concept within the resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless there is a specific reason to preserve the alternate wording.
+16. Use Analyzer before export when available.
+17. Export PDF, verify the downloaded file name, and rename generic exports before upload.
 
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:
@@ -132,6 +134,7 @@ Use Job Matcher as a gap-analysis tool:
 - separate must-have terms from noise
 - reject false or inflated keyword additions
 - preserve readable resume architecture
+- keep the final skill taxonomy deduped, categorized, and canonically named
 
 Treat generic tokens, malformed strings, and irrelevant one-word fragments as noise. Prioritize role-specific phrases, credible tools, measurable systems work, and keywords that align with source-backed experience.
 Exploit direct UI actions when helpful, such as hovering a missing skill to add it or turn it into a bullet, but only if the result is truthful and not duplicative.

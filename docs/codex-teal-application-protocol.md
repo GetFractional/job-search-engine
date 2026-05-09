@@ -84,6 +84,9 @@ Use this ladder before doing expensive work:
 - Put the most important truthful JD terms into the title, summary, and selected recent bullets first.
 - Use Skills & Interests to broaden reflected coverage, not to hide a weak summary.
 - Treat redundancy as failure. If two bullets say nearly the same thing, keep the stronger one and reclaim the slot.
+- If categorized skills are active, the resume must not also ship with an uncategorized top skill row.
+- Use one canonical term per concept within a resume, for example `GA4` or `Google Analytics 4`, not both.
+- Keep skill categories mutually exclusive where practical so the taxonomy reads cleanly and does not repeat the same concept in two places.
 
 ### Cover Letter
 - If the live form supports a cover letter and the role is viable, create one by default.
@@ -108,6 +111,9 @@ Use one strict local naming standard before upload or delivery:
 Do not upload generic exports such as `{Role} at {Company}.pdf` when a correctly named local file can be produced first.
 
 ## Teal UX Heuristics
+- In `Skills & Interests`, prefer checkbox toggles over delete actions when cleaning or deduping skills. Delete actions can remove the skill from work history across all resumes.
+- If Teal exposes both uncategorized chips and categorized skills, turn the uncategorized chips off locally before export.
+- Normalize concept naming before export, including items like `Systems Thinking` versus `Systems Thinker`, so the taxonomy reads like one deliberate system.
 - Prefer the fastest truthful action inside Teal.
 - Reuse selected existing bullets before drafting new ones.
 - When Job Matcher exposes direct actions for missing skills, such as adding the skill or creating a bullet, use those only if they improve truthful coverage without creating redundancy.
@@ -131,6 +137,7 @@ Score each asset on:
 Minimum standard:
 - no unsupported claims
 - no duplicate proof lines
+- one selected bullet per proof cluster unless the second bullet adds clearly different scope, metric, tool, or business outcome
 - no cryptic metrics
 - no AI-sounding phrasing
 - role fit obvious in the first screen

@@ -54,20 +54,23 @@ Create a tailored two-page resume using the correct lane, job-title language, va
 12. If score improvement requires mutating shared bullets or summaries, propose the exact edits first and get approval before saving them.
 13. Before adding or editing a bullet, compare it against existing bullets for the same role and the summary. If overlap is high, replace the weaker line or rewrite for a clearly different angle.
 14. Update `Skills & Interests` into role-specific categories that showcase the highest-value truthful skills for the target role.
-15. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the resume still reads cleanly.
-16. Prefer adding missing role language through real bullets and summary lines before dumping terms into Skills & Interests, but use categorized skills to close safe gaps that do not belong in bullets.
-17. When the role hinges on terms like retention, onboarding, nurture, segmentation, lifecycle, customer journey, KPIs, automation, channel mix, collaboration, coaching, or platform fluency, look for the cleanest truthful place to express them in prose instead of leaving them implied.
-18. When relevant and source-backed, include operator-level AI, workflow automation, and tool-orchestration language in a grounded way that reinforces execution leverage and human oversight.
-19. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit rather than hiding them in a generic tool pile.
-20. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or category change.
-21. If Teal shows a recommended Match Score threshold, keep iterating until the resume either clears that floor or the remaining gaps would require unsupported claims.
-22. Keep brand-specific metrics under the correct employer or clearly named client context.
-23. Remove duplicate or near-duplicate lines across headline, summary, highlights, and experience.
-24. If the resume underfills two pages, add stronger relevant proof, older but relevant experience, broader truthful skill coverage, or relevant tool fluency before shrinking the format.
-25. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
-26. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
-27. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
-28. Do not upload a file until the local name matches the required format exactly.
+15. Do not mix categorized skills with an active uncategorized top-skill row. If Teal exposes both, turn the uncategorized row off locally before export.
+16. Use one canonical term per concept per resume, for example `GA4` or `Google Analytics 4`, not both; `Systems Thinking`, not `Systems Thinker`, unless the job explicitly benefits from the alternate wording.
+17. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the resume still reads cleanly.
+18. Prefer adding missing role language through real bullets and summary lines before dumping terms into Skills & Interests, but use categorized skills to close safe gaps that do not belong in bullets.
+19. When the role hinges on terms like retention, onboarding, nurture, segmentation, lifecycle, customer journey, KPIs, automation, channel mix, collaboration, coaching, or platform fluency, look for the cleanest truthful place to express them in prose instead of leaving them implied.
+20. When relevant and source-backed, include operator-level AI, workflow automation, and tool-orchestration language in a grounded way that reinforces execution leverage and human oversight.
+21. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit rather than hiding them in a generic tool pile.
+22. Re-run Job Matcher and Analyzer after each meaningful summary, bullet, or category change.
+23. If Teal shows a recommended Match Score threshold, keep iterating until the resume either clears that floor or the remaining gaps would require unsupported claims.
+24. Keep brand-specific metrics under the correct employer or clearly named client context.
+25. Remove duplicate or near-duplicate lines across headline, summary, highlights, experience, and skills categories.
+26. When two bullets draw on the same underlying proof, keep the stronger version and either cut or materially reframe the weaker one so each selected bullet earns distinct space.
+27. If the resume underfills two pages, add stronger relevant proof, older but relevant experience, broader truthful skill coverage, or relevant tool fluency before shrinking the format.
+28. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
+29. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume`.
+30. If Teal exports a generic filename, rename the local file to the required format before upload or delivery.
+31. Do not upload a file until the local name matches the required format exactly.
 
 ## Output
 - Tailored resume draft
