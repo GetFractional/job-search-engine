@@ -26,8 +26,11 @@ When the user says "find jobs":
 1. Open Google Chrome and use Teal Job Search, saved searches, relevant job boards, or company career pages.
 2. Bookmark promising roles with the Teal Chrome extension when Codex is operating the browser with approval.
 3. Confirm each bookmarked role includes title, company, location, URL, compensation if available, and full JD.
-4. Triage Teal-saved roles by lane, score, risks, and next action.
-5. Set Teal Excitement from score.
+4. When the live posting clearly exposes a hard logistics blocker, such as a hidden hybrid requirement or a hub-limited remote requirement, treat that as a priority disqualifier instead of trusting saved metadata.
+5. Triage Teal-saved roles by lane, score, risks, and next action.
+6. Set Teal Excitement from score.
+
+If the user says something vaguer such as "help me with job search," infer the most likely workflow from the current Teal state and recent context instead of forcing a rigid prompt ritual.
 
 ## Excitement Mapping
 Use this default mapping:
@@ -53,15 +56,31 @@ After bookmarking:
 When the user says "apply to this job":
 1. Open the Teal job record in Google Chrome.
 2. Verify the source link is still active. If the saved source blocks or redirects, try one direct company-hosted posting path, then stop with uncertainty if needed.
-3. Complete intake, lane classification, fit scoring, and Excitement update.
-4. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists.
-5. Move the role to Applying when asset work begins.
-6. Create or open the Teal role resume from the Resumes tab.
-7. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume.
-8. Use Cover Letter with a custom prompt.
-9. Export the resume and cover letter as separate files.
-10. Prepare application answers.
-11. Stop before final submission until the user approves the exact action and destination.
+3. Before deep research or asset work, run a live viability check against the company-hosted posting or application page. Confirm actual remote versus hybrid status, hub-radius restrictions, office attendance expectations, relocation requirements, sponsorship constraints, and any other hard logistics blockers.
+4. If the role fails the live viability check, do not continue into resume or cover-letter work. Downgrade the role in Teal notes or scoring and route to the next viable role.
+5. Complete intake, lane classification, fit scoring, and Excitement update.
+6. Inspect the live application flow early and record:
+   - required assets
+   - optional assets the form supports
+   - screening questions or fields that require research support
+7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists.
+8. Move the role to Applying when asset work begins.
+9. Create or open the Teal role resume from the Resumes tab.
+10. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume.
+11. Make the summary explain role fit clearly, name relevant industries or business contexts when useful, and avoid cryptic shorthand metrics.
+12. Build enough role-specific reflected skills to cover the mandate thoroughly, with a default target of at least 24 truthful skills across 5 to 6 categories and a preferred target around 28 when the proof and layout support it.
+13. Use extra second-page capacity for stronger adjacent proof, broader high-value skill coverage, and relevant tool fluency before compressing the layout.
+14. When relevant and source-backed, include operator-level AI and workflow-architecture language such as AI-assisted workflows, agentic research, automation systems, and human oversight.
+15. When the company uses tools Matt has actually used, reflect those tools naturally where they improve fit.
+16. Before saving any new summary line or bullet, compare it against the existing selected content and remove overlap. Replace the weaker line instead of stacking two versions of the same proof.
+17. When Teal exposes direct missing-skill actions, such as adding a skill or generating a bullet from Job Matcher, use them only when they produce truthful, non-redundant coverage faster than manual editing.
+18. Use the relevant local skills, not just Teal mechanics, when the workflow calls for them. Minimum application stack usually includes `role-intake`, `role-lane-classification`, `company-research`, `resume-strategy`, `resume-drafting`, `qa-fact-check`, and `application-answer`.
+19. Aim to fill two full pages without spilling onto a third.
+20. If the live form accepts an optional cover letter and the role is viable, prepare one by default with a custom prompt.
+21. Export the resume and cover letter as separate files.
+22. Prepare application answers.
+23. Run one final QA pass across resume, cover letter, and prepared application answers before asking for submission approval.
+24. Stop before final submission until the user approves the exact action and destination.
 
 ## Job Tracker Fields
 Maintain:
@@ -92,10 +111,15 @@ For each role:
 4. Rename the resume `{Company} - {Role} - Matt Dimock - Resume` when possible.
 5. Use Teal Job Matcher for hard-skill, soft-skill, tool, and role-term gaps.
 6. Update target title, professional summary, selected bullets, and Skills & Interests.
-7. Add only truthful, natural, recruiter-readable language.
-8. Avoid keyword stuffing and unsupported claims.
-9. Use Analyzer before export when available.
-10. Export PDF and verify the downloaded file name.
+7. In the summary, make the mandate obvious and name relevant industries or business contexts when that increases relevance.
+8. Put the highest-value truthful JD terms into recruiter-readable prose first, especially the target title, summary, and recent bullets, before relying on Skills & Interests to carry the load.
+9. Add only truthful, natural, recruiter-readable language.
+10. Avoid keyword stuffing, unsupported claims, and cryptic shorthand metrics that require translation.
+11. Target at least 24 truthful reflected skills across 5 to 6 categories, with a preferred target around 28 when the resume still reads cleanly.
+12. If Job Matcher shows the draft is well below the recommended score, keep iterating on summary and bullet language before treating the draft as ready.
+13. Before adding a new bullet, check whether an existing bullet already communicates the same proof, channel mix, or business outcome. If yes, replace or rewrite instead of adding a near-duplicate.
+14. Use Analyzer before export when available.
+15. Export PDF and verify the downloaded file name.
 
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:
@@ -105,6 +129,7 @@ Use Job Matcher as a gap-analysis tool:
 - preserve readable resume architecture
 
 Treat generic tokens, malformed strings, and irrelevant one-word fragments as noise. Prioritize role-specific phrases, credible tools, measurable systems work, and keywords that align with source-backed experience.
+Exploit direct UI actions when helpful, such as hovering a missing skill to add it or turn it into a bullet, but only if the result is truthful and not duplicative.
 
 ## Cover Letter
 Use the Teal Cover Letter tab after the resume is attached to the job.
@@ -115,6 +140,10 @@ For each role:
 3. Ground the prompt in the company research brief, role diagnosis, proof hierarchy, and claim-safe metrics.
 4. Edit the output so it sounds human, direct, and specific.
 5. Export or copy the cover letter and save it as `{Company} - {Role} - Matt Dimock - Cover Letter`.
+6. For viable roles, if the live application supports an optional cover letter, prepare one by default unless the user explicitly skips it.
+
+## Salary Default
+When a live application asks for desired salary and the posting does not state a range, default to `$150,000` unless the user has set a different target for the current search phase.
 
 ## Contacts Tracker
 Track:

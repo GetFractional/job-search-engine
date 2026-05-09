@@ -24,6 +24,7 @@ If a file conflicts with the Canonical Profile or Metrics Ledger, use the safer 
 ## Default Positioning
 Matt is a systems-driven growth and revenue operator who builds the infrastructure behind measurable growth.
 When a summary or headline references tenure, calculate from Matt's first marketing role at National Positions, which began in Sep 2007. As of May 7, 2026, the accurate count is `18 years in marketing`. Do not use stale shorthand like `15+ years`.
+When relevance matters, summaries should quickly name 2 to 4 source-backed industries or business contexts near the top, such as B2B SaaS-adjacent, ecommerce/DTC, telecom, contractor services, or sales-led environments.
 
 Default fit emphasis:
 - Revenue Operations
@@ -42,6 +43,7 @@ Avoid over-positioning Matt for pure brand, PR, awareness-only leadership, pure 
 - Preferred minimum: `$150k+` with family benefits.
 - Fastest acceptable floor: `$120k` base or total comp only if the role is strategically strong, low-friction, or a compelling bridge.
 - Below `$120k`: usually pass unless there is exceptional short-term bridge value, equity upside, or unusually strong strategic value.
+- When a live application asks for desired salary and the posting does not state a range, default to `$150,000` unless the user has set a different search-phase target.
 - Family benefits matter. Bonus, equity, 401(k), healthcare, and childcare support improve fit.
 - Remote is preferred. Local hybrid is acceptable. Limited travel is acceptable. Paid relocation only if clearly worth it.
 
@@ -73,6 +75,7 @@ Each role analysis must include:
 ## Claim Safety
 Never invent metrics.
 Do not round or understate tenure in summaries. If years of experience are mentioned, calculate from the Sep 2007 National Positions start date and use the current exact count. As of May 7, 2026, that is `18 years in marketing`.
+Do not use cryptic internal shorthand or low-context metrics such as `lifted H2 monthly revenue 39%`. Rewrite in plain business language with explicit context, or leave it out.
 
 Before using any number:
 1. Check the Metrics Ledger.
@@ -133,34 +136,56 @@ For a new role, use this order:
 
 Do not create final assets until the research brief is complete and the role is worth pursuing.
 
+## Intent Inference
+The user should not need to remember rigid trigger phrases. Infer the workflow from normal language and current Teal state when possible.
+
+- `find jobs`, `look for jobs`, or lane/location-based requests -> run the search workflow
+- `score saved jobs`, `triage these`, or similar -> run the saved-job scoring workflow
+- `what should I apply to next`, `help me apply to the next best job`, or similar -> open Teal, find the strongest viable non-applied role after live logistics verification, then run the application workflow
+- `apply to this job`, `build the application pack`, or similar -> run the full application workflow
+- `keep going` -> continue the highest-leverage unblocked step on the active role
+- If the request is slightly ambiguous between scoring and applying, prefer resolving it from Teal state rather than pushing the ambiguity back to the user
+
 ## Easy Trigger Workflows
 When the user asks to find jobs:
 1. Use Quick mode by default.
 2. Use Google Chrome and TealHQ, including Teal Job Search, saved searches, relevant job boards, and the Teal Chrome extension when bookmarking is needed.
 3. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
-4. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
-5. Bookmark strong roles in Teal when operating Chrome with approval.
-6. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
-7. Do not apply or message anyone.
+4. Before treating a role as strong, check for hard live logistics blockers when they are visible early, especially hidden hybrid requirements, hub-radius remote limits, relocation expectations, and geography-limited remote labels.
+5. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
+6. Bookmark strong roles in Teal when operating Chrome with approval.
+7. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
+8. Do not apply or message anyone.
 
 When the user asks to score saved jobs:
 1. Use Google Chrome and app.tealhq.com.
 2. Open each Teal record with no or stale Excitement score.
-3. Read the JD and source URL, verify the posting is still active when feasible, run lane and fit scoring, set Excitement, and add concise notes.
-4. Do not draft assets unless the user asks or the role clears the pursue threshold.
+3. Read the JD and source URL, verify the posting is still active when feasible, and check for hard live logistics blockers before finalizing fit.
+4. If the live posting reveals a hard blocker, such as required hub proximity or non-optional hybrid attendance outside Matt's target footprint, downgrade the role and note the blocker in Teal instead of treating it as viable.
+5. Run lane and fit scoring, set Excitement, and add concise notes.
+6. Do not draft assets unless the user asks or the role clears the pursue threshold.
 
 When the user asks to apply to a job:
 1. Use Standard mode by default.
 2. Use Google Chrome and app.tealhq.com as the operating surface.
 3. Require or locate the Teal record, full JD, or application URL.
-4. Open the Teal record, score it if needed, verify the saved source is still active, and move it to Applying when asset work starts.
-5. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
-6. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
+4. Open the Teal record, score it if needed, and verify the saved source is still active.
+5. Inspect the live company-hosted posting or live application page before deep work and look specifically for hard logistics blockers, especially hub-radius remote requirements, office attendance requirements, relocation expectations, and remote labels that do not match the real posting.
+6. If a hard logistics blocker appears, stop asset work, downgrade the role in Teal notes or score, and route to the next viable role instead of forcing the application.
+7. Move the role to Applying only after it clears the live viability gate and asset work is actually starting.
+8. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
+9. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
 7. Use Job Matcher and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms.
-8. Open the Cover Letter tab, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate/edit the letter.
-9. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`.
-10. Prepare application answers and outreach if useful.
-11. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
+8. Make the summary state mandate fit plainly and name relevant industries or business contexts when that increases relevance for the target role.
+9. Build enough role-specific reflected skills to cover the mandate thoroughly, with a default target of at least 24 truthful skills across 5 to 6 role-specific categories and a preferred target around 28 when the proof and layout support it cleanly.
+10. Preserve or add adjacent high-value strengths that fit Matt's actual lane even when the JD does not list them explicitly, especially systems thinking, reporting, workflow automation, operating cadence, and human-in-the-loop AI leverage.
+11. When relevant and source-backed, include operator-level AI and workflow architecture language such as AI-assisted workflows, agentic research, automation systems, and connected tool fluency.
+12. When the company uses tools Matt has actually used, reflect those tools naturally in the resume, skills, or cover letter when they improve fit and remain truthful.
+13. Aim to fill two full resume pages without spilling onto a third.
+17. Open the Cover Letter tab only when the live form supports it, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate or edit the letter.
+18. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`.
+19. Prepare application answers and outreach if useful.
+20. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
 
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.
@@ -225,10 +250,17 @@ Maintain Teal records with:
 
 For every Teal resume before export:
 - run Job Matcher and Analyzer after the first role-specific draft is attached
+- make the summary explain role fit plainly and name relevant industries or business contexts when useful
 - update `Skills & Interests` into role-specific categories rather than a flat skill list
 - prioritize truthful missing hard skills first, then supporting soft skills, business terms, and platforms/tools
 - make the reflected skills match the actual mandate of the role, not a generic master-resume mix
+- target at least 24 truthful reflected skills across 5 to 6 role-specific categories, with a preferred target around 28 when the resume still reads cleanly
+- use extra second-page capacity for stronger adjacent proof, older relevant experience, or broader high-value skill coverage before compressing layout
+- when relevant and truthful, include AI-assisted workflows, agentic research, automation systems, human oversight, and real tool fluency as part of the operator profile rather than as hype
+- when the target company uses tools Matt has actually used, reflect those tools naturally where they improve fit
 - re-check Job Matcher and Analyzer after each meaningful skills/category pass
+- avoid cryptic shorthand metrics or language that needs translation to be understood
+- aim to use two full pages without exceeding two pages
 - do not add unsupported role-native terms just to chase score
 
 Default application answers when the form asks and no contradictory evidence exists:
@@ -241,6 +273,7 @@ Default application answers when the form asks and no contradictory evidence exi
 - gender/race: white male only for voluntary self-ID when approved
 - pronouns: he/him only when asked
 - veteran status: not a veteran
+- desired salary when no posted range exists: `$150,000`
 
 ## Human Approval Gates
 Ask for explicit approval before:
@@ -303,6 +336,8 @@ Use them as task-specific operating guides:
 - qa-fact-check
 - alen-sultanic-persuasion
 - expert-team-orchestration
+
+Also use `/Users/mattdimock/.codex/skills/alen-sultanic/SKILL.md` selectively for proof-backed positioning, summary structure, cover-letter angles, objection handling, and application messaging when conversion quality matters and the supporting proof is real.
 
 No global `product-delivery-os` skill is available in this session. Use this file plus local playbooks as the project-specific fallback.
 

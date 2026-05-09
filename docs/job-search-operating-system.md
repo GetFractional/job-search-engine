@@ -13,28 +13,32 @@ Use these simple requests:
 | "Find jobs for me today" | Quick batch search and shortlist |
 | "Find remote RevOps jobs" | Quick lane-specific search |
 | "Triage these jobs" | Quick score each role and recommend next action |
+| "What should I apply to next?" | Open Teal, identify the best viable non-applied role after live logistics verification, then run the Standard application workflow |
 | "Apply to this job" | Standard application workflow |
 | "Build the application pack for this Teal job" | Standard application workflow from Teal/JD |
+| "Keep going" | Continue the highest-leverage unblocked step on the active role |
 | "Prep me for this interview" | Deep interview workflow |
 | "Help me negotiate this offer" | Deep compensation workflow |
 
-Use one ongoing project chat for searches and operating cadence. Use a new chat for a high-fit individual application when the role needs deep research, multiple assets, interview prep, or repeated revisions.
+Use one ongoing project chat for searches and operating cadence. Use a new chat for a high-fit individual application when the role needs deep research, multiple assets, interview prep, or repeated revisions. The user should not need to remember rigid prompts, the system should infer the likely workflow from normal language and Teal state.
 
 ## Workflow
 1. Source roles through Teal saved searches, alerts, Chrome extension bookmarking, company career pages, referrals, and targeted research.
 2. Complete role intake with title, company, JD, compensation, logistics, application URL, known contacts, and Teal status.
 3. Classify the role by mandate into one primary lane and optional secondary lane.
 4. Run a quick fit score before spending time on research or assets.
-5. For viable roles, create a company and market research brief.
-6. Create the final fit scorecard and pursue recommendation.
-7. Build resume strategy before drafting the tailored resume.
-8. Draft role-specific assets only after research and scoring justify the effort.
-9. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
-10. Submit, message, or update externally only after explicit user approval.
-11. Track every next action and follow-up in Teal.
-12. Prepare interview packs only after the role is active or clearly worth pursuing.
-13. Preserve compensation leverage through research, careful language, and staged disclosure.
-14. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
+5. For viable roles, inspect the live application early to determine required assets, useful optional assets, and screening questions before deep drafting begins.
+6. Create a company and market research brief.
+7. Create the final fit scorecard and pursue recommendation.
+8. Build resume strategy before drafting the tailored resume.
+9. Draft role-specific assets only after research and scoring justify the effort.
+10. For viable roles, create an optional cover letter by default when the form accepts one, unless the user explicitly skips it or the asset would clearly add more risk than value.
+11. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
+12. Submit, message, or update externally only after explicit user approval.
+13. Track every next action and follow-up in Teal.
+14. Prepare interview packs only after the role is active or clearly worth pursuing.
+15. Preserve compensation leverage through research, careful language, and staged disclosure.
+16. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
 
 ## Find Jobs Workflow
 Default to Quick mode.
@@ -54,9 +58,12 @@ Default to Standard mode.
 2. Complete intake and lane classification.
 3. Run fit scoring before asset work.
 4. If score is below 65, recommend pass or low-effort path unless the user overrides.
-5. If viable, create research brief, fit scorecard, resume strategy, tailored resume, cover letter, outreach, and application answers as needed.
-6. QA every external asset against claim-safety rules.
-7. Stop for explicit approval before submitting, messaging, or changing external records.
+5. Before the role is treated as viable, inspect the live posting or live application for hard logistics blockers such as hidden hybrid requirements, hub-limited remote rules, relocation demands, and geography-based remote constraints.
+6. If a hard blocker appears, downgrade the role and move to the next viable option instead of building assets.
+7. If viable, inspect the live application first, then create research brief, fit scorecard, resume strategy, tailored resume, cover letter, outreach, and application answers in the order the form actually demands.
+8. In the resume, make role fit clear, name relevant industries when helpful, build broad truthful skill coverage, include relevant AI/workflow and tool-fluency signals when source-backed, and maximize two pages without exceeding them.
+9. QA every external asset against claim-safety rules, ATS clarity, and redundancy control before asking for approval to submit.
+10. Stop for explicit approval before submitting, messaging, or changing external records.
 
 ## Role Decision Gate
 Use this effort ladder:
