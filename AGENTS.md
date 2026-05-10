@@ -6,16 +6,16 @@ Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for r
 ## Required Source Hierarchy
 Use these sources in this order:
 
-1. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-3. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-4. `/Users/mattdimock/Downloads/04_story_bank.md`
-5. `/Users/mattdimock/Downloads/05_outreach_templates.md`
-6. `/Users/mattdimock/Downloads/06_interview_pack_template.md`
-7. `/Users/mattdimock/Downloads/07_linked_in_optimization_brief.md`
-8. `/Users/mattdimock/Downloads/08_reference_sheet.md`, restricted, references only
+1. `source-files/01_matt_dimock_canonical_profile.md`
+2. `source-files/02_metrics_ledger.md`
+3. `source-files/03_role_lane_glossary.md`
+4. `source-files/04_story_bank.md`
+5. `source-files/05_outreach_templates.md`
+6. `source-files/06_interview_pack_template.md`
+7. `source-files/07_linked_in_optimization_brief.md`
+8. `source-files/08_reference_sheet.md`, restricted, references only
 9. Supporting materials only when useful:
-   - `/Users/mattdimock/Documents/Strategies/Wealth Dynamics Report - Matt Dimock - 2025.pdf`
+   - `source-files/Wealth Dynamics Report - Matt Dimock - 2025.pdf`
    - older LinkedIn PDF/DOCX snapshots only for historical comparison, not current optimization
    - HawkScout outreach DOCX files only if the user explicitly asks about acquisition/founder outreach
 
@@ -271,7 +271,7 @@ For coding-style implementation threads, also include:
 - Risks
 
 ## Skill Routing
-This project includes official local skill playbooks under `/Users/mattdimock/Documents/Jobs/Job Search/.agents/skills`.
+This project includes official local skill playbooks under `.agents/skills`.
 
 Use them as task-specific operating guides:
 - job-search-scenarios

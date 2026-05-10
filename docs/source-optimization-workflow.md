@@ -4,15 +4,15 @@
 Improve the trusted source set so the job-search system is sharper, safer, easier to use, and less token-heavy.
 
 ## Trusted Source Set
-- `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-- `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-- `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-- `/Users/mattdimock/Downloads/04_story_bank.md`
-- `/Users/mattdimock/Downloads/05_outreach_templates.md`
-- `/Users/mattdimock/Downloads/06_interview_pack_template.md`
-- `/Users/mattdimock/Downloads/07_linked_in_optimization_brief.md`
-- `/Users/mattdimock/Downloads/08_reference_sheet.md`
-- `/Users/mattdimock/Documents/Strategies/Wealth Dynamics Report - Matt Dimock - 2025.pdf`, internal operating-style input
+- `source-files/01_matt_dimock_canonical_profile.md`
+- `source-files/02_metrics_ledger.md`
+- `source-files/03_role_lane_glossary.md`
+- `source-files/04_story_bank.md`
+- `source-files/05_outreach_templates.md`
+- `source-files/06_interview_pack_template.md`
+- `source-files/07_linked_in_optimization_brief.md`
+- `source-files/08_reference_sheet.md`
+- `source-files/Wealth Dynamics Report - Matt Dimock - 2025.pdf`, internal operating-style input
 
 ## Audit Goals
 - Remove conflicting positioning.

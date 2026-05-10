@@ -5,7 +5,7 @@ Work from evidence, not invention. Never invent metrics, ownership, tools, title
 
 ## Source Check
 Before using any number:
-1. Check `/Users/mattdimock/Downloads/02_metrics_ledger.md`.
+1. Check `source-files/02_metrics_ledger.md`.
 2. Confirm confidence: High, Medium, Low, or Unverified.
 3. Confirm ownership: Direct, Shared leadership, Supporting, or Context only.
 4. Use the listed safe phrasing or a more conservative version.
