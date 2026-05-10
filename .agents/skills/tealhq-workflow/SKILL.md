@@ -8,6 +8,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 ## Project Defaults
 - Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
 - Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
+- Use `mattdim805@gmail.com` for Gmail, Google Calendar, and Google Drive job-search workflows. Do not use work/client Google accounts for personal job-search work unless Matt explicitly approves it.
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.

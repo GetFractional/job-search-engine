@@ -3,6 +3,12 @@
 ## Objective
 Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for research, scoring, strategy, asset drafting, QA, and interview prep, with TealHQ as the job-search command center.
 
+## Account Scope
+- Use `mattdim805@gmail.com` as Matt's legitimate job-search Google identity for Gmail, Google Calendar, and Google Drive work tied to applications, recruiters, interviews, and job-search documents.
+- Use the logged-in personal Chrome profile for TealHQ, LinkedIn, Gmail/Google, job boards, company career sites, and application forms.
+- Do not use `matt@getfractional.co` or any client/work Google account for personal job-search workflows unless Matt explicitly directs it for a specific task.
+- TealHQ is not a Codex connector. Use Teal through Chrome and the Teal Chrome extension.
+
 ## Required Source Hierarchy
 Use these sources in this order:
 

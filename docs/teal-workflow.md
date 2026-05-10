@@ -5,6 +5,8 @@ TealHQ is the job-search command center. Codex supports analysis, drafting, QA, 
 
 Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and application forms. Prefer Chrome over in-app browser automation when login state, Cloudflare, challenge prompts, or the Teal Chrome extension matter.
 
+Use `mattdim805@gmail.com` as the job-search Google account for Gmail, Google Calendar, and Google Drive work related to applications, recruiter messages, interview scheduling, follow-up reminders, and job-search documents. Do not use `matt@getfractional.co` for personal job-search workflows unless Matt explicitly approves it for a specific task.
+
 Operate like a human: use visible navigation, keep actions paced, avoid repeated reload/click loops, do not brute-force guessed URLs, and stop at CAPTCHA, Cloudflare, security, login, or permission challenges.
 
 ## Saved Searches

@@ -17,6 +17,8 @@ Use this as the first skill for job-search execution. It routes the request, enf
 ## Browser Rule
 Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and applications. Prefer visible UI interaction through Chrome over in-app browser automation when login, Cloudflare, bot checks, or Teal extension behavior matter.
 
+Use `mattdim805@gmail.com` as the job-search Google identity for Gmail, Google Calendar, and Google Drive tasks. Do not use work/client Google accounts for personal job-search operations unless Matt explicitly instructs it.
+
 Act like a careful human operator:
 - open direct, relevant pages only
 - avoid rapid repeated clicks, reload loops, scraping loops, or guessed URL grids
