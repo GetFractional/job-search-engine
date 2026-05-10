@@ -1,10 +1,10 @@
 # Job Search Protocol Optimizer Master Prompt
 
-Use this prompt in a fresh `GPT-5.5` chat with `high` reasoning and `Plan` mode when the goal is to improve the full Job Search protocol, not just work one role.
+Use this prompt in a fresh `GPT-5.5` chat with `medium` reasoning and `Plan` mode when the goal is to improve the full Job Search protocol, not just work one role.
 
 ## Recommended Settings
 - Model: `GPT-5.5`
-- Reasoning: `high`
+- Reasoning: `medium`
 - Mode: `Plan`
 
 ## Prompt
@@ -145,4 +145,4 @@ Do not execute changes until the plan is approved.
 ## Why This Prompt Exists
 - It separates protocol optimization from normal application execution.
 - It forces source-backed research before rule changes.
-- It creates a repeatable way to improve the system with `GPT-5.5 high`, then use the leaner protocol later with `gpt-5.4 medium`.
+- It creates a repeatable way to improve the system with `GPT-5.5 medium`, then use the leaner protocol later through concise trigger prompts.

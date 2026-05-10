@@ -17,11 +17,17 @@ description: Audit job-search assets for factual accuracy, claim safety, tone, A
 Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role fit, and overstatement.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-3. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-4. `/Users/mattdimock/Downloads/04_story_bank.md`
-5. `docs/claim-safety-rules.md`
+1. `docs/job-search-protocol-index.md`
+2. `docs/codex-teal-application-protocol.md`
+3. `docs/job-search-protocol-benchmark.md`
+4. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
+5. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
+6. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
+7. `/Users/mattdimock/Downloads/04_story_bank.md`
+8. `docs/claim-safety-rules.md`
+
+## Protocol Routing Rule
+Use `docs/job-search-protocol-index.md` for canonical skill naming and approval gates. Use `docs/job-search-protocol-benchmark.md` to record QA evidence for meaningful Standard and Deep runs.
 
 ## Inputs
 - Asset draft
@@ -39,13 +45,15 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 6. Check for duplicate or near-duplicate positioning across summary, highlights, and experience.
 7. Check whether any newly added bullet only restates an existing bullet with slightly different wording. If so, keep the stronger line and flag the weaker one for replacement.
 8. For every newly added JD or Job Matcher term, verify evidence source, best placement, and non-duplication.
-9. Flag soft skills that are unsupported by a bullet, story, scope signal, or clearly implied cross-functional behavior.
-10. Run a two-page tradeoff check. If the resume is dense or spills, cut low-signal skills, duplicated concepts, or weak category items before cutting differentiated proof.
-11. Check recruiter comprehension and ATS clarity.
-12. Check tone: human, calm, specific, commercially intelligent.
-13. Remove em dashes and AI-sounding phrasing.
-14. Check asset naming before upload or delivery. Generic export names fail QA.
-15. Flag anything requiring user confirmation.
+9. Label remaining JD or Job Matcher gaps as `covered in prose`, `covered in skills`, `external asset only`, `unsupported`, or `noise`.
+10. Flag soft skills that are unsupported by a bullet, story, scope signal, or clearly implied cross-functional behavior.
+11. Run a two-page tradeoff check. If the resume is dense or spills, cut low-signal skills, duplicated concepts, or weak category items before cutting differentiated proof.
+12. Check recruiter comprehension and ATS clarity.
+13. Check tone: human, calm, specific, commercially intelligent.
+14. Remove em dashes and AI-sounding phrasing.
+15. Check asset naming before upload or delivery. Generic export names fail QA.
+16. Capture final benchmark values or explain why they are not visible: Match Score, Analyzer score, page count, export loops, remaining gaps, and shared-content risk.
+17. Flag anything requiring user confirmation.
 
 ## Output
 - QA verdict
@@ -54,6 +62,7 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 - Claim safety table
 - Approval readiness
 - Redundancy findings, including exact lines that should be merged, replaced, or removed
+- Benchmark-ready QA evidence for Standard and Deep runs
 
 ## Safety
 Do not mark an asset ready if any required claim is unsupported.

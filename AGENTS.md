@@ -3,6 +3,9 @@
 ## Objective
 Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for research, scoring, strategy, asset drafting, QA, and interview prep, with TealHQ as the job-search command center.
 
+## Protocol Routing
+Use `docs/job-search-protocol-index.md` as the compact routing layer before loading deeper docs or skills. It points to the current application protocol, Teal workflow, token policy, benchmark, change log, source map, claim-safety rules, and local skills.
+
 ## Required Source Hierarchy
 Use these sources in this order:
 
@@ -45,6 +48,8 @@ Avoid over-positioning Matt for pure brand, PR, awareness-only leadership, pure 
 - Below `$120k`: usually pass unless there is exceptional short-term bridge value, equity upside, or unusually strong strategic value.
 - When a live application asks for desired salary and the posting does not state a range, default to `$150,000` unless the user has set a different search-phase target.
 - Family benefits matter. Bonus, equity, 401(k), healthcare, and childcare support improve fit.
+- In search ranking, prioritize roles with posted salary ranges and family-supportive benefits when fit is otherwise comparable. A posted salary range is a confidence and efficiency signal, not permission to save a weak role.
+- Capture family-supportive benefits in Teal notes when visible: healthcare and dependent coverage, 401(k), bonus, equity, parental leave, PTO, remote flexibility, childcare, and wellness support.
 - Remote is preferred. Local hybrid is acceptable. Limited travel is acceptable. Paid relocation only if clearly worth it.
 
 ## Role Lanes
@@ -148,14 +153,37 @@ The user should not need to remember rigid trigger phrases. Infer the workflow f
 
 ## Easy Trigger Workflows
 When the user asks to find jobs:
-1. Use Quick mode by default.
-2. Use Google Chrome and TealHQ, including Teal Job Search, saved searches, relevant job boards, and the Teal Chrome extension when bookmarking is needed.
-3. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
-4. Before treating a role as strong, check for hard live logistics blockers when they are visible early, especially hidden hybrid requirements, hub-radius remote limits, relocation expectations, and geography-limited remote labels.
-5. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
-6. Bookmark strong roles in Teal when operating Chrome with approval.
-7. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
-8. Do not apply or message anyone.
+1. Use `gpt-5.4-mini` with medium reasoning and infer Quick mode by default.
+2. Open Google Chrome and Teal Trackers before searching.
+3. Record the current Bookmarked baseline and keep a run ledger with Candidate, Source, Geo, Fit, Salary min, Salary max, JD captured, Save attempt, Teal confirmed, and Decision.
+4. Keep the Chrome workspace lean before searching. Close or avoid stale job tabs, close the Teal side panel when it is not actively needed, and keep only Teal Trackers, Teal Job Search or the current search surface, and one current source posting visible when possible.
+5. Use Teal Job Search, saved searches, relevant job boards, company career pages, and the Teal Chrome extension.
+6. Build a candidate queue first, but keep it in the ledger, not as a batch of open browser tabs.
+7. Evaluate exactly one source posting tab at a time. Open or reuse the current source tab for the next candidate, then close or replace it before moving on.
+8. Before saving, open the company-hosted or ATS-hosted posting and confirm the role is active, not closed, expired, filled, removed, or redirected to a generic careers page.
+9. Reject hidden geography blockers early, especially UK-only, London, EMEA-only, Europe-only, country-limited, state-limited, hub-limited, commuting-radius, hybrid, or relocation-required roles Matt does not clearly fit.
+10. Score the role and decide Teal Excitement before saving. Use the mapping: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
+11. Draft the Teal note before saving. The note must include lane, score, compensation/logistics, active-status evidence, risk, and next action.
+12. Save only roles that clear the active-posting, geo, fit, compensation, and mandate gates. Use this save-path order: Teal Job Search or saved-search Save/Bookmark button when the role is already inside Teal, then the Teal Chrome extension from the live source posting, then Manual Add Job only as a last resort.
+13. If the extension exposes Excitement and notes before save, set Excitement first, add notes second, then click Bookmark or Save third.
+14. If the extension does not expose those fields until after save, treat the save as provisional and immediately open the Teal Tracker record to set Excitement, notes, salary fields, and full JD before counting it.
+15. Do not use the Latest Saved Jobs list or a Tracker count as proof of new saves. Only the run ledger plus matching Teal record confirmation proves a new qualified save.
+16. Treat extension saves as provisional until confirmed in Teal with matching title, company, source URL, Bookmarked status, full JD, Excitement, structured salary fields when salary is visible, and notes.
+17. When a posting includes salary, populate Teal's official Minimum Salary and Maximum Salary fields after saving. Use annual base salary numbers only: `$150k-$190k` becomes minimum `150000` and maximum `190000`; a single exact salary fills both fields; `up to` fills maximum only; `from` fills minimum only; hourly, OTE, bonus, or equity details go in notes unless the annual base is explicit.
+18. If salary is not visible, leave salary fields blank and note `salary not posted` instead of inventing a range.
+19. Manual Add Job is allowed only when Teal-native Save/Bookmark and the Chrome extension are unavailable or fail, and only after the full actual JD has been captured from the live source posting. Do not use Manual Add Job just because extension capture is flaky.
+20. If using Manual Add Job, paste the full actual JD into the job description field before saving or in the same edit session, then reopen the record and verify the Job Description or Original Job Description section contains the full text. If the JD field is unavailable or the JD cannot be pasted immediately, stop and report the blocker instead of creating a bare bookmarked record.
+21. Use save labels: Confirmed saved, Duplicate existing, Provisional, Delayed confirmed, Failed save, and Rejected.
+22. Count only Confirmed saved or Delayed confirmed roles toward the target.
+23. Treat the requested count as qualified confirmed saves, not candidates reviewed. If asked for 10 jobs, keep searching until 10 qualified roles are confirmed saved or a clear blocker or search exhaustion point is reached.
+24. Search across multiple title families and adjacent lanes before accepting a weak batch, including RevOps, Growth Ops, GTM Ops, Lifecycle, CRM, Retention, Growth Marketing, Revenue Marketing, Demand Generation, Ecommerce Growth, CRO, and selective Head/VP Marketing.
+25. Prioritize the best jobs by fit, compensation, logistics, recency, company quality, mandate quality, and application leverage. Do not let one title label crowd out stronger adjacent roles.
+26. Pivot after 5 candidates in one title family with 0 qualified saves, 2 repeated geo blockers from one surface, 10 minutes without a qualified save, 2 ambiguous extension events, or results skewing international, junior, low-comp, or channel-mismatched.
+27. Send a non-blocking progress update every 3 confirmed saves or every 10 candidates reviewed. Do not wait for the user after routine progress updates.
+28. Add a browser-loop fail-safe: after 2 confirmed saves, 12 candidates reviewed, 8 minutes of active browser work, or 40 browser actions, provide a compact ledger update before continuing. If the runtime cannot continue safely, stop with the ledger, saved count, blocker, and exact next continuation step instead of ending without a final status.
+29. If Teal, the extension, login, CAPTCHA, source sites, or browser automation stop working, stop and report the blocker instead of silently abandoning the run.
+30. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, active-status evidence, why it fits, risks, and next action.
+31. Do not apply or message anyone.
 
 When the user asks to score saved jobs:
 1. Use Google Chrome and app.tealhq.com.
@@ -189,6 +217,17 @@ When the user asks to apply to a job:
 21. Prepare application answers and outreach if useful.
 22. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID unless the user explicitly allows submission in the active turn.
 
+When the user asks to apply to jobs in order from Teal Trackers:
+1. Use Standard mode by default.
+2. Open Teal Trackers in Google Chrome.
+3. Review non-applied Bookmarked or Saved roles by Excitement, fit score, recency, compensation, logistics, and application effort.
+4. For each candidate, verify the live posting first.
+5. If inactive, archive it with a concise note and verification date, then continue.
+6. If active but blocked or low fit, downgrade or note it, then continue.
+7. Move a role to Applying only after live viability passes and the live application flow is inspected.
+8. Build the application pack for the first viable top-ranked role.
+9. Stop before final submission unless explicitly approved.
+
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.
 - A new chat per job is optional but recommended for high-fit applications that need deep research, resume drafting, interview prep, or long back-and-forth.
@@ -211,9 +250,9 @@ Approximate token budget:
 Codex may not have access to live remaining rate-limit quota. If live budgeting matters, ask the user for the visible remaining quota and model/reasoning level, then estimate remaining workflows with `docs/token-efficiency.md`.
 
 Model defaults:
-- Broad job finding and first-pass triage: `gpt-5.4-mini`, low or medium reasoning.
-- Shortlist evaluation and standard application drafting: `gpt-5.4`, medium reasoning.
-- Final high-stakes resume, interview, compensation, or ambiguous strategy: `GPT-5.5`, medium or high reasoning.
+- Teal job finding and first-pass saved-job scoring: `gpt-5.4-mini`, medium reasoning.
+- Standard application execution, final resume, interview, compensation, or ambiguous strategy: `GPT-5.5`, medium reasoning.
+- Do not recommend `GPT-5.5 high` for this Job Search protocol.
 
 ## TealHQ Rules
 Use TealHQ as the operating system wherever possible, through Google Chrome, the official UI, Chrome extension, and supported export/import features.
@@ -225,13 +264,24 @@ Operate like a careful human:
 - avoid rapid-fire actions, repeated reloads, and guessed URL grids
 - do not bypass CAPTCHA, Cloudflare, login, permissions, or paywalls
 - pause on challenge prompts or unexpected account/security warnings
+- use Teal Tracker table inline edits for approved maintenance fields when they are faster and visible
+- use the Teal detail screen for source URL, full JD, notes, resumes, contacts, and fields that prove brittle in the table
 
 Do not:
 - invent or assume a Teal API
 - bypass login, permissions, CAPTCHA, or website restrictions
+- extract or print Teal tokens, session data, localStorage secrets, or cookies
+- mutate Teal through private backend endpoints, even if browser code reveals candidate routes
 - submit applications without approval
 - send outreach without approval
 - bulk-change Teal records without approval
+
+Safe Teal acceleration:
+- page-context JavaScript may inspect visible DOM, count visible elements, extract visible row text, or help target visible controls
+- page-context JavaScript must not bypass auth, Cloudflare, CAPTCHA, permissions, rate limits, or UI confirmation
+- prefer inline table edits for verified salary min, salary max, location, status, follow-up, deadline, and Excitement when the field is visible and low risk
+- update Date Posted only after source verification, one record at a time; if the inline date picker is brittle, use the detail screen or stop with a blocker
+- take a before and after snapshot or ledger note for every Teal record mutation
 
 Maintain Teal records with:
 - status
@@ -239,6 +289,8 @@ Maintain Teal records with:
 - fit score
 - pursue classification
 - compensation range
+- minimum salary
+- maximum salary
 - remote/hybrid/location
 - application deadline if known
 - source

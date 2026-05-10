@@ -16,11 +16,15 @@ description: Audit and improve Matt's trusted job-search source files for role t
 Analyze and improve the trusted job-search source files so they better support high-fit role targeting, fast application prep, claim safety, and token efficiency.
 
 ## Required Sources
-1. `docs/source-map.md`
-2. `docs/source-optimization-workflow.md`
-3. `docs/claim-safety-rules.md`
-4. `.agents/skills/expert-team-orchestration/SKILL.md`
-5. `.agents/skills/token-budgeting/SKILL.md`
+1. `docs/job-search-protocol-index.md`
+2. `docs/source-map.md`
+3. `docs/source-optimization-workflow.md`
+4. `docs/claim-safety-rules.md`
+5. `.agents/skills/expert-team-orchestration/SKILL.md`
+6. `.agents/skills/token-budgeting/SKILL.md`
+
+## Protocol Routing Rule
+Use `docs/job-search-protocol-index.md` to keep source optimization aligned with the current application protocol, benchmark, and token policy. Do not mutate source-of-truth files without explicit approval.
 
 ## Inputs
 - Source file or source set to audit

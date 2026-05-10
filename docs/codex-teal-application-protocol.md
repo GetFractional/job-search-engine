@@ -1,241 +1,227 @@
 # Codex Teal Application Protocol
 
+Version: `2026-05-10-teal-acceleration`
+
 ## Purpose
-Make the job-search system more consistent, higher quality, easier to automate, and less dependent on ad hoc prompting.
 
-Optimize for:
-- fastest path to a strong application
-- truthful ATS optimization
-- consistent asset quality
-- low avoidable token burn
-- automation readiness
+Make Codex + TealHQ application work faster, safer, more measurable, and easier to repeat across chats.
 
-## Working Goal
-Get Matt to a role paying at least `$120,000` to `$150,000` as quickly as possible, while continuously prioritizing stronger upside opportunities when the comp package, fit, and logistics justify the extra effort.
+Use this file for the end-to-end operating sequence. Use `docs/job-search-protocol-index.md` for routing across docs and skills.
 
-## Core Rule
-The live application page determines the asset plan.
+## Core Principles
 
-Do not start with resume tinkering in isolation when the application flow can answer these questions first:
-- Is a resume required?
-- Is a cover letter accepted?
-- Are there screening questions that need research support?
-- Are there extra fields that change strategy, such as referrals, compensation, work authorization, or portfolio links?
+- The live posting and live application page determine the asset plan.
+- Fit, compensation, logistics, and claim safety come before resume tuning.
+- ATS alignment is a placement problem, not only a skills-list problem.
+- Teal Resume Builder is a shared content library until the UI proves an edit is local.
+- Every meaningful Standard or Deep run should create benchmark evidence.
+- Protocol changes should replace stale guidance, not stack more rules.
+
+## Workflow Modes
+
+| Mode | Use For | Default Model | Reasoning | Token Posture |
+|---|---|---|---|---|
+| Quick | Active Teal job search, batch triage, saved-job scoring, pass or pursue decisions | `gpt-5.4-mini` | medium | fast active-search execution with strict gates |
+| Standard | One viable Teal application pack | `GPT-5.5` | medium | enough research and QA to submit confidently |
+| Deep | Interview, offer, hard positioning, protocol redesign | `GPT-5.5` | medium | use only when scope or stakes justify it |
+
+Use `gpt-5.4-mini` with medium reasoning for Teal job search and routine Tracker maintenance after the update pattern is known. Use `GPT-5.5` with medium reasoning for application packs, final QA, interviews, compensation, Teal UI repair, repeated browser failure diagnosis, and protocol repair. Do not use or recommend `GPT-5.5 high` for this Job Search protocol.
+
+## Safe Teal Acceleration
+
+Speed up Teal only through visible, account-safe workflows:
+- use logged-in Chrome, Teal-native controls, the Teal Chrome extension, and Tracker table inline edits
+- use page-context JavaScript only to inspect visible DOM, extract visible row text, count elements, or identify visible controls
+- use inline edits for verified salary min, salary max, location, status, follow-up, deadline, and Excitement
+- use the detail screen for source URL, full JD, notes, resumes, contacts, and Date Posted when the table control is brittle
+- do not bypass Cloudflare, CAPTCHA, login, permissions, rate limits, or paywalls
+- do not extract tokens, print localStorage secrets, or mutate private Teal backend endpoints
+
+## Find Jobs Sequence
+
+1. Use Quick mode unless the user explicitly asks for deeper research.
+2. Open Teal Trackers and record the current Bookmarked baseline.
+3. Start a run ledger with `Candidate`, `Source`, `Geo`, `Fit`, `Salary min`, `Salary max`, `Benefits evidence`, `JD captured`, `Save attempt`, `Teal confirmed`, and `Decision`.
+4. Search Teal saved searches, job boards, company career pages, and relevant sources in Google Chrome.
+5. Build a candidate queue in the ledger, but do not save yet and do not open a batch of job tabs.
+6. For each candidate, open or reuse exactly one company-hosted or ATS-hosted posting tab.
+7. Confirm the active-posting gate:
+   - posting opens directly
+   - role is not closed, expired, filled, removed, or a generic redirect
+   - title, company, location, and application URL are visible
+   - logistics and compensation do not create an obvious blocker
+   - posting freshness matches the user's requested window or has a strong exception reason
+8. Reject hidden geography blockers early, especially UK-only, London, EMEA-only, Europe-only, country-limited, state-limited, hub-limited, commuting-radius, hybrid, or relocation-required roles Matt does not clearly fit.
+9. Score only roles that pass the active-posting and geo gates.
+10. Prioritize roles with posted annual base salary ranges and family-supportive benefits when fit, mandate, and logistics are otherwise comparable.
+11. Score the role, assign Teal Excitement, and draft notes before saving.
+12. Save qualified roles using the safest available path: Teal Job Search or saved-search Save/Bookmark button when the role is already inside Teal, then the Teal Chrome extension from the live source posting, then Manual Add Job only as a last resort.
+13. If the extension exposes Excitement and notes before save, set Excitement first, add notes second, then click Bookmark or Save third.
+14. If the extension cannot set those fields before save, treat the save as provisional and immediately open the Teal Tracker record to finish Excitement, notes, salary fields, and full JD before counting the role.
+15. Treat extension results as provisional until the role appears in Teal with matching title, company, source URL, Bookmarked status, full JD, Excitement, structured salary fields when salary is visible, and notes.
+16. When a posting includes annual base salary, populate Teal's structured Minimum Salary and Maximum Salary fields after saving. Put ranges into min and max, exact annual salary into both fields, `up to` into max only, and `from` or `starting at` into min only.
+17. Do not invent salary fields. Put hourly, OTE, bonus, equity, vague, missing compensation, and benefits in notes unless annual base salary is explicit.
+18. Manual Add Job is allowed only when Teal-native Save/Bookmark and the Chrome extension are unavailable or fail, and only after the full actual JD has been captured from the live source posting. Do not use Manual Add Job just because extension capture is flaky.
+19. If using Manual Add Job, paste the full actual JD into the job description field before saving or in the same edit session, then reopen the record and verify the Job Description or Original Job Description section contains the full text. If the JD field is unavailable or the JD cannot be pasted immediately, stop and report the blocker instead of creating a bare bookmarked record.
+20. Do not add multiple manual records before verifying the first one has the full JD.
+21. Do not use the Latest Saved Jobs list or Tracker count as proof of new saves. Only the run ledger plus matching Teal record confirmation proves a new qualified save.
+22. Use save labels: `Confirmed saved`, `Duplicate existing`, `Provisional`, `Delayed confirmed`, `Failed save`, and `Rejected`.
+23. Count only `Confirmed saved` or `Delayed confirmed` roles toward the target.
+24. Treat the requested count as qualified confirmed saves, not candidates reviewed. If the user asks for 10 jobs, keep going until 10 qualified roles are confirmed saved or a real blocker/search exhaustion point is reached.
+25. Do not save weak, stale, inactive, or blocked roles just to hit the target.
+26. Search across multiple title families and adjacent lanes before accepting a weak batch.
+27. Prioritize the best jobs by fit, compensation, logistics, recency, company quality, mandate quality, benefits, and application leverage.
+28. Pivot after 5 candidates in one title family with 0 qualified saves, 2 repeated geo blockers from one surface, 10 minutes without a qualified save, 2 ambiguous extension events, or results skewing international, junior, low-comp, or channel-mismatched.
+29. Work in batches and send a non-blocking progress update every 3 confirmed saves or every 10 candidates reviewed.
+30. Do not wait for the user after routine progress updates. Continue unless there is a real external blocker.
+31. Use a browser-loop fail-safe: after 2 confirmed saves, 12 candidates reviewed, 8 minutes of active browser work, or 40 browser actions, provide a compact ledger update before continuing. If the runtime cannot continue safely, stop with a partial ledger and exact continuation step rather than ending silently.
+32. Keep Chrome lean during search. Close stale job tabs, duplicate source tabs, extension popups, and the Teal side panel when they are not needed, because large browser states waste tokens and raise the chance of runtime failure.
+33. If Teal, the extension, login, CAPTCHA, or a source site stops working, stop and report the blocker instead of silently continuing or abandoning the task.
+
+## Application Sequence
+
+1. Classify the user request with `job-search-scenarios`.
+2. Open or create the Teal role record only when the task needs Teal state.
+3. Verify the saved source and inspect the live posting.
+4. Run the live viability gate before deep work.
+5. Inspect the live application flow early enough to identify required assets, useful optional assets, screening questions, and blocker fields.
+6. Complete role intake, lane classification, quick fit score, and Teal Excitement.
+7. Research only what the asset plan and application questions require.
+8. Create the research brief and final scorecard.
+9. Build resume strategy, including proof hierarchy, missing-term coverage map, redundancy map, and page-budget plan.
+10. Optimize the Teal resume through target title, summary, selected bullets, categorized skills, Job Matcher, and Analyzer.
+11. Build a cover letter when the live form accepts one and the role is viable.
+12. Prepare application answers and compensation language.
+13. Export or prepare assets with strict filenames.
+14. Run QA across resume, cover letter when used, and application answers.
+15. Fill the form only when useful and safe.
+16. Stop before submission, outreach, references, or external negotiation unless the user explicitly approves the exact action.
+17. Log benchmark data for Standard and Deep runs.
+
+## Apply Next Best Sequence
+
+Use this when the user asks what to apply to next, asks to apply from the Trackers screen, or asks to work jobs best-to-worst.
+
+1. Open Teal Trackers in Google Chrome.
+2. Filter to roles that are not already applied, archived, rejected, or clearly closed.
+3. Rank candidates by Excitement, fit score, role lane, compensation, logistics, recency, and application effort.
+4. Open the top candidate's Teal record and source URL.
+5. Verify the live posting before any asset work.
+6. If the posting is inactive, archive the role with a concise note and verification date, then continue.
+7. If the posting is active but blocked by logistics, compensation, mandate, or low fit, downgrade or note it, then continue.
+8. Only move a role to Applying after it passes live viability and the live application flow is inspected.
+9. Build the application pack for the first viable top-ranked role.
+10. Stop before final submission unless the user approves the exact submission.
 
 ## Live Viability Gate
-Before a role can become "next best" or enter deep application work, the live posting or live application page must clear the logistics gate.
 
-Check for:
-- actual remote versus hybrid status
-- hub-radius or metro-limited remote requirements
-- office attendance expectations
-- relocation or geography constraints
-- work authorization or sponsorship blockers
-- compensation details that materially change viability
+Stop before deep asset work if the live posting or application shows a hard mismatch:
 
-If any of those create a hard mismatch, stop. Do not build assets just because Teal excitement, LinkedIn labels, or stale tracker metadata made the role look strong.
+- required hybrid or in-office schedule outside Matt's target footprint
+- remote limited to specific hubs, metros, or commuting radius
+- relocation requirement that conflicts with the current search posture
+- work authorization or sponsorship mismatch
+- compensation below the acceptable floor without exceptional strategic value
+- application requirement that needs user approval, references, or sensitive disclosure
 
-## Default Application Algorithm
-1. Open the Teal job record and confirm the saved source is still live.
-2. Open the live posting or live application page immediately after fit clears the basic effort gate.
-3. Run the live viability gate before any deep work.
-4. Record:
-   - required assets
-   - useful optional assets
-   - screening questions
-   - blocking unknowns
-5. Run role research only deep enough to support those assets and questions.
-6. Build or refine the Teal resume.
-7. Build the cover letter when the form accepts one and the role is viable.
-8. Prepare application answers.
-9. Run final QA across the full package.
-10. Fill the form.
-11. Hold submission for approval, unless the operating policy is later changed.
+If a role fails the gate, downgrade or note it in Teal when authorized, then move to the next viable role.
 
-## Continuous Improvement Loop
-Every run should improve the protocol, not just execute it.
+Inactive postings are not just low fit. If a saved Teal role is closed, expired, filled, removed, or no longer accepting applications, archive it and record the reason before moving on.
 
-Before closing a job-search turn:
-- estimate tokens used in the turn
-- name the main token drivers
-- record the most important new learnings from the run
-- state what will change in the protocol because of those learnings
-- make the change immediately when it is a safe workflow, skill, or doc update
+## Resume Optimization Standard
 
-When updating docs or skills:
-- replace superseded guidance instead of stacking duplicate rules
-- remove or rewrite stale guidance when current evidence invalidates it
-- prefer fewer clearer rules over additive clutter
+Use Job Matcher and Analyzer as diagnostic tools, not as the goal.
 
-## Effort Gates
-Use this ladder before doing expensive work:
+For every role-specific resume:
 
-| Fit band | Action |
-|---|---|
-| 85 to 100 | Full application pack, fast priority |
-| 75 to 84 | Full application pack |
-| 65 to 74 | Selective, usually still worth a lean pack if comp and logistics work |
-| 50 to 64 | Low-effort path or archive |
-| Under 50 | Pass |
-
-## Asset Rules
-### Resume
-- Use Job Matcher and Analyzer as gap tools, not as the goal.
-- Put the most important truthful JD terms into the title, summary, and selected recent bullets first.
-- Harvest missing JD and Job Matcher terms into hard skills, soft skills, business terms, and platforms/tools, then assign each one best destination.
-- Use Skills & Interests to broaden reflected coverage, not to hide a weak summary.
+- Map missing JD and Job Matcher terms into hard skills, soft skills, business terms, platforms/tools, and noise.
+- Assign each kept term one best destination: target title, summary, selected recent bullet, categorized skills, cover letter, or application answer.
+- Put mandate-defining truthful terms into recruiter-readable prose before relying on skills categories.
+- Keep skill categories clean, deduped, canonical, and role-specific.
+- Do not ship categorized skills with an active uncategorized top-skill row.
 - Treat 24 to 28 reflected skills as a coverage target, not a quota.
-- Soft skills only count when they are backed by real proof, role scope, cross-functional behavior, or a clearly readable systems context.
-- Treat redundancy as failure. If two bullets say nearly the same thing, keep the stronger one and reclaim the slot.
-- The resume fails if high-value JD terms exist only in skills categories while the summary and bullets still read generic.
-- The resume fails if keyword coverage is achieved through vague filler, low-context standalone skills, or duplicate proof.
-- If categorized skills are active, the resume must not also ship with an uncategorized top skill row.
-- Use one canonical term per concept within a resume, for example `GA4` or `Google Analytics 4`, not both.
-- Keep skill categories mutually exclusive where practical so the taxonomy reads cleanly and does not repeat the same concept in two places.
+- Remove weak standalone skills and vague filler before cutting differentiated proof.
+- Keep brand-specific metrics tied to the correct employer, client, or brand context.
+- Keep the final resume to two pages maximum and use the second page well.
 
-### Cover Letter
-- If the live form supports a cover letter and the role is viable, create one by default.
-- Keep it short, specific, calm, and role-diagnostic.
-- Use 1 to 2 source-backed proof points only.
-- Do not force a referral or name-drop a weak connection.
+## Shared Teal Content Gate
 
-### Application Answers
-- Prepare answers after the live form is known.
-- Keep a reusable answer library, but always adapt to the role.
-- Prefer manual, source-backed contact entry over browser autofill when autofill suggests stale addresses, outdated profiles, or mismatched location history.
-- When compensation is not listed, use `$150,000`.
-- If the posted range does not reach `$120,000`, keep the minimum at `$150,000`.
-- Fill safe pre-submit application questions by default when the user has provided standing facts, including sponsorship, veteran status, ethnicity, race, disability, and government-clearance questions. Stop only at submission.
+Safe local actions:
 
-## Asset Naming
-Use one strict local naming standard before upload or delivery:
-- Resume: `{Company} - {Role} - Matt Dimock - Resume`
-- Cover Letter: `{Company} - {Role} - Matt Dimock - Cover Letter`
-- Application brief folder: `{company-slug}-{role-slug}`
+- toggling selected content for a role resume
+- adding role-specific categorized skills when they do not delete history-level skills
+- renaming role resumes and local exports
+- recording notes and benchmark data
 
-Do not upload generic exports such as `{Role} at {Company}.pdf` when a correctly named local file can be produced first.
+Needs explicit approval:
 
-## Teal UX Heuristics
-- In `Skills & Interests`, prefer checkbox toggles over delete actions when cleaning or deduping skills. Delete actions can remove the skill from work history across all resumes.
-- If Teal exposes both uncategorized chips and categorized skills, turn the uncategorized chips off locally before export.
-- Normalize concept naming before export, including items like `Systems Thinking` versus `Systems Thinker`, so the taxonomy reads like one deliberate system.
-- Prefer the fastest truthful action inside Teal.
-- Reuse selected existing bullets before drafting new ones.
-- When Job Matcher exposes direct actions for missing skills, such as adding the skill or creating a bullet, use those only if they improve truthful coverage without creating redundancy.
-- Treat Teal shared content carefully. A summary or bullet edit may affect multiple resumes.
-- Keep Chrome tab count lean. Close tabs opened for failed roles, duplicate sources, and finished research paths once they are no longer needed.
+- saving a bullet or summary edit to all resumes
+- deleting a skill from work history
+- bulk-changing Teal records
+- changing source-of-truth files
+- submitting applications, outreach, references, or compensation negotiation
 
 ## QA Gate
-Do not call a package ready until all three assets pass:
-- Resume
-- Cover letter, when used
-- Prepared application answers
 
-Score each asset on:
-- claim safety
-- ATS clarity
-- mandate fit
-- relevance of proof
-- redundancy control
-- tone quality
+Do not call a package ready until these checks pass:
 
-Minimum standard:
-- no unsupported claims
-- no duplicate proof lines
-- one selected bullet per proof cluster unless the second bullet adds clearly different scope, metric, tool, or business outcome
-- no cryptic metrics
-- no AI-sounding phrasing
-- role fit obvious in the first screen
+- claims trace to the Canonical Profile, Metrics Ledger, Role Lane Glossary, or Story Bank
+- numbers use safe phrasing and correct ownership
+- role fit is obvious in the first screen
+- high-value ATS terms appear in prose when supportable
+- no keyword stuffing, duplicate proof, weak filler, or cryptic metrics
+- no em dashes or AI-sounding phrasing
+- resume stays at two pages maximum
+- filenames match `{Company} - {Role} - Matt Dimock - Resume` and `{Company} - {Role} - Matt Dimock - Cover Letter`
+- remaining gaps are labeled as unsupported, noise, covered in prose, covered in skills, or external asset only
 
-## Token And Model Policy
+## Measurement Loop
+
+Use `docs/job-search-protocol-benchmark.md` for every meaningful Standard or Deep run.
+
+Log:
+
+- before and after Match Score
+- before and after Resume Analyzer score when visible
+- page count before and after export
+- export loops
+- shared-content risks
+- remaining gap labels
+- token estimate and main token drivers
+- outcome signal when available
+
+Use `docs/job-search-protocol-change-log.md` for protocol edits. Do not treat a new rule as proven until it has been tested across at least 3 meaningful Standard or Deep runs without creating claim safety, page discipline, or Teal efficiency regressions.
+
+## Prompt Architecture
+
 ### Quick
-- Use for batch search, first-pass triage, saved-job scoring.
-- Default model: `gpt-5.4-mini`
-- Reasoning: low or medium
+
+```text
+Use gpt-5.4-mini with medium reasoning. Find 10 qualified active jobs against Matt's saved role lanes, compensation rules, family-benefits preferences, and logistics preferences. Infer the full Teal search workflow from this request. The target is 10 qualified confirmed saves, not 10 reviewed candidates. Prioritize roles with posted salary ranges and family-supportive benefits when fit is otherwise comparable. Open Teal Trackers first, record the Bookmarked baseline, and use a save ledger with JD captured, salary min, salary max, benefits evidence, save attempt, and Teal confirmed fields. Use Google Chrome. Use Teal-native Save/Bookmark for roles already inside Teal, then the Teal Chrome extension from live source postings, then Manual Add Job only as a last resort. Keep the candidate queue in the ledger, evaluate one source posting tab at a time, and close or reuse the source tab before the next candidate. Verify active employer or ATS postings before saving, reject hidden geo blockers early, search across multiple title families and adjacent lanes, and use pivot thresholds when a surface is weak. Before saving, score the role, set intended Excitement, and draft notes. If the extension supports it, set Excitement first, add notes second, then use the save control third. If not, immediately open the Tracker record after saving and complete Excitement, notes, salary fields, and full JD before counting the role. Do not use Manual Add Job just because extension capture is flaky. If Manual Add Job is unavoidable, capture the full source JD first, paste it before or during the same save, reopen the record, and verify Job Description or Original Job Description before continuing to the next role. Do not use Latest Saved Jobs or Tracker counts as proof of new saves. Populate Teal Minimum Salary and Maximum Salary fields when annual base salary is visible. Keep expanding sources until 10 qualified roles are confirmed saved or a clear blocker/search exhaustion point is reached. Keep Chrome lean by closing stale tabs, duplicate source tabs, extension popups, and side panels when possible. Use only safe UI acceleration: visible controls, inline Tracker edits for verified low-risk fields, and visible DOM inspection. Do not bypass Cloudflare, CAPTCHA, login, permissions, or private endpoints. Progress updates are non-blocking. Do not wait for the user unless there is a real external blocker such as login, CAPTCHA, extension failure, or site access failure. Use a browser-loop fail-safe so the run returns a compact ledger rather than ending without a final status.
+```
 
 ### Standard
-- Use for one viable application.
-- Default model: `gpt-5.4`
-- Reasoning: medium
+
+```text
+Use GPT-5.5 with medium reasoning. Build one viable application pack through Teal. Infer Standard mode. First run role intake, lane classification, fit score, source verification, and live application inspection. Then create the research brief, resume strategy, missing-term coverage map, Teal resume plan, cover letter if the form supports it, application answers, QA verdict, benchmark row, and stop before submission.
+```
+
+### Apply Next Best
+
+```text
+Use GPT-5.5 with medium reasoning. Apply to jobs in Teal from best to worst. Infer Standard mode. Open the Trackers screen in Google Chrome, review non-applied Bookmarked or Saved roles by Excitement, fit score, recency, compensation, and logistics. For each candidate, verify the live posting first. If inactive, archive it with a note and continue. If active but blocked or low fit, downgrade or note it and continue. Only move a role to Applying after it passes live viability and the application flow is inspected. Build the full application pack for the first viable top-ranked role, fill what is safe, and stop before submission.
+```
 
 ### Deep
-- Use for final-positioning problems, interview prep, high-stakes roles, or workflow redesign.
-- Default model: `GPT-5.5`
-- Reasoning: medium or high
 
-### Cost controls
-- inspect the live application before deep drafting
-- batch triage before company research
-- avoid full-source reloads when the source map is enough
-- reserve high reasoning for ambiguity, not volume
+```text
+Use GPT-5.5 with medium reasoning. For a high-stakes role or protocol redesign, synthesize the role, company, market, hiring logic, Matt's proof, claim risks, ATS alignment, compensation leverage, and QA constraints. Produce decision-ready strategy, assets, evaluation criteria, and protocol improvements. Separate source-backed facts from inference.
+```
 
-## Automation Roadmap
-### Phase 1, structured semi-automation
-- Find and rank top jobs not already in Teal
-- Open Teal and bookmark or create records
-- Score and prioritize
-- Build assets
-- Fill forms
-- Pause only at submission
+## Prompt Rules
 
-### Phase 2, governed submission automation
-- Add standing rules for safe defaults
-- Add stricter QA scoring
-- Auto-submit only when:
-  - fit clears threshold
-  - comp clears threshold
-  - all assets pass QA
-  - no sensitive self-ID is required
-  - no blocker questions remain
-
-### Phase 3, continuous pipeline engine
-- Fresh top-10 target list generated on cadence
-- Auto-triage against existing Job Tracker
-- Auto-build packs for highest-priority roles
-- Auto-fill applications
-- Queue only edge cases for review
-
-## Prompt Recipes
-### Daily pipeline
-`Find the best 10 new jobs for me that are not already in Teal, rank them by priority, exclude roles with obvious live logistics blockers when visible, bookmark the strong ones, and prepare the top 3 for application-pack work. Use Quick mode first, then Standard mode only for the finalists.`
-
-### Next-best role
-`Use Teal to identify the next best viable role for me to apply to, run the live viability gate first, inspect the live application, then build the full application pack in the right order.`
-
-### Full application
-`Apply to the next best job for me using the Codex Teal Application Protocol. Run the live viability gate first, inspect the live form, create every useful asset it supports, run final QA, fill the application, and stop before submission.`
-
-### Workflow audit
-`Audit the current job-search workflow, identify the top 5 quality or efficiency failures, patch the relevant docs and skills, and apply the improved process to the active role.`
-
-## What To Keep Learning
-- which Teal UI actions save the most time
-- which categories of missing skills are usually noise
-- which cover letters actually add value
-- which role lanes convert best by interview rate
-- where shared-content edits create hidden risk
-
-## Success Metrics
-- applications submitted
-- interviews per application
-- time from role discovery to ready-to-submit pack
-- percent of viable applications with full asset pack
-- percent of applications passing QA on first pass
-- strongest-converting role lanes
-
-## Measurement
-- Log meaningful `Standard` and `Deep` runs in [job-search-protocol-benchmark.md](/Users/mattdimock/Documents/Jobs/Job%20Search/docs/job-search-protocol-benchmark.md).
-- Record protocol rule changes in [job-search-protocol-change-log.md](/Users/mattdimock/Documents/Jobs/Job%20Search/docs/job-search-protocol-change-log.md).
-- Score the pre-submit package consistently across:
-  - ATS fit
-  - asset quality
-  - page discipline
-  - workflow efficiency
-  - submission readiness
-
-## Prompt Design Rules
-- Keep workflow prompts direct and structured. Use short sections, explicit objectives, and clear constraints before adding examples or edge cases.
-- Use delimiter-based sections for long prompts so source hierarchy, approval gates, and output requirements stay easy to follow.
-- Do not force chain-of-thought phrasing like `think step by step`. Ask for the deliverable, the evaluation criteria, and the decision output instead.
-- Use heavier model and reasoning settings for protocol redesign, ambiguous research, and high-stakes QA, not for every routine application step.
-- Keep a benchmark and change-log loop so prompt changes are measured, not guessed.
+- Use clear sections and delimiters for source material, JD text, role intake, application questions, and output requirements.
+- Ask for the deliverable, criteria, evidence, and decision. Do not ask for hidden chain-of-thought.
+- Use the smallest source set that can support the decision.
+- Use `gpt-5.4-mini medium` by default for Teal job search and routine Tracker maintenance. Use `GPT-5.5 medium` for application packs, final QA, interviews, compensation, Teal UI repair, repeated browser failure diagnosis, and protocol repair. Do not recommend high reasoning for this Job Search protocol.
+- Record benchmark data after Standard and Deep runs so prompt changes are measured, not guessed.
