@@ -114,11 +114,11 @@ Default to Standard mode.
 
 1. Open Teal Trackers in Google Chrome.
 2. Review non-applied Bookmarked or Saved roles from best to worst using Excitement, fit score, role lane, compensation, logistics, recency, and application effort.
-3. Verify the live posting before asset work.
-4. Archive inactive, closed, expired, removed, or no-longer-accepting roles with a concise note and verification date.
+3. Verify the live posting in the browser before asset work. Browser-rendered source truth wins over search snippets, stale index text, and Teal metadata.
+4. Archive inactive, closed, expired, removed, `Job not found`, blank-shell, or no-longer-accepting roles with a concise note and verification date.
 5. Downgrade active but blocked or low-fit roles with a concise note.
 6. Continue until the first viable top-ranked role clears the live viability gate.
-7. Move that role to Applying only after the live application flow is inspected.
+7. Move that role to Applying only after the live application flow is inspected and a usable browser-rendered apply path is visible.
 8. Build the full application pack and stop before submission.
 
 ## Role Decision Gate

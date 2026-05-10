@@ -180,8 +180,8 @@ Search balance:
 When the user says "apply to this job":
 1. Open the Teal job record in Google Chrome.
 2. Verify the source link is still active. If the saved source blocks or redirects, try one direct company-hosted posting path, then stop with uncertainty if needed.
-3. Before deep research or asset work, run a live viability check against the company-hosted posting or application page. Confirm actual remote versus hybrid status, hub-radius restrictions, office attendance expectations, relocation requirements, sponsorship constraints, and any other hard logistics blockers.
-4. If the role fails the live viability check, do not continue into resume or cover-letter work. Downgrade the role in Teal notes or scoring and route to the next viable role.
+3. Before deep research or asset work, run a live viability check against the company-hosted posting or application page. Confirm that the browser-rendered page shows real live job content and a usable apply path, not a stale cache snippet, blank shell, `Job not found` page, or broken application surface. Then confirm actual remote versus hybrid status, hub-radius restrictions, office attendance expectations, relocation requirements, sponsorship constraints, and any other hard logistics blockers.
+4. If the role fails the live viability check, do not continue into resume or cover-letter work. Downgrade or archive the role in Teal and route to the next viable role.
 5. Complete intake, lane classification, fit scoring, and Excitement update.
 6. Inspect the live application flow early and record:
    - required assets
@@ -223,9 +223,9 @@ When the user asks Codex to apply to jobs in order from the Trackers screen:
 3. Rank candidates by Excitement, fit score, role lane, compensation, logistics, recency, and application effort.
 4. For each candidate, open the Teal record and source URL.
 5. Verify the live posting before research, resume work, or status changes to Applying.
-6. If inactive, archive the role and add a note: `Archived: posting inactive or no longer accepting applications, verified YYYY-MM-DD.`
+6. If inactive, archive the role and add a note: `Archived: browser-rendered source page inactive, removed, or not found, verified YYYY-MM-DD.`
 7. If active but blocked, downgrade Excitement, add a note with the blocker, and continue to the next role.
-8. Only move the first viable role to Applying after the live application flow is inspected.
+8. Only move the first viable role to Applying after the live application flow is inspected and the browser-rendered source page shows a usable apply path.
 9. Build the application pack for that viable role and stop before submission.
 
 Archiving one failed role during a next-best workflow is normal pipeline hygiene. Bulk archive sweeps still require explicit approval.

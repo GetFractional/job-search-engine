@@ -46,9 +46,11 @@ Speed up Teal only through visible, account-safe workflows:
 5. Build a candidate queue in the ledger, but do not save yet and do not open a batch of job tabs.
 6. For each candidate, open or reuse exactly one company-hosted or ATS-hosted posting tab.
 7. Confirm the active-posting gate:
-   - posting opens directly
+   - posting opens directly in the browser session that will be used for the workflow
+   - the browser-rendered page shows real live job content, not a stale cache snippet, blank shell, challenge-only page, or `Job not found` message
    - role is not closed, expired, filled, removed, or a generic redirect
    - title, company, location, and application URL are visible
+   - a usable apply path or application surface is visible when the workflow is an application run
    - logistics and compensation do not create an obvious blocker
    - posting freshness matches the user's requested window or has a strong exception reason
 8. Reject hidden geography blockers early, especially UK-only, London, EMEA-only, Europe-only, country-limited, state-limited, hub-limited, commuting-radius, hybrid, or relocation-required roles Matt does not clearly fit.
@@ -83,8 +85,8 @@ Speed up Teal only through visible, account-safe workflows:
 1. Classify the user request with `job-search-scenarios`.
 2. Open or create the Teal role record only when the task needs Teal state.
 3. Verify the saved source and inspect the live posting.
-4. Run the live viability gate before deep work.
-5. Inspect the live application flow early enough to identify required assets, useful optional assets, screening questions, and blocker fields.
+4. Run the live viability gate before deep work. Browser-rendered source truth wins over cached search snippets, stale index text, Teal metadata, or other indirect signals.
+5. Inspect the live application flow early enough to identify required assets, useful optional assets, screening questions, blocker fields, and whether the apply path is actually usable.
 6. Complete role intake, lane classification, quick fit score, and Teal Excitement.
 7. Research only what the asset plan and application questions require.
 8. Create the research brief and final scorecard.
@@ -107,7 +109,7 @@ Use this when the user asks what to apply to next, asks to apply from the Tracke
 3. Rank candidates by Excitement, fit score, role lane, compensation, logistics, recency, and application effort.
 4. Open the top candidate's Teal record and source URL.
 5. Verify the live posting before any asset work.
-6. If the posting is inactive, archive the role with a concise note and verification date, then continue.
+6. If the posting is inactive, removed, `Job not found`, or the source page cannot prove a usable apply path, archive the role with a concise note and verification date, then continue.
 7. If the posting is active but blocked by logistics, compensation, mandate, or low fit, downgrade or note it, then continue.
 8. Only move a role to Applying after it passes live viability and the live application flow is inspected.
 9. Build the application pack for the first viable top-ranked role.

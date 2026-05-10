@@ -97,8 +97,9 @@ Use the versioned Quick, Standard, and Deep prompt templates in `docs/job-search
 ## Teal Execution Gates
 For application work, do not finish until these are handled or explicitly blocked:
 - Teal job record opened in Chrome
-- job source verified active
+- job source verified active from the browser-rendered source page, not a cached snippet or Teal metadata alone
 - live viability gate passed before deep asset work
+- browser-rendered source page showed real live job content and a usable apply path before status changes or asset work
 - Excitement score set from fit score
 - job moved to the correct stage, usually Applying once active asset work begins
 - research brief completed before final assets

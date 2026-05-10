@@ -88,12 +88,19 @@ Salary and benefits priority:
 - if salary is not posted, record `salary not posted` instead of inventing a range
 
 Active-posting gate:
-- company-hosted or ATS-hosted posting opens successfully
+- company-hosted or ATS-hosted posting opens successfully in the browser session that will be used for the workflow
+- the browser-rendered page shows real live job content, not a blank shell, challenge page, stale cache snippet, or `Job not found` message
 - role is not closed, expired, filled, removed, or redirected to a generic careers page
 - title, company, location, and application URL are visible
+- a usable apply path or application surface is visible when the workflow requires application work
 - remote, hybrid, hub, or relocation requirements do not create an obvious blocker
 - compensation is visible or not disqualifying based on current rules
 - posting age is acceptable, ideally fresh within the requested window; roles older than 14 days need a stronger fit reason
+
+Browser truth rule:
+- when search results, stale snippets, Teal metadata, or cached text disagree with the browser-rendered source page, trust the browser-rendered source page
+- if the browser shows `Job not found`, a removed posting, a blank shell, or a broken application surface, treat the role as inactive or blocked even if search snippets still show a full JD
+- do not score, save as viable, move to Applying, or create assets until the browser-rendered source page proves the role is live
 
 Save only roles that clear the gate. Use this save-path order:
 - Teal Job Search or saved-search Save/Bookmark button when the role is already inside Teal
