@@ -1,0 +1,7 @@
+interface:
+  display_name: "Evidence QA"
+  short_description: "Checks a diff against the active packet and returns PASS or FAIL"
+  default_prompt: "Use $evidence-qa to validate this completed work against the active packet and return a strict PASS or FAIL verdict."
+
+policy:
+  allow_implicit_invocation: false
