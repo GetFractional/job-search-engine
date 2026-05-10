@@ -1,0 +1,7 @@
+interface:
+  display_name: "Startup MVP Orchestrator"
+  short_description: "Routes MVP work into a packet-first lane and next prompt"
+  default_prompt: "Use $startup-mvp-orchestrator to choose the right lane, supporting skills, and exact next prompt for this MVP task."
+
+policy:
+  allow_implicit_invocation: false

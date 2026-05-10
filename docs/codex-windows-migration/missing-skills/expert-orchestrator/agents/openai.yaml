@@ -1,0 +1,7 @@
+interface:
+  display_name: "Expert Orchestrator"
+  short_description: "Chooses roles, frameworks, and mentor lenses by situation"
+  default_prompt: "Use $expert-orchestrator to identify the best expert roles, frameworks, and mentor lenses for this task, then orchestrate them into a concise plan."
+
+policy:
+  allow_implicit_invocation: false

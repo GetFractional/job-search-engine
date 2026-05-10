@@ -1,0 +1,7 @@
+interface:
+  display_name: "Alen Sultanic"
+  short_description: "Selective offer, funnel, and conversion frameworks"
+  default_prompt: "Use $alen-sultanic to apply a small number of Alen Sultanic frameworks to this offer, funnel, pricing, or conversion problem."
+
+policy:
+  allow_implicit_invocation: false

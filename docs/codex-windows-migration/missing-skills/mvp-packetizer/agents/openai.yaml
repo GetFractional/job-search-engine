@@ -1,0 +1,7 @@
+interface:
+  display_name: "MVP Packetizer"
+  short_description: "Turns tasks and feature ideas into build-ready packets"
+  default_prompt: "Use $mvp-packetizer to turn this task or feature request into a decision-complete packet for packet-first delivery."
+
+policy:
+  allow_implicit_invocation: false
