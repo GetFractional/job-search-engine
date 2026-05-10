@@ -1,0 +1,154 @@
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+
+
+
+notify = ["/Users/mattdimock/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+
+[mcp_servers.airtable]
+command = "npx"
+args = ["-y", "airtable-mcp-server"]
+
+[mcp_servers.airtable.env]
+AIRTABLE_API_KEY = "[REDACTED - recreate on Windows]"
+
+[mcp_servers.clickup]
+command = "npx"
+args = ["-y", "@hauptsache.net/clickup-mcp@latest"]
+
+[mcp_servers.clickup.env]
+CLICKUP_API_KEY = "[REDACTED - recreate on Windows]"
+CLICKUP_MCP_MODE = "[REDACTED - recreate on Windows]"
+CLICKUP_TEAM_ID = "[REDACTED - recreate on Windows]"
+MAX_IMAGES = "[REDACTED - recreate on Windows]"
+MAX_RESPONSE_SIZE_MB = "[REDACTED - recreate on Windows]"
+
+[mcp_servers.clickup.tools.createTask]
+approval_mode = "approve"
+
+[mcp_servers.clickup.tools.updateTask]
+approval_mode = "approve"
+
+[mcp_servers.clickup.tools.addComment]
+approval_mode = "approve"
+
+[mcp_servers.playwright]
+command = "/bin/zsh"
+args = ["-lc", "export HOME=\"$HOME\"; export PLAYWRIGHT_BROWSERS_PATH=\"$HOME/.cache/ms-playwright\"; mkdir -p \"$HOME/.playwright-mcp\" \"$PLAYWRIGHT_BROWSERS_PATH\"; exec npx -y @playwright/mcp@latest --headless --isolated --viewport-size=1366x900 --timeout-navigation=60000 --timeout-action=5000"]
+
+[mcp_servers.playwright.tools.browser_evaluate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_tabs]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_resize]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_click]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_run_code_unsafe]
+approval_mode = "approve"
+
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+
+[mcp_servers.figma.http_headers]
+Authentication = "[REDACTED - recreate on Windows]"
+
+[mcp_servers.memory]
+command = "node"
+args = ["/Users/mattdimock/.codex/vendor/memory-mcp/node_modules/@whenmoon-afk/memory-mcp/dist/index.js"]
+
+[mcp_servers.memory.env]
+MEMORY_DB_PATH = "[REDACTED - recreate on Windows]"
+DEFAULT_TTL_DAYS = "[REDACTED - recreate on Windows]"
+
+[features]
+js_repl = true
+multi_agent = true
+memories = true
+
+[plugins."google-calendar@openai-curated"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."canva@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."google-drive@openai-curated"]
+enabled = true
+
+[plugins."figma@openai-curated"]
+enabled = true
+
+[plugins."cloudflare@openai-curated"]
+enabled = true
+
+[plugins."build-web-apps@openai-curated"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."clickup@openai-curated"]
+enabled = true
+
+[plugins."browser-use@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[projects."/Users/mattdimock/Documents/Jobs/Job Filter/Job-Filter-v2"]
+trust_level = "trusted"
+
+[projects."/Users/mattdimock"]
+trust_level = "trusted"
+
+[projects."/Users/mattdimock/Documents/Clients/OC Ramps"]
+trust_level = "trusted"
+
+[projects."/Users/mattdimock/Documents/New project"]
+trust_level = "trusted"
+
+[projects."/Users/mattdimock/Documents/Jobs/Job-Hunter copy"]
+trust_level = "trusted"
+
+[projects."/Users/mattdimock/Documents/Jobs/Job Search"]
+trust_level = "trusted"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-05-08T17:21:09Z"
+source_type = "local"
+source = "/Users/mattdimock/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-05-07T15:49:08Z"
+source_type = "local"
+source = "/Users/mattdimock/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[apps.asdk_app_69431e6d26b88191b4029488aeb42f5b.tools.clickup_clickup_update_task]
+approval_mode = "approve"
