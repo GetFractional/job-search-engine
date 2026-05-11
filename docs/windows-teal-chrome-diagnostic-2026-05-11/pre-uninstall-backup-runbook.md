@@ -25,6 +25,7 @@ $repo = "C:\Users\matth\Documents\Jobs\Job Search"
 $backupDir = "$HOME\Desktop\codex-pre-uninstall-backup-$stamp"
 $repoZip = "$backupDir\job-search-repo-backup-$stamp.zip"
 $codexZip = "$backupDir\codex-config-backup-$stamp.zip"
+$codexMissingNote = "$backupDir\codex-home-missing.txt"
 
 New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
 ```
@@ -62,13 +63,47 @@ Compress-Archive -Path $repo -DestinationPath $repoZip -Force
 
 This preserves Codex-side context without touching Chrome profile data.
 
+Important: do not zip `C:\Users\matth\.codex` directly. Codex can leave SQLite runtime log files locked even after the app appears closed. Instead, copy `.codex` into a staging folder with lock-prone runtime databases excluded, then zip the staging folder.
+
 ```powershell
 $codexHome = "$HOME\.codex"
+$codexCopy = "$backupDir\codex-home-copy"
 
 if (Test-Path -LiteralPath $codexHome) {
-  Compress-Archive -Path $codexHome -DestinationPath $codexZip -Force
+  New-Item -ItemType Directory -Path $codexCopy -Force | Out-Null
+
+  robocopy $codexHome $codexCopy /E /R:1 /W:1 /XF `
+    "*.sqlite" `
+    "*.sqlite-shm" `
+    "*.sqlite-wal" `
+    "logs_*.sqlite" `
+    "logs_*.sqlite-shm" `
+    "logs_*.sqlite-wal" `
+    | Out-File "$backupDir\codex-robocopy-output.txt" -Encoding utf8
+
+  $robocopyExitCode = $LASTEXITCODE
+  if ($robocopyExitCode -gt 7) {
+    throw "Codex .codex staging copy failed. Robocopy exit code: $robocopyExitCode. See $backupDir\codex-robocopy-output.txt"
+  }
+
+  @"
+Codex home backup used a staging copy because live SQLite runtime files can remain locked.
+Excluded patterns:
+- *.sqlite
+- *.sqlite-shm
+- *.sqlite-wal
+- logs_*.sqlite
+- logs_*.sqlite-shm
+- logs_*.sqlite-wal
+
+This is expected and safer than forcing locked runtime files.
+Staging copy: $codexCopy
+Robocopy exit code: $robocopyExitCode
+"@ | Out-File "$backupDir\codex-backup-notes.txt" -Encoding utf8
+
+  Compress-Archive -Path $codexCopy -DestinationPath $codexZip -Force
 } else {
-  "No .codex folder found at $codexHome" | Out-File "$backupDir\codex-home-missing.txt" -Encoding utf8
+  "No .codex folder found at $codexHome" | Out-File $codexMissingNote -Encoding utf8
 }
 ```
 
@@ -102,6 +137,10 @@ foreach ($path in $required) {
   }
 }
 
+if (-not (Test-Path -LiteralPath $codexZip) -and -not (Test-Path -LiteralPath $codexMissingNote)) {
+  throw "Missing Codex backup artifact. Expected either $codexZip or $codexMissingNote"
+}
+
 Write-Host "Backup complete: $backupDir"
 ```
 
@@ -111,7 +150,8 @@ Codex may tell Matt it is safe to uninstall/reinstall Codex Desktop only after:
 - The backup directory exists on the Desktop.
 - The repo zip exists.
 - Git status, branch, log, remotes, unstaged diff, staged diff, and untracked file list are saved.
-- `.codex` was zipped or a `codex-home-missing.txt` note was created.
+- `.codex` was staged and zipped, or a `codex-home-missing.txt` note was created.
+- If `.codex` exists, `codex-backup-notes.txt` exists and explains excluded locked runtime files.
 - No destructive commands were run.
 
 ## Final Message To Matt
