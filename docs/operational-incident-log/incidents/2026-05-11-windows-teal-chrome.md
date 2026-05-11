@@ -136,3 +136,10 @@ Stop the Teal workflow when:
 - Next required action: Windows Codex must pass the controlled Chrome-backed Teal probe before another real Teal resume or application workflow.
 - Operating rule: one Teal tab, no isolated Playwright for Teal, stop after two identical Teal timeouts, one automated export attempt only, then manual export handoff.
 - Full handoff: `docs/windows-teal-chrome-diagnostic-2026-05-11/macbook-findings-and-windows-handoff.md`.
+
+## Windows Follow-Up, 2026-05-11
+- Local bridge health check passed with `NativeHostCorrect`, `ExtensionInstalled`, `ExtensionEnabled`, and `ChromeRunning` all `True`.
+- The repair script opened TealHQ in Google Chrome at `https://app.tealhq.com/`.
+- Tool discovery in the active Windows Codex thread exposed Playwright browser tools, but did not expose the required Chrome extension backend functions `browser.user.openTabs()` or `browser.user.claimTab(...)`.
+- Controlled Teal probe status: blocked before Teal interaction. Bridge is locally healthy, but this thread cannot prove it is controlling Matt's logged-in Chrome tab.
+- Current conclusion: do not resume Teal-native application or resume work from this thread until Codex desktop/plugin rebind or reinstall exposes the Chrome backend to the active thread.
