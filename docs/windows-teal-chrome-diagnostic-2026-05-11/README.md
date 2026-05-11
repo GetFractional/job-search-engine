@@ -1,12 +1,14 @@
 # Windows Teal/Chrome Codex Diagnostic, 2026-05-11
 
 ## Purpose
-This packet documents the Windows Codex failure mode during TealHQ resume optimization for Matt Dimock's HackerOne `Director, Marketing Operations` application.
+This packet documents the persistent Windows Codex failure mode around Chrome-backed TealHQ work, with the HackerOne `Director, Marketing Operations` resume incident as the clearest end-to-end failure case.
 
 The goal is to let the MacBook Codex inspect the problem without Matt manually transferring prompts, outputs, or context between machines.
 
 ## Summary
-The Windows Codex session can connect to Google Chrome and TealHQ through the Codex Chrome extension, but it is not operating Teal efficiently or reliably enough for production resume work.
+The Windows Codex setup can sometimes connect to Google Chrome and TealHQ through the Codex Chrome extension, but it does not yet operate Teal efficiently or reliably enough for production resume work.
+
+The issue has appeared across multiple Job Search chats since the Windows setup, not only in the latest Teal resume thread. Cross-thread evidence points to a system problem spanning browser-backend binding, isolated Playwright fallback, session recovery, heavy Teal React UI automation, download/export handling, and missing fast-fail workflow discipline.
 
 The biggest observed problems:
 
@@ -21,9 +23,17 @@ The biggest observed problems:
 ## Files In This Packet
 - `timeline.md`: chronological record of the user goal, actions taken, failures, partial fixes, and current state.
 - `environment-and-evidence.md`: local environment, bridge health output, repo state, artifact/download evidence, and observed Teal/Chrome behavior.
+- `cross-thread-evidence.md`: distilled evidence from the local Codex session index and relevant prior Job Search chats.
 - `failure-analysis.md`: likely causes, unsafe paths discovered, and specific Windows Codex behavior that needs debugging.
+- `framework-analysis.md`: MECE, JTBD, design thinking, systems thinking, Nielsen heuristics, critical thinking, inversion, deduction, and second-order analysis.
 - `macbook-analysis-prompt.md`: a ready-to-use prompt for the MacBook Codex.
 - `recommended-rebuild-plan.md`: proposed changes to make Windows Codex work more like the MacBook workflow.
+
+Related lightweight operating memory:
+
+- `../operational-incident-log/README.md`
+- `../operational-incident-log/schema.md`
+- `../operational-incident-log/incidents/2026-05-11-windows-teal-chrome.md`
 
 ## Important Safety Notes
 - No secrets, cookies, OAuth tokens, or reference contacts are included.
@@ -45,4 +55,4 @@ The biggest observed problems:
 ## Immediate Ask For MacBook Codex
 Diagnose why Windows Codex Chrome control is much slower and less reliable than the MacBook workflow, then guide the Windows setup toward a reliable Teal-native resume workflow.
 
-Start by reading `macbook-analysis-prompt.md`.
+Start by reading `macbook-analysis-prompt.md`, then inspect `cross-thread-evidence.md` and `framework-analysis.md` before proposing fixes.

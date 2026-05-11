@@ -4,6 +4,8 @@
 Make Windows Codex operate TealHQ closer to the MacBook workflow: faster, more visual, less fragile, and safer around Teal's shared resume library.
 
 ## Phase 1: Stabilize Chrome Session
+Gate: do not start Teal resume work until this phase passes.
+
 1. Close all duplicate Teal resume tabs.
 2. Keep only:
    - one Teal resume builder tab
@@ -27,12 +29,24 @@ powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps
 
 The current health script does not measure these.
 
+Pass condition:
+
+- Chrome backend is visible to Codex.
+- A live Teal user tab can be listed and claimed.
+- The Teal URL/title can be read from the claimed tab.
+- A narrow DOM or visual probe completes without timeout.
+
+Fail condition:
+
+- If the current thread still exposes only isolated Playwright, in-app browser, or `about:blank`, stop and escalate to Codex desktop/plugin reset or MacBook-guided repair.
+
 ## Phase 2: Change Browser Automation Discipline
 Use this operating rule:
 
 - If a Teal browser action times out once, reduce scope.
 - If the same Teal action times out twice, stop and ask for a manual handoff or restart browser state.
 - Do not spend multiple minutes retrying the same failing click or snapshot.
+- Treat Playwright-to-Teal Cloudflare as wrong-surface evidence, not a Teal login failure.
 
 Preferred pattern:
 
@@ -43,6 +57,22 @@ Preferred pattern:
 5. Avoid whole-page snapshots in Teal after the page is loaded.
 6. Export once through automation.
 7. If no download appears within 15 seconds, ask Matt to click export manually.
+
+## Phase 2.5: Controlled Teal Probe
+Before another real application workflow, run a controlled probe against one non-destructive Teal resume tab:
+
+1. List available browser backends.
+2. Confirm `Chrome`, not only the in-app browser.
+3. Use the extension backend to list open user tabs.
+4. Claim the existing Teal tab.
+5. Read title and URL.
+6. Take one screenshot.
+7. Inspect one narrow section only.
+8. Click one harmless navigation or section control.
+9. Export once only if the user has already approved an export test.
+10. Verify whether a new file appears.
+
+Record the result in `docs/operational-incident-log/incidents/2026-05-11-windows-teal-chrome.md`.
 
 ## Phase 3: Teal Skills Policy
 Important: Teal skills are shared resume-library objects.
@@ -170,6 +200,19 @@ Suggested additions:
 - Teal shared skill-library warning.
 - Manual export escalation after one failed automated export.
 - Visual second-page fill gate before calling resume ready.
+- Requirement to check `docs/operational-incident-log/` before Teal/Chrome recovery work.
+
+## Phase 7: Lightweight Self-Healing Loop
+Use `docs/operational-incident-log/` as the shared reliability memory.
+
+Rules:
+
+- Do not commit raw Codex session logs.
+- Do not commit browser profile data, auth files, or cookies.
+- Add or update one concise incident record when a failure repeats or a proven fix changes.
+- Record session IDs and commands, not full transcripts.
+- Keep incident records short enough for future Codex instances to read quickly.
+- Promote only proven fixes into skills/scripts.
 
 ## Success Criteria
 Windows Codex is fixed only when it can:
