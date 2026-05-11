@@ -28,6 +28,7 @@ The biggest observed problems:
 - `framework-analysis.md`: MECE, JTBD, design thinking, systems thinking, Nielsen heuristics, critical thinking, inversion, deduction, and second-order analysis.
 - `macbook-analysis-prompt.md`: a ready-to-use prompt for the MacBook Codex.
 - `macbook-findings-and-windows-handoff.md`: MacBook review findings, ranked root-cause hypotheses, and exact Windows Codex operating guidance.
+- `pre-uninstall-backup-runbook.md`: exact Windows PowerShell runbook for backing up repo and Codex state before uninstalling or reinstalling Codex Desktop.
 - `recommended-rebuild-plan.md`: proposed changes to make Windows Codex work more like the MacBook workflow.
 
 Related lightweight operating memory:
