@@ -129,3 +129,10 @@ Stop the Teal workflow when:
 - MacBook Codex should review the diagnostic packet and identify whether Windows needs Codex desktop/plugin reset, Chrome extension reset, workflow changes, or all of the above.
 - Windows Codex should not attempt another Teal-native application workflow until it passes the controlled Teal probe in `recommended-rebuild-plan.md`.
 - Update Teal and resume skills only after the MacBook-guided process is confirmed.
+
+## MacBook Review, 2026-05-11
+- Primary verdict: this is a layered reliability failure, not a missing-context or single-script issue.
+- Highest-probability chain: current-thread Chrome backend binding instability plus wrong-surface fallback plus Teal React UI fragility plus weak stop/QA gates.
+- Next required action: Windows Codex must pass the controlled Chrome-backed Teal probe before another real Teal resume or application workflow.
+- Operating rule: one Teal tab, no isolated Playwright for Teal, stop after two identical Teal timeouts, one automated export attempt only, then manual export handoff.
+- Full handoff: `docs/windows-teal-chrome-diagnostic-2026-05-11/macbook-findings-and-windows-handoff.md`.

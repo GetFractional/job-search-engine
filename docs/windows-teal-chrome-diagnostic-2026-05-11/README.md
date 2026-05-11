@@ -27,6 +27,7 @@ The biggest observed problems:
 - `failure-analysis.md`: likely causes, unsafe paths discovered, and specific Windows Codex behavior that needs debugging.
 - `framework-analysis.md`: MECE, JTBD, design thinking, systems thinking, Nielsen heuristics, critical thinking, inversion, deduction, and second-order analysis.
 - `macbook-analysis-prompt.md`: a ready-to-use prompt for the MacBook Codex.
+- `macbook-findings-and-windows-handoff.md`: MacBook review findings, ranked root-cause hypotheses, and exact Windows Codex operating guidance.
 - `recommended-rebuild-plan.md`: proposed changes to make Windows Codex work more like the MacBook workflow.
 
 Related lightweight operating memory:
@@ -56,3 +57,5 @@ Related lightweight operating memory:
 Diagnose why Windows Codex Chrome control is much slower and less reliable than the MacBook workflow, then guide the Windows setup toward a reliable Teal-native resume workflow.
 
 Start by reading `macbook-analysis-prompt.md`, then inspect `cross-thread-evidence.md` and `framework-analysis.md` before proposing fixes.
+
+MacBook review output is now captured in `macbook-findings-and-windows-handoff.md`.
