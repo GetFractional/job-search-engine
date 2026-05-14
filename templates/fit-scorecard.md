@@ -5,6 +5,12 @@
 - Role:
 - Date scored:
 - Teal status:
+- Source active:
+- Posting age:
+- Freshness evidence:
+- Freshness risk:
+- Canonical employer status:
+- Duplicate/already-applied status:
 
 ## Lane
 - Primary lane:
@@ -21,9 +27,10 @@
 | Evidence/proof match | 15 |  |  |
 | Compensation fit | 15 |  |  |
 | Logistics fit | 10 |  |  |
-| Company/stage fit | 10 |  |  |
+| Company/stage fit | 5 |  |  |
 | Hiring access | 5 |  |  |
-| Risk adjustment | 5 |  |  |
+| Freshness and active-source risk | 5 |  |  |
+| Other risk adjustment | 5 |  |  |
 | Total | 100 |  |  |
 
 ## Classification
@@ -37,8 +44,8 @@
 ## Rationale
 - What makes it attractive:
 - What could kill the opportunity:
+- Freshness or source risk:
 - What must be verified:
 - Key risks:
 - Missing information:
 - Next action:
-

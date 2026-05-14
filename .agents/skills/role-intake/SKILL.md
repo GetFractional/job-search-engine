@@ -28,19 +28,30 @@ Normalize incoming job information so the role can be scored, researched, saved 
 - Location/logistics
 - Recruiter or hiring manager
 - Application URL
+- Posting date, posting age, and freshness evidence
+- Source employer, JD employer, and Teal company name
 - Teal tracker status
+- Visible applied date or terminal-stage status
 
 ## Process
 1. Capture the exact job title and company.
 2. Verify the full JD is available, not just the URL.
-3. Capture compensation, benefits, remote/hybrid, travel, relocation, and deadline.
-4. Capture recruiter, hiring manager, and contacts if known.
-5. Assign a provisional lane by mandate, not title alone.
-6. Note missing information and immediate next action.
+3. Verify the source link is active when feasible and record any blocker, redirect, or source uncertainty.
+4. Capture posting date, posting age, freshness evidence, and freshness risk. Treat roles older than 30 days as stale-risk unless there is concrete active-hiring evidence, and roles older than 60 days as default pass/archive candidates unless Matt explicitly wants an exception.
+5. Resolve the canonical employer by comparing Teal company, source employer, and JD employer. Stop before asset work if they do not align.
+6. Check Teal status and applied date. Do not continue application work for `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, or any role with a visible applied date.
+7. Check for duplicate wrapper or aggregator risk, especially records where the saved company differs from the real employer.
+8. Capture compensation, benefits, remote/hybrid, travel, relocation, and deadline.
+9. Capture recruiter, hiring manager, and contacts if known.
+10. Assign a provisional lane by mandate, not title alone.
+11. Note missing information and immediate next action.
 
 ## Output
 - Completed role intake
 - Provisional lane
+- Source-active status, posting age, freshness evidence, and freshness risk
+- Canonical employer status
+- Duplicate-wrapper and already-applied checks
 - Quick missing-info list
 - Recommended next action
 

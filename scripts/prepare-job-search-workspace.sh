@@ -31,7 +31,56 @@ source_skills_root="$repo_root/.agents/skills"
 codex_skills_root="${CODEX_HOME:-$HOME/.codex}/skills"
 agents_skills_root="$HOME/.agents/skills"
 
-if [[ "$skip_hook_install" != true ]]; then
+current_skill_names=()
+while IFS= read -r skill_name; do
+  current_skill_names+=("$skill_name")
+done < <(find "$source_skills_root" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | LC_ALL=C sort)
+
+test_skill_metadata() {
+  local skill_file
+
+  for skill_name in "${current_skill_names[@]}"; do
+    skill_file="$source_skills_root/$skill_name/SKILL.md"
+
+    if [[ ! -f "$skill_file" ]]; then
+      echo "Missing SKILL.md: $skill_name"
+      return 1
+    fi
+
+    if ! awk '
+      NR == 1 {
+        if ($0 != "---") {
+          exit 1
+        }
+        in_frontmatter = 1
+        next
+      }
+      in_frontmatter && $0 == "---" {
+        if (has_name && has_description) {
+          ok = 1
+        }
+        exit
+      }
+      in_frontmatter && /^name:[[:space:]]*[^[:space:]]/ {
+        has_name = 1
+      }
+      in_frontmatter && /^description:[[:space:]]*[^[:space:]]/ {
+        has_description = 1
+      }
+      END {
+        exit ok ? 0 : 1
+      }
+    ' "$skill_file"; then
+      echo "Invalid skill metadata: $skill_name"
+      return 1
+    fi
+  done
+
+  echo "Valid"
+  return 0
+}
+
+if [[ "$skip_hook_install" != true && "$verify_only" != true ]]; then
   "$install_hooks_script"
 fi
 
@@ -107,8 +156,14 @@ test_directory_mirror() {
 
 codex_reason="Mirrored"
 agents_reason="Mirrored"
+skill_metadata_reason="Valid"
 codex_ok=true
 agents_ok=true
+skill_metadata_ok=true
+
+if ! skill_metadata_reason="$(test_skill_metadata)"; then
+  skill_metadata_ok=false
+fi
 
 if ! codex_reason="$(test_directory_mirror "$source_skills_root" "$codex_skills_root")"; then
   codex_ok=false
@@ -125,7 +180,7 @@ if [[ "$hooks_path" == ".githooks" ]]; then
 fi
 
 workspace_ready=false
-if [[ "$tracked_dirty" == false && "$hooks_ok" == true && "$codex_ok" == true && "$agents_ok" == true && -n "$upstream" && "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
+if [[ "$tracked_dirty" == false && "$hooks_ok" == true && "$skill_metadata_ok" == true && "$codex_ok" == true && "$agents_ok" == true && -n "$upstream" && "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
   workspace_ready=true
 fi
 
@@ -151,6 +206,7 @@ else
 fi
 echo "Codex skills mirror: $codex_reason"
 echo "Agents skills mirror: $agents_reason"
+echo "Skill metadata: $skill_metadata_reason"
 echo "Git sync: $git_sync_message"
 
 if [[ "$workspace_ready" != true ]]; then

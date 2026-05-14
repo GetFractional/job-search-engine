@@ -149,7 +149,7 @@ For a new role, use this order:
 7. Resume strategy
 8. Teal Resume Builder optimization
 9. Tailored two-page resume export
-10. Cover letter generation/export when the application has a cover-letter slot, the form requires it, the role is strategically important, or Matt explicitly requests it
+10. Cover letter generation/export after live-flow inspection when the application has a cover-letter slot, the form requires it, Matt explicitly requests it, or Matt approves a strategic exception
 11. Application answers
 12. Outreach pack, only if useful and approved before sending
 13. Interview pack
@@ -184,7 +184,7 @@ When the user asks to apply to a job:
 7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
 8. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
 9. Use Teal Resume Builder, Job Matcher, and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms. If any Teal optimizer feature is unavailable, record the blocker and do not substitute a local-only resume unless the user approves that fallback.
-10. If the application has a cover-letter upload or text slot, create a tailored one-page cover letter unless Matt explicitly opts out. Use the Teal Cover Letter tab with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
+10. Inspect the live application flow before cover-letter work. If the application has a cover-letter upload or text slot, create a tailored one-page cover letter unless Matt explicitly opts out. If there is no cover-letter slot, create one only when Matt explicitly requests it or approves a strategic exception. Use the Teal Cover Letter tab with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
 11. Download or save resume and cover letter as separate files named `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels in the filename.
 12. Prepare application answers from the exact live form questions. Use defaults only when the form asks and no contradictory evidence or user instruction exists.
 13. Create a role-specific interview pack before submission readiness for roles that clear the pursue bar, so likely screens, objections, story selection, questions to ask, and compensation strategy are ready.
@@ -345,7 +345,7 @@ Use them as task-specific operating guides:
 - alen-sultanic-persuasion
 - expert-team-orchestration
 
-No global `product-delivery-os` skill is available in this session. Use this file plus local playbooks as the project-specific fallback.
+If a global or shared delivery/governance skill such as `product-delivery-os` is available in the active session, use it for tracker, branch, PR, WIP, or delivery-audit governance. If it is unavailable, use this file plus local playbooks as the project-specific fallback.
 
 ## Source Optimization
 The current trusted source set is:

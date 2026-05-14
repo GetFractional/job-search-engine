@@ -14,6 +14,49 @@ $codexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME ".c
 $codexDest = Join-Path $codexHome "skills"
 $agentsDest = Join-Path $HOME ".agents\skills"
 
+function Test-SkillName {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$SkillName
+  )
+
+  if ([string]::IsNullOrWhiteSpace($SkillName) -or $SkillName -in @(".", "..")) {
+    return $false
+  }
+
+  if ($SkillName.IndexOfAny([System.IO.Path]::GetInvalidFileNameChars()) -ge 0) {
+    return $false
+  }
+
+  return $SkillName -match '^[A-Za-z0-9._-]+$'
+}
+
+function Remove-ManagedSkillDirectory {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$DestinationRoot,
+    [Parameter(Mandatory = $true)]
+    [string]$SkillName
+  )
+
+  if (-not (Test-SkillName -SkillName $SkillName)) {
+    throw "Invalid managed skill name: $SkillName"
+  }
+
+  $destinationFull = [System.IO.Path]::GetFullPath($DestinationRoot).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+  $skillPath = Join-Path $destinationFull $SkillName
+
+  if (Test-Path -LiteralPath $skillPath) {
+    $resolvedSkillPath = (Resolve-Path -LiteralPath $skillPath).Path
+    $expectedPrefix = $destinationFull + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedSkillPath.StartsWith($expectedPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+      throw "Refusing to remove path outside skill mirror: $resolvedSkillPath"
+    }
+
+    Remove-Item -LiteralPath $resolvedSkillPath -Recurse -Force
+  }
+}
+
 function Get-ManagedSkillNames {
   param(
     [Parameter(Mandatory = $true)]
@@ -42,21 +85,24 @@ function Sync-SkillMirror {
   $managedSkillNames = Get-ManagedSkillNames -DestinationRoot $DestinationRoot
 
   foreach ($managedSkillName in $managedSkillNames) {
+    if (-not (Test-SkillName -SkillName $managedSkillName)) {
+      throw "Invalid managed skill name in marker: $managedSkillName"
+    }
+
     if ($currentSkillNames -contains $managedSkillName) {
       continue
     }
 
-    $staleSkillPath = Join-Path $DestinationRoot $managedSkillName
-    if (Test-Path -LiteralPath $staleSkillPath) {
-      Remove-Item -LiteralPath $staleSkillPath -Recurse -Force
-    }
+    Remove-ManagedSkillDirectory -DestinationRoot $DestinationRoot -SkillName $managedSkillName
   }
 
   foreach ($sourceSkillDir in $SourceSkillDirs) {
-    $destinationSkillPath = Join-Path $DestinationRoot $sourceSkillDir.Name
-    if (Test-Path -LiteralPath $destinationSkillPath) {
-      Remove-Item -LiteralPath $destinationSkillPath -Recurse -Force
+    if (-not (Test-SkillName -SkillName $sourceSkillDir.Name)) {
+      throw "Invalid source skill directory name: $($sourceSkillDir.Name)"
     }
+
+    $destinationSkillPath = Join-Path $DestinationRoot $sourceSkillDir.Name
+    Remove-ManagedSkillDirectory -DestinationRoot $DestinationRoot -SkillName $sourceSkillDir.Name
 
     Copy-Item -LiteralPath $sourceSkillDir.FullName -Destination $DestinationRoot -Recurse -Force
   }

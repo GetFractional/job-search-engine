@@ -18,6 +18,7 @@ This repo now provides two layers of consistency protection:
    - install the repo-managed git hooks
    - sync repo-managed skills into the local Codex skill directories
    - verify the mirrored skills match the repo
+   - verify every repo-managed skill has a valid `SKILL.md` with required metadata
    - verify branch and upstream state for cross-machine parity
 2. `.githooks/`
    - after checkout, merge, or rewrite, the repo automatically re-syncs the managed skills
@@ -38,6 +39,16 @@ macOS/Linux:
 
 If the repo has tracked local changes that should not be pulled over, run the same command without the git-sync flag so the script still installs hooks, syncs skills, and verifies the mirrors.
 
+For read-only checks that must not install hooks or sync skill files, use verify-only mode:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\prepare-job-search-workspace.ps1 -VerifyOnly
+```
+
+```bash
+./scripts/prepare-job-search-workspace.sh --verify-only
+```
+
 ## Readiness Standard
 
 The workspace is considered ready for shared Mac/Windows work when all of these are true:
@@ -46,6 +57,7 @@ The workspace is considered ready for shared Mac/Windows work when all of these 
 - the current branch is not ahead of or behind upstream
 - there are no tracked local changes
 - `core.hooksPath` is set to `.githooks`
+- every repo-managed skill has valid metadata
 - the mirrored skills in `~/.codex/skills` and `~/.agents/skills` match `.agents/skills`
 
 Untracked local artifacts can still exist. They do not stop skill sync, but they can still matter if they collide with future tracked files.

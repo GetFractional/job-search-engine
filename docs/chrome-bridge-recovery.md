@@ -36,13 +36,13 @@ Current behavior note:
 If PowerShell is currently in another folder such as `C:\WINDOWS\system32`, use the absolute path:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\matth\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
 ```
 
 From the Job Search repo root, the shorter launcher also works:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\open-teal-chrome.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\open-teal-chrome.ps1
 ```
 
 What it does:
@@ -87,7 +87,7 @@ On 2026-05-14, the repair script stopped one stale Codex Chrome host process and
 
 ## Verification Notes
 
-A healthy repair should prove all three things:
+A healthy recovery should prove all three things. The scripts prove the first item; the active Codex thread must prove the second and third items through the Chrome runtime probe before Teal work resumes:
 
 - the local bridge checks pass
 - Codex can list the `Chrome` extension backend

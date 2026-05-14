@@ -45,7 +45,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps
 If not in the repo root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\matth\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
 ```
 
 ### 2. Prove The Correct Browser Surface

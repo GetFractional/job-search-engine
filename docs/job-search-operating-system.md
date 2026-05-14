@@ -84,7 +84,7 @@ Default to Standard mode.
 6. Run fit scoring before asset work.
 7. If the role is older than 60 days and freshness evidence is weak, recommend pass or archive unless the user overrides.
 8. If score is below 65, recommend pass or low-effort path unless the user overrides.
-9. If viable, create research brief, fit scorecard, resume strategy, tailored resume, application answers, interview pack, and any required or strategically useful cover letter. If the live application has a cover-letter upload or text slot, create a one-page tailored cover letter through Teal Cover Letter with a custom prompt unless Matt explicitly opts out.
+9. If viable, create research brief, fit scorecard, resume strategy, tailored resume, application answers, interview pack, and any required cover letter. Inspect the live application flow before cover-letter work. If the application has a cover-letter upload or text slot, create a one-page tailored cover letter through Teal Cover Letter with a custom prompt unless Matt explicitly opts out. If there is no cover-letter slot, create one only when Matt explicitly requests it or approves a strategic exception.
 10. Use Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export unless Teal is blocked. Refresh Resume Builder once before trusting attached-job state or optimizer state. If Teal is blocked, stop with the blocker instead of silently replacing Teal with a local-only workflow.
 11. Enforce canonical filenames before upload: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload filenames with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
 12. QA every external asset against claim-safety rules.
@@ -107,7 +107,7 @@ Use this effort ladder:
 2. Fit scorecard
 3. Resume strategy
 4. Tailored two-page resume
-5. Cover letter, required through Teal Cover Letter when the application has a cover-letter slot unless Matt opts out, otherwise only when useful
+5. Cover letter, required through Teal Cover Letter after live-flow inspection when the application has a cover-letter slot unless Matt opts out, otherwise only when Matt requests it or approves a strategic exception
 6. Outreach pack
 7. Application answers
 8. Interview pack, before submission readiness for roles that clear the pursue bar

@@ -13,6 +13,49 @@ $checkExtensionScript = Join-Path $pluginRoot "scripts\check-extension-installed
 $checkManifestScript = Join-Path $pluginRoot "scripts\check-native-host-manifest.js"
 $tealUrl = "https://app.tealhq.com/"
 
+function Get-ChromeExecutablePath {
+    $candidatePaths = @()
+    $registryPaths = @(
+        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe",
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe",
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"
+    )
+
+    foreach ($registryPath in $registryPaths) {
+        try {
+            $candidatePaths += Get-ItemPropertyValue -Path $registryPath -Name "(default)" -ErrorAction Stop
+        }
+        catch {
+            continue
+        }
+    }
+
+    $installRoots = @(
+        $env:ProgramFiles,
+        [Environment]::GetEnvironmentVariable("ProgramFiles(x86)"),
+        $env:LOCALAPPDATA
+    )
+
+    foreach ($installRoot in $installRoots) {
+        if (-not [string]::IsNullOrWhiteSpace($installRoot)) {
+            $candidatePaths += Join-Path $installRoot "Google\Chrome\Application\chrome.exe"
+        }
+    }
+
+    $chromeCommand = Get-Command "chrome.exe" -ErrorAction SilentlyContinue
+    if ($chromeCommand) {
+        $candidatePaths += $chromeCommand.Source
+    }
+
+    foreach ($candidatePath in ($candidatePaths | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)) {
+        if (Test-Path -LiteralPath $candidatePath) {
+            return $candidatePath
+        }
+    }
+
+    throw "Google Chrome executable was not found. Install Chrome or add chrome.exe to PATH."
+}
+
 if (-not (Test-Path -LiteralPath $manifestPath)) {
     throw "Codex Chrome native host manifest not found at $manifestPath"
 }
@@ -66,7 +109,8 @@ if (-not $SkipOpenChrome) {
 if ($OpenTeal) {
     $extension = node $checkExtensionScript --json | ConvertFrom-Json
     $profileDirectory = Split-Path -Leaf $extension.profilePath
-    Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList @("--profile-directory=$profileDirectory", $tealUrl)
+    $chromePath = Get-ChromeExecutablePath
+    Start-Process -FilePath $chromePath -ArgumentList @("--profile-directory=$profileDirectory", $tealUrl)
     Write-Host "Opened TealHQ in Google Chrome: $tealUrl"
 }
 

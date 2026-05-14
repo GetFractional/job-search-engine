@@ -91,9 +91,83 @@ function Test-DirectoryMirror {
     }
   }
 
+  $sourceSkillNames = @(Get-ChildItem -LiteralPath $SourceRoot -Directory | ForEach-Object { $_.Name })
+  $extraPaths = @()
+  foreach ($skillName in $sourceSkillNames) {
+    $prefix = "$skillName/"
+    foreach ($relativePath in $destinationSignature.Keys) {
+      if ($relativePath.StartsWith($prefix, [System.StringComparison]::Ordinal) -and -not $sourceSignature.ContainsKey($relativePath)) {
+        $extraPaths += $relativePath
+      }
+    }
+  }
+
+  if ($extraPaths.Count -gt 0) {
+    return [pscustomobject]@{
+      Ok = $false
+      Reason = "Extra files in managed skills: $($extraPaths -join ', ')"
+    }
+  }
+
   return [pscustomobject]@{
     Ok = $true
     Reason = "Mirrored"
+  }
+}
+
+function Test-SkillMetadata {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$SourceRoot
+  )
+
+  foreach ($skillDir in Get-ChildItem -LiteralPath $SourceRoot -Directory | Sort-Object Name) {
+    $skillFile = Join-Path $skillDir.FullName "SKILL.md"
+    if (-not (Test-Path -LiteralPath $skillFile)) {
+      return [pscustomobject]@{
+        Ok = $false
+        Reason = "Missing SKILL.md: $($skillDir.Name)"
+      }
+    }
+
+    $lines = @(Get-Content -LiteralPath $skillFile)
+    if ($lines.Count -lt 4 -or $lines[0] -ne "---") {
+      return [pscustomobject]@{
+        Ok = $false
+        Reason = "Invalid skill metadata: $($skillDir.Name)"
+      }
+    }
+
+    $hasName = $false
+    $hasDescription = $false
+    $closedFrontmatter = $false
+
+    for ($i = 1; $i -lt $lines.Count; $i++) {
+      if ($lines[$i] -eq "---") {
+        $closedFrontmatter = $true
+        break
+      }
+
+      if ($lines[$i] -match '^name:\s*\S') {
+        $hasName = $true
+      }
+
+      if ($lines[$i] -match '^description:\s*\S') {
+        $hasDescription = $true
+      }
+    }
+
+    if (-not ($closedFrontmatter -and $hasName -and $hasDescription)) {
+      return [pscustomobject]@{
+        Ok = $false
+        Reason = "Invalid skill metadata: $($skillDir.Name)"
+      }
+    }
+  }
+
+  return [pscustomobject]@{
+    Ok = $true
+    Reason = "Valid"
   }
 }
 
@@ -105,7 +179,7 @@ $codexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME ".c
 $codexSkillsRoot = Join-Path $codexHome "skills"
 $agentsSkillsRoot = Join-Path $HOME ".agents\skills"
 
-if (-not $SkipHookInstall) {
+if (-not $SkipHookInstall -and -not $VerifyOnly) {
   & $installHooksScript
 }
 
@@ -168,10 +242,11 @@ if (-not $VerifyOnly) {
 
 $codexMirror = Test-DirectoryMirror -SourceRoot $sourceSkillsRoot -DestinationRoot $codexSkillsRoot
 $agentsMirror = Test-DirectoryMirror -SourceRoot $sourceSkillsRoot -DestinationRoot $agentsSkillsRoot
+$skillMetadata = Test-SkillMetadata -SourceRoot $sourceSkillsRoot
 $hooksPath = Invoke-GitText -Args @("config", "--get", "core.hooksPath") -AllowFailure
 $hooksOk = $hooksPath -eq ".githooks"
 
-$workspaceReady = (-not $trackedDirty) -and $hooksOk -and $codexMirror.Ok -and $agentsMirror.Ok -and (-not [string]::IsNullOrWhiteSpace($upstream)) -and ($ahead -eq 0) -and ($behind -eq 0)
+$workspaceReady = (-not $trackedDirty) -and $hooksOk -and $skillMetadata.Ok -and $codexMirror.Ok -and $agentsMirror.Ok -and (-not [string]::IsNullOrWhiteSpace($upstream)) -and ($ahead -eq 0) -and ($behind -eq 0)
 
 Write-Host "Workspace readiness: $(if ($workspaceReady) { 'READY' } else { 'NOT READY' })"
 Write-Host "Branch: $branch"
@@ -183,6 +258,7 @@ Write-Host "Untracked items: $untrackedCount"
 Write-Host "Hooks path: $(if ([string]::IsNullOrWhiteSpace($hooksPath)) { '[unset]' } else { $hooksPath })"
 Write-Host "Codex skills mirror: $($codexMirror.Reason)"
 Write-Host "Agents skills mirror: $($agentsMirror.Reason)"
+Write-Host "Skill metadata: $($skillMetadata.Reason)"
 Write-Host "Git sync: $gitSyncMessage"
 
 if (-not $workspaceReady) {

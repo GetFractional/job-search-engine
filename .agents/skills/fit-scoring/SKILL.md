@@ -28,18 +28,25 @@ Score roles out of 100 and classify pursuit effort.
 - Company context
 - Compensation and logistics
 - Hiring access
+- Source-active status, posting age, freshness evidence, and freshness risk
+- Canonical employer, duplicate-wrapper, and already-applied status
 
 ## Process
-1. Score lane fit, mandate fit, evidence match, compensation, logistics, company/stage, hiring access, and risk.
-2. Apply compensation rules, including the `$120k` strategic floor only for strong opportunities.
-3. Classify as Pursue aggressively, Pursue, Selective/opportunistic, Low fit, or Pass.
-4. Explain what makes it attractive, what could kill it, and what must be verified.
-5. Recommend whether to spend time on research, assets, and outreach.
+1. Confirm the role is not already applied, not in a terminal Teal stage, not an unresolved duplicate wrapper, and not blocked by canonical-employer mismatch before recommending asset work.
+2. Confirm source-active status, posting age, freshness evidence, and freshness risk before assigning the final score.
+3. Score lane fit, mandate fit, evidence match, compensation, logistics, company/stage, hiring access, freshness/source risk, and other risk.
+4. Apply compensation rules, including the `$120k` strategic floor only for strong opportunities.
+5. Down-rank stale or unresolved roles: older than 30 days requires concrete active-hiring evidence, older than 60 days defaults to pass/archive unless Matt explicitly wants a strategic exception, and public visibility alone is not freshness proof.
+6. Classify as Pursue aggressively, Pursue, Selective/opportunistic, Low fit, or Pass.
+7. Explain what makes it attractive, what could kill it, and what must be verified.
+8. Recommend whether to spend time on research, assets, and outreach.
 
 ## Output
 - Fit score `/100`
 - Pursuit label
 - Decision rationale
+- Source-active status, posting age, freshness evidence, and freshness risk
+- Canonical-employer, duplicate-wrapper, and already-applied gate status
 - Missing information
 - Next action
 - Teal Excitement score using 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1

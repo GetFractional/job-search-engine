@@ -27,10 +27,12 @@ This skill exists because the local bridge health script can pass while a Codex 
 When a thread needs Chrome/Teal access, do this before role selection or Teal mutation:
 
 1. If the `node_repl` JavaScript tool is not already callable, use tool discovery for `node_repl js`.
-2. Import the Chrome plugin browser client from the absolute path:
+2. Import the Chrome plugin browser client from the current Windows user profile:
 
 ```js
-const chromeModule = await import("file:///C:/Users/matth/.codex/plugins/cache/openai-bundled/chrome/latest/scripts/browser-client.mjs");
+const { pathToFileURL } = await import("node:url");
+const chromeClientPath = `${process.env.USERPROFILE}\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\scripts\\browser-client.mjs`;
+const chromeModule = await import(pathToFileURL(chromeClientPath).href);
 await chromeModule.setupAtlasRuntime({ globals: globalThis });
 ```
 
@@ -99,7 +101,13 @@ await browser.tabs.finalize({ keep: [{ status: "handoff", tab: tealTab }] });
 If the runtime probe cannot list or claim Chrome tabs, run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\matth\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
+powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps1 -Repair -OpenTeal
+```
+
+Run that from the Job Search repo root. If PowerShell is in another folder, use `$env:USERPROFILE` instead of a hardcoded username:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
 ```
 
 Then retry the runtime probe once.

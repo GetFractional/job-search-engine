@@ -89,7 +89,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps
 - If the shell is not at the repo root, use:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\matth\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
 ```
 
 - Use the extension backend plus `browser.user.openTabs()` and `browser.user.claimTab(...)` for visible user tabs.

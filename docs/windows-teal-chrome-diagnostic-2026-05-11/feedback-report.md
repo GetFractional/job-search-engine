@@ -91,7 +91,7 @@ All contain the same Teal Cloudflare block state.
 Running:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\matth\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1"
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1"
 ```
 
 returns:
