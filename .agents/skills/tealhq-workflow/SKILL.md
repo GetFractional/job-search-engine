@@ -53,6 +53,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - If Teal exports a generic filename, rename the local file to `{Company} - {Role} - Matt Dimock - Resume` before any upload or delivery. Do not upload a generic export name when the role-specific filename is required.
 - Treat posting age as a gating factor. Roles older than 30 days require stronger freshness evidence. Roles older than 60 days default to stale-risk and should usually not receive asset effort unless the user explicitly wants an exception.
 - Treat Teal Home `Priorities` and dashboard cards as orientation only. Do not choose the next-best application target from Home alone. Final selection must be re-confirmed in Job Tracker Table view with visible status and date fields.
+- For post-submit hygiene, prefer Job Tracker Table view for any field Teal exposes as an inline edit, especially status and Excitement. Use the detail page for notes and longer text, but use the table as the default audit and mutation surface when possible.
 - For next-best application selection, exclude any role already in `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, or with a visible applied date. Do not reopen already-submitted roles through duplicate wrapper records.
 - Treat aggregator wrappers as suspect until proven clean. If the Teal company name, live source employer, and JD employer disagree, stop and resolve the canonical employer before any resume, cover-letter, or application work.
 - If a wrapper such as `Jobgether` points to an underlying employer such as `Housecall Pro`, do not proceed unless the canonical employer role is confirmed live, not already applied, and not duplicated elsewhere in Teal.
@@ -97,6 +98,7 @@ Determine how to use Teal features for each job-search stage.
 21. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker unless the user approves a local-only fallback.
 22. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
 23. Create a concise Teal update checklist.
+24. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
 
 ## Output
 - Teal workflow recommendation

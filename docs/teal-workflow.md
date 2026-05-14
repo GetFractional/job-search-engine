@@ -126,6 +126,8 @@ When the user says "apply to this job":
 18. Stop before final submission until the user approves the exact assets, copy, action, and destination.
 19. After approved submission is completed and confirmation is visible, move the Teal job status to Applied, add the application date, and note which assets were submitted.
 20. Run post-submit hygiene before moving on: verify Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, exact asset filenames, follow-up target, and application ledger entry.
+21. For fields Teal exposes as editable in Job Tracker Table view, such as status and Excitement, prefer the inline table control over the detail page. This is the default path for post-submit hygiene because it is faster to audit and less likely to leave the record visually stale.
+22. When updating Notes in the detail pane, click out of the note field and visually confirm the saved value before leaving the record. Treat note text as unsaved until the field loses focus and the final text still renders in place.
 
 ## Application Package Gates
 Do not move to live upload or submission until each gate is passed or explicitly blocked:
@@ -174,6 +176,8 @@ Maintain:
 - follow-up date
 - asset status
 - interview status
+
+For post-submit hygiene, use Job Tracker Table view as the audit surface whenever Teal supports inline editing for the field you need to change. Open the role row, update inline-editable fields there first, then use the detail pane for longer text such as notes.
 
 ## Resume Builder
 Use one comprehensive master resume in Teal as the profile library. Do not submit the master directly.
