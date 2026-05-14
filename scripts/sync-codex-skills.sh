@@ -5,18 +5,84 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 src_dir="$repo_root/.agents/skills"
 codex_dest="${CODEX_HOME:-$HOME/.codex}/skills"
 agents_dest="$HOME/.agents/skills"
+managed_marker=".job-search-managed-skills.txt"
 
 mkdir -p "$codex_dest" "$agents_dest"
 
-for skill_dir in "$src_dir"/*; do
-  [ -d "$skill_dir" ] || continue
-  skill_name="$(basename "$skill_dir")"
+validate_skill_name() {
+  local skill_name="$1"
 
-  mkdir -p "$codex_dest/$skill_name"
-  cp -R "$skill_dir"/. "$codex_dest/$skill_name"/
+  if [[ -z "$skill_name" || "$skill_name" == "." || "$skill_name" == ".." || "$skill_name" == *"/"* || "$skill_name" == *"\\"* ]]; then
+    echo "Invalid managed skill name: $skill_name" >&2
+    return 1
+  fi
 
-  mkdir -p "$agents_dest/$skill_name"
-  cp -R "$skill_dir"/. "$agents_dest/$skill_name"/
-done
+  if [[ ! "$skill_name" =~ ^[A-Za-z0-9._-]+$ ]]; then
+    echo "Invalid managed skill name: $skill_name" >&2
+    return 1
+  fi
+}
+
+current_skill_names=()
+while IFS= read -r skill_name; do
+  validate_skill_name "$skill_name"
+  current_skill_names+=("$skill_name")
+done < <(find "$src_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | LC_ALL=C sort)
+
+remove_managed_skill_dir() {
+  local destination_root="$1"
+  local skill_name="$2"
+
+  validate_skill_name "$skill_name"
+
+  local destination_abs
+  destination_abs="$(cd "$destination_root" && pwd -P)"
+  local target_path="$destination_abs/$skill_name"
+  local target_abs="$target_path"
+
+  if [[ -e "$target_path" ]]; then
+    local target_parent
+    target_parent="$(cd "$(dirname "$target_path")" && pwd -P)"
+    target_abs="$target_parent/$(basename "$target_path")"
+  fi
+
+  case "$target_abs" in
+    "$destination_abs"/*) ;;
+    *)
+      echo "Refusing to remove path outside skill mirror: $target_abs" >&2
+      return 1
+      ;;
+  esac
+
+  rm -rf "$target_path"
+}
+
+sync_skill_mirror() {
+  local destination_root="$1"
+  local marker_path="$destination_root/$managed_marker"
+
+  mkdir -p "$destination_root"
+
+  if [[ -f "$marker_path" ]]; then
+    while IFS= read -r managed_skill_name; do
+      [[ -n "$managed_skill_name" ]] || continue
+      if printf '%s\n' "${current_skill_names[@]}" | grep -Fxq "$managed_skill_name"; then
+        continue
+      fi
+
+      remove_managed_skill_dir "$destination_root" "$managed_skill_name"
+    done < "$marker_path"
+  fi
+
+  for skill_name in "${current_skill_names[@]}"; do
+    remove_managed_skill_dir "$destination_root" "$skill_name"
+    cp -R "$src_dir/$skill_name" "$destination_root/"
+  done
+
+  printf '%s\n' "${current_skill_names[@]}" > "$marker_path"
+}
+
+sync_skill_mirror "$codex_dest"
+sync_skill_mirror "$agents_dest"
 
 printf 'Synced skills from %s to %s and %s\n' "$src_dir" "$codex_dest" "$agents_dest"

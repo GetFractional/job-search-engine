@@ -17,7 +17,7 @@ Identify relevant people, likely priorities, credibility triggers, and the safes
 
 ## Required Sources
 1. `docs/teal-workflow.md`
-2. `/Users/mattdimock/Downloads/05_outreach_templates.md`
+2. `source-files/05_outreach_templates.md`
 3. `templates/linkedin-outreach.md`
 4. `templates/recruiter-email.md`
 5. `templates/hiring-manager-email.md`

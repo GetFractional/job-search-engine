@@ -16,9 +16,9 @@ description: Draft concise, accurate, claim-safe answers to job application ques
 Answer application questions concisely and safely, including compensation and location questions.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-3. `/Users/mattdimock/Downloads/04_story_bank.md`
+1. `source-files/01_matt_dimock_canonical_profile.md`
+2. `source-files/02_metrics_ledger.md`
+3. `source-files/04_story_bank.md`
 4. `templates/application-answers.md`
 
 ## Inputs
@@ -52,6 +52,9 @@ Use these only when the form asks and no contradictory user instruction exists:
 - Sponsorship now or later: no.
 - Current state: TN.
 - Relocation: open for the right opportunity, paid relocation preferred.
+- SMS consent for employer follow-up about the job application: yes.
+- Valid passport: yes.
+- Canada travel for work: yes, with prior business-travel history to Canada.
 - Family or relatives at employer: no.
 - Previously worked at employer: no unless evidence says otherwise.
 - Veteran status: not a veteran.

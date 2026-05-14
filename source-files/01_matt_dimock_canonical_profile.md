@@ -37,6 +37,13 @@ Avoid:
 - architect of $100M strategies
 - overly theatrical or self-mythologizing phrasing
 
+## Logistics Notes
+
+- has a valid passport
+- has prior business-travel history to Canada from a previous company relationship
+- can truthfully answer yes to travel-related application questions that ask about valid-passport readiness or occasional Canada travel
+- do not confuse passport/travel readiness with work authorization; use the separate work-authorization defaults for that
+
 ## Best-Fit Role Lanes
 
 ### Lane 1: Revenue / Growth Operations

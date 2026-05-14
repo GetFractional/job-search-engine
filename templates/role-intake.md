@@ -5,16 +5,28 @@
 - Metrics Ledger reviewed for any numbers used: `[yes/no]`
 - Role Lane Glossary reviewed: `[yes/no]`
 - Full JD saved in Teal: `[yes/no]`
+- Source link active: `[yes/no/blocked]`
+- Canonical employer resolved: `[yes/no]`
+- Duplicate wrapper checked: `[yes/no]`
+- Already-applied or terminal-stage checked: `[yes/no]`
 
 ## Role Basics
 - Company:
 - Role title:
 - Application URL:
 - Source:
+- Source employer:
+- JD employer:
+- Teal company:
 - Date found:
 - Date posted:
+- Posting age:
+- Freshness evidence:
+- Freshness risk:
 - Deadline:
 - Teal status:
+- Applied date visible:
+- Duplicate or aggregator wrapper risk:
 
 ## Compensation And Logistics
 - Listed compensation:
@@ -45,4 +57,3 @@ Paste the full job description or link to the saved Teal record.
 - Why it may not fit:
 - Missing information:
 - Recommended next action:
-

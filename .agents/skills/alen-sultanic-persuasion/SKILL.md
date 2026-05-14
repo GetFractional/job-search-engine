@@ -16,9 +16,9 @@ description: Use as an internal persuasion and conversion lens for job-search as
 Use Alen Sultanic-style persuasion internally as a strategic lens for clarity, proof, positioning, and conversion. Do not name-drop this externally.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/05_outreach_templates.md`
-2. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-3. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
+1. `source-files/05_outreach_templates.md`
+2. `source-files/01_matt_dimock_canonical_profile.md`
+3. `source-files/02_metrics_ledger.md`
 4. Role research and JD
 
 ## Inputs

@@ -14,7 +14,7 @@
 - Primary lane:
 - Secondary lane:
 - Target title line:
-- Resume length target: two pages or less
+- Resume length target: strong two-page Teal export, no page 3, no obvious unused page-2 whitespace when high-value proof can fit
 
 ## Positioning
 - 2-line summary angle:
@@ -29,6 +29,8 @@
 - Useful secondary keywords:
 - Keywords to avoid because they are unsupported:
 - Teal Job Matcher gaps to review:
+- Teal Analyzer status:
+- Teal preview/export length check:
 
 ## Claim Safety
 | Claim | Source | Confidence | Ownership | Safe phrasing |

@@ -11,16 +11,16 @@ description: Understand Matt's canonical profile, safe claims, validated metrics
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- For tenure framing, default to factual calendar language: Matt has worked in marketing since 2007. Do not substitute rounded shorthand like `15+ years`.
+- For tenure framing, calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required. Do not substitute stale shorthand like `15+ years`.
 
 ## Purpose
 Understand who Matt is, what he has done, what claims are safe, and which proof points are strongest for a role.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-3. `/Users/mattdimock/Downloads/04_story_bank.md`
-4. `/Users/mattdimock/Documents/Strategies/Wealth Dynamics Report - Matt Dimock - 2025.pdf`, internal style only
+1. `source-files/01_matt_dimock_canonical_profile.md`
+2. `source-files/02_metrics_ledger.md`
+3. `source-files/04_story_bank.md`
+4. `source-files/Wealth Dynamics Report - Matt Dimock - 2025.pdf`, internal style only
 
 ## Inputs
 - Role title or target lane
@@ -35,7 +35,7 @@ Understand who Matt is, what he has done, what claims are safe, and which proof 
 4. Select 2 to 4 strongest proof themes from the Story Bank.
 5. Label claims as Validated, Estimated, Inferred, Weak, Missing, Risky, or Do not use externally.
 6. Translate internal operating-style notes into practical working preferences, never external branding.
-7. If an asset summary references experience length, express it as `in marketing since 2007` or an exact current calculation, not an outdated shorthand count.
+7. If an asset summary references experience length, express it as an exact current calculation from the 2007 National Positions start year or conservative `18+ years` language if exact month precision is required.
 
 ## Output
 - Short profile summary

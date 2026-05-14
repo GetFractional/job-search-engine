@@ -18,8 +18,8 @@ Research the company enough to diagnose why the role exists and how Matt should 
 ## Required Sources
 1. `templates/company-research-brief.md`
 2. `docs/job-search-operating-system.md`
-3. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-4. `/Users/mattdimock/Downloads/04_story_bank.md`
+3. `source-files/01_matt_dimock_canonical_profile.md`
+4. `source-files/04_story_bank.md`
 
 ## Inputs
 - Company
