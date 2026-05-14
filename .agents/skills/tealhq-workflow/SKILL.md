@@ -17,6 +17,14 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - If score improvement requires editing shared Teal bullets or summaries, present the proposed changes for approval before mutating shared content unless the user explicitly asked for direct mutation.
 - Confirm the live application form requirements early so optional work such as cover-letter drafting only happens when the target flow supports or needs it.
 - When editing a Teal summary, default tenure framing to `in marketing since 2007`. Do not use stale shorthand like `15+ years`.
+- In `Skills & Interests`, use the section `...` actions menu for bulk toggles. `Deactivate All` quickly unchecks all skills, and when all skills are inactive the same menu changes to `Activate All`.
+- Do not use `Delete Inactive Skills` unless the user explicitly approves destructive cleanup, because it can remove stored skills rather than simply hiding them from the current resume.
+- Treat every Teal skill as claim-bearing. Only add or keep a skill if Matt has actually done it.
+- For hospitality and bridge-role resumes, prefer building the Teal skill library slowly from confirmed experience rather than keyword stuffing for score.
+- When a skill is retained for future reuse, note the company or companies that support it, for example `Inventory Counts -> Lowe's Home Improvement`, so the claim can be defended later.
+- If a skill is plausible but unconfirmed, ask Matt to confirm it before leaving it active or documenting it as reusable.
+- Once a live role is being finalized in Teal, use only Teal-exported resume files for employer uploads. Do not upload older local DOCX or Canva variants after the Teal version becomes the approved source of truth.
+- If Teal exports a generic filename, rename the local file to `{Company} - {Role} - Matt Dimock - Resume` before any upload or delivery. Do not upload a generic export name when the role-specific filename is required.
 
 ## Purpose
 Determine how to use Teal features for each job-search stage.
