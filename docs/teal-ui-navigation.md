@@ -12,6 +12,8 @@ Do not use isolated Playwright or the Codex in-app browser for Teal application 
 
 Separate Chrome access from Teal usability. If the runtime probe can list the `Chrome` extension backend, show live user tabs through `browser.user.openTabs()`, and claim or open `https://app.tealhq.com/` without Cloudflare or login, Chrome is working. After that point, diagnose failures as stale-tab, Teal route, Teal readability, text-entry, or file-upload issues instead of rerunning Chrome bridge repair.
 
+Before trusting any `app.tealhq.com` page, refresh that Teal tab once and wait 5 to 8 seconds for the UI to settle. Treat pre-refresh tracker rows, status, notes, applied dates, and resume state as potentially stale when another machine may have changed the same account.
+
 ## Core Routes
 
 | Teal area | Route | Use for | Safe first action |
@@ -40,6 +42,8 @@ The tracker table exposes these useful controls:
 
 For next-best-job selection, use Table view and collect the visible rows first. Rank using posting date, compensation, lane fit, role mandate, status, applied date, and any existing Excitement. Exclude rows already in `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, or `Closed`, plus any row with a visible applied date. If the tracker cannot be read, do not guess. Ask for a tracker screenshot, direct Teal record URL, or pasted JD.
 
+Refresh Job Tracker once before reading the rows or trusting visible status/date fields. If the refreshed state changes the candidate set, discard the pre-refresh read.
+
 Treat Home `Priorities` as a lead list only. Do not choose the final application target from Home alone. Re-confirm the target in Job Tracker Table view before resume or application work begins.
 
 ## Job Detail
@@ -58,6 +62,8 @@ Reliable anchors:
 - `Job listing menu`
 
 Avoid broad all-page snapshots on job detail pages unless mapping the UI. Keyword chips can create hundreds of button entries. Instead, query specific headings, tabs, the source link, the status radio group, and JD section headings.
+
+Refresh Job Detail once before trusting status, notes, applied date, source state, or checklist state.
 
 Canonical-employer rule:
 
@@ -87,6 +93,8 @@ The resume editor uses tab routes:
 - Designer: `/design/presentation`
 
 The top-level `Export PDF` button is visible across editor tabs. Before export, verify the target title, selected sections, selected bullets, Skills & Interests, Analyzer status, and two-page preview/layout.
+
+Refresh Resume Builder once before trusting attached-job state, selected bullets, selected skills, Analyzer status, or Job Matcher state.
 
 ## Skills And Shared Content Safety
 
@@ -175,12 +183,13 @@ Use it after the correct job is attached to the resume. If the live application 
 Teal is a heavy single-page app. Default to slow, scoped interaction:
 
 1. Navigate directly to the route.
-2. Wait 5 to 8 seconds after route changes or tab changes.
-3. Confirm the page title and URL.
-4. Use role/name locators for specific controls.
-5. Take scoped snapshots or targeted text reads.
-6. If a click times out, wait once and retry the same targeted control.
-7. After two failed attempts on the same control, reduce scope or stop with the exact blocker.
+2. Refresh once after claim/open or route changes when the page will drive decisions or mutations.
+3. Wait 5 to 8 seconds after route changes, refreshes, or tab changes.
+4. Confirm the page title and URL.
+5. Use role/name locators for specific controls.
+6. Take scoped snapshots or targeted text reads.
+7. If a click times out, wait once and retry the same targeted control.
+8. After two failed attempts on the same control, reduce scope or stop with the exact blocker.
 
 Avoid repeated broad DOM snapshots on pages over roughly 800 lines. Avoid opening multiple Teal tabs unless needed, because it increases confusion and slows later recovery.
 

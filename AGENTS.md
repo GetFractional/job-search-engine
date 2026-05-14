@@ -226,9 +226,12 @@ On Windows, use the Codex Chrome plugin path for Teal and application work. Befo
 
 Separate failure classes before stopping: local bridge failure, thread binding failure, wrong browser surface, stale/locked Teal tab, and Teal UI readability/navigation failure. If Chrome is listed as an extension backend and `browser.user.openTabs()` works, do not call the problem "cannot see Chrome." Open a fresh Chrome-backed Teal tab for stale tab claims, or use slow scoped Teal navigation and a screenshot/direct-record/JD fallback for unreadable tracker or resume pages.
 
+Before trusting any `app.tealhq.com` page, refresh that Chrome tab once and wait for the page to settle. Treat pre-refresh Teal data as potentially stale when the same account may have been changed from another machine. This refresh-first rule applies before reading Job Tracker rows, status, notes, applied dates, Resume Builder state, or deciding the next-best role.
+
 For Teal and signed-in browser work, invoke the Chrome extension surface explicitly as `@Chrome`. Do not use `@Browser`, the in-app browser, or a standalone Playwright MCP for TealHQ, LinkedIn, Gmail, job boards, or application forms that depend on Matt's logged-in Chrome profile.
 
 For "apply to the next best job" workflows:
+- Refresh Job Tracker Table view before building the candidate set or trusting visible status/date fields.
 - Use Home `Priorities` only as a lead list.
 - Re-confirm the final target in Job Tracker Table view with visible status and date fields.
 - Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role with a visible applied date.

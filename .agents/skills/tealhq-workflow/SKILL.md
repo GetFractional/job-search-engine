@@ -17,6 +17,8 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - For text entry in Windows Chrome-backed Teal, avoid `locator.fill()` when the session shows `Browser Use virtual clipboard is not installed` or CDP timeouts. Prefer Chrome tab clipboard paste: `tab.clipboard.writeText(text)`, focus the field, then `tab.dom_cua.keypress({ keys: ["CTRL", "V"] })`. Use `scripts/paste-into-focused-window.ps1` as the OS clipboard fallback only after visibly focusing the target field; include `-WindowTitle "Teal"` when Chrome may not be foreground.
 - Treat Cloudflare, login prompts, CAPTCHA, `about:blank`, or missing live tabs as wrong-surface evidence for Teal, not as permission to switch to isolated Playwright.
 - If an existing Teal tab is locked by another browser session, open a fresh Chrome-extension-backed Teal tab and continue from the direct route. Do not treat a stale tab claim as a bridge failure.
+- Before trusting any Teal page, refresh that `app.tealhq.com` tab once and wait 5 to 8 seconds for the page to settle. Treat pre-refresh Teal state as stale-risk whenever another machine may have changed the same account.
+- If the refreshed Teal state differs from what was visible before refresh, discard the old read and continue only from the refreshed state.
 - If Chrome-backed Teal loads but the tracker, Resume Builder, Job Matcher, or Analyzer is unreadable after slow scoped navigation and one fresh extension-backed tab attempt, stop with a precise blocker and ask for a screenshot, direct Teal record URL, or pasted JD rather than guessing.
 - Use `mattdim805@gmail.com` for Gmail, Google Calendar, and Google Drive job-search workflows. Do not use work/client Google accounts for personal job-search work unless Matt explicitly approves it.
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
@@ -78,27 +80,28 @@ Determine how to use Teal features for each job-search stage.
 1. Choose the relevant Teal feature: Job Search, saved alerts, Chrome extension, Job Tracker, Resume Builder, Job Matcher, Contacts Tracker, notes, interview tracking, or interview practice.
 2. Use Chrome and visible Teal UI for job search, scoring, records, resumes, cover letters, downloads, and application forms.
 3. Prove the browser surface before selection, scoring, asset editing, upload, or status mutation. Passing means Chrome extension backend is listed, user tabs are visible, and Teal can be claimed or opened without Cloudflare/login.
-4. Navigate by direct route when possible: `/job-tracker`, `/job-search`, `/resume-builder/resumes`, `/preview`, `/analysis`, `/matching`, or `/design/presentation`.
-5. For Job Tracker work, keep Table view when selecting the next-best role. Use status filters, visible posting dates, compensation, location, status, applied date, and Excitement before opening a role. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, and `Closed` from the candidate set.
-6. For Job Detail work, anchor on the job heading, source link, status radios, detail tabs, and Job Description sections. Avoid repeated whole-page snapshots because tracker rows and keyword chips remain in the DOM.
-7. If a Teal page is unreadable after slow scoped navigation and one fresh Chrome-backed tab, classify the blocker precisely and request the minimum handoff artifact instead of continuing blind.
-8. Check posting date, freshness evidence, and whether the role appears meaningfully active, not merely still visible.
-9. Confirm the canonical employer before asset work. If the saved company, source domain, or JD employer disagree, treat the record as unresolved and stop until the real employer and real opening are identified.
-10. For live applications, inspect the actual application flow as early as possible to confirm what uploads or questions are present.
-11. For attachment-based applications, preflight upload before long final form entry. Confirm the exact approved file path, confirm the destination URL, verify `Allow access to file URLs` if a prior upload failed with `Not allowed`, and use the visible upload control. Do not rely on direct backend POSTs because CAPTCHA-protected final submits must stay in the browser flow.
-12. Define the minimum asset set required for the current flow.
-13. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
-14. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
-15. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
-16. Reduce resume length in this order: exclude older low-relevance roles, trim redundant bullets, clean duplicate skills, then adjust Designer layout.
-17. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
-18. Define what Codex should prepare before Teal entry.
-19. Define what must be manually confirmed in Teal.
-20. Identify approval gates, including explicit user approval before any live submission.
-21. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker unless the user approves a local-only fallback.
-22. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
-23. Create a concise Teal update checklist.
-24. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
+4. Refresh the claimed or newly opened Teal tab once, wait 5 to 8 seconds, and only then trust the visible page state. If returning to a Teal tab after work on another machine, refresh again before using it.
+5. Navigate by direct route when possible: `/job-tracker`, `/job-search`, `/resume-builder/resumes`, `/preview`, `/analysis`, `/matching`, or `/design/presentation`.
+6. For Job Tracker work, refresh Table view before selecting the next-best role. Use status filters, visible posting dates, compensation, location, status, applied date, and Excitement before opening a role. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, and `Closed` from the candidate set.
+7. For Job Detail work, refresh the detail page before trusting the heading, source link, status radios, notes, applied date, detail tabs, or Job Description sections. Avoid repeated whole-page snapshots because tracker rows and keyword chips remain in the DOM.
+8. If a Teal page is unreadable after slow scoped navigation and one fresh Chrome-backed tab, classify the blocker precisely and request the minimum handoff artifact instead of continuing blind.
+9. Check posting date, freshness evidence, and whether the role appears meaningfully active, not merely still visible.
+10. Confirm the canonical employer before asset work. If the saved company, source domain, or JD employer disagree, treat the record as unresolved and stop until the real employer and real opening are identified.
+11. For live applications, inspect the actual application flow as early as possible to confirm what uploads or questions are present.
+12. For attachment-based applications, preflight upload before long final form entry. Confirm the exact approved file path, confirm the destination URL, verify `Allow access to file URLs` if a prior upload failed with `Not allowed`, and use the visible upload control. Do not rely on direct backend POSTs because CAPTCHA-protected final submits must stay in the browser flow.
+13. Define the minimum asset set required for the current flow.
+14. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
+15. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
+16. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
+17. Reduce resume length in this order: exclude older low-relevance roles, trim redundant bullets, clean duplicate skills, then adjust Designer layout.
+18. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
+19. Define what Codex should prepare before Teal entry.
+20. Define what must be manually confirmed in Teal.
+21. Identify approval gates, including explicit user approval before any live submission.
+22. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker unless the user approves a local-only fallback.
+23. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
+24. Create a concise Teal update checklist.
+25. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
 
 ## Output
 - Teal workflow recommendation

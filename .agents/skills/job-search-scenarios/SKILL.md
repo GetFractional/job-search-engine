@@ -26,6 +26,8 @@ If the runtime probe can list `Chrome` as an extension backend and `browser.user
 
 If an existing Teal tab cannot be claimed because it belongs to another browser session, open a fresh Chrome-extension-backed Teal tab and continue from a direct route. If Chrome-backed Teal loads but the tracker or resume pages are unreadable after slow scoped navigation and one fresh tab attempt, stop with the exact blocker and ask for a screenshot, direct Teal record URL, or pasted JD. Do not rerun repair loops or guess from memory.
 
+Before trusting any `app.tealhq.com` page, refresh that Teal tab once and wait for the page to settle. Treat status, notes, applied dates, tracker rows, and resume state as stale-risk until after refresh, especially when another machine may have changed the same account.
+
 Use `docs/teal-ui-navigation.md` for the current Teal route map and slow-mode guidance. The map applies to both Mac and Windows Chrome sessions unless a section explicitly says Windows.
 
 Use `mattdim805@gmail.com` as the job-search Google identity for Gmail, Google Calendar, and Google Drive tasks. Do not use work/client Google accounts for personal job-search operations unless Matt explicitly instructs it.
@@ -109,6 +111,7 @@ Apply to a job:
 For application work, do not finish until these are handled or explicitly blocked:
 - Teal job record opened in Chrome
 - correct browser surface verified before role selection or mutation with the Chrome extension backend, live user tabs, and a Teal claim/open check
+- Teal page refreshed after claim/open and before trusting tracker rows, status, notes, applied date, or resume state
 - Chrome/Teal failure classified before stopping: local bridge failure, thread binding failure, wrong browser surface, stale/locked tab, Teal readability/navigation failure, text-entry failure, upload failure, login/security challenge, or application-site failure
 - stale/locked Teal tabs handled by opening a fresh Chrome-extension-backed Teal tab before declaring a blocker
 - Teal tracker/readability blockers handled with slow scoped navigation plus one fresh-tab attempt, then a screenshot/direct-record/JD fallback

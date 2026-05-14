@@ -11,6 +11,8 @@ Use `docs/teal-ui-navigation.md` as the current Teal route and UI map. It applie
 
 Before calling Chrome unavailable, run the Chrome runtime probe from `job-search-chrome-teal-recovery`: `agent.browsers.get("extension")`, `agent.browsers.list()`, `browser.user.openTabs()`, and a Teal claim/open check. If that passes, classify later failures as Teal navigation, stale-tab, or UI-readability problems, not Chrome-access failures.
 
+Before trusting any `app.tealhq.com` page, refresh that Teal tab once and wait 5 to 8 seconds for it to settle. Treat tracker rows, status, notes, applied dates, and resume state as stale-risk until after refresh, especially when another machine may have changed the same account.
+
 Use `mattdim805@gmail.com` as the job-search Google account for Gmail, Google Calendar, and Google Drive work related to applications, recruiter messages, interview scheduling, follow-up reminders, and job-search documents. Do not use `matt@getfractional.co` for personal job-search workflows unless Matt explicitly approves it for a specific task.
 
 Operate like a human: use visible navigation, keep actions paced, avoid repeated reload/click loops, do not brute-force guessed URLs, and stop at CAPTCHA, Cloudflare, security, login, or permission challenges.
@@ -29,11 +31,12 @@ Prefer direct routes for execution:
 
 Use slow, scoped interaction in Teal:
 1. Navigate directly to the route.
-2. Wait 5 to 8 seconds after route or tab changes.
-3. Confirm title and URL.
-4. Use targeted role/name locators.
-5. Avoid repeated all-page snapshots on heavy pages such as Job Detail and Content Editor.
-6. Retry one targeted action once after a wait, then reduce scope or stop with the blocker.
+2. Refresh once after claim/open or route changes when the page will drive decisions or mutations.
+3. Wait 5 to 8 seconds after route, refresh, or tab changes.
+4. Confirm title and URL.
+5. Use targeted role/name locators.
+6. Avoid repeated all-page snapshots on heavy pages such as Job Detail and Content Editor.
+7. Retry one targeted action once after a wait, then reduce scope or stop with the blocker.
 
 For text entry in Windows Chrome-backed Teal, avoid `locator.fill()` when the current session has shown `Browser Use virtual clipboard is not installed` or CDP timeouts. Prefer:
 
@@ -98,41 +101,44 @@ After bookmarking:
 ## Codex Application Trigger
 When the user says "apply to this job":
 1. Open the Teal job record in Google Chrome.
-2. Verify the role is not already applied, not in another terminal stage, and not a duplicate wrapper of an already-submitted canonical role.
-3. Verify the source link is still active and assess posting age plus freshness evidence. If the saved source blocks or redirects, try one direct company-hosted posting path, then stop with uncertainty if needed.
-4. If the Teal company name, source employer, and JD employer do not clearly match, stop and resolve the canonical employer before asset work.
-5. Complete intake, lane classification, fit scoring, and Excitement update.
-6. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists.
-7. Move the role to Applying when asset work begins.
-8. Create or open the Teal role resume from the Resumes tab.
-9. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume. This is mandatory before export unless Teal is unavailable or blocked; if blocked, stop and report the blocker before creating a local-only substitute.
-10. If the application exposes a cover-letter upload or text slot, create a tailored cover letter unless Matt explicitly opts out for that application. Keep it to one page.
-11. Use Teal Cover Letter with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
-12. Export the resume and Teal-designed cover letter as separate files.
-13. Run the file naming gate before upload:
+2. Refresh the job record once before trusting status, notes, applied date, source data, or checklist state.
+3. Verify the role is not already applied, not in another terminal stage, and not a duplicate wrapper of an already-submitted canonical role.
+4. Verify the source link is still active and assess posting age plus freshness evidence. If the saved source blocks or redirects, try one direct company-hosted posting path, then stop with uncertainty if needed.
+5. If the Teal company name, source employer, and JD employer do not clearly match, stop and resolve the canonical employer before asset work.
+6. Complete intake, lane classification, fit scoring, and Excitement update.
+7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists.
+8. Move the role to Applying when asset work begins.
+9. Create or open the Teal role resume from the Resumes tab.
+10. Refresh Resume Builder once before trusting attached-job state, selected content, Job Matcher state, or Analyzer state.
+11. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume. This is mandatory before export unless Teal is unavailable or blocked; if blocked, stop and report the blocker before creating a local-only substitute.
+12. If the application exposes a cover-letter upload or text slot, create a tailored cover letter unless Matt explicitly opts out for that application. Keep it to one page.
+13. Use Teal Cover Letter with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
+14. Export the resume and Teal-designed cover letter as separate files.
+15. Run the file naming gate before upload:
    - resume: `{Company} - {Role} - Matt Dimock - Resume.pdf`
    - cover letter: `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`
    - do not upload files with suffixes such as `Teal`, `final`, `v2`, `draft`, dates, source labels, or tool labels
    - if Teal exports a generic or suffixed filename, rename or copy it to the canonical filename before upload
-14. Before final form entry, run the upload preflight if the application requires attachments:
+16. Before final form entry, run the upload preflight if the application requires attachments:
    - confirm the exact approved local file path and target application URL
    - confirm Chrome is using the logged-in profile with the Codex extension connected
    - open `chrome://extensions/?id=hehggadaopoacecdllhhajmbjkdcmajg` and verify `Allow access to file URLs` is on when uploads have failed with `Not allowed`
    - restart Chrome or start the Chrome task again after changing that setting
    - use the visible page `Attach` or upload control, wait for the file chooser, then set the approved file path
-15. Prepare application answers from the exact form fields.
-16. Create an interview pack after the role clears the pursue bar and before submission readiness, so compensation strategy and interview positioning are ready if the application converts.
-17. Present the final resume, cover letter if used, application answers, upload destination, and submit action for review.
-18. Stop before final submission until the user approves the exact assets, copy, action, and destination.
-19. After approved submission is completed and confirmation is visible, move the Teal job status to Applied, add the application date, and note which assets were submitted.
-20. Run post-submit hygiene before moving on: verify Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, exact asset filenames, follow-up target, and application ledger entry.
-21. For fields Teal exposes as editable in Job Tracker Table view, such as status and Excitement, prefer the inline table control over the detail page. This is the default path for post-submit hygiene because it is faster to audit and less likely to leave the record visually stale.
-22. When updating Notes in the detail pane, click out of the note field and visually confirm the saved value before leaving the record. Treat note text as unsaved until the field loses focus and the final text still renders in place.
+17. Prepare application answers from the exact form fields.
+18. Create an interview pack after the role clears the pursue bar and before submission readiness, so compensation strategy and interview positioning are ready if the application converts.
+19. Present the final resume, cover letter if used, application answers, upload destination, and submit action for review.
+20. Stop before final submission until the user approves the exact assets, copy, action, and destination.
+21. After approved submission is completed and confirmation is visible, move the Teal job status to Applied, add the application date, and note which assets were submitted.
+22. Run post-submit hygiene before moving on: verify Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, exact asset filenames, follow-up target, and application ledger entry.
+23. For fields Teal exposes as editable in Job Tracker Table view, such as status and Excitement, prefer the inline table control over the detail page. This is the default path for post-submit hygiene because it is faster to audit and less likely to leave the record visually stale.
+24. When updating Notes in the detail pane, click out of the note field and visually confirm the saved value before leaving the record. Treat note text as unsaved until the field loses focus and the final text still renders in place.
 
 ## Application Package Gates
 Do not move to live upload or submission until each gate is passed or explicitly blocked:
 
 1. Active role gate: official source is live, posting age/freshness is recorded, and stale-risk is assessed.
+   - the Teal page was refreshed before trusting visible status, notes, applied date, or source state
    - the selected role is not already in `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, or `Closed`
    - no visible applied date is present
    - the record is not a duplicate wrapper of an already-submitted canonical role

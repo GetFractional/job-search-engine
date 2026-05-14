@@ -53,22 +53,23 @@ Do not spend research time on weak roles just because they were easy to save.
 Before drafting assets:
 
 1. Verify live Chrome-backed Teal with the runtime probe, not only the bridge script. Passing means Chrome appears as an extension backend, live user tabs are visible, and Teal can be claimed or opened without Cloudflare/login.
-2. If Chrome is proven but the workflow still fails, classify the blocker before continuing: stale/locked tab, wrong browser surface, Teal readability/navigation, text entry, upload, login/security, or application-site failure.
-3. If a Teal tab is locked by another session, open a fresh Chrome-extension-backed Teal tab. If tracker or resume content is unreadable after slow scoped navigation and one fresh-tab attempt, stop and request the minimum handoff artifact instead of guessing.
-4. Verify the role is not already applied, not in another terminal stage, and not a duplicate wrapper of an already-submitted canonical role.
-5. Verify the source posting is active and fresh enough.
-6. Resolve the canonical employer before asset work. If the Teal company, JD employer, and source employer disagree, stop and resolve the mismatch instead of pushing forward.
-7. Inspect the live application flow early.
-8. Identify required uploads and questions.
-9. If uploads are required, preflight the upload path before long final form entry:
+2. Refresh the Teal page once after claim/open and before trusting any visible tracker rows, status, notes, applied date, or resume state. If another machine may have changed the same account, treat pre-refresh state as stale-risk.
+3. If Chrome is proven but the workflow still fails, classify the blocker before continuing: stale/locked tab, stale page data, wrong browser surface, Teal readability/navigation, text entry, upload, login/security, or application-site failure.
+4. If a Teal tab is locked by another session, open a fresh Chrome-extension-backed Teal tab. If tracker or resume content is unreadable after slow scoped navigation and one fresh-tab attempt, stop and request the minimum handoff artifact instead of guessing.
+5. Verify the role is not already applied, not in another terminal stage, and not a duplicate wrapper of an already-submitted canonical role.
+6. Verify the source posting is active and fresh enough.
+7. Resolve the canonical employer before asset work. If the Teal company, JD employer, and source employer disagree, stop and resolve the mismatch instead of pushing forward.
+8. Inspect the live application flow early.
+9. Identify required uploads and questions.
+10. If uploads are required, preflight the upload path before long final form entry:
    - confirm the exact approved file path
    - confirm the application destination
    - confirm the Codex Chrome extension has `Allow access to file URLs` on when a prior upload failed with `Not allowed`
    - use the visible upload control rather than direct backend POSTs
-10. If a cover-letter slot exists, create a tailored one-page cover letter unless Matt explicitly opts out.
-11. Build the required assets, application answers, and interview pack before submission readiness.
-12. Verify canonical file names before upload. Never upload a file with `Teal`, `final`, `draft`, `v2`, a date, or any tool/source label in the filename.
-13. When Teal export is the failing step, keep one active resume tab per route, avoid duplicate-tab buildup, retry export after one Chrome bridge repair, and verify the filesystem before declaring export blocked.
+11. If a cover-letter slot exists, create a tailored one-page cover letter unless Matt explicitly opts out.
+12. Build the required assets, application answers, and interview pack before submission readiness.
+13. Verify canonical file names before upload. Never upload a file with `Teal`, `final`, `draft`, `v2`, a date, or any tool/source label in the filename.
+14. When Teal export is the failing step, keep one active resume tab per route, avoid duplicate-tab buildup, retry export after one Chrome bridge repair, and verify the filesystem before declaring export blocked.
 
 During Teal resume work:
 

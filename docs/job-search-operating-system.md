@@ -44,19 +44,20 @@ Use one ongoing project chat for searches and operating cadence. Use a new chat 
 1. Source roles through Teal saved searches, alerts, Chrome extension bookmarking, company career pages, referrals, and targeted research.
 2. Complete role intake with title, company, JD, compensation, logistics, application URL, known contacts, and Teal status.
 3. Verify the correct browser surface before role selection, scoring, resume edits, or Teal status changes. Use live Chrome-backed Teal, not isolated Playwright or the in-app browser. On Windows, this requires the `job-search-chrome-teal-recovery` runtime probe: Chrome extension backend listed, live user tabs visible, and Teal claimed or opened without Cloudflare/login.
-4. Classify the role by mandate into one primary lane and optional secondary lane.
-5. Run a quick fit score before spending time on research or assets.
-6. For viable roles, create a company and market research brief.
-7. Create the final fit scorecard and pursue recommendation.
-8. Build resume strategy before drafting the tailored resume.
-9. Draft role-specific assets only after research and scoring justify the effort.
-10. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
-11. Submit, message, or update externally only after explicit user approval.
-12. Track every next action and follow-up in Teal.
-13. Prepare interview packs only after the role is active or clearly worth pursuing.
-14. Preserve compensation leverage through research, careful language, and staged disclosure.
-15. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
-16. After substantial workflows, capture one improvement note: bottleneck, reusable Teal item, search rule, reusable answer/asset, or proposed docs/skills update.
+4. Refresh the Teal page once after claim/open and before trusting any visible tracker rows, status, notes, applied dates, or resume state. If another machine may have changed the same account, treat pre-refresh state as stale-risk.
+5. Classify the role by mandate into one primary lane and optional secondary lane.
+6. Run a quick fit score before spending time on research or assets.
+7. For viable roles, create a company and market research brief.
+8. Create the final fit scorecard and pursue recommendation.
+9. Build resume strategy before drafting the tailored resume.
+10. Draft role-specific assets only after research and scoring justify the effort.
+11. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
+12. Submit, message, or update externally only after explicit user approval.
+13. Track every next action and follow-up in Teal.
+14. Prepare interview packs only after the role is active or clearly worth pursuing.
+15. Preserve compensation leverage through research, careful language, and staged disclosure.
+16. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
+17. After substantial workflows, capture one improvement note: bottleneck, reusable Teal item, search rule, reusable answer/asset, or proposed docs/skills update.
 
 ## Find Jobs Workflow
 Default to Quick mode.
@@ -77,17 +78,18 @@ Default to Standard mode.
 
 1. Require the full JD, Teal record, or application URL.
 2. Verify live Chrome-backed Teal access before selecting or mutating a Teal record. If Chrome is proven but an existing Teal tab is locked, open a fresh Chrome-extension-backed Teal tab. If Chrome-backed Teal loads but the target Teal page is unreadable after slow scoped navigation and one fresh-tab attempt, stop and request a screenshot, direct Teal record URL, or pasted JD instead of guessing.
-3. Complete intake and lane classification.
-4. Check posting age and freshness risk before asset work.
-5. Run fit scoring before asset work.
-6. If the role is older than 60 days and freshness evidence is weak, recommend pass or archive unless the user overrides.
-7. If score is below 65, recommend pass or low-effort path unless the user overrides.
-8. If viable, create research brief, fit scorecard, resume strategy, tailored resume, application answers, interview pack, and any required or strategically useful cover letter. If the live application has a cover-letter upload or text slot, create a one-page tailored cover letter through Teal Cover Letter with a custom prompt unless Matt explicitly opts out.
-9. Use Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export unless Teal is blocked. If Teal is blocked, stop with the blocker instead of silently replacing Teal with a local-only workflow.
-10. Enforce canonical filenames before upload: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload filenames with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
-11. QA every external asset against claim-safety rules.
-12. Stop for explicit approval of the final assets, application answers, upload destination, and submit action before submitting, messaging, or changing external records.
-13. Move Teal status to Applied only after the approved live submission is completed and confirmed.
+3. Refresh Job Tracker or Job Detail once before trusting visible status, notes, applied date, or source state.
+4. Complete intake and lane classification.
+5. Check posting age and freshness risk before asset work.
+6. Run fit scoring before asset work.
+7. If the role is older than 60 days and freshness evidence is weak, recommend pass or archive unless the user overrides.
+8. If score is below 65, recommend pass or low-effort path unless the user overrides.
+9. If viable, create research brief, fit scorecard, resume strategy, tailored resume, application answers, interview pack, and any required or strategically useful cover letter. If the live application has a cover-letter upload or text slot, create a one-page tailored cover letter through Teal Cover Letter with a custom prompt unless Matt explicitly opts out.
+10. Use Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export unless Teal is blocked. Refresh Resume Builder once before trusting attached-job state or optimizer state. If Teal is blocked, stop with the blocker instead of silently replacing Teal with a local-only workflow.
+11. Enforce canonical filenames before upload: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload filenames with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
+12. QA every external asset against claim-safety rules.
+13. Stop for explicit approval of the final assets, application answers, upload destination, and submit action before submitting, messaging, or changing external records.
+14. Move Teal status to Applied only after the approved live submission is completed and confirmed.
 
 ## Role Decision Gate
 Use this effort ladder:

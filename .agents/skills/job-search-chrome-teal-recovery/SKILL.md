@@ -81,7 +81,15 @@ Pass condition:
 - no sign-in prompt
 - title or visible state confirms Teal loaded
 
-8. Keep the Teal tab for handoff if stopping:
+8. Refresh the Teal tab once before handoff or downstream Teal work, then wait for the page to settle:
+
+```js
+await tealTab.reload();
+```
+
+After refresh, reconfirm the title or URL if the page changed routes. Treat any pre-refresh tracker rows, status, notes, applied dates, or resume state as stale.
+
+9. Keep the Teal tab for handoff if stopping:
 
 ```js
 await browser.tabs.finalize({ keep: [{ status: "handoff", tab: tealTab }] });
@@ -103,6 +111,7 @@ Classify the failure before stopping:
 - **Thread binding failure:** local bridge checks are green, but `agent.browsers.get("extension")` fails or the backend list lacks `Chrome`. Stop same-thread retries after one repair and route to Codex Desktop Chrome plugin reset/rebind/restart or support escalation.
 - **Wrong browser surface:** Teal is opened in isolated Playwright or the in-app browser, often with Cloudflare. Stop that path and switch to the Chrome extension backend.
 - **Stale tab claim:** `Chrome` backend and `browser.user.openTabs()` work, but an existing Teal tab cannot be claimed. Open a fresh extension-backed Teal tab instead of rerunning bridge repair.
+- **Stale page data:** Chrome works and Teal loads, but the visible page may not reflect cross-device changes yet. Refresh the Teal tab once and wait for the UI to settle before trusting the page.
 - **Teal UI readability/navigation failure:** Chrome works and Teal loads, but the tracker, table, Resume Builder, or Job Matcher cannot be read or acted on reliably. Do not call this a Chrome failure. Use slow scoped Teal navigation, a direct Teal record URL, or a screenshot/pasted JD fallback.
 
 ## Stop Conditions
