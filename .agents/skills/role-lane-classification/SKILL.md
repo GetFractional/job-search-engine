@@ -16,8 +16,8 @@ description: Classify a job by actual mandate into Matt's role lanes, including 
 Assign each role to the right lane by mandate, not title alone.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-2. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
+1. `source-files/03_role_lane_glossary.md`
+2. `source-files/01_matt_dimock_canonical_profile.md`
 
 ## Inputs
 - Role title

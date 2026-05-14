@@ -17,8 +17,8 @@ Understand market pressure, competitor positioning, category trends, and what th
 
 ## Required Sources
 1. `templates/company-research-brief.md`
-2. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-3. `/Users/mattdimock/Downloads/04_story_bank.md`
+2. `source-files/03_role_lane_glossary.md`
+3. `source-files/04_story_bank.md`
 
 ## Inputs
 - Company

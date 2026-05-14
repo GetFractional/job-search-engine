@@ -65,11 +65,17 @@ Show-BridgeReport -Manifest $manifest -Extension $extension -Chrome $chrome
 $needsRepair = (-not $manifest.correct) -or (-not $extension.installed) -or (-not $extension.enabled) -or (-not $chrome.running)
 $didRepair = $false
 
-if ($needsRepair) {
-    if (-not $Repair) {
+if ($needsRepair -and -not $Repair) {
+    Write-Host ""
+    Write-Host "Bridge is not ready. Re-run with -Repair to attempt a local recovery."
+    exit 1
+}
+
+if ($Repair) {
+    if (-not $needsRepair) {
         Write-Host ""
-        Write-Host "Bridge is not ready. Re-run with -Repair to attempt a local recovery."
-        exit 1
+        Write-Host "Bridge checks are already healthy."
+        Write-Host "Running the repair path anyway because -Repair was requested. This resets a stale Codex Chrome host even when local prerequisites are green."
     }
 
     $repairArgs = @(

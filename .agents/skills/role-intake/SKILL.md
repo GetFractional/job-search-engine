@@ -16,7 +16,7 @@ description: Normalize a new job opportunity into structured intake fields for t
 Normalize incoming job information so the role can be scored, researched, saved in Teal, and turned into assets only when worthwhile.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
+1. `source-files/03_role_lane_glossary.md`
 2. `templates/role-intake.md`
 3. `docs/teal-workflow.md`
 

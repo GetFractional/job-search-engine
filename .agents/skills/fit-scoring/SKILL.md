@@ -17,8 +17,8 @@ Score roles out of 100 and classify pursuit effort.
 
 ## Required Sources
 1. `docs/role-fit-scorecard.md`
-2. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-3. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
+2. `source-files/03_role_lane_glossary.md`
+3. `source-files/02_metrics_ledger.md`
 4. `templates/fit-scorecard.md`
 
 ## Inputs

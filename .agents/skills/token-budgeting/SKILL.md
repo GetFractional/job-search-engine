@@ -13,7 +13,7 @@ description: Estimate and control token usage for job-search workflows, includin
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
 - Report an estimated token budget in every job-search response by default, even when the user did not explicitly ask for token guidance.
 - Keep token reporting concise: per-turn estimate, main cost drivers, and the cheapest reliable next step.
-- Do not create optional assets such as cover letters until the live application flow, JD, or user instruction shows they are actually needed.
+- Do not create optional assets until the live application flow, JD, or user instruction shows they are actually needed. A cover-letter upload or text slot means a one-page tailored Teal Cover Letter is needed unless Matt explicitly opts out.
 
 ## Purpose
 Estimate and control token usage for job search, application, interview, and offer workflows.

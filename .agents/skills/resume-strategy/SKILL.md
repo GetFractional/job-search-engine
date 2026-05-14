@@ -11,16 +11,16 @@ description: Create role-specific resume strategy before drafting, including pos
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
-- Default tenure framing for summaries and headlines to `in marketing since 2007`. Do not use stale shorthand like `15+ years`.
+- Calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
 Create a role-specific resume strategy before drafting.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-3. `/Users/mattdimock/Downloads/03_role_lane_glossary.md`
-4. `/Users/mattdimock/Downloads/04_story_bank.md`
+1. `source-files/01_matt_dimock_canonical_profile.md`
+2. `source-files/02_metrics_ledger.md`
+3. `source-files/03_role_lane_glossary.md`
+4. `source-files/04_story_bank.md`
 5. `templates/tailored-resume-brief.md`
 
 ## Inputs
@@ -39,7 +39,7 @@ Create a role-specific resume strategy before drafting.
 6. Identify unsupported keywords to avoid.
 7. Map every chosen metric or story to the correct employer, client, or brand context before drafting.
 8. Remove redundant positioning themes before drafting, especially repeated consulting-summary language.
-9. Plan a two-page reverse-chronological resume.
+9. Plan a two-page reverse-chronological resume and identify which lower-value proof can be cut or expanded after Teal preview/export shows actual length.
 10. Define Teal Job Matcher moves: selected existing bullets to reuse, summary changes, bullet changes, and Skills & Interests additions.
 11. Prioritize missing truthful hard skills first, then supporting soft skills, business terms, and platforms/tools.
 12. Separate score-improvement actions into:
@@ -48,7 +48,8 @@ Create a role-specific resume strategy before drafting.
    - propose summary edits
    - Skills & Interests additions
 13. Call out optional work that should wait until the live application proves it is needed, especially cover letters.
-14. If the summary mentions years of experience, use `since 2007` language or a correctly calculated current count.
+14. If the summary mentions years of experience, use a correctly calculated current professional marketing count from the 2007 National Positions start year.
+15. For Get Fractional/OC Ramps proof, avoid ending with a weak or overloaded baseline-comparison bullet. Prefer a role-specific systems outcome that ties operating cadence, campaign planning, CRO, lifecycle/reporting, and measurement to the strongest relevant metric.
 
 ## Output
 - Resume strategy brief

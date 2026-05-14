@@ -16,10 +16,10 @@ description: Build role-specific interview prep packs with strategy, likely ques
 Prepare role-specific interview strategy, likely questions, answer drafts, stories, objections, rebuttals, questions to ask, and follow-up messaging.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/06_interview_pack_template.md`
-2. `/Users/mattdimock/Downloads/01_matt_dimock_canonical_profile.md`
-3. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
-4. `/Users/mattdimock/Downloads/04_story_bank.md`
+1. `source-files/06_interview_pack_template.md`
+2. `source-files/01_matt_dimock_canonical_profile.md`
+3. `source-files/02_metrics_ledger.md`
+4. `source-files/04_story_bank.md`
 5. `templates/interview-pack.md`
 
 ## Inputs
