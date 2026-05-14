@@ -16,6 +16,7 @@ The export excludes auth files, token/secret/session-named files, logs, sqlite/d
 | `mvp-packetizer` | `/Users/mattdimock/.codex/skills/mvp-packetizer` |
 | `product-delivery-os` | `/Users/mattdimock/.codex/skills/product-delivery-os` |
 | `project-memory` | `/Users/mattdimock/.codex/skills/project-memory` |
+| `skill-maintenance` | `/Users/mattdimock/.codex/skills/skill-maintenance` |
 | `startup-mvp-orchestrator` | `/Users/mattdimock/.codex/skills/startup-mvp-orchestrator` |
 | `playwright-interactive` | `/Users/mattdimock/.codex/skills/playwright-interactive` |
 | `sora` | `/Users/mattdimock/.codex/skills/sora` |

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Product Delivery OS"
-  short_description: "Cross-product governance for packets, PRs, and WIP"
-  default_prompt: "Use $product-delivery-os to standardize task packets, WIP discipline, PR readiness, sync receipts, and delivery audits across repos."
-
-policy:
-  allow_implicit_invocation: false

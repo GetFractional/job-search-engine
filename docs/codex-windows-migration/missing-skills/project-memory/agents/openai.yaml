@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Memory"
-  short_description: "Local MCP memory for project recall and handoffs"
-  default_prompt: "Use $project-memory to store or recall stable project context, packet handoffs, QA verdicts, and open risks across sessions."
