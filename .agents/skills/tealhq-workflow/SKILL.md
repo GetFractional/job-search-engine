@@ -12,7 +12,10 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - If live Chrome access is uncertain, use `job-search-chrome-teal-recovery` before any Teal workflow step. Do not stop after the bridge repair script alone; prove the thread can claim or open a Chrome extension-backed Teal tab.
 - If the runtime probe lists `Chrome` as an extension backend and `browser.user.openTabs()` returns visible tabs, Chrome is available. Classify any later problem as stale-tab, Teal navigation/readability, text-entry, upload, login/security, or application-site failure instead of rerunning Chrome repair or saying Chrome cannot be seen.
 - Use `docs/teal-ui-navigation.md` as the route and UI map for Teal. It applies to Mac and Windows Chrome sessions unless a section explicitly says Windows.
-- Keep one active Teal work tab when possible. Multiple Teal tabs make session handoff, route state, and DOM snapshots harder to reason about.
+- Keep one persistent `Job Tracker` tab open as the default Teal anchor tab for this workspace.
+- Keep one active Teal work tab set per role when possible. Reuse the same visible working window or tab group for that role instead of opening duplicate `preview`, `matching`, `analysis`, `cover-letter`, or application tabs.
+- When another active Codex agent or thread is already using Teal in Chrome, open a separate Chrome-backed Teal window or tab group for the current role rather than sharing the same active Teal window.
+- On concurrent multi-machine use of the same Chrome profile, manage only the tabs visible in the current machine's active session. Do not assume hidden tab groups on the other machine can be safely inspected or cleaned up.
 - Use Teal slow mode: direct route, 5 to 8 second wait after route/tab changes, confirm title and URL, then use targeted role/name locators. Retry one targeted action once; after a second failure, reduce scope or report the blocker.
 - For text entry in Windows Chrome-backed Teal, avoid `locator.fill()` when the session shows `Browser Use virtual clipboard is not installed` or CDP timeouts. Prefer Chrome tab clipboard paste: `tab.clipboard.writeText(text)`, focus the field, then `tab.dom_cua.keypress({ keys: ["CTRL", "V"] })`. Use `scripts/paste-into-focused-window.ps1` as the OS clipboard fallback only after visibly focusing the target field; include `-WindowTitle "Teal"` when Chrome may not be foreground.
 - Treat Cloudflare, login prompts, CAPTCHA, `about:blank`, or missing live tabs as wrong-surface evidence for Teal, not as permission to switch to isolated Playwright.
@@ -30,6 +33,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - Keep Skills & Interests category-led. Prefer existing bold/category-style groups over loose flat keywords.
 - Before adding skills, expand Skills & Interests and check for existing categorized entries and uncategorized duplicates.
 - Do not add a flat skill when the same or clearer skill already exists inside a category.
+- Never create a pseudo-category as a flat uncategorized skill by prefixing the skill text with a category name, for example `Analytics Systems: GA4 / GTM / dashboards`. If a needed category does not exist, create the actual category first so Teal renders the category name as a bold heading, then add the child skills inside that category.
 - Never leave uncategorized top-level skills checked above category groups; they display as a malformed comma-list before the preferred category sections.
 - Treat exact and near-duplicate skills as duplicates. Examples: `GA4`, `Google Analytics`, and `Google Analytics 4`; `GTM` and `Google Tag Manager`; capitalization-only variants; singular/plural variants; and repeated entries like `Targeting` / `targeting`.
 - Do not rename an existing shared category for a different role lane. Create a new category when a new lane needs skills. Keep professional tools in `Platforms & Execution Stack`; keep hospitality skills in a separate category such as `Hospitality Operations & Bar Support`.
@@ -53,9 +57,12 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - If a skill is plausible but unconfirmed, ask Matt to confirm it before leaving it active or documenting it as reusable.
 - Once a live role is being finalized in Teal, use only Teal-exported resume files for employer uploads. Do not upload older local DOCX or Canva variants after the Teal version becomes the approved source of truth.
 - If Teal exports a generic filename, rename the local file to `{Company} - {Role} - Matt Dimock - Resume` before any upload or delivery. Do not upload a generic export name when the role-specific filename is required.
+- Do not create a substitute local resume or cover letter for a live application just because Teal editing, preview, Analyzer, Job Matcher, or export is blocked. Default action is to stop, classify the blocker, and report what Teal step failed.
+- A non-Teal resume or cover letter may be used only when Matt explicitly instructs a non-Teal fallback for that exact role after the Teal blocker is made visible.
 - Treat posting age as a gating factor. Roles older than 30 days require stronger freshness evidence. Roles older than 60 days default to stale-risk and should usually not receive asset effort unless the user explicitly wants an exception.
 - Treat Teal Home `Priorities` and dashboard cards as orientation only. Do not choose the next-best application target from Home alone. Final selection must be re-confirmed in Job Tracker Table view with visible status and date fields.
 - For post-submit hygiene, prefer Job Tracker Table view for any field Teal exposes as an inline edit, especially status and Excitement. Use the detail page for notes and longer text, but use the table as the default audit and mutation surface when possible.
+- After confirmed submission and post-submit hygiene, close the role-specific Teal and application tabs that are no longer needed. Leave the persistent `Job Tracker` tab open for the next role.
 - For next-best application selection, exclude any role already in `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, or with a visible applied date. Do not reopen already-submitted roles through duplicate wrapper records.
 - Treat aggregator wrappers as suspect until proven clean. If the Teal company name, live source employer, and JD employer disagree, stop and resolve the canonical employer before any resume, cover-letter, or application work.
 - If a wrapper such as `Jobgether` points to an underlying employer such as `Housecall Pro`, do not proceed unless the canonical employer role is confirmed live, not already applied, and not duplicated elsewhere in Teal.
@@ -98,10 +105,11 @@ Determine how to use Teal features for each job-search stage.
 19. Define what Codex should prepare before Teal entry.
 20. Define what must be manually confirmed in Teal.
 21. Identify approval gates, including explicit user approval before any live submission.
-22. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker unless the user approves a local-only fallback.
+22. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker. Do not create a local substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
 23. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
 24. Create a concise Teal update checklist.
 25. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
+26. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
 
 ## Output
 - Teal workflow recommendation

@@ -70,6 +70,11 @@ Before drafting assets:
 12. Build the required assets, application answers, and interview pack before submission readiness.
 13. Verify canonical file names before upload. Never upload a file with `Teal`, `final`, `draft`, `v2`, a date, or any tool/source label in the filename.
 14. When Teal export is the failing step, keep one active resume tab per route, avoid duplicate-tab buildup, retry export after one Chrome bridge repair, and verify the filesystem before declaring export blocked.
+15. If Teal export, Analyzer, Job Matcher, or Teal Cover Letter is blocked during a live application, stop and report the blocker. Do not create a substitute local submission resume or cover letter unless Matt explicitly instructs a non-Teal fallback for that exact role.
+16. When another Codex agent thread is active in Chrome, isolate Teal apply work in a separate Chrome-backed window or tab group to reduce session collisions and wrong-tab edits.
+17. Keep one persistent Teal `Job Tracker` tab open as the anchor tab for the next role, but close no-longer-needed role-specific Teal and application tabs after submission and post-submit hygiene.
+18. On shared-profile multi-machine use, only clean up the visible tabs on the current machine. Do not assume hidden tab groups on the other machine are safe to inspect or close.
+19. In Teal `Skills & Interests`, never fake a category by creating a flat uncategorized skill with a category label prefix such as `Analytics Systems: ...`. Create the actual category first so the heading is bolded correctly, then add child skills inside it.
 
 During Teal resume work:
 

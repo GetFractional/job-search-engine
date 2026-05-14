@@ -29,6 +29,14 @@ Prefer direct routes for execution:
 - Job Matcher: `/resume-builder/resumes/{resume_id}/matching`
 - Designer: `/resume-builder/resumes/{resume_id}/design/presentation`
 
+## Tab Hygiene
+- Keep one persistent `Job Tracker` tab open as the default Teal anchor tab for the workspace.
+- For one active role, reuse the same visible Teal working window or tab group instead of opening duplicate `preview`, `matching`, `analysis`, `cover-letter`, or application tabs.
+- During active role work, keep the live tab set minimal: the persistent `Job Tracker` tab plus only the current-role tabs actually needed for Teal editing and the live application.
+- After confirmed submission and post-submit hygiene, close the role-specific Teal and application tabs that are no longer needed. Leave the persistent `Job Tracker` tab open.
+- If another Codex agent thread is active in Chrome, isolate work in a separate Chrome-backed window or tab group for that role, but still keep the live tab count low inside that working set.
+- When the same Chrome profile is active on two machines, only manage the tabs visible in the current machine's active session. Hidden tab groups on the other machine may exist and should not be assumed safe to inspect or close.
+
 Use slow, scoped interaction in Teal:
 1. Navigate directly to the route.
 2. Refresh once after claim/open or route changes when the page will drive decisions or mutations.
@@ -110,9 +118,9 @@ When the user says "apply to this job":
 8. Move the role to Applying when asset work begins.
 9. Create or open the Teal role resume from the Resumes tab.
 10. Refresh Resume Builder once before trusting attached-job state, selected content, Job Matcher state, or Analyzer state.
-11. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume. This is mandatory before export unless Teal is unavailable or blocked; if blocked, stop and report the blocker before creating a local-only substitute.
+11. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume. This is mandatory before export unless Teal is unavailable or blocked; if blocked, stop and report the blocker. Do not create a local-only substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
 12. If the application exposes a cover-letter upload or text slot, create a tailored cover letter unless Matt explicitly opts out for that application. Keep it to one page.
-13. Use Teal Cover Letter with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
+13. Use Teal Cover Letter with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker. Do not create a non-Teal substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
 14. Export the resume and Teal-designed cover letter as separate files.
 15. Run the file naming gate before upload:
    - resume: `{Company} - {Role} - Matt Dimock - Resume.pdf`
@@ -133,6 +141,7 @@ When the user says "apply to this job":
 22. Run post-submit hygiene before moving on: verify Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, exact asset filenames, follow-up target, and application ledger entry.
 23. For fields Teal exposes as editable in Job Tracker Table view, such as status and Excitement, prefer the inline table control over the detail page. This is the default path for post-submit hygiene because it is faster to audit and less likely to leave the record visually stale.
 24. When updating Notes in the detail pane, click out of the note field and visually confirm the saved value before leaving the record. Treat note text as unsaved until the field loses focus and the final text still renders in place.
+25. After post-submit hygiene is complete, close the role-specific Teal and application tabs for the submitted role that are no longer needed. Keep the persistent `Job Tracker` tab open.
 
 ## Application Package Gates
 Do not move to live upload or submission until each gate is passed or explicitly blocked:
@@ -196,6 +205,7 @@ Treat Teal bullets and Skills & Interests as reusable library items:
 - Do not delete skills, delete bullets, or run shared-library cleanup during application work unless Matt explicitly asks for it.
 - If Matt explicitly approves shared skill cleanup, remove exact and near-duplicate skills from the Teal library, not just from the current resume. Keep one canonical original skill and delete duplicate variants such as `GA4` / `Google Analytics` / `Google Analytics 4`, capitalization-only duplicates, singular/plural variants, and repeated entries like `Targeting` / `targeting`.
 - Do not rename an existing shared category for a different role lane. If a new lane needs skills, create a new category for that lane and add or move only the relevant skills.
+- Never create a pseudo-category as a flat uncategorized skill by prefixing the skill text with a category name, for example `Analytics Systems: GA4 / GTM / dashboards`. If a needed category does not exist, create the real category first so Teal renders the category name as a bold heading, then add the child skills inside that category.
 - Keep professional tool categories separate from hospitality/service categories. Use `Platforms & Execution Stack` for tools such as ClickUp, Figma, GitHub, Google Workspace, Shopify, and Zoho One. Use a separate hospitality category such as `Hospitality Operations & Bar Support` for barback terms such as restocking, opening duties, closing duties, garnish prep, stocking, and heavy lifting.
 
 For each role:
@@ -208,7 +218,7 @@ For each role:
 7. Add only truthful, natural, recruiter-readable language.
 8. Avoid keyword stuffing and unsupported claims.
 9. When editing a library item, keep any global update option unchecked unless Matt approves the global change.
-10. Use Analyzer before export. If Analyzer is not visible or fails, stop with the blocker unless Matt explicitly approves a local-only or manual-QA fallback for that application.
+10. Use Analyzer before export. If Analyzer is not visible or fails, stop with the blocker. Do not create a substitute local submission resume just to continue the application.
 11. Use Teal preview/export as the source of truth for length. Target a strong two-page resume: no page 3, no obvious unused second-page whitespace when high-value proof can fit, and no cramped layout that damages readability.
 12. Ensure no uncategorized top-level skills remain checked above category groups. Those display as an ugly comma-list before the category sections.
 13. Use Designer/settings after content cleanup to improve spacing between companies and bullets, and prefer simple bullet glyphs over double-angle symbols if Teal offers that option.
@@ -219,13 +229,14 @@ For each role:
 
 When Teal content editing works but export does not produce a real local file, classify that as an export blocker, not a resume-content blocker.
 
-Use this repair order before any local asset fallback:
+Use this repair order before any Teal-blocked stop decision:
 1. Keep one active Teal resume tab per route for the current role. Avoid building up duplicate `analysis`, `matching`, `preview`, or `cover-letter` tabs for the same resume.
 2. Prefer `Job Matcher` for target-title, summary, and skills work when `Analyzer` or `Content Editor` becomes unstable. In this workspace, repeated direct opens to `analysis` have been more fragile than `matching`.
 3. Use the Teal `Cover Letter` tab only after the correct job is attached to the resume. Do not bounce between multiple cover-letter route variants during generation.
 4. If Teal resume routes become sluggish across the board, run one Chrome bridge repair, then retry from a fresh Chrome-backed tab.
 5. After clicking `Export PDF`, verify the filesystem within 10 to 15 seconds. If no new file appears in Downloads or Temp, treat export as still blocked.
-6. Only use a local asset fallback after Teal content is ready, export has been retried on a repaired Chrome-backed session, and no downloadable file can be verified.
+6. If Teal content is ready, export has been retried on a repaired Chrome-backed session, and no downloadable file can be verified, stop and report the blocker. Do not generate or submit a substitute local resume or cover letter unless Matt explicitly instructs a non-Teal fallback for that exact role.
+7. If duplicate Teal working tabs have accumulated for the same role, collapse back to one active tab per needed route before continuing. Do not keep stale duplicate tabs open longer than necessary.
 
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:
@@ -254,7 +265,7 @@ For each role:
 4. Edit the output so it sounds human, direct, and specific.
 5. Export the Teal-designed cover letter when possible, then save or rename it as `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`.
 6. Keep the final cover letter to one page.
-7. If Teal Cover Letter cannot be reached, generated, edited, or exported, stop with the blocker unless Matt explicitly approves a local-only cover-letter fallback for that application.
+7. If Teal Cover Letter cannot be reached, generated, edited, or exported, stop with the blocker. Do not generate or submit a substitute local cover letter unless Matt explicitly instructs a non-Teal fallback for that exact role.
 
 ## Contacts Tracker
 Track:
