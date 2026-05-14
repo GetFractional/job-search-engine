@@ -52,6 +52,9 @@ Use these only when the form asks and no contradictory user instruction exists:
 - Sponsorship now or later: no.
 - Current state: TN.
 - Relocation: open for the right opportunity, paid relocation preferred.
+- SMS consent for employer follow-up about the job application: yes.
+- Valid passport: yes.
+- Canada travel for work: yes, with prior business-travel history to Canada.
 - Family or relatives at employer: no.
 - Previously worked at employer: no unless evidence says otherwise.
 - Veteran status: not a veteran.

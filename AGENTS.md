@@ -9,6 +9,16 @@ Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for r
 - Do not use `matt@getfractional.co` or any client/work Google account for personal job-search workflows unless Matt explicitly directs it for a specific task.
 - TealHQ is not a Codex connector. Use Teal through Chrome and the Teal Chrome extension.
 
+## Workspace Consistency
+- Before non-trivial repo work in this workspace, run the repo-local workspace prep command:
+  - Windows: `powershell -ExecutionPolicy Bypass -File .\scripts\prepare-job-search-workspace.ps1 -SyncGitIfClean`
+  - macOS/Linux: `./scripts/prepare-job-search-workspace.sh --sync-git-if-clean`
+- If tracked local changes should not be pulled over, run the same command without the git-sync flag. It must still install hooks, sync skills, and verify mirrors.
+- Treat the tracked repo as the source of truth for workflow rules, docs, and safeguards.
+- Treat `.agents/skills/` as the source of truth for this repo's managed skills.
+- Treat `~/.codex/skills/` and `~/.agents/skills/` as mirrored execution directories, not authoring surfaces for this repo.
+- Repo-managed git hooks in `.githooks/` must remain enabled through `core.hooksPath = .githooks` so checkout, merge, and rewrite events automatically re-sync managed skills.
+
 ## Required Source Hierarchy
 Use these sources in this order:
 
@@ -260,6 +270,9 @@ Default application answers when the form asks and no contradictory evidence exi
 - sponsorship now or later: no
 - current state: TN
 - relocation: open for the right opportunity, paid relocation preferred
+- SMS consent for employer follow-up about the job application: yes
+- valid passport: yes
+- Canada travel for work: yes, has prior business-travel history to Canada
 - family or relatives at target employer: no
 - previously worked at target employer: no unless evidence says otherwise
 - gender/race: white male only for voluntary self-ID when approved

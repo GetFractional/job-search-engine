@@ -209,6 +209,18 @@ For each role:
 14. Export PDF and verify the downloaded file name. The submission filename must be `{Company} - {Role} - Matt Dimock - Resume.pdf`; rename or copy the Teal export if needed. Do not upload filenames containing `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
 15. If a resume is reformatted outside Teal, remove local file path footers, browser print headers/footers, timestamps, URLs, and any other machine-generated footer text before upload or delivery.
 
+## Export Failure Classification
+
+When Teal content editing works but export does not produce a real local file, classify that as an export blocker, not a resume-content blocker.
+
+Use this repair order before any local asset fallback:
+1. Keep one active Teal resume tab per route for the current role. Avoid building up duplicate `analysis`, `matching`, `preview`, or `cover-letter` tabs for the same resume.
+2. Prefer `Job Matcher` for target-title, summary, and skills work when `Analyzer` or `Content Editor` becomes unstable. In this workspace, repeated direct opens to `analysis` have been more fragile than `matching`.
+3. Use the Teal `Cover Letter` tab only after the correct job is attached to the resume. Do not bounce between multiple cover-letter route variants during generation.
+4. If Teal resume routes become sluggish across the board, run one Chrome bridge repair, then retry from a fresh Chrome-backed tab.
+5. After clicking `Export PDF`, verify the filesystem within 10 to 15 seconds. If no new file appears in Downloads or Temp, treat export as still blocked.
+6. Only use a local asset fallback after Teal content is ready, export has been retried on a repaired Chrome-backed session, and no downloadable file can be verified.
+
 ## Job Matcher
 Use Job Matcher as a gap-analysis tool:
 - identify missing truthful keywords

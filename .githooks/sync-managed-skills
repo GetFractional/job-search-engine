@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+event_name="${1:-git-hook}"
+
+if command -v powershell.exe >/dev/null 2>&1; then
+  powershell.exe -ExecutionPolicy Bypass -File "$repo_root/scripts/sync-codex-skills.ps1" >/dev/null
+elif command -v powershell >/dev/null 2>&1; then
+  powershell -ExecutionPolicy Bypass -File "$repo_root/scripts/sync-codex-skills.ps1" >/dev/null
+elif command -v pwsh >/dev/null 2>&1; then
+  pwsh -File "$repo_root/scripts/sync-codex-skills.ps1" >/dev/null
+else
+  "$repo_root/scripts/sync-codex-skills.sh" >/dev/null
+fi
+
+printf '[job-search] synced managed skills after %s\n' "$event_name" >&2

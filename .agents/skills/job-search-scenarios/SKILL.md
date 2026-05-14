@@ -168,6 +168,9 @@ Use these only when the form asks and the user has not overridden them:
 - needs sponsorship now or later: no
 - current state: Tennessee
 - relocation: open for the right opportunity, paid relocation preferred
+- SMS consent for employer follow-up about the application: yes
+- valid passport: yes
+- Canada travel for work: yes, with prior business-travel history to Canada
 - family or relatives at target employer: no
 - previous employment at target employer: no unless evidence says otherwise
 - gender/race: white male only for voluntary self-ID when the user has approved answering

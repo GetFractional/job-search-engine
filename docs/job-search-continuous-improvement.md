@@ -68,6 +68,7 @@ Before drafting assets:
 10. If a cover-letter slot exists, create a tailored one-page cover letter unless Matt explicitly opts out.
 11. Build the required assets, application answers, and interview pack before submission readiness.
 12. Verify canonical file names before upload. Never upload a file with `Teal`, `final`, `draft`, `v2`, a date, or any tool/source label in the filename.
+13. When Teal export is the failing step, keep one active resume tab per route, avoid duplicate-tab buildup, retry export after one Chrome bridge repair, and verify the filesystem before declaring export blocked.
 
 During Teal resume work:
 

@@ -7,6 +7,24 @@ Codex handles structured thinking, research, scoring, asset drafting, QA, and in
 
 Use `docs/job-search-continuous-improvement.md` as the operating loop for making searches, qualification, Teal usage, assets, and applications faster over time.
 
+## Workspace Readiness
+
+Before non-trivial job-search work in this repo, prepare the workspace so both machines are using the same tracked rules and mirrored skills.
+
+Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\prepare-job-search-workspace.ps1 -SyncGitIfClean
+```
+
+macOS/Linux:
+
+```bash
+./scripts/prepare-job-search-workspace.sh --sync-git-if-clean
+```
+
+This repo treats `.agents/skills/` as the managed source of truth. The local `~/.codex/skills/` and `~/.agents/skills/` copies are mirrors. Repo-managed git hooks in `.githooks/` automatically re-sync those mirrored skill directories after checkout, merge, and rewrite events.
+
 ## Easy User Triggers
 Use these simple requests:
 
