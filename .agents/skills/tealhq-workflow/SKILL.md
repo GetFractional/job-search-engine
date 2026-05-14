@@ -94,22 +94,23 @@ Determine how to use Teal features for each job-search stage.
 8. If a Teal page is unreadable after slow scoped navigation and one fresh Chrome-backed tab, classify the blocker precisely and request the minimum handoff artifact instead of continuing blind.
 9. Check posting date, freshness evidence, and whether the role appears meaningfully active, not merely still visible.
 10. Confirm the canonical employer before asset work. If the saved company, source domain, or JD employer disagree, treat the record as unresolved and stop until the real employer and real opening are identified.
-11. For live applications, inspect the actual application flow as early as possible to confirm what uploads or questions are present.
-12. For attachment-based applications, preflight upload before long final form entry. Confirm the exact approved file path, confirm the destination URL, verify `Allow access to file URLs` if a prior upload failed with `Not allowed`, and use the visible upload control. Do not rely on direct backend POSTs because CAPTCHA-protected final submits must stay in the browser flow.
-13. Define the minimum asset set required for the current flow.
-14. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
-15. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
-16. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
-17. Reduce resume length in this order: exclude older low-relevance roles, trim redundant bullets, clean duplicate skills, then adjust Designer layout.
-18. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
-19. Define what Codex should prepare before Teal entry.
-20. Define what must be manually confirmed in Teal.
-21. Identify approval gates, including explicit user approval before any live submission.
-22. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker. Do not create a local substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
-23. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
-24. Create a concise Teal update checklist.
-25. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
-26. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
+11. As soon as the role clears the pursue bar and active asset work begins, move the Teal record to `Applying`. Do this before resume edits, cover-letter work, application-answer drafting, or live form work continue. Treat this as mandatory WIP hygiene, not an optional cleanup step.
+12. For live applications, inspect the actual application flow as early as possible to confirm what uploads or questions are present.
+13. For attachment-based applications, preflight upload before long final form entry. Confirm the exact approved file path, confirm the destination URL, verify `Allow access to file URLs` if a prior upload failed with `Not allowed`, and use the visible upload control. Do not rely on direct backend POSTs because CAPTCHA-protected final submits must stay in the browser flow.
+14. Define the minimum asset set required for the current flow.
+15. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
+16. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
+17. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
+18. Reduce resume length in this order: exclude older low-relevance roles, trim redundant bullets, clean duplicate skills, then adjust Designer layout.
+19. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
+20. Define what Codex should prepare before Teal entry.
+21. Define what must be manually confirmed in Teal.
+22. Identify approval gates, including explicit user approval before any live submission.
+23. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker. Do not create a local substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
+24. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
+25. Create a concise Teal update checklist.
+26. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
+27. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
 
 ## Output
 - Teal workflow recommendation
@@ -122,7 +123,7 @@ Determine how to use Teal features for each job-search stage.
 - Bullet/skill library actions: toggled, added, edited, or blocked
 - Freshness assessment, including posting age, evidence, and stale-risk
 - Teal optimizer status, including Job Matcher, Analyzer, and two-page preview/export result
-- Post-submission status instruction: keep Applying during asset work, move to Applied only after approved submission is completed
+- Post-submission status instruction: move to Applying as soon as active asset work starts, keep Applying during the full prep/application workflow, move to Applied only after approved submission is completed
 - Workflow improvement note, if the run revealed a reusable speed or quality improvement
 - Post-submit hygiene status: Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, submitted asset filenames, follow-up target, and application ledger entry
 

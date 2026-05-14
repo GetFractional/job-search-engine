@@ -49,15 +49,16 @@ Use one ongoing project chat for searches and operating cadence. Use a new chat 
 6. Run a quick fit score before spending time on research or assets.
 7. For viable roles, create a company and market research brief.
 8. Create the final fit scorecard and pursue recommendation.
-9. Build resume strategy before drafting the tailored resume.
-10. Draft role-specific assets only after research and scoring justify the effort.
-11. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
-12. Submit, message, or update externally only after explicit user approval.
-13. Track every next action and follow-up in Teal.
-14. Prepare interview packs only after the role is active or clearly worth pursuing.
-15. Preserve compensation leverage through research, careful language, and staged disclosure.
-16. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
-17. After substantial workflows, capture one improvement note: bottleneck, reusable Teal item, search rule, reusable answer/asset, or proposed docs/skills update.
+9. Once the role clears the pursue bar and active asset work is about to begin, move the Teal record to `Applying` before resume edits, cover-letter work, application-answer drafting, or live form work continue.
+10. Build resume strategy before drafting the tailored resume.
+11. Draft role-specific assets only after research and scoring justify the effort.
+12. QA every asset for claim safety, recruiter comprehension, ATS clarity, tone, and fit.
+13. Submit, message, or update externally only after explicit user approval.
+14. Track every next action and follow-up in Teal.
+15. Prepare interview packs only after the role is active or clearly worth pursuing.
+16. Preserve compensation leverage through research, careful language, and staged disclosure.
+17. Review pipeline weekly and adjust searches, lanes, proof themes, and asset strategy.
+18. After substantial workflows, capture one improvement note: bottleneck, reusable Teal item, search rule, reusable answer/asset, or proposed docs/skills update.
 
 ## Find Jobs Workflow
 Default to Quick mode.
@@ -89,7 +90,7 @@ Default to Standard mode.
 11. Enforce canonical filenames before upload: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload filenames with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
 12. QA every external asset against claim-safety rules.
 13. Stop for explicit approval of the final assets, application answers, upload destination, and submit action before submitting, messaging, or changing external records.
-14. Move Teal status to Applied only after the approved live submission is completed and confirmed.
+14. Move Teal status to `Applying` as soon as the role enters active asset work, then move it to `Applied` only after the approved live submission is completed and confirmed.
 
 ## Role Decision Gate
 Use this effort ladder:

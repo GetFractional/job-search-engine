@@ -71,7 +71,7 @@ Canonical-employer rule:
 - Aggregator wrappers such as `Jobgether` are not sufficient proof of the real target employer.
 - If a wrapper points to an underlying employer that already has an `Applied` record or no longer has a live opening, do not continue application work on the wrapper record.
 
-Do not change status to `Applying`, `Applied`, or `Close Job` until the workflow gate allows it. Do not bulk-edit notes or fields without approval.
+Do not change status to `Applying`, `Applied`, or `Close Job` until the workflow gate allows it. Once the role clears the pursue bar and active asset work begins, switch the record to `Applying` before resume edits, cover-letter work, application-answer drafting, or live form work continue. Do not bulk-edit notes or fields without approval.
 
 ## Resume Builder
 

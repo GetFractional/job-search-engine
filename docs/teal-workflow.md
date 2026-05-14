@@ -115,7 +115,7 @@ When the user says "apply to this job":
 5. If the Teal company name, source employer, and JD employer do not clearly match, stop and resolve the canonical employer before asset work.
 6. Complete intake, lane classification, fit scoring, and Excitement update.
 7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists.
-8. Move the role to Applying when asset work begins.
+8. As soon as the role clears the pursue bar and active asset work begins, move the Teal record to `Applying`. Do this before resume edits, cover-letter work, application-answer drafting, or live form work continue. Treat this as mandatory WIP hygiene so active applications stay visible in the tracker.
 9. Create or open the Teal role resume from the Resumes tab.
 10. Refresh Resume Builder once before trusting attached-job state, selected content, Job Matcher state, or Analyzer state.
 11. Use Resume Builder, Job Matcher, Analyzer, and Skills & Interests to optimize the resume. This is mandatory before export unless Teal is unavailable or blocked; if blocked, stop and report the blocker. Do not create a local-only substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
