@@ -140,7 +140,6 @@ foreach ($path in $required) {
 if (-not (Test-Path -LiteralPath $codexZip) -and -not (Test-Path -LiteralPath $codexMissingNote)) {
   throw "Missing Codex backup artifact. Expected either $codexZip or $codexMissingNote"
 }
-
 Write-Host "Backup complete: $backupDir"
 ```
 
@@ -181,3 +180,42 @@ Git state saved:
 Safe to proceed with Codex Desktop uninstall/reinstall.
 Do not delete the Job Search repo, .codex folder, or Chrome profile data unless separately approved.
 ```
+
+## Execution Status
+
+### 2026-05-11 Windows run
+- Status: stopped on failure at step 5, per runbook instructions.
+- Backup folder created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-111608`
+- Repo zip created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-111608\job-search-repo-backup-20260511-111608.zip`
+- Git state artifacts created:
+  - `git-status-before-codex-uninstall.txt`
+  - `git-current-branch-before-codex-uninstall.txt`
+  - `git-log-before-codex-uninstall.txt`
+  - `git-remotes-before-codex-uninstall.txt`
+  - `unstaged-diff-before-codex-uninstall.patch`
+  - `staged-diff-before-codex-uninstall.patch`
+  - `untracked-files-before-codex-uninstall.txt`
+- Codex config zip was not created.
+- Failure detail: `Compress-Archive` could not access `C:\Users\matth\.codex\logs_2.sqlite` because it was in use by another process.
+- `backup-manifest.txt` was not created because the run stopped immediately after the step 5 failure.
+- No destructive commands were run.
+- Retry status: after Matt reported Codex was quit and asked to resume, step 5 was retried against the same backup folder and failed again on the same locked file: `C:\Users\matth\.codex\logs_2.sqlite`.
+
+### 2026-05-11 Windows rerun with updated Step 5
+- Status: completed successfully using the Macbook-updated Step 5 staging-copy flow.
+- Backup folder created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207`
+- Repo zip created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\job-search-repo-backup-20260511-115207.zip`
+- Codex config zip created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\codex-config-backup-20260511-115207.zip`
+- Backup manifest created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\backup-manifest.txt`
+- Codex backup notes created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\codex-backup-notes.txt`
+- Robocopy output created: `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\codex-robocopy-output.txt`
+- Updated Step 5 behavior used a staging copy at `C:\Users\matth\Desktop\codex-pre-uninstall-backup-20260511-115207\codex-home-copy` and excluded lock-prone runtime SQLite files instead of zipping `C:\Users\matth\.codex` directly.
+- Git state artifacts created:
+  - `git-status-before-codex-uninstall.txt`
+  - `git-current-branch-before-codex-uninstall.txt`
+  - `git-log-before-codex-uninstall.txt`
+  - `git-remotes-before-codex-uninstall.txt`
+  - `unstaged-diff-before-codex-uninstall.patch`
+  - `staged-diff-before-codex-uninstall.patch`
+  - `untracked-files-before-codex-uninstall.txt`
+- No destructive commands were run.

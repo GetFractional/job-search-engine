@@ -16,8 +16,8 @@ description: Draft LinkedIn connection notes, LinkedIn follow-ups, recruiter ema
 Create LinkedIn connection notes, LinkedIn follow-ups, recruiter emails, hiring manager emails, and warm-intro blurbs.
 
 ## Required Sources
-1. `/Users/mattdimock/Downloads/05_outreach_templates.md`
-2. `/Users/mattdimock/Downloads/02_metrics_ledger.md`
+1. `source-files/05_outreach_templates.md`
+2. `source-files/02_metrics_ledger.md`
 3. `templates/linkedin-outreach.md`
 4. `templates/recruiter-email.md`
 5. `templates/hiring-manager-email.md`

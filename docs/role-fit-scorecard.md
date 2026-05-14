@@ -13,7 +13,14 @@ Use this rubric to decide whether a role deserves research, assets, outreach, an
 | Logistics fit | 10 | Remote, hybrid, travel, relocation, time zone, family practicality |
 | Company/stage fit | 10 | Traction, demand signal, stage, role urgency, operating maturity |
 | Hiring access | 5 | Recruiter, hiring manager, referral, network, warm angle |
-| Risk adjustment | 5 | Penalize high-risk mismatch, unclear mandate, low comp, politics, or over-specialization |
+| Risk adjustment | 5 | Penalize high-risk mismatch, unclear mandate, stale posting risk, low comp, politics, or over-specialization |
+
+## Freshness Gate
+- Posting freshness must be assessed before a role gets full pursuit effort.
+- Roles posted within 30 days are the default priority set.
+- Roles older than 30 days carry stale-risk unless there is concrete evidence of active hiring.
+- Roles older than 60 days should usually be passed, archived, or deprioritized unless the user explicitly wants a strategic exception.
+- Public visibility alone is not enough to offset stale-risk.
 
 ## Pursuit Labels
 | Score | Label | Decision |
@@ -43,6 +50,7 @@ For every role, output:
 - evidence match
 - compensation fit
 - logistics fit
+- posting freshness
 - risks
 - missing information
 - recommendation

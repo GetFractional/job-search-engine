@@ -29,7 +29,7 @@ If a file conflicts with the Canonical Profile or Metrics Ledger, use the safer 
 
 ## Default Positioning
 Matt is a systems-driven growth and revenue operator who builds the infrastructure behind measurable growth.
-When a summary or headline references tenure, anchor it to the factual timeline: Matt has worked in marketing since 2007. Do not compress that into stale shorthand like `15+ years`.
+When a summary or headline references tenure, calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` only when a calendar-year count is acceptable; if exact month precision matters and the National Positions start month is not available, use `18+ years of professional marketing experience`. Do not use stale shorthand like `15+ years`, and do not default external assets to `in marketing since 2007` when a years-of-experience claim is expected.
 
 Default fit emphasis:
 - Revenue Operations
@@ -50,6 +50,15 @@ Avoid over-positioning Matt for pure brand, PR, awareness-only leadership, pure 
 - Below `$120k`: usually pass unless there is exceptional short-term bridge value, equity upside, or unusually strong strategic value.
 - Family benefits matter. Bonus, equity, 401(k), healthcare, and childcare support improve fit.
 - Remote is preferred. Local hybrid is acceptable. Limited travel is acceptable. Paid relocation only if clearly worth it.
+
+## Posting Freshness Rules
+- Freshness is a first-order decision gate, not a minor note.
+- Default to pursuing recently posted roles first.
+- If a job was posted more than 30 days ago, treat it as stale-risk and lower confidence unless there is strong evidence the opening is still active and meaningfully staffed against.
+- If a job was posted more than 60 days ago, default to pass or archive unless the user explicitly wants a strategic exception and there is unusually strong evidence of active hiring.
+- Strong evidence of freshness can include a recent repost date, recent recruiter activity, a recently updated company careers page, or another concrete signal that the role is still actively being worked.
+- A role being publicly visible is not enough by itself to treat it as fresh.
+- Include posting age and freshness risk explicitly in role analysis, fit scoring, and shortlist recommendations.
 
 ## Role Lanes
 Classify every role by mandate before drafting assets.
@@ -78,7 +87,7 @@ Each role analysis must include:
 
 ## Claim Safety
 Never invent metrics.
-Do not round or understate tenure in summaries. If years of experience are mentioned, use `in marketing since 2007`, `working in marketing since 2007`, or the exact year-derived count only if it is current and calculated correctly.
+Do not round or understate tenure in summaries. If years of experience are mentioned, calculate from the National Positions start year in 2007 and the current date. Use a current count or conservative `18+ years` language when the exact start month is unavailable.
 
 Before using any number:
 1. Check the Metrics Ledger.
@@ -130,7 +139,7 @@ For a new role, use this order:
 7. Resume strategy
 8. Teal Resume Builder optimization
 9. Tailored two-page resume export
-10. Teal Cover Letter generation/export
+10. Cover letter generation/export when the application has a cover-letter slot, the form requires it, the role is strategically important, or Matt explicitly requests it
 11. Application answers
 12. Outreach pack, only if useful and approved before sending
 13. Interview pack
@@ -144,7 +153,7 @@ When the user asks to find jobs:
 1. Use Quick mode by default.
 2. Use Google Chrome and TealHQ, including Teal Job Search, saved searches, relevant job boards, and the Teal Chrome extension when bookmarking is needed.
 3. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
-4. Produce a shortlist with title, company, source URL, lane, quick score, comp/logistics, why it fits, risks, and next action.
+4. Produce a shortlist with title, company, source URL, posting age if known, lane, quick score, comp/logistics, why it fits, risks, and next action.
 5. Bookmark strong roles in Teal when operating Chrome with approval.
 6. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
 7. Do not apply or message anyone.
@@ -152,21 +161,25 @@ When the user asks to find jobs:
 When the user asks to score saved jobs:
 1. Use Google Chrome and app.tealhq.com.
 2. Open each Teal record with no or stale Excitement score.
-3. Read the JD and source URL, verify the posting is still active when feasible, run lane and fit scoring, set Excitement, and add concise notes.
+3. Read the JD and source URL, verify the posting is still active when feasible, assess posting age and freshness risk, run lane and fit scoring, set Excitement, and add concise notes.
 4. Do not draft assets unless the user asks or the role clears the pursue threshold.
 
 When the user asks to apply to a job:
 1. Use Standard mode by default.
 2. Use Google Chrome and app.tealhq.com as the operating surface.
 3. Require or locate the Teal record, full JD, or application URL.
-4. Open the Teal record, score it if needed, verify the saved source is still active, and move it to Applying when asset work starts.
-5. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
-6. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
-7. Use Job Matcher and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms.
-8. Open the Cover Letter tab, choose medium or long based on role complexity, use a custom prompt grounded in research, and generate/edit the letter.
-9. Download resume and cover letter as separate files named `{Company Name} - {Job Title Name} - Matt Dimock - Resume` and `{Company Name} - {Job Title Name} - Matt Dimock - Cover Letter`.
-10. Prepare application answers and outreach if useful.
-11. Stop for approval before application submission, outreach, reference sharing, or sensitive voluntary self-ID.
+4. Open the Teal record, verify it is not already `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, or `Closed`, and do not continue if the role already has an applied date or is a duplicate wrapper of an already-submitted canonical role.
+5. Verify the saved source is still active, assess posting age and freshness risk, and resolve the canonical employer before asset work. If the Teal company name, JD employer, and source employer do not clearly match, stop and resolve the mismatch instead of proceeding on an aggregator wrapper.
+6. Move the role to Applying only if the role still clears the pursue bar and asset work has actually started.
+7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
+8. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
+9. Use Teal Resume Builder, Job Matcher, and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms. If any Teal optimizer feature is unavailable, record the blocker and do not substitute a local-only resume unless the user approves that fallback.
+10. If the application has a cover-letter upload or text slot, create a tailored one-page cover letter unless Matt explicitly opts out. Use the Teal Cover Letter tab with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker unless Matt explicitly approves a local-only fallback.
+11. Download or save resume and cover letter as separate files named `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels in the filename.
+12. Prepare application answers from the exact live form questions. Use defaults only when the form asks and no contradictory evidence or user instruction exists.
+13. Create a role-specific interview pack before submission readiness for roles that clear the pursue bar, so likely screens, objections, story selection, questions to ask, and compensation strategy are ready.
+14. Stop for approval after the final resume, cover letter if used, application answers, upload destination, and submit action are visible/reviewable. Do not submit applications, send outreach, share references, or answer sensitive voluntary self-ID without explicit approval of the exact external action.
+15. After an approved application is submitted and confirmation is visible, update the Teal status to Applied, add the application date, note the submitted assets and submitted salary/comp answer, verify Teal Excitement still matches the fit score, record a follow-up target, and update the application performance ledger. Do not mark Applied before the live submission is completed.
 
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.
@@ -198,6 +211,19 @@ Model defaults:
 Use TealHQ as the operating system wherever possible, through Google Chrome, the official UI, Chrome extension, and supported export/import features.
 
 Use Matt's Google Chrome browser for job boards, Teal, LinkedIn, company sites, and application forms. Prefer Chrome over the in-app browser when login state, Cloudflare, human challenge prompts, or extension behavior matter.
+
+On Windows, use the Codex Chrome plugin path for Teal and application work. Before declaring Chrome unavailable, use `job-search-chrome-teal-recovery` and prove the runtime surface with `agent.browsers.get("extension")`, `agent.browsers.list()`, `browser.user.openTabs()`, and a Teal claim/open check. If Codex cannot see live Chrome tabs, run `powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps1 -Repair -OpenTeal`, then retry the runtime probe once. Do not continue Teal work in isolated Playwright after a Cloudflare block or missing Chrome backend unless Matt explicitly approves a local-only fallback.
+
+Separate failure classes before stopping: local bridge failure, thread binding failure, wrong browser surface, stale/locked Teal tab, and Teal UI readability/navigation failure. If Chrome is listed as an extension backend and `browser.user.openTabs()` works, do not call the problem "cannot see Chrome." Open a fresh Chrome-backed Teal tab for stale tab claims, or use slow scoped Teal navigation and a screenshot/direct-record/JD fallback for unreadable tracker or resume pages.
+
+For Teal and signed-in browser work, invoke the Chrome extension surface explicitly as `@Chrome`. Do not use `@Browser`, the in-app browser, or a standalone Playwright MCP for TealHQ, LinkedIn, Gmail, job boards, or application forms that depend on Matt's logged-in Chrome profile.
+
+For "apply to the next best job" workflows:
+- Use Home `Priorities` only as a lead list.
+- Re-confirm the final target in Job Tracker Table view with visible status and date fields.
+- Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role with a visible applied date.
+- Do not treat aggregator wrappers such as `Jobgether` as canonical employers. If the wrapper points to another real employer, resolve the canonical employer and verify that exact opening is still live and not already applied before continuing.
+- If Chrome-backed Teal loads but Job Tracker Table view is unreadable after slow scoped navigation and one fresh extension-backed tab attempt, stop and request a tracker screenshot, direct Teal record URL, or pasted JD. Do not guess the next-best target from memory or visible tab titles alone.
 
 Operate like a careful human:
 - use direct visible navigation
@@ -243,6 +269,7 @@ Default application answers when the form asks and no contradictory evidence exi
 ## Human Approval Gates
 Ask for explicit approval before:
 - submitting an application
+- using final resume, cover letter, application answers, or upload destinations in a live submission
 - sending LinkedIn outreach
 - sending email
 - changing Teal records in bulk
