@@ -9,7 +9,10 @@ managed_marker=".job-search-managed-skills.txt"
 
 mkdir -p "$codex_dest" "$agents_dest"
 
-mapfile -t current_skill_names < <(find "$src_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | LC_ALL=C sort)
+current_skill_names=()
+while IFS= read -r skill_name; do
+  current_skill_names+=("$skill_name")
+done < <(find "$src_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | LC_ALL=C sort)
 
 sync_skill_mirror() {
   local destination_root="$1"
