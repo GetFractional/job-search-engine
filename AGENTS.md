@@ -347,6 +347,29 @@ Use them as task-specific operating guides:
 
 If a global or shared delivery/governance skill such as `product-delivery-os` is available in the active session, use it for tracker, branch, PR, WIP, or delivery-audit governance. If it is unavailable, use this file plus local playbooks as the project-specific fallback.
 
+## Skill + Rule Governance
+For non-trivial job-search work, identify the skills and durable rules that should govern the task before execution, especially when the task touches TealHQ, Chrome, source-of-truth files, resumes, application answers, external submissions, proof-sensitive claims, or reusable workflow changes.
+
+Optimize for behavioral compliance, not just skill invocation. Ask whether the rule actually shaped the work, evidence, artifact, or final decision.
+
+When a rule matters, make it auditable with one of these evidence types:
+- file or diff reference
+- command result
+- browser or visual check
+- source citation
+- explicit exception
+- final response receipt
+
+Use first principles to separate the goal from the mechanism, JTBD to clarify the user/job outcome, MECE to prevent overlapping rule buckets, systems thinking to trace downstream effects, second-order thinking to catch future drift, critical thinking and deductive reasoning to test whether the evidence supports the conclusion, and Nielsen heuristics for usable UI/workflow surfaces.
+
+At the end of substantial work, include a compact `Skill + Rule Receipt` listing skills used, critical rules checked, evidence produced, and exceptions or drift found.
+
+If expected skills or rules were skipped, say why. If the skip exposed a gap in instructions, docs, or skills, patch the smallest durable source when the fix is clear and low risk.
+
+Treat repeated misses, stale skill guidance, or rules that are too vague to verify as drift. Propose or make a durable update instead of relying on memory.
+
+Keep this lightweight for trivial deterministic tasks; do not add process overhead where no durable rule or meaningful risk exists.
+
 ## Source Optimization
 The current trusted source set is:
 - `01_matt_dimock_canonical_profile.md`
