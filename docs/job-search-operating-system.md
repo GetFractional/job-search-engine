@@ -95,7 +95,7 @@ Default to Quick mode.
 ## Apply To Job Workflow
 Default to Standard mode.
 
-1. Require the full JD, Teal record, or application URL.
+1. Require the full JD, Teal record, application URL, or, for "apply to a job for me," select the next best eligible role from refreshed Job Tracker Table view.
 2. Verify live Chrome-backed Teal access before selecting or mutating a Teal record. If Chrome is proven but an existing Teal tab is locked, open a fresh Chrome-extension-backed Teal tab. If Chrome-backed Teal loads but the target Teal page is unreadable after slow scoped navigation and one fresh-tab attempt, stop and request a screenshot, direct Teal record URL, or pasted JD instead of guessing.
 3. Refresh Job Tracker or Job Detail once before trusting visible status, notes, applied date, or source state.
 4. Complete intake and lane classification.
@@ -109,6 +109,17 @@ Default to Standard mode.
 12. QA every external asset against claim-safety rules.
 13. Stop for explicit approval of the final assets, application answers, upload destination, and submit action before submitting, messaging, or changing external records.
 14. Move Teal status to `Applying` as soon as the role enters active asset work, then move it to `Applied` only after the approved live submission is completed and confirmed.
+
+## Apply To Next Best Job Selection
+When no specific role is supplied, use this target-selection gate before the Standard application workflow:
+
+1. Open Chrome-backed Teal and refresh Job Tracker Table view.
+2. Build the candidate set from visible tracker evidence, not memory, Home cards, or browser tab titles.
+3. Exclude terminal statuses, visible applied dates, duplicate wrappers, and unresolved aggregator records.
+4. Rank remaining roles by Excitement, fit score, lane fit, compensation fit, logistics fit, freshness, and expected application effort.
+5. Verify the top candidate's live source, canonical employer, and application path before asset work.
+6. If the top candidate fails live viability, record the reason in Teal when safe and inspect the next candidate.
+7. Move the winner to `Applying` only after it clears live viability and asset work is starting.
 
 ## Role Decision Gate
 Use this effort ladder:

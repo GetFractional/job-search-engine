@@ -65,6 +65,20 @@ The user should not have to mention branches, sync, skills, browser backend, fre
 - Keep weak roles to pass/save/research recommendations.
 - Use Standard or Deep only after the role clears the pursue bar.
 
+### Next-Best Target Selection
+When the user says "Apply to a job for me" or "Apply to the next best job for me," Codex owns target selection.
+
+1. Refresh Chrome-backed Teal and use Job Tracker Table view as the source of truth.
+2. Use Home `Priorities` only as a lead list.
+3. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role with a visible applied date.
+4. Exclude duplicate wrappers of already-submitted canonical roles.
+5. Rank eligible roles by Excitement, fit score, role lane, compensation, logistics, posting freshness, and expected application effort.
+6. Open the strongest candidate and verify the live source and application path before asset work.
+7. Prefer browser-rendered source evidence over cached Teal details, snippets, or old notes when they conflict.
+8. Resolve canonical employer mismatches before resume, cover-letter, or application-answer work.
+9. If the role is inactive, unavailable, dead-ended, duplicated, below floor, stale without strong evidence, or logistically incompatible, note the reason and continue to the next candidate.
+10. Move the selected Teal record to `Applying` only after live viability is confirmed and active asset work is beginning.
+
 ### 4. Build Only What The Flow Needs
 - Research brief and final scorecard come before final assets.
 - Inspect the live application flow before cover-letter work.

@@ -77,11 +77,23 @@ For substantial searches, saved-job scoring batches, applications, or workflow-i
 
 For "apply to the next best Teal job", own target selection only after the Job Tracker is readable in live Chrome. Use Table view and status filters to build the candidate set. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role already showing a submitted application date. Treat Home `Priorities` as suggestion-only, not as the final source of truth for target selection. If the tracker is blocked, ask for a tracker screenshot, direct Teal record URL, or pasted JD instead of guessing.
 
+Rank eligible next-best candidates by:
+- Teal Excitement
+- fit score
+- role lane
+- compensation fit
+- logistics fit
+- posting freshness
+- expected application effort
+
 For next-best target selection, reject wrapper or aggregator ambiguity before asset work:
 - if the Teal company name, JD employer, and source employer do not clearly match, stop and resolve the canonical employer first
 - if the record is an aggregator wrapper such as `Jobgether` and the underlying employer is someone else such as `Housecall Pro`, the canonical employer record wins
 - if the wrapper source is dead, redirected, duplicated, or no longer maps cleanly to a live canonical opening, do not continue asset work on that record
 - do not reopen or continue any role that has already been applied to, even if another wrapper record for the same underlying job still appears in Teal
+- before asset work, verify the live source and application path in Chrome; browser-rendered source evidence outranks cached Teal details, search snippets, or old notes
+- if the best candidate is inactive, unavailable, stale without strong evidence, below floor, logistically incompatible, or blocked by a hard mismatch, note the reason and move to the next eligible candidate
+- move the selected record to `Applying` only after live viability is confirmed and active asset work begins
 
 ## Skill Order
 Use the smallest complete chain for the scenario.
