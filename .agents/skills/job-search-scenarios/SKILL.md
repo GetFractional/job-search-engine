@@ -66,9 +66,12 @@ For every request, classify it first:
 
 1. **Find jobs**: Use Teal Job Search, saved searches, Google Chrome, and the Teal Chrome extension. Shortlist roles, bookmark strong roles, and set Excitement from fit score.
 2. **Score saved jobs**: Open Teal Job Tracker, find jobs with missing Excitement, read the JD, score each role, update Excitement, and add concise notes.
-3. **Apply to a specific job**: Open the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
-4. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
-5. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+3. **Apply to a job / apply to the next best job**: If the user asks to apply without a specific URL, Teal record, or pasted JD, select the next best eligible role from refreshed Job Tracker Table view before asset work. Do not guess from memory, Home cards, or visible tab titles.
+4. **Apply to a specific job**: If the user provides a URL, Teal record, or JD, open or create the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
+5. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
+6. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+
+Short prompts are sufficient. Treat "Apply to a job for me" as next-best selection, "Apply to the next best job for me" as explicit next-best selection, and "Apply to [job URL] for me" as a specific-job application. The user should not need to mention branch, skill sync, Chrome backend, freshness gates, canonical employer checks, or run metrics.
 
 For substantial searches, saved-job scoring batches, applications, or workflow-improvement passes, assign a compact `run_id` and track the scenario, mode, model/reasoning level, estimated current-response tokens, estimated run-to-date tokens, elapsed time when known, stage blockers, and one self-healing candidate. Use `templates/job-search-run-metrics.md` for general runs and `templates/application-retrospective.md` for Standard or Deep applications.
 

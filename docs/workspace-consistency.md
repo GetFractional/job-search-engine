@@ -79,6 +79,20 @@ Do not tell a user that "not on main" automatically means the run was bad. The c
 
 If the answer is unclear, run the workspace prep command before job-search execution. User-facing language should be simple: "I need to update my local job-search playbook before I continue," not a branch lecture.
 
+## Branch Backlog Policy
+
+Do not open PRs for every old branch automatically.
+
+Classify each branch first:
+
+- `merged`: already incorporated into `main`; no PR needed
+- `current-release-candidate`: clean branch from latest `main`, safe to PR
+- `salvage-only`: contains useful commits but was cut from old history; cherry-pick or reapply only the useful changes onto a fresh branch
+- `artifact-only`: contains local handoff packages, generated assets, or migration bundles; merge only if the repo should intentionally carry those artifacts
+- `obsolete`: superseded by newer docs, skills, or scripts; close or delete after confirmation
+
+Old branches that do not contain latest `origin/main` should not be merged directly into `main`. They may delete current files or revive stale workflow rules. If useful logic exists, create a new branch from current `main` or the active release-candidate branch, then apply only the still-relevant changes.
+
 ## Why This Fix Is Better
 
 This avoids three failure modes that caused repeat drift:

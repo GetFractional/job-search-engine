@@ -37,7 +37,9 @@ Use these simple requests:
 | "Find jobs for me today" | Quick batch search and shortlist |
 | "Find remote RevOps jobs" | Quick lane-specific search |
 | "Triage these jobs" | Quick score each role and recommend next action |
-| "Apply to this job" | Standard application workflow |
+| "Apply to a job for me" | Standard workflow after selecting the next best eligible Teal role |
+| "Apply to the next best job" | Standard workflow after refreshed Job Tracker Table selection |
+| "Apply to this job" or "Apply to [job URL]" | Standard application workflow for the specific role |
 | "Build the application pack for this Teal job" | Standard application workflow from Teal/JD |
 | "Prep me for this interview" | Deep interview workflow |
 | "Help me negotiate this offer" | Deep compensation workflow |

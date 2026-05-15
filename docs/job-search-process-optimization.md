@@ -25,9 +25,25 @@ The durable offer is a proof-safe job-search command center:
 |---|---|---|---|---|
 | Find jobs | "Find jobs for me" | Quick | Shortlist with score, risk, freshness, and Teal action | Stop before applying or outreach |
 | Score saved jobs | "Triage these jobs" | Quick | Updated score, Excitement, notes, next action | Stop before assets unless threshold clears |
-| Apply to job | "Apply to this job" | Standard | Research, scorecard, Teal resume, required cover letter, answers, interview pack, approval packet | Stop before submission until explicit approval |
+| Apply to next best job | "Apply to a job for me" or "Apply to the next best job" | Standard | Best eligible Teal target, research, scorecard, Teal resume, required cover letter, answers, interview pack, approval packet | Stop before submission until explicit approval |
+| Apply to specific job | "Apply to [job URL] for me" or "Apply to this Teal job" | Standard | Verified target, research, scorecard, Teal resume, required cover letter, answers, interview pack, approval packet | Stop before submission until explicit approval |
 | Interview or offer | "Prep me" or "Help me negotiate" | Deep | Interview pack or compensation strategy | Stop before external messages or negotiation |
 | Improve system | End of substantial run | Quick | Metrics, bottleneck, reusable item, proposed docs or skill update | Implement only if low-risk and reusable |
+
+## Simple Prompt Contract
+
+Users should be able to use short natural prompts. Codex owns the routing.
+
+| User says | Codex should infer |
+|---|---|
+| "Find jobs for me" | Run Quick search and shortlist only. Do not apply or message. |
+| "Apply to a job for me" | Select the next best eligible Teal job from refreshed Job Tracker evidence, then run Standard application workflow. |
+| "Apply to the next best job for me" | Same as above, with explicit next-best target selection from Job Tracker Table view. |
+| "Apply to this job" plus a URL, Teal record, or JD | Treat it as a specific-job application. Verify source, freshness, canonical employer, and duplicate status before assets. |
+| "Apply to [job URL] for me" | Add or locate the Teal record if needed, verify the live posting, then run the specific-job workflow. |
+| "Prep me for this interview" | Run Deep interview prep. |
+
+The user should not have to mention branches, sync, skills, browser backend, freshness gates, canonical employer checks, or run metrics. Those are concierge responsibilities.
 
 ## Canonical Execution Order
 
