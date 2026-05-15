@@ -1,6 +1,6 @@
 # Workspace Consistency
 
-The real requirement is not "stay on one branch forever." The real requirement is "start every serious job-search session from the same validated repo state, with the same managed skills mirrored into Codex on both machines."
+The real requirement is not "stay on one branch forever." The real requirement is "start every serious job-search session from the same validated repo state, with the same managed skills mirrored into Codex on both machines, and with the latest default-branch workflow rules included."
 
 ## Source Of Truth
 
@@ -20,6 +20,7 @@ This repo now provides two layers of consistency protection:
    - verify the mirrored skills match the repo
    - verify every repo-managed skill has a valid `SKILL.md` with required metadata
    - verify branch and upstream state for cross-machine parity
+   - verify the current branch contains the latest known `origin/main`
 2. `.githooks/`
    - after checkout, merge, or rewrite, the repo automatically re-syncs the managed skills
 
@@ -55,12 +56,28 @@ The workspace is considered ready for shared Mac/Windows work when all of these 
 
 - the current branch has an upstream
 - the current branch is not ahead of or behind upstream
+- the current branch contains the latest known default branch, normally `origin/main`
 - there are no tracked local changes
 - `core.hooksPath` is set to `.githooks`
 - every repo-managed skill has valid metadata
 - the mirrored skills in `~/.codex/skills` and `~/.agents/skills` match `.agents/skills`
 
 Untracked local artifacts can still exist. They do not stop skill sync, but they can still matter if they collide with future tracked files.
+
+## Branch Rule For Live Job Work
+
+Use a validated operating state, not a branch-name shortcut.
+
+For normal live job-search work, `main` should be the default release branch after approved workflow changes are merged. A non-`main` branch can still be safe for a specific run only when the readiness check passes and the branch includes the latest `origin/main`.
+
+Do not tell a user that "not on main" automatically means the run was bad. The correct diagnosis is:
+
+1. Does the current branch include latest `origin/main`?
+2. Do repo-managed skills mirror cleanly into the execution directories?
+3. Are there tracked local changes that could alter workflow behavior?
+4. Is the branch intentionally being used to test a workflow improvement?
+
+If the answer is unclear, run the workspace prep command before job-search execution. User-facing language should be simple: "I need to update my local job-search playbook before I continue," not a branch lecture.
 
 ## Why This Fix Is Better
 

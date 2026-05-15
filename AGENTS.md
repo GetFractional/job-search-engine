@@ -18,6 +18,7 @@ Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for r
 - Treat `.agents/skills/` as the source of truth for this repo's managed skills.
 - Treat `~/.codex/skills/` and `~/.agents/skills/` as mirrored execution directories, not authoring surfaces for this repo.
 - Repo-managed git hooks in `.githooks/` must remain enabled through `core.hooksPath = .githooks` so checkout, merge, and rewrite events automatically re-sync managed skills.
+- For live job-search execution, do not equate "not on main" with stale by default. Run the readiness/prep gate and verify the current branch contains latest `origin/main`, has no tracked changes, and has mirrored skills. If it fails, repair or stop before Teal work. If it passes, the branch is operationally current even when its name is not `main`.
 
 ## Required Source Hierarchy
 Use these sources in this order:

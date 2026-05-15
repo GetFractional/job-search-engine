@@ -20,6 +20,8 @@ Use this as the first skill for job-search execution. It routes the request, enf
 ## Browser Rule
 Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and applications. Prefer visible UI interaction through Chrome over in-app browser automation when login, Cloudflare, bot checks, or Teal extension behavior matter.
 
+Before substantial live job-search execution, use the repo workspace readiness gate when available. The relevant test is not simply whether the checkout is named `main`; it is whether the current branch contains latest `origin/main`, has no tracked local workflow edits, and has mirrored `.agents/skills` into the execution skill directories. If the readiness gate fails, repair or stop before Teal work. If it passes, do not warn the user that a non-`main` branch is stale solely because of its branch name.
+
 On Windows, use the Codex Chrome plugin path for job-search browser work. Do not use isolated/headless Playwright for Teal, LinkedIn, job boards, or application forms that depend on Matt's logged-in profile, Cloudflare trust, or the Teal Chrome extension. If Chrome plugin communication fails, diagnose Chrome, the Codex Chrome Extension, and the native host before proceeding; stop rather than switching to an isolated browser.
 
 Before declaring live Chrome unavailable, use `job-search-chrome-teal-recovery`. A green bridge script is not sufficient; the thread must attempt the Chrome extension runtime probe with `agent.browsers.get("extension")`, `browser.user.openTabs()`, and `browser.user.claimTab(...)`.

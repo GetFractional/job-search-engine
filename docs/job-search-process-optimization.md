@@ -33,6 +33,7 @@ The durable offer is a proof-safe job-search command center:
 
 ### 1. Prepare
 - Confirm workspace readiness for repo work.
+- Treat branch state as an invisible concierge preflight: the current branch must contain latest `origin/main`, have clean tracked workflow files, and have mirrored skills. Do not make users reason about branch names.
 - For Teal, LinkedIn, job boards, or applications, use Chrome-backed Teal, not isolated Playwright or the in-app browser.
 - Refresh Teal once before trusting tracker rows, status, notes, applied dates, source state, or Resume Builder state.
 

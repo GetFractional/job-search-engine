@@ -27,6 +27,8 @@ macOS/Linux:
 
 This repo treats `.agents/skills/` as the managed source of truth. The local `~/.codex/skills/` and `~/.agents/skills/` copies are mirrors. Repo-managed git hooks in `.githooks/` automatically re-sync those mirrored skill directories after checkout, merge, and rewrite events.
 
+For live job-search execution, the real gate is "validated operating state," not branch name alone. The workspace is current when the prep check confirms the branch contains latest `origin/main`, tracked workflow files are clean, and managed skills are mirrored. A non-`main` branch is a warning only if it fails that readiness check or is not intentionally being used for a workflow test.
+
 ## Easy User Triggers
 Use these simple requests:
 
