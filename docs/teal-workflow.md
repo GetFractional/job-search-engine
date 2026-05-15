@@ -144,6 +144,15 @@ When the user says "apply to this job":
 25. After post-submit hygiene is complete, close the role-specific Teal and application tabs for the submitted role that are no longer needed. Keep the persistent `Job Tracker` tab open.
 26. For substantial Teal work, capture a Workflow Metrics Summary with `run_id`, Teal stages touched, elapsed time if known, blocker type, failures, revision loops, and self-healing status.
 
+When the user says "apply to a job for me" without providing a role:
+1. Refresh Chrome-backed Teal Job Tracker Table view.
+2. Build the candidate set from tracker evidence. Use Home `Priorities` only as leads.
+3. Exclude terminal statuses, visible applied dates, duplicate canonical roles, and unresolved aggregator wrappers.
+4. Rank candidates by Excitement, fit score, role lane, compensation, logistics, posting freshness, and expected application effort.
+5. Verify the top candidate's live source, canonical employer, and application path in the browser before asset work.
+6. If a candidate is inactive, unavailable, stale without strong evidence, below floor, logistically incompatible, or blocked by a hard mismatch, note the reason and move to the next candidate.
+7. Move the selected record to `Applying` only after live viability is confirmed and active asset work begins.
+
 ## Application Package Gates
 Do not move to live upload or submission until each gate is passed or explicitly blocked:
 
