@@ -75,7 +75,9 @@ Determine how to use Teal features for each job-search stage.
 2. `docs/teal-ui-navigation.md`
 3. `docs/job-search-continuous-improvement.md`
 4. `docs/job-search-operating-system.md`
-5. `templates/role-intake.md`
+5. `docs/job-search-process-optimization.md`
+6. `templates/role-intake.md`
+7. `templates/job-search-run-metrics.md`
 
 ## Inputs
 - Current job-search stage
@@ -111,6 +113,7 @@ Determine how to use Teal features for each job-search stage.
 25. Create a concise Teal update checklist.
 26. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
 27. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
+28. For substantial Teal work, track stage timing and blockers for `browser_teal_preflight`, `role_intake`, `source_freshness_check`, `teal_resume_builder`, `cover_letter`, `live_form_entry`, `submission`, and `post_submit_hygiene` when feasible. Use this to distinguish tool friction from role-quality decisions.
 
 ## Output
 - Teal workflow recommendation
@@ -126,6 +129,7 @@ Determine how to use Teal features for each job-search stage.
 - Post-submission status instruction: move to Applying as soon as active asset work starts, keep Applying during the full prep/application workflow, move to Applied only after approved submission is completed
 - Workflow improvement note, if the run revealed a reusable speed or quality improvement
 - Post-submit hygiene status: Applied status, applied date, Teal Excitement from fit score, submitted salary/comp answer, submitted asset filenames, follow-up target, and application ledger entry
+- Workflow metrics summary for substantial runs: `run_id`, Teal stages touched, elapsed time if known, blocker type, failures, revision loops, and self-healing status
 
 ## Safety
 Do not invent a Teal API. Do not bypass Teal permissions or submit actions without approval.

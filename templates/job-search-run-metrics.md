@@ -1,4 +1,6 @@
-# Application Retrospective
+# Job Search Run Metrics
+
+Use this for substantial search, scoring, governance, or workflow-improvement runs. Use `templates/application-retrospective.md` instead when a Standard or Deep application needs a full application record.
 
 ## Run Metadata
 - Run ID:
@@ -8,56 +10,36 @@
 - Model:
 - Reasoning:
 - Operator thread:
-- Expected output:
-
-## Role
 - Company:
 - Role:
-- Source:
+- Source URL:
 - Teal record:
-- Application URL:
-- Application system:
-- Date submitted:
+- Expected output:
 
-## Submission
-- Status:
-- Fit score:
-- Teal Excitement:
-- Submitted base salary / comp answer:
-- Submitted resume:
-- Submitted cover letter:
-- Other submitted answers:
-- Follow-up date:
-
-## Gates
-- Active role:
-- Research:
-- Teal resume:
-- Cover letter:
-- Application answers:
-- Interview pack:
-- QA:
-- Approval:
-
-## Unit Economics
+## Token Economics
+- Estimated starting budget:
 - Estimated current-response tokens:
 - Estimated run-to-date tokens:
 - Actual total tokens, if visible:
 - Main token drivers:
-- Time from role selection to ready-to-submit:
-- Time from ready-to-submit to submitted:
+- Source files loaded:
+- Web/JD pages loaded:
+- Revision loops:
+- Token-saving choices made:
+
+## Time Economics
+- Run start:
+- Run end:
 - Elapsed wall minutes:
 - Active Codex minutes:
 - Blocked wait minutes:
-- Asset revision loops:
-- Teal/browser failures:
-- Upload or application-site failures:
-- Manual interventions:
-- Avoidable rework:
+- Ready-to-submit time, if applicable:
+- Submitted time, if applicable:
 
 ## Stage Timing
 | Stage | Start | End | Minutes | Blocker type | Rework count | Evidence |
 |---|---|---|---:|---|---:|---|
+| workspace_preflight |  |  |  |  |  |  |
 | browser_teal_preflight |  |  |  |  |  |  |
 | role_intake |  |  |  |  |  |  |
 | source_freshness_check |  |  |  |  |  |  |
@@ -72,13 +54,29 @@
 | live_form_entry |  |  |  |  |  |  |
 | submission |  |  |  |  |  |  |
 | post_submit_hygiene |  |  |  |  |  |  |
+| retrospective |  |  |  |  |  |  |
 
-## Learnings
-- What slowed this down:
-- What improved quality:
-- What can be reused:
-- What should change before the next application:
-- Should docs/skills be updated:
+## Search Or Scoring Counts
+- Roles reviewed:
+- Roles saved:
+- Roles passed:
+- Roles researched:
+- Roles advanced to application:
+- Primary pass reasons:
+- Strongest lane signal:
+- Weakest recurring lane signal:
+
+## Outcome
+- Current status:
+- Fit score:
+- Teal Excitement:
+- Role lane:
+- Submitted base or comp answer:
+- Assets used:
+- Application system:
+- Follow-up date:
+- Outcome:
+- Outcome date:
 
 ## Self-Healing Candidate
 - Bottleneck:
@@ -91,3 +89,11 @@
 - Evidence:
 - Validation plan:
 - Actual before/after result:
+
+## Weekly Rollup Tags
+- Lane:
+- Source:
+- Freshness bucket:
+- Application system:
+- Blocker type:
+- Improvement ID:

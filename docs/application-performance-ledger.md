@@ -22,8 +22,17 @@ For every submitted application, record:
 - Application system, such as Greenhouse, Lever, Ashby, Workday, or company form.
 - Whether a cover letter was required, optional, or omitted.
 - Main bottleneck and estimated time cost.
+- Run ID, estimated tokens, elapsed minutes, active Codex minutes, failures, and revision loops when available.
 - Follow-up date.
 - Outcome once known.
+
+## Run Metrics
+
+Use this table for submitted applications and substantial application attempts. Keep it compact; detailed notes belong in `templates/application-retrospective.md` or the role packet.
+
+| Run ID | Date | Company | Role | Mode | Est. Tokens | Elapsed Min | Active Min | Ready Min | Submit Min | Failures | Revision Loops | Improvement ID |
+|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+|  |  |  |  |  |  |  |  |  |  |  |  |  |
 
 ## Performance Measures
 
@@ -34,8 +43,11 @@ Track these weekly:
 - Applications by source.
 - Time from role selection to ready-to-submit.
 - Time from ready-to-submit to submitted.
+- Estimated tokens per submitted application.
+- Estimated tokens per recruiter response when outcomes mature.
 - Number of asset revision loops.
 - Number of browser/Teal failures.
+- Number of upload or application-site failures.
 - Response rate.
 - Recruiter-screen rate.
 - Interview rate.

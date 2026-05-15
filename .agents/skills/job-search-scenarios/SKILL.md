@@ -12,8 +12,10 @@ Use this as the first skill for job-search execution. It routes the request, enf
 1. `AGENTS.md`
 2. `docs/teal-workflow.md`
 3. `docs/job-search-continuous-improvement.md`
-4. `references/scenario-workflows.md`
-5. Task-specific skills named by the scenario
+4. `docs/job-search-process-optimization.md`
+5. `templates/job-search-run-metrics.md`
+6. `references/scenario-workflows.md`
+7. Task-specific skills named by the scenario
 
 ## Browser Rule
 Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and applications. Prefer visible UI interaction through Chrome over in-app browser automation when login, Cloudflare, bot checks, or Teal extension behavior matter.
@@ -65,6 +67,8 @@ For every request, classify it first:
 3. **Apply to a specific job**: Open the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
 4. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
 5. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+
+For substantial searches, saved-job scoring batches, applications, or workflow-improvement passes, assign a compact `run_id` and track the scenario, mode, model/reasoning level, estimated current-response tokens, estimated run-to-date tokens, elapsed time when known, stage blockers, and one self-healing candidate. Use `templates/job-search-run-metrics.md` for general runs and `templates/application-retrospective.md` for Standard or Deep applications.
 
 For "apply to the next best Teal job", own target selection only after the Job Tracker is readable in live Chrome. Use Table view and status filters to build the candidate set. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role already showing a submitted application date. Treat Home `Priorities` as suggestion-only, not as the final source of truth for target selection. If the tracker is blocked, ask for a tracker screenshot, direct Teal record URL, or pasted JD instead of guessing.
 
@@ -189,7 +193,7 @@ Always end with:
 - workflow improvement note: bottleneck, reusable item, search rule, reusable answer/asset, or proposed docs/skills update
 - post-submit hygiene status when an application was submitted
 - downloaded file paths if any
-- estimated tokens used in the response
+- workflow metrics summary: `run_id`, scenario, mode, estimated current-response tokens, estimated run-to-date tokens, elapsed time if known, blocker count, revision loops, and self-healing status
 - unanswered questions or approval gates
 - how to verify
 - risks and rollback

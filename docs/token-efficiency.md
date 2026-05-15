@@ -66,3 +66,25 @@ Codex may not see the live remaining rate-limit quota for the current account/se
 
 Then estimate how many Quick, Standard, or Deep workflows remain.
 
+## Measurement
+
+Report token usage as estimates unless exact usage is visible in the session.
+
+For substantial job-search work, include:
+
+- estimated tokens used in the current response
+- estimated run-to-date tokens
+- main token drivers, such as web research, long JDs, source files, screenshots, PDF reads, resume revisions, or repeated browser retries
+- cheapest reliable next step
+- variance note when the estimate is weak
+
+Use these conservative run-to-date estimates when exact usage is unavailable:
+
+| Workflow | Conservative run-to-date estimate |
+|---|---:|
+| Quick single-role triage | 8k |
+| Quick 15-role search batch | 60k |
+| Standard application | 100k |
+| Deep application, interview, or offer work | 220k |
+
+Do not treat token counts as performance by themselves. Pair token estimates with elapsed time, roles reviewed, applications submitted, response outcomes, and bottlenecks in `templates/job-search-run-metrics.md`.

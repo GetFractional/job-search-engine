@@ -21,6 +21,7 @@ Known contact: [recruiter/hiring manager/referral]
 Requested assets: [resume / cover letter / outreach / application answers / all]
 Live application flow: [resume upload / cover letter slot / questions / unknown]
 Submission: Draft only until I approve
+Metrics: include run_id, estimated tokens, elapsed time if known, stage blockers, revision loops, and self-healing candidate
 ```
 
 ## Notes
@@ -29,3 +30,4 @@ Submission: Draft only until I approve
 - Codex must verify active source, freshness risk, canonical employer alignment, duplicate-wrapper risk, and already-applied status before asset work.
 - Codex should inspect the live application flow early so optional cover-letter work happens only when the flow needs it, the user requested it, or a strategic exception is approved.
 - Codex must stop before submitting applications or sending messages.
+- Codex should record lightweight run metrics and use the full application retrospective for Standard or Deep applications with meaningful friction.

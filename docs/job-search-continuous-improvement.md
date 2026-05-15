@@ -120,6 +120,76 @@ At the end of substantial search, scoring, or application work, include a compac
 
 Only update docs or skills immediately when the improvement is broadly useful and low-risk. Otherwise, list it as a proposed improvement.
 
+## Run Metrics
+
+For any substantial search, saved-job scoring batch, application, or workflow-improvement pass, create a compact `run_id` and capture enough metrics to compare future runs.
+
+Use `templates/job-search-run-metrics.md` for general search, scoring, and workflow runs. Use `templates/application-retrospective.md` for Standard or Deep applications, failed submissions, or repeated friction.
+
+Minimum fields:
+
+- scenario and mode
+- model and reasoning level
+- estimated current-response tokens and run-to-date tokens
+- actual token usage only if visible
+- elapsed wall minutes, active Codex minutes, and blocked wait minutes when known
+- roles reviewed, saved, researched, applied, and passed when relevant
+- stage timing for major phases
+- blocker type, rework count, and manual intervention
+- outcome or current status
+- self-healing candidate, if any
+
+Use estimates honestly. Codex may not be able to see live remaining quota or exact per-run usage.
+
+## Stage Taxonomy
+
+Use consistent stage names so weekly reviews can compare like-for-like:
+
+- `workspace_preflight`
+- `browser_teal_preflight`
+- `role_intake`
+- `source_freshness_check`
+- `lane_fit_scoring`
+- `research_brief`
+- `resume_strategy`
+- `teal_resume_builder`
+- `cover_letter`
+- `application_answers`
+- `interview_pack`
+- `qa_approval_packet`
+- `live_form_entry`
+- `submission`
+- `post_submit_hygiene`
+- `retrospective`
+
+## Weekly Performance Review
+
+Use rolling medians rather than averages because one Teal, upload, or job-board failure can distort small samples.
+
+Review:
+
+- median elapsed minutes by mode and stage
+- estimated tokens per run, per submitted application, and per recruiter response
+- roles saved per roles reviewed
+- roles researched per roles saved
+- applications submitted per roles researched
+- recruiter screens, interviews, and offers per application
+- browser, Teal, upload, or application-site failures per run
+- recurring guardrail catches: stale role, duplicate wrapper, claim-safety correction, filename failure, approval gate
+
+## Self-Healing Status
+
+Use one status for each improvement candidate:
+
+- `none`: no useful improvement found
+- `proposed`: useful but not yet approved or implemented
+- `approved`: approved but not implemented
+- `implemented`: docs, template, skill, saved-search, or Teal library update completed
+- `validated`: improvement worked in at least 3 comparable future runs or solved a repeated blocker
+- `reverted`: change created friction, risk, or poor output and was rolled back
+
+Graduate an improvement from `implemented` to `validated` only after evidence from future runs, not because the change sounded sensible when written.
+
 ## Post-Submit Hygiene
 
 After every confirmed application submission, update Teal and the local application ledger before moving to the next role.
