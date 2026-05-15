@@ -7,6 +7,8 @@ Codex handles structured thinking, research, scoring, asset drafting, QA, and in
 
 Use `docs/job-search-continuous-improvement.md` as the operating loop for making searches, qualification, Teal usage, assets, and applications faster over time.
 
+Use `docs/job-search-process-optimization.md` as the simplified execution and measurement blueprint when improving the system, training another operator, or cloning the workflow into a productized offer.
+
 ## Workspace Readiness
 
 Before non-trivial job-search work in this repo, prepare the workspace so both machines are using the same tracked rules and mirrored skills.
@@ -25,6 +27,8 @@ macOS/Linux:
 
 This repo treats `.agents/skills/` as the managed source of truth. The local `~/.codex/skills/` and `~/.agents/skills/` copies are mirrors. Repo-managed git hooks in `.githooks/` automatically re-sync those mirrored skill directories after checkout, merge, and rewrite events.
 
+For live job-search execution, the real gate is "validated operating state," not branch name alone. The workspace is current when the prep check confirms the branch contains latest `origin/main`, tracked workflow files are clean, and managed skills are mirrored. A non-`main` branch is a warning only if it fails that readiness check or is not intentionally being used for a workflow test.
+
 ## Easy User Triggers
 Use these simple requests:
 
@@ -33,12 +37,26 @@ Use these simple requests:
 | "Find jobs for me today" | Quick batch search and shortlist |
 | "Find remote RevOps jobs" | Quick lane-specific search |
 | "Triage these jobs" | Quick score each role and recommend next action |
-| "Apply to this job" | Standard application workflow |
+| "Apply to a job for me" | Standard workflow after selecting the next best eligible Teal role |
+| "Apply to the next best job" | Standard workflow after refreshed Job Tracker Table selection |
+| "Apply to this job" or "Apply to [job URL]" | Standard application workflow for the specific role |
 | "Build the application pack for this Teal job" | Standard application workflow from Teal/JD |
 | "Prep me for this interview" | Deep interview workflow |
 | "Help me negotiate this offer" | Deep compensation workflow |
 
 Use one ongoing project chat for searches and operating cadence. Use a new chat for a high-fit individual application when the role needs deep research, multiple assets, interview prep, or repeated revisions.
+
+## Simplified Execution Rule
+Use the smallest complete workflow that can make the next reliable decision:
+
+1. Prepare the workspace or browser surface only when the task requires it.
+2. Capture intake and hard gates before research.
+3. Score before asset work.
+4. Build only the assets the live flow or user request requires.
+5. Stop before external action until the exact final action is approved.
+6. Record metrics and one improvement note after substantial work.
+
+This avoids the main failure pattern: turning every role into a full application workflow before it has earned that effort.
 
 ## Workflow
 1. Source roles through Teal saved searches, alerts, Chrome extension bookmarking, company career pages, referrals, and targeted research.
@@ -150,10 +168,17 @@ Track:
 - interviews
 - offers
 - time spent per role
+- estimated tokens per run
+- elapsed wall minutes and active Codex minutes
+- stage timing for major workflow phases
+- browser, Teal, upload, or application-site failures
+- asset revision loops
 - interviews per application
 - strongest lanes by conversion
 - common objections
 - compensation ranges
+
+For substantial runs, assign a `run_id` and use `templates/job-search-run-metrics.md`. For Standard or Deep applications, use `templates/application-retrospective.md` and update `docs/application-performance-ledger.md`.
 
 ## Approval Gates
 The user must approve:

@@ -87,6 +87,10 @@ fi
 branch="$(git branch --show-current)"
 commit="$(git rev-parse --short HEAD)"
 upstream="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null || true)"
+default_branch_ref="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || true)"
+if [[ -z "$default_branch_ref" ]]; then
+  default_branch_ref="origin/main"
+fi
 tracked_status="$(git status --porcelain --untracked-files=no)"
 tracked_dirty=false
 if [[ -n "$tracked_status" ]]; then
@@ -123,6 +127,18 @@ if [[ "$sync_git_if_clean" == true ]]; then
       git_sync_message="Current branch already matches upstream."
     fi
   fi
+fi
+
+default_branch_reason="Included"
+default_branch_ok=true
+if git rev-parse --verify "$default_branch_ref" >/dev/null 2>&1; then
+  if ! git merge-base --is-ancestor "$default_branch_ref" HEAD; then
+    default_branch_ok=false
+    default_branch_reason="Current branch does not contain $default_branch_ref"
+  fi
+else
+  default_branch_ok=false
+  default_branch_reason="Default branch ref not found: $default_branch_ref"
 fi
 
 if [[ "$verify_only" != true ]]; then
@@ -180,7 +196,7 @@ if [[ "$hooks_path" == ".githooks" ]]; then
 fi
 
 workspace_ready=false
-if [[ "$tracked_dirty" == false && "$hooks_ok" == true && "$skill_metadata_ok" == true && "$codex_ok" == true && "$agents_ok" == true && -n "$upstream" && "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
+if [[ "$tracked_dirty" == false && "$hooks_ok" == true && "$skill_metadata_ok" == true && "$codex_ok" == true && "$agents_ok" == true && "$default_branch_ok" == true && -n "$upstream" && "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
   workspace_ready=true
 fi
 
@@ -191,6 +207,8 @@ else
 fi
 echo "Branch: $branch"
 echo "Commit: $commit"
+echo "Default branch: $default_branch_ref"
+echo "Default branch included: $default_branch_reason"
 if [[ -n "$upstream" ]]; then
   echo "Upstream: $upstream"
 else

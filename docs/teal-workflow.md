@@ -142,6 +142,7 @@ When the user says "apply to this job":
 23. For fields Teal exposes as editable in Job Tracker Table view, such as status and Excitement, prefer the inline table control over the detail page. This is the default path for post-submit hygiene because it is faster to audit and less likely to leave the record visually stale.
 24. When updating Notes in the detail pane, click out of the note field and visually confirm the saved value before leaving the record. Treat note text as unsaved until the field loses focus and the final text still renders in place.
 25. After post-submit hygiene is complete, close the role-specific Teal and application tabs for the submitted role that are no longer needed. Keep the persistent `Job Tracker` tab open.
+26. For substantial Teal work, capture a Workflow Metrics Summary with `run_id`, Teal stages touched, elapsed time if known, blocker type, failures, revision loops, and self-healing status.
 
 ## Application Package Gates
 Do not move to live upload or submission until each gate is passed or explicitly blocked:

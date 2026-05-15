@@ -14,10 +14,11 @@ Count: [10 to 20 roles]
 Must include: [optional keywords]
 Avoid: [optional exclusions]
 Output: shortlist with score, risks, next action, and Teal bookmark recommendation
+Metrics: include run_id, estimated tokens, elapsed time if known, roles reviewed/saved, and main bottleneck
 ```
 
 ## Notes
 - Use Quick mode for broad search.
 - Use Teal Chrome extension to bookmark promising roles.
 - Do not request full application assets until a role scores well enough.
-
+- Capture lightweight run metrics so search quality and speed can improve over time.

@@ -18,6 +18,7 @@ Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for r
 - Treat `.agents/skills/` as the source of truth for this repo's managed skills.
 - Treat `~/.codex/skills/` and `~/.agents/skills/` as mirrored execution directories, not authoring surfaces for this repo.
 - Repo-managed git hooks in `.githooks/` must remain enabled through `core.hooksPath = .githooks` so checkout, merge, and rewrite events automatically re-sync managed skills.
+- For live job-search execution, do not equate "not on main" with stale by default. Run the readiness/prep gate and verify the current branch contains latest `origin/main`, has no tracked changes, and has mirrored skills. If it fails, repair or stop before Teal work. If it passes, the branch is operationally current even when its name is not `main`.
 
 ## Required Source Hierarchy
 Use these sources in this order:
@@ -138,6 +139,8 @@ Do not use externally unless validated:
 ## Workflow Order
 For any job-search request, first classify the starting scenario with `$job-search-scenarios`.
 
+Use `docs/job-search-process-optimization.md` when simplifying the workflow, measuring performance, training another operator, or cloning the system into a productized offer.
+
 For a new role, use this order:
 
 1. Role intake
@@ -211,6 +214,8 @@ Approximate token budget:
 - Deep application plus interview prep: 100k to 220k tokens.
 
 Codex may not have access to live remaining rate-limit quota. If live budgeting matters, ask the user for the visible remaining quota and model/reasoning level, then estimate remaining workflows with `docs/token-efficiency.md`.
+
+For substantial searches, scoring batches, applications, or workflow-improvement runs, include a compact Workflow Metrics Summary with `run_id`, mode, estimated current-response tokens, estimated run-to-date tokens, elapsed time if known, main blocker, revision loops, and self-healing status.
 
 Model defaults:
 - Broad job finding and first-pass triage: `gpt-5.4-mini`, low or medium reasoning.
@@ -421,6 +426,9 @@ Metrics:
 - interviews
 - offers
 - time spent per role
+- estimated tokens per run
+- elapsed wall minutes and active Codex minutes
+- stage blockers and revision loops
 - interviews per application
 - strongest lanes by conversion
 - common objections

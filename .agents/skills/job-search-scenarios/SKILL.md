@@ -12,11 +12,15 @@ Use this as the first skill for job-search execution. It routes the request, enf
 1. `AGENTS.md`
 2. `docs/teal-workflow.md`
 3. `docs/job-search-continuous-improvement.md`
-4. `references/scenario-workflows.md`
-5. Task-specific skills named by the scenario
+4. `docs/job-search-process-optimization.md`
+5. `templates/job-search-run-metrics.md`
+6. `references/scenario-workflows.md`
+7. Task-specific skills named by the scenario
 
 ## Browser Rule
 Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and applications. Prefer visible UI interaction through Chrome over in-app browser automation when login, Cloudflare, bot checks, or Teal extension behavior matter.
+
+Before substantial live job-search execution, use the repo workspace readiness gate when available. The relevant test is not simply whether the checkout is named `main`; it is whether the current branch contains latest `origin/main`, has no tracked local workflow edits, and has mirrored `.agents/skills` into the execution skill directories. If the readiness gate fails, repair or stop before Teal work. If it passes, do not warn the user that a non-`main` branch is stale solely because of its branch name.
 
 On Windows, use the Codex Chrome plugin path for job-search browser work. Do not use isolated/headless Playwright for Teal, LinkedIn, job boards, or application forms that depend on Matt's logged-in profile, Cloudflare trust, or the Teal Chrome extension. If Chrome plugin communication fails, diagnose Chrome, the Codex Chrome Extension, and the native host before proceeding; stop rather than switching to an isolated browser.
 
@@ -62,9 +66,14 @@ For every request, classify it first:
 
 1. **Find jobs**: Use Teal Job Search, saved searches, Google Chrome, and the Teal Chrome extension. Shortlist roles, bookmark strong roles, and set Excitement from fit score.
 2. **Score saved jobs**: Open Teal Job Tracker, find jobs with missing Excitement, read the JD, score each role, update Excitement, and add concise notes.
-3. **Apply to a specific job**: Open the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
-4. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
-5. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+3. **Apply to a job / apply to the next best job**: If the user asks to apply without a specific URL, Teal record, or pasted JD, select the next best eligible role from refreshed Job Tracker Table view before asset work. Do not guess from memory, Home cards, or visible tab titles.
+4. **Apply to a specific job**: If the user provides a URL, Teal record, or JD, open or create the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
+5. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
+6. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+
+Short prompts are sufficient. Treat "Apply to a job for me" as next-best selection, "Apply to the next best job for me" as explicit next-best selection, and "Apply to [job URL] for me" as a specific-job application. The user should not need to mention branch, skill sync, Chrome backend, freshness gates, canonical employer checks, or run metrics.
+
+For substantial searches, saved-job scoring batches, applications, or workflow-improvement passes, assign a compact `run_id` and track the scenario, mode, model/reasoning level, estimated current-response tokens, estimated run-to-date tokens, elapsed time when known, stage blockers, and one self-healing candidate. Use `templates/job-search-run-metrics.md` for general runs and `templates/application-retrospective.md` for Standard or Deep applications.
 
 For "apply to the next best Teal job", own target selection only after the Job Tracker is readable in live Chrome. Use Table view and status filters to build the candidate set. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role already showing a submitted application date. Treat Home `Priorities` as suggestion-only, not as the final source of truth for target selection. If the tracker is blocked, ask for a tracker screenshot, direct Teal record URL, or pasted JD instead of guessing.
 
@@ -189,7 +198,7 @@ Always end with:
 - workflow improvement note: bottleneck, reusable item, search rule, reusable answer/asset, or proposed docs/skills update
 - post-submit hygiene status when an application was submitted
 - downloaded file paths if any
-- estimated tokens used in the response
+- workflow metrics summary: `run_id`, scenario, mode, estimated current-response tokens, estimated run-to-date tokens, elapsed time if known, blocker count, revision loops, and self-healing status
 - unanswered questions or approval gates
 - how to verify
 - risks and rollback

@@ -186,6 +186,10 @@ if (-not $SkipHookInstall -and -not $VerifyOnly) {
 $branch = Invoke-GitText -Args @("branch", "--show-current")
 $commit = Invoke-GitText -Args @("rev-parse", "--short", "HEAD")
 $upstream = Invoke-GitText -Args @("rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}") -AllowFailure
+$defaultBranchRef = Invoke-GitText -Args @("symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD") -AllowFailure
+if ([string]::IsNullOrWhiteSpace($defaultBranchRef)) {
+  $defaultBranchRef = "origin/main"
+}
 
 $trackedStatus = Invoke-GitText -Args @("status", "--porcelain", "--untracked-files=no")
 $untrackedStatus = Invoke-GitText -Args @("status", "--porcelain") -AllowFailure
@@ -236,6 +240,20 @@ if ($SyncGitIfClean) {
   }
 }
 
+$defaultBranchReason = "Included"
+$defaultBranchOk = $true
+$null = & git rev-parse --verify $defaultBranchRef 2>$null
+if ($LASTEXITCODE -ne 0) {
+  $defaultBranchOk = $false
+  $defaultBranchReason = "Default branch ref not found: $defaultBranchRef"
+} else {
+  & git merge-base --is-ancestor $defaultBranchRef HEAD 2>$null
+  if ($LASTEXITCODE -ne 0) {
+    $defaultBranchOk = $false
+    $defaultBranchReason = "Current branch does not contain $defaultBranchRef"
+  }
+}
+
 if (-not $VerifyOnly) {
   & $syncScript
 }
@@ -246,11 +264,13 @@ $skillMetadata = Test-SkillMetadata -SourceRoot $sourceSkillsRoot
 $hooksPath = Invoke-GitText -Args @("config", "--get", "core.hooksPath") -AllowFailure
 $hooksOk = $hooksPath -eq ".githooks"
 
-$workspaceReady = (-not $trackedDirty) -and $hooksOk -and $skillMetadata.Ok -and $codexMirror.Ok -and $agentsMirror.Ok -and (-not [string]::IsNullOrWhiteSpace($upstream)) -and ($ahead -eq 0) -and ($behind -eq 0)
+$workspaceReady = (-not $trackedDirty) -and $hooksOk -and $skillMetadata.Ok -and $codexMirror.Ok -and $agentsMirror.Ok -and $defaultBranchOk -and (-not [string]::IsNullOrWhiteSpace($upstream)) -and ($ahead -eq 0) -and ($behind -eq 0)
 
 Write-Host "Workspace readiness: $(if ($workspaceReady) { 'READY' } else { 'NOT READY' })"
 Write-Host "Branch: $branch"
 Write-Host "Commit: $commit"
+Write-Host "Default branch: $defaultBranchRef"
+Write-Host "Default branch included: $defaultBranchReason"
 Write-Host "Upstream: $(if ([string]::IsNullOrWhiteSpace($upstream)) { '[none]' } else { $upstream })"
 Write-Host "Ahead/Behind: $ahead/$behind"
 Write-Host "Tracked changes present: $trackedDirty"

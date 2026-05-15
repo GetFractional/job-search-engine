@@ -10,6 +10,7 @@
 7. Set Excitement from score.
 8. Add notes with lane, score, compensation/logistics, risk, and next action.
 9. Return a shortlist with which roles deserve deeper research.
+10. Record run metrics: roles reviewed, roles saved, estimated tokens, elapsed time if known, main bottleneck, and one self-healing candidate.
 
 ## Score Saved Jobs
 1. Prove the browser surface with `job-search-chrome-teal-recovery`.
@@ -21,6 +22,7 @@
 7. Score using the role-fit rubric.
 8. Set Excitement and add notes.
 9. Do not draft assets unless a role clears the pursue threshold or the user asks.
+10. Record run metrics: roles scored, roles advanced, stale or duplicate records found, estimated tokens, elapsed time if known, and one self-healing candidate.
 
 ## Apply To A Specific Job
 1. Prove the browser surface with `job-search-chrome-teal-recovery`: Chrome extension backend listed, live user tabs visible, and Teal claimed or opened without Cloudflare/login.
@@ -61,6 +63,7 @@
 32. Stop before submission and ask for approval with the exact destination and data involved.
 33. After approved submission is completed and confirmation is visible, update Teal status to Applied and add the application date plus submitted assets.
 34. Run post-submit hygiene: verify Teal Excitement from fit score, record submitted salary/comp answer, exact filenames, follow-up target, and update `docs/application-performance-ledger.md`.
+35. Complete run metrics or an application retrospective with estimated tokens, elapsed time, stage blockers, revision loops, and self-healing status.
 
 ## Chrome/Teal Failure Routing
 - Local bridge failure: run the forced repair script and retry the runtime probe once.

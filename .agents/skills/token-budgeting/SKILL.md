@@ -12,7 +12,7 @@ description: Estimate and control token usage for job-search workflows, includin
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
 - Report an estimated token budget in every job-search response by default, even when the user did not explicitly ask for token guidance.
-- Keep token reporting concise: per-turn estimate, main cost drivers, and the cheapest reliable next step.
+- Keep token reporting concise: current-response estimate, run-to-date estimate for substantial work, main cost drivers, and the cheapest reliable next step.
 - Do not create optional assets until the live application flow, JD, or user instruction shows they are actually needed. A cover-letter upload or text slot means a one-page tailored Teal Cover Letter is needed unless Matt explicitly opts out.
 
 ## Purpose
@@ -40,11 +40,14 @@ Estimate and control token usage for job search, application, interview, and off
 6. For batches, triage first and reserve deep work for top roles only.
 7. For application work, call out any avoidable work before doing it, especially optional cover letters, duplicate research passes, or score tuning that will not change the submission package.
 8. Provide a per-response estimate, not only a workflow-total estimate.
+9. For substantial runs, include a run-to-date estimate and the top token drivers. If exact usage is not visible, label the number as estimated.
+10. Pair token estimates with elapsed time, roles reviewed, stage blockers, and outcome metrics when using `templates/job-search-run-metrics.md`.
 
 ## Output
 - Recommended mode
 - Estimated token cost
 - Estimated tokens used in the current response
+- Estimated tokens used run-to-date for substantial work
 - Model/reasoning recommendation
 - Workflows remaining, if quota is known
 - Token-saving steps
