@@ -26,7 +26,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - Use `mattdim805@gmail.com` for Gmail, Google Calendar, and Google Drive job-search workflows. Do not use work/client Google accounts for personal job-search work unless Matt explicitly approves it.
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves the exact final assets, copy, destination, and external action.
+- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves the exact final assets, copy, destination, and external action. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 - Treat Teal Resume Builder as a shared bullet and summary library. Assume edits to bullets or summaries can affect multiple resumes until the UI proves otherwise.
 - Treat Teal bullets and Skills & Interests as reusable library items with per-resume inclusion controlled by checkboxes.
 - Prefer toggling existing truthful bullets and skills before editing or adding.
@@ -46,7 +46,7 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - If score improvement requires editing shared Teal bullets or summaries, present the proposed changes for approval before mutating shared content unless the user explicitly asked for direct mutation.
 - Confirm the live application form requirements early so optional work such as cover-letter drafting only happens when the target flow supports or needs it.
 - If the application has a cover-letter upload or text slot, create a tailored one-page cover letter in Teal Cover Letter with a custom prompt unless Matt explicitly opts out.
-- Before upload, enforce canonical filenames: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
+- Before upload, enforce canonical filenames exactly: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Treat this as a blocking gate, not cleanup after the fact. If the visible upload name is not canonical, remove it and re-upload the approved-name file before continuing. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, tool labels, or job-board phrasing such as `Barback at W Nashville.pdf`.
 - If an application provides file upload, do not paste a resume or cover letter into a manual text field as an automation fallback. If upload fails with `fileChooser.setFiles failed` and `Not allowed`, first verify the Codex Chrome extension's `Allow access to file URLs` toggle at `chrome://extensions/?id=hehggadaopoacecdllhhajmbjkdcmajg`, restart Chrome or start the Chrome task again, and retry the visible upload control. Stop and report the upload/file-picker blocker unless Matt explicitly approves manual text entry or a narrow manual file-picker step for that application.
 - When editing a Teal summary, use a current year-derived professional marketing experience count from the 2007 National Positions start year when the asset expects experience length. As of 2026, use `19 years of professional marketing experience` for calendar-year counts, or conservative `18+ years` language when exact month precision matters and the start month is unavailable. Do not default external summaries to `in marketing since 2007` when a years-of-experience claim is expected, and avoid stale shorthand like `15+ years`.
 - In `Skills & Interests`, use the section `...` actions menu for bulk toggles. `Deactivate All` quickly unchecks all skills, and when all skills are inactive the same menu changes to `Activate All`.
@@ -56,9 +56,11 @@ description: Decide how to use TealHQ for job search stages, including saved sea
 - When a skill is retained for future reuse, note the company or companies that support it, for example `Inventory Counts -> Lowe's Home Improvement`, so the claim can be defended later.
 - If a skill is plausible but unconfirmed, ask Matt to confirm it before leaving it active or documenting it as reusable.
 - Once a live role is being finalized in Teal, use only Teal-exported resume files for employer uploads. Do not upload older local DOCX or Canva variants after the Teal version becomes the approved source of truth.
-- If Teal exports a generic filename, rename the local file to `{Company} - {Role} - Matt Dimock - Resume` before any upload or delivery. Do not upload a generic export name when the role-specific filename is required.
+- If Teal exports a generic filename, rename or copy the local file to `{Company} - {Role} - Matt Dimock - Resume.pdf` before any upload or delivery. Do not upload a generic export name when the role-specific filename is required.
 - Do not create a substitute local resume or cover letter for a live application just because Teal editing, preview, Analyzer, Job Matcher, or export is blocked. Default action is to stop, classify the blocker, and report what Teal step failed.
 - A non-Teal resume or cover letter may be used only when Matt explicitly instructs a non-Teal fallback for that exact role after the Teal blocker is made visible.
+- Compensation answers must preserve leverage. Never guess a low hourly number just to satisfy an application form. If the field accepts text, prefer `Negotiable` unless Matt gave a different instruction. If the field requires a number and Matt has not approved one, stop and ask.
+- For Nashville hospitality resumes, follow the base-resume policy in `docs/teal-workflow.md` rather than duplicating it here. Use that doc as the authority for the approved starting resume, chronology expectations, bullet selection rules, and pre-export readability checks.
 - Treat posting age as a gating factor. Roles older than 30 days require stronger freshness evidence. Roles older than 60 days default to stale-risk and should usually not receive asset effort unless the user explicitly wants an exception.
 - Treat Teal Home `Priorities` and dashboard cards as orientation only. Do not choose the next-best application target from Home alone. Final selection must be re-confirmed in Job Tracker Table view with visible status and date fields.
 - For post-submit hygiene, prefer Job Tracker Table view for any field Teal exposes as an inline edit, especially status and Excitement. Use the detail page for notes and longer text, but use the table as the default audit and mutation surface when possible.
@@ -100,20 +102,21 @@ Determine how to use Teal features for each job-search stage.
 12. For live applications, inspect the actual application flow as early as possible to confirm what uploads or questions are present.
 13. For attachment-based applications, preflight upload before long final form entry. Confirm the exact approved file path, confirm the destination URL, verify `Allow access to file URLs` if a prior upload failed with `Not allowed`, and use the visible upload control. Do not rely on direct backend POSTs because CAPTCHA-protected final submits must stay in the browser flow.
 14. Define the minimum asset set required for the current flow.
-15. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
-16. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
-17. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
-18. Reduce resume length in this order: exclude older low-relevance roles, trim redundant bullets, clean duplicate skills, then adjust Designer layout.
-19. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
-20. Define what Codex should prepare before Teal entry.
-21. Define what must be manually confirmed in Teal.
-22. Identify approval gates, including explicit user approval before any live submission.
-23. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker. Do not create a local substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
-24. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
-25. Create a concise Teal update checklist.
-26. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
-27. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
-28. For substantial Teal work, track stage timing and blockers for `browser_teal_preflight`, `role_intake`, `source_freshness_check`, `teal_resume_builder`, `cover_letter`, `live_form_entry`, `submission`, and `post_submit_hygiene` when feasible. Use this to distinguish tool friction from role-quality decisions.
+15. For hospitality and Harri-style applications, run the blocking checklist in `docs/teal-workflow.md#hospitality-and-harri-pre-submit-qa` before any final submit action. Treat target integrity, upload integrity, compensation answers, availability matrix answers, and autofill drift as explicit gates, not implied checks.
+16. Use Job Matcher and Analyzer to gather truthful gap terms before editing shared resume content.
+17. When gap terms suggest shared-bullet edits, produce a concise proposed-change list grouped into hard skills, soft skills, business terms, and platforms/tools.
+18. Prefer checkbox toggles for role-specific bullet and skill display. Add durable reusable items only when existing library items cannot truthfully cover the gap.
+19. Reduce hospitality resume length in this order: uncheck weak or repetitive bullets, uncheck position descriptions, clean duplicate skills, then adjust Designer layout. Exclude roles only when Matt explicitly approves a shortened timeline.
+20. In Designer/settings, add enough spacing between company headings and previous bullets for scannability, and prefer simple bullet glyphs over double-angle symbols when Teal supports it.
+21. Define what Codex should prepare before Teal entry.
+22. Define what must be manually confirmed in Teal.
+23. Identify approval gates, including explicit user approval before any live submission.
+24. Require Teal Resume Builder, Job Matcher, Analyzer, and preview/export checks before final resume export. If Teal is unavailable or blocked, stop with the blocker. Do not create a local substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
+25. Identify one workflow improvement if the current run reveals repeated friction, reusable Teal content, reusable application answers, or a better qualification/search rule.
+26. Create a concise Teal update checklist.
+27. After editing notes in the detail pane, click outside the note field and visually confirm the final text still renders before leaving the record. Do not assume notes saved just because the field accepted input.
+28. After post-submit hygiene, run tab cleanup for the current machine's active Chrome session: keep `Job Tracker`, close duplicate role-working tabs, and close no-longer-needed application tabs for the submitted role.
+29. For substantial Teal work, track stage timing and blockers for `browser_teal_preflight`, `role_intake`, `source_freshness_check`, `teal_resume_builder`, `cover_letter`, `live_form_entry`, `submission`, and `post_submit_hygiene` when feasible. Use this to distinguish tool friction from role-quality decisions.
 
 ## Output
 - Teal workflow recommendation
@@ -122,6 +125,7 @@ Determine how to use Teal features for each job-search stage.
 - Approval checklist
 - Required assets versus optional assets
 - Application gate status: active role, research, Teal optimizer, filename, cover letter, application answers, interview pack, QA, approval
+- Hospitality pre-submit gate status, when applicable: target integrity, upload integrity, compensation answer, availability matrix, autofill drift, and visible submit destination
 - Proposed shared-bullet or summary edits, if score improvement is blocked by missing truthful terms
 - Bullet/skill library actions: toggled, added, edited, or blocked
 - Freshness assessment, including posting age, evidence, and stale-risk

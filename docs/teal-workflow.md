@@ -122,11 +122,12 @@ When the user says "apply to this job":
 12. If the application exposes a cover-letter upload or text slot, create a tailored cover letter unless Matt explicitly opts out for that application. Keep it to one page.
 13. Use Teal Cover Letter with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker. Do not create a non-Teal substitute unless Matt explicitly instructs a non-Teal fallback for that exact role.
 14. Export the resume and Teal-designed cover letter as separate files.
-15. Run the file naming gate before upload:
+15. Run the file naming gate before upload. This is blocking:
    - resume: `{Company} - {Role} - Matt Dimock - Resume.pdf`
    - cover letter: `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`
-   - do not upload files with suffixes such as `Teal`, `final`, `v2`, `draft`, dates, source labels, or tool labels
+   - do not upload files with suffixes such as `Teal`, `final`, `v2`, `draft`, dates, source labels, tool labels, or job-board phrasing such as `Barback at W Nashville.pdf`
    - if Teal exports a generic or suffixed filename, rename or copy it to the canonical filename before upload
+   - if the wrong name is already visible in the live application, remove it and re-upload the approved-name file before continuing
 16. Before final form entry, run the upload preflight if the application requires attachments:
    - confirm the exact approved local file path and target application URL
    - confirm Chrome is using the logged-in profile with the Codex extension connected
@@ -134,6 +135,9 @@ When the user says "apply to this job":
    - restart Chrome or start the Chrome task again after changing that setting
    - use the visible page `Attach` or upload control, wait for the file chooser, then set the approved file path
 17. Prepare application answers from the exact form fields.
+    - For desired pay or compensation fields, never guess a low number to get past the form.
+    - If the field allows text, prefer `Negotiable` unless Matt has approved a specific number for that role.
+    - If the field is numeric-only and Matt has not approved a figure, stop and ask instead of inventing one.
 18. Create an interview pack after the role clears the pursue bar and before submission readiness, so compensation strategy and interview positioning are ready if the application converts.
 19. Present the final resume, cover letter if used, application answers, upload destination, and submit action for review.
 20. Stop before final submission until the user approves the exact assets, copy, action, and destination.
@@ -169,7 +173,37 @@ Do not move to live upload or submission until each gate is passed or explicitly
 6. Application-answer gate: all form answers are drafted, claim-safe, and compensation/location answers preserve leverage.
 7. Interview-pack gate: a role-specific pack exists for likely screens, objections, stories, questions to ask, and compensation framing.
 8. QA gate: facts, metrics, company context, resume length, cover-letter length, filenames, upload targets, and no-submit approval state are verified.
-9. External-action gate: submission, outreach, references, sensitive self-ID, or negotiation happens only after explicit approval of the exact action.
+9. External-action gate: submission, outreach, references, or negotiation happens only after explicit approval of the exact action. Self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
+
+## Hospitality And Harri Pre-Submit QA
+Use this as the blocking live-form checklist for barback, server-assistant, food-runner, bartender-track, and similar hospitality applications, especially in Harri-style flows that mix profile data, application questions, and final submit in one surface.
+
+Before submit, verify all of the following:
+
+1. Target integrity
+   - visible employer, role title, and live application URL all match the intended canonical role
+   - no wrapper or duplicate role confusion remains
+2. Upload integrity
+   - uploaded file names match the approved canonical names exactly
+   - the uploaded resume is the intended role asset, not a stale or generic fallback
+   - if no resume was uploaded because the field was optional, note that explicitly in the approval packet
+3. Form-answer integrity
+   - legal-age, work authorization, prior-employment, referral, and self-ID answers are truthful and match standing defaults or explicit user input
+   - free-text compensation fields use `Negotiable` unless Matt approved a role-specific number
+   - hourly or salary numbers are never guessed just to clear a required field
+   - start-date answers match the user's stated intent, for example immediate start only when the user has approved that claim
+4. Availability integrity
+   - day and shift matrix answers match the user's actual stated availability
+   - weekend, late-night, and holiday availability answers are re-checked before submit because hospitality forms often prefill or retain stale profile selections
+5. Hospitality reality check
+   - commute, transportation, schedule flexibility, lifting/standing, alcohol-service age, and multi-shift expectations are answered truthfully
+   - any field that could imply conflicting employment is checked against the user's current commitments before consent is given
+6. Autofill and profile drift check
+   - profile sections such as work history, references, residence, phone, and parsed fields do not contain obvious autofill corruption, stale employers, malformed titles, or partial entries introduced by Harri or resume parsing
+   - open dropdowns, hidden overlays, or half-selected controls are cleared before final review
+7. Approval packet
+   - the exact employer, role, URL, uploaded filenames, compensation answer, key availability answers, and visible submit control are all captured in the handoff before any external submit action
+   - if any required field still depends on an unsafe assumption, stop and resolve it before submit
 
 ## Chrome Upload Repair
 Official Codex Chrome guidance requires enabling `Allow access to file URLs` on the Codex extension before Chrome tasks can upload local files. In this Windows profile, the Codex extension ID has been observed as `hehggadaopoacecdllhhajmbjkdcmajg`.
@@ -217,6 +251,7 @@ Treat Teal bullets and Skills & Interests as reusable library items:
 - Do not rename an existing shared category for a different role lane. If a new lane needs skills, create a new category for that lane and add or move only the relevant skills.
 - Never create a pseudo-category as a flat uncategorized skill by prefixing the skill text with a category name, for example `Analytics Systems: GA4 / GTM / dashboards`. If a needed category does not exist, create the real category first so Teal renders the category name as a bold heading, then add the child skills inside that category.
 - Keep professional tool categories separate from hospitality/service categories. Use `Platforms & Execution Stack` for tools such as ClickUp, Figma, GitHub, Google Workspace, Shopify, and Zoho One. Use a separate hospitality category such as `Hospitality Operations & Bar Support` for barback terms such as restocking, opening duties, closing duties, garnish prep, stocking, and heavy lifting.
+- For Nashville hospitality resumes, use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact for server, bartender-track, barback, and adjacent high-volume floor roles. Preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it. Keep full chronology and use selected hospitality-transfer bullets across all roles, not only `Lowe's Home Improvement` and `Boething Treeland Nursery`. Include 1-2 selected bullets per role when they prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution. Job-specific optimization may adjust the target title and truthful hard/soft skill phrasing for the posting; only adjust the summary when the target job clearly requires it or Matt approves it. Do not activate a skills dump. Passing pre-export verification means every active bullet has a clear hospitality-transfer reason and the preview remains readable.
 
 For each role:
 1. Build resume strategy from the JD and research brief.
@@ -229,7 +264,7 @@ For each role:
 8. Avoid keyword stuffing and unsupported claims.
 9. When editing a library item, keep any global update option unchecked unless Matt approves the global change.
 10. Use Analyzer before export. If Analyzer is not visible or fails, stop with the blocker. Do not create a substitute local submission resume just to continue the application.
-11. Use Teal preview/export as the source of truth for length. Target a strong two-page resume: no page 3, no obvious unused second-page whitespace when high-value proof can fit, and no cramped layout that damages readability.
+11. Use Teal preview/export as the source of truth for length. Target a strong two-page resume for professional roles: no page 3, no obvious unused second-page whitespace when high-value proof can fit, and no cramped layout that damages readability. For hospitality bridge resumes, prioritize readability and hospitality-transfer proof over a fixed bullet count.
 12. Ensure no uncategorized top-level skills remain checked above category groups. Those display as an ugly comma-list before the category sections.
 13. Use Designer/settings after content cleanup to improve spacing between companies and bullets, and prefer simple bullet glyphs over double-angle symbols if Teal offers that option.
 14. Export PDF and verify the downloaded file name. The submission filename must be `{Company} - {Role} - Matt Dimock - Resume.pdf`; rename or copy the Teal export if needed. Do not upload filenames containing `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
@@ -328,7 +363,6 @@ Ask before:
 - changing records in bulk
 - sharing references
 - accepting, declining, or negotiating externally
-- answering sensitive voluntary self-ID fields unless the user has provided standing permission
 
 ## Teal Status Rules
 - Use `Applying` only after the role clears the pursue bar and active asset/application work has started.
