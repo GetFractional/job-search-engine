@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-05-10T17:49:35.374832+00:00",
+  "source_home": "/Users/mattdimock",
+  "export_dir": "/Users/mattdimock/Desktop/codex-mac-setup-export",
+  "copied_files": [
+    "config.toml",
+    "AGENTS.md",
+    "rules/default.rules"
+  ],
+  "skipped_optional_files": [],
+  "excluded_patterns": [
+    "auth.json",
+    "tokens",
+    "secrets",
+    "sessions",
+    "sqlite databases",
+    "logs",
+    ".sandbox-secrets",
+    "raw connector credentials"
+  ],
+  "github_upload_sanitized": true,
+  "sanitized_at": "2026-05-10T17:54:40.173107+00:00",
+  "sanitization_note": "config.toml credential-like values and all MCP env/header values were redacted before GitHub upload.",
+  "source_desktop_bundle_contains_raw_config": true
+}
