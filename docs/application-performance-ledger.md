@@ -28,6 +28,7 @@ Purpose: track each serious application as an operating metric, not just a submi
 | 2026-05-27 | The Finch | Hospitality role | Applied | TBD | TBD | TBD | Snagajob profile/application submission | User confirmed submitted after creating the Snagajob account with Google. Exact role, assets, and compensation answer still need Teal/source reconciliation. | 2026-06-03 | Pending |
 | 2026-05-27 | Image Hotel Management | Bartender, Mount Juliet | Applied | TBD | TBD | TBD | TBD | User confirmed submitted. Exact source, assets, and compensation answer still need Teal/source reconciliation. | 2026-06-03 | Pending |
 | 2026-05-27 | Hilton / Gray & Dudley - The Bankers Alley Hotel | Restaurant Server | Applied | 86 | 4 | Posted $8/hr plus tips; no desired compensation question appeared | `Matt Dimock - Server Resume.pdf`; Hilton Taleo profile, resume upload, questionnaires, eSignature, and review submission | Taleo first blocked normal file-picker automation, so a non-branded server upload PDF was created and attached through the upload control; application was submitted after review. Benefits were a major positive signal: medical, PTO, 401(k) match, DailyPay, Hilton travel, education assistance, ESPP, and family-support benefits. Claim-safe screeners used up to six months for server/fine-dining experience and no food safety certification. | 2026-06-03 | Pending |
+| 2026-05-27 | Ruby Slipper Restaurant Group / Ruby Sunshine | Server - We Do Days! | Applied | 74 | 3 | Submitted `Negotiable` for salary desired and weekly tips desired | `Matt Dimock - Server Resume.pdf`; ClearCompany profile/application submission | Applied to fresh LinkedIn/direct posting with no hard years-of-experience requirement. Role is full-service brunch/daytime server work with medical/dental, PTO, family meal/discounts, and growth/pay-increase language. Form parsed the resume into a long manual application; required fields were completed with claim-safe answers, open breakfast/lunch availability, no SSN, and self-ID standing defaults. | 2026-06-03 | Pending |
 
 ## Required Post-Application Fields
 
@@ -67,6 +68,7 @@ Use this table for submitted applications and substantial application attempts. 
 | hospitality-dos-santos-server-bartender-2026-05-25 | 2026-05-25 | Dos Santos-Nashville | Server/Bartender | Hospitality bridge application | TBD | TBD | TBD | TBD | TBD | 1 | 0 | hospitality-claim-safe-screeners |
 | hospitality-takumi-bartender-barback-2026-05-26 | 2026-05-26 | Takumi Hibachi Sushi Lounge | Bartender / Bar-back | Hospitality bridge application | TBD | TBD | TBD | TBD | TBD | 0 | 1 | higher-pay-filter-applied |
 | hospitality-hilton-gray-dudley-server-2026-05-27 | 2026-05-27 | Hilton / Gray & Dudley - The Bankers Alley Hotel | Restaurant Server | Hospitality bridge application | TBD | TBD | TBD | TBD | TBD | 1 | 1 | generic-upload-resume-created |
+| hospitality-ruby-slipper-server-2026-05-27 | 2026-05-27 | Ruby Slipper Restaurant Group / Ruby Sunshine | Server - We Do Days! | Hospitality bridge application | TBD | TBD | TBD | TBD | TBD | 1 | 1 | generic-upload-resume-created |
 
 ## Performance Measures
 

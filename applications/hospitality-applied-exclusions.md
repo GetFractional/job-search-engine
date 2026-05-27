@@ -30,6 +30,7 @@ Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check th
 | The Finch | Hospitality role | Applied | User confirmed submitted through Snagajob account created with Google |
 | Image Hotel Management | Bartender, Mount Juliet | Applied | User confirmed submitted |
 | Hilton / Gray & Dudley - The Bankers Alley Hotel | Restaurant Server | Applied | Hilton Taleo thank-you screen confirmed online job opportunity experience completed on 2026-05-27 |
+| Ruby Slipper Restaurant Group / Ruby Sunshine | Server - We Do Days! | Applied | ClearCompany application showed `Thank you for applying` on 2026-05-27 |
 | Dos Santos-Nashville | Server/Bartender | Denied | User confirmed denial |
 
 ## Expired / Stale Live-Source Blocks
@@ -41,6 +42,7 @@ These should not be retried unless a new active posting is found.
 | Fogo de Chao Nashville | Server / Server No Experience Needed | Monster and CareerBuilder links opened to expired pages on 2026-05-26; Seasoned listing was stale |
 | Zuzu Nashville | Barback | Harri listing showed `Expired Job Post` on 2026-05-26 |
 | Luke Bryan's 32 Bridge / TC Restaurant Group | Barback | User confirmed the barback position is closed |
+| Hyatt | Restaurant Bartender | Hyatt careers page said the job is no longer accepting applications on 2026-05-27 |
 | Bottarga Restaurant | Barback | Harri listing showed `Expired Job Post`, London location, and expiration date 2026-04-12 on 2026-05-26 |
 | Palm Palm | Server Assistant and Food Runner | CareerPlug live application resolved to Pittsburgh, PA and listed $400-$500/week on 2026-05-26, below the Farm House benchmark and outside the Nashville/Mount Juliet target geography |
 | WKND Club | All hospitality roles | User confirmed WKND club is closed |
@@ -83,6 +85,10 @@ These have local resume/application artifacts and must be treated as already wor
 | Virgin Hotels Nashville | Part Time Weekend Server | Requires currently valid Food Service Handler Card and TIPS certification |
 | Hyatt | Pool Server | Requires minimum 1 year server experience plus Food Handling Certificate and TIPS Training Certificate |
 | Legends Global | Server, Premium - Nashville, TN | Requires 2-3 years in a fast-paced high-end club or restaurant |
+| Hard Rock Cafe Nashville | Bartender | Requires 2+ years high-volume bartending experience |
+| Morton's The Steakhouse | Server, Upscale / Fine Dining | Requires 1+ year fine dining server experience |
+| Palm Restaurant Group | Server, Upscale / Fine Dining | Requires 1+ year fine dining server experience |
+| RH Nashville | Server | Requires 3+ years in a high-volume full-service restaurant environment |
 
 ## Recommendation Gate
 
