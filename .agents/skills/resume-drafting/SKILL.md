@@ -67,8 +67,13 @@ Create a tailored two-page resume using the correct lane, job-title language, va
 23. Remove duplicate or near-duplicate lines across headline, summary, highlights, and experience.
 24. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
 25. For Nashville hospitality resumes:
-   - use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact for server, bartender-track, barback, and adjacent high-volume floor roles
-   - preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it; do not replace it with the older barback-only summary
+   - use only the approved local PDFs unless a live Teal export is created for that exact role
+   - use `applications/hospitality-lanes/Matt Dimock - Hospitality Resume.pdf` for server, server-track, and general hospitality roles
+   - use `applications/hospitality-lanes/Matt Dimock - Barback Resume.pdf` for barback and bartender-support roles
+   - use `applications/hospitality-lanes/Matt Dimock - Server Resume.pdf` when a site needs a reusable non-branded server upload file
+   - use `applications/hospitality-lanes/Matt Dimock - Barback Upload Resume.pdf` when a site needs a reusable non-branded barback upload file
+   - do not use older Broadway, Nashville Broadway, baseline, food runner, server assistant, or experimental hospitality resume drafts unless Matt explicitly approves that exact fallback
+   - preserve the approved summary structure and The Farm House Restaurant entry unless Matt explicitly asks to rewrite them
    - default to a full-chronology resume with hospitality-relevant bullets across all roles, not only `Lowe's Home Improvement` and `Boething Treeland Nursery`
    - keep every company, position, date, and location active unless Matt explicitly approves a shortened timeline
    - include 1-2 selected transferable bullets per role when they prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution

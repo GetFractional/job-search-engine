@@ -60,7 +60,12 @@ For resume and cover-letter work:
 - do not default external resume summaries to `in marketing since 2007` when the target asset expects a years-of-experience claim
 - never use em dashes in final assets
 - avoid AI-sounding phrasing, hype, or theatrical self-branding
-- for Nashville hospitality resumes, use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact
+- for Nashville hospitality applications, use only the approved local PDFs unless a live Teal export is created for that exact role:
+  - server, server-track, and general hospitality roles: `applications/hospitality-lanes/Matt Dimock - Hospitality Resume.pdf`
+  - barback and bartender-support roles: `applications/hospitality-lanes/Matt Dimock - Barback Resume.pdf`
+  - reusable non-branded server upload file: `applications/hospitality-lanes/Matt Dimock - Server Resume.pdf`
+  - reusable non-branded barback upload file: `applications/hospitality-lanes/Matt Dimock - Barback Upload Resume.pdf`
+- do not use older Broadway, Nashville Broadway, baseline, food runner, server assistant, or experimental hospitality resume drafts unless Matt explicitly approves that exact fallback
 - preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it
 - keep the default structure to full chronology with selected hospitality-transfer bullets across all roles
 - include bullets that prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution

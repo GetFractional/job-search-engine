@@ -61,8 +61,10 @@ These prove:
 
 ### Barback
 Approved baseline:
-- Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback`
-- This baseline is the preferred structure for future Nashville hospitality applications because it communicates Matt's customer-facing, hands-on, leadership, and operations background while keeping the current career timeline credible.
+- Server/general hospitality: `applications/hospitality-lanes/Matt Dimock - Hospitality Resume.pdf`
+- Barback/bartender-support: `applications/hospitality-lanes/Matt Dimock - Barback Resume.pdf`
+- These approved PDFs are the preferred structure for future Nashville hospitality applications because they include The Farm House Restaurant, communicate Matt's customer-facing, hands-on, leadership, and operations background, and keep the current career timeline credible.
+- Do not use older Broadway, Nashville Broadway, baseline, food runner, server assistant, or experimental hospitality resume drafts unless Matt explicitly approves that exact fallback.
 - Job-specific optimization may adjust the target title and truthful hard/soft skill language for a target posting, but should preserve Matt's selected summary unless the target job clearly requires a rewrite or Matt approves it.
 
 Stress:

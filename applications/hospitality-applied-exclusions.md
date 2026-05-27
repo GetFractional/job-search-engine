@@ -1,6 +1,6 @@
 # Hospitality Applied And Excluded Roles
 
-Updated: 2026-05-26
+Updated: 2026-05-27
 
 Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check this file before recommending, saving, or applying to server, barback, bartender-track, food runner, busser, host, or adjacent hospitality roles.
 
@@ -26,6 +26,11 @@ Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check th
 | The Capital Grille | Server Assistant | Applied | Darden/Paradox thank-you screen confirmed answers submitted on 2026-05-26; direct listing was posted 2026-05-18 and did not show a hard experience requirement |
 | Oak Steakhouse Nashville | Server Assistant | Applied | Hireology confirmation screen and candidate survey confirmation screen both completed on 2026-05-26; direct listing was active and said one year restaurant or similar experience preferred, not required |
 | Hal's The Steakhouse Nashville | Server Assistant | In process, blocked on references | Paylocity application advanced to Step 3 of 5 on 2026-05-26; listing was active and only preferred food-service knowledge, but the form requires three references with phone numbers before continuing |
+| Prime & Proper | Hospitality role | Applied | User confirmed submitted |
+| The Finch | Hospitality role | Applied | User confirmed submitted through Snagajob account created with Google |
+| Image Hotel Management | Bartender, Mount Juliet | Applied | User confirmed submitted |
+| Hilton / Gray & Dudley - The Bankers Alley Hotel | Restaurant Server | Applied | Hilton Taleo thank-you screen confirmed online job opportunity experience completed on 2026-05-27 |
+| Dos Santos-Nashville | Server/Bartender | Denied | User confirmed denial |
 
 ## Expired / Stale Live-Source Blocks
 
@@ -35,8 +40,10 @@ These should not be retried unless a new active posting is found.
 |---|---|---|
 | Fogo de Chao Nashville | Server / Server No Experience Needed | Monster and CareerBuilder links opened to expired pages on 2026-05-26; Seasoned listing was stale |
 | Zuzu Nashville | Barback | Harri listing showed `Expired Job Post` on 2026-05-26 |
+| Luke Bryan's 32 Bridge / TC Restaurant Group | Barback | User confirmed the barback position is closed |
 | Bottarga Restaurant | Barback | Harri listing showed `Expired Job Post`, London location, and expiration date 2026-04-12 on 2026-05-26 |
 | Palm Palm | Server Assistant and Food Runner | CareerPlug live application resolved to Pittsburgh, PA and listed $400-$500/week on 2026-05-26, below the Farm House benchmark and outside the Nashville/Mount Juliet target geography |
+| WKND Club | All hospitality roles | User confirmed WKND club is closed |
 
 ## User Preference Blocks
 
