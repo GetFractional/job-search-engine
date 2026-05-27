@@ -10,7 +10,7 @@ description: Estimate and control token usage for job-search workflows, includin
 - Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 - Report an estimated token budget in every job-search response by default, even when the user did not explicitly ask for token guidance.
 - Keep token reporting concise: current-response estimate, run-to-date estimate for substantial work, main cost drivers, and the cheapest reliable next step.
 - Do not create optional assets until the live application flow, JD, or user instruction shows they are actually needed. A cover-letter upload or text slot means a one-page tailored Teal Cover Letter is needed unless Matt explicitly opts out.

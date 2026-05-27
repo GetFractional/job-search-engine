@@ -22,14 +22,13 @@ Do not hide recent experience.
 Compress and translate it.
 
 ### Keep recent experience on the page
-Use `3 recent entries`, with `1 bullet each`, focused on:
-- pace
-- follow-through
-- communication
-- training
-- checklists
-- organization
-- handling multiple priorities under pressure
+For hospitality resumes, keep recent experience visible and translate it into hospitality-relevant proof where it helps.
+
+Default hospitality rule:
+- recent marketing and consulting roles may stay on the page to prevent timeline distortion
+- use selected transferable bullets across all roles when they prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution
+- do not rely on marketing jargon as hospitality fit proof
+- keep earlier retail and support-floor roles visible because they remain the most direct hands-on proof
 
 Recommended recent entries to keep available:
 1. `Get Fractional`
@@ -61,13 +60,27 @@ These prove:
 ## Role-specific emphasis
 
 ### Barback
+Approved baseline:
+- Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback`
+- This baseline is the preferred structure for future Nashville hospitality applications because it communicates Matt's customer-facing, hands-on, leadership, and operations background while keeping the current career timeline credible.
+- Job-specific optimization may adjust the target title and truthful hard/soft skill language for a target posting, but should preserve Matt's selected summary unless the target job clearly requires a rewrite or Matt approves it.
+
 Stress:
 - stocking
 - physical stamina
 - restocking and reset discipline
 - clean follow-through
-- spirits familiarity
 - willingness to start in support and earn trust
+
+Primary proof roles:
+- `Lowe's Home Improvement`
+- `Boething Treeland Nursery`
+
+Default bullet rule:
+- use hospitality-relevant bullets across all roles, not only `Lowe's` and `Boething`
+- prefer one strong transferable bullet per role in the base resume, with a second bullet only where it materially strengthens the target application
+- do not add skills or bullets just to chase keyword match if they weaken readability or claim safety
+- do not claim bar-specific skills that are not confirmed, including spirits familiarity, garnish prep, recipes, stock rotation, or restaurant operations
 
 ### Food Runner
 Stress:
@@ -132,9 +145,10 @@ Instead:
 ## Next rewrite rule
 No more design work until the copy is approved.
 
-The next pass should be:
+The next barback pass should be:
 - copy first
-- one page
+- strong two-page maximum, fully used when the content supports it
 - recent timeline intact
 - older retail proof explicit
 - role-specific summaries and strengths
+- `Lowe's` and `Boething` as the main bullet-level relevance proof

@@ -137,7 +137,8 @@ When the user says "apply to this job":
 17. Prepare application answers from the exact form fields.
     - For desired pay or compensation fields, never guess a low number to get past the form.
     - If the field allows text, prefer `Negotiable` unless Matt has approved a specific number for that role.
-    - If the field is numeric-only and Matt has not approved a figure, stop and ask instead of inventing one.
+    - For hospitality applications where Matt has approved numeric fallback handling, if the field is numeric-only, use the role's posted pay evidence first. If no posted rate is visible, use current market evidence for the exact lane, such as barback, server assistant, server, host, or food runner, and record the source after submission.
+    - Never use `$18/hr` as a blind hospitality fallback. It may be used only when the active role itself posts that figure or Matt explicitly approves it for that exact role.
 18. Create an interview pack after the role clears the pursue bar and before submission readiness, so compensation strategy and interview positioning are ready if the application converts.
 19. Present the final resume, cover letter if used, application answers, upload destination, and submit action for review.
 20. Stop before final submission until the user approves the exact assets, copy, action, and destination.
@@ -190,7 +191,9 @@ Before submit, verify all of the following:
 3. Form-answer integrity
    - legal-age, work authorization, prior-employment, referral, and self-ID answers are truthful and match standing defaults or explicit user input
    - free-text compensation fields use `Negotiable` unless Matt approved a role-specific number
+   - hospitality numeric-only compensation fields use posted pay evidence first, otherwise a current role-market fallback, and the source or rationale is noted after submission
    - hourly or salary numbers are never guessed just to clear a required field
+   - incomplete date day fields use `1` only when Matt has approved first-of-month normalization for the application run
    - start-date answers match the user's stated intent, for example immediate start only when the user has approved that claim
 4. Availability integrity
    - day and shift matrix answers match the user's actual stated availability

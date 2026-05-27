@@ -22,7 +22,6 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 3. `source-files/03_role_lane_glossary.md`
 4. `source-files/04_story_bank.md`
 5. `docs/claim-safety-rules.md`
-6. `docs/teal-workflow.md`
 
 ## Inputs
 - Asset draft
@@ -47,9 +46,7 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 13. For exported PDFs, verify the file exists in Downloads or the target folder, is named correctly, has no page 3, keeps the correct contact block and target title, and contains no browser print headers, file paths, timestamps, URLs, or machine-generated footer text.
 14. For application packages, block upload if filenames contain `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels. Required names are `{Company} - {Role} - Matt Dimock - Resume.pdf` and, when used, `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`.
 15. For cover letters, verify the final file is one page.
-16. For hospitality and Harri-style live forms, run the blocking checklist in `docs/teal-workflow.md#hospitality-and-harri-pre-submit-qa`.
-17. Verify the final live form for autofill drift, stale profile data, malformed dropdown selections, broken availability matrices, incorrect compensation anchors, and any answer that implies schedule or employment commitments not approved by Matt.
-18. Flag anything requiring user confirmation.
+16. Flag anything requiring user confirmation.
 
 ## Output
 - QA verdict
@@ -57,9 +54,7 @@ Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role
 - Optional improvements
 - Claim safety table
 - Approval readiness
- - Live-form integrity verdict, when a browser application is in progress
 
 ## Safety
 Do not mark an asset ready if any required claim is unsupported.
 Do not mark an asset ready if a strong metric is technically true but contextually misleading.
-Do not mark a live hospitality application ready if availability, compensation, uploaded filenames, or final destination have not been re-verified on the visible submit surface.

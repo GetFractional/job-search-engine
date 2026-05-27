@@ -483,6 +483,43 @@ For Director / Head / VP of Marketing roles, do not underweight the role because
 
 For RevOps / lifecycle roles, use OC Ramps only when the company values owned-channel systems, CRO, or site-experience leadership.
 
+## Hospitality outreach, Nashville bridge roles
+
+Use this as the default style for Nashville hospitality outreach when Matt is replying to a warm lead, Facebook group invitation, restaurant inbox, AGM/GM, or venue operator.
+
+### Style notes
+
+- Lead with the invitation or source of the lead.
+- Keep the message direct, grounded, and human.
+- Do not over-explain the career pivot.
+- Position nontraditional experience as a strength, not an apology.
+- Use server, barback, and bartender language when the role is not fixed.
+- Keep TABC wording current:
+  - before completion: `I'll be TABC certified by end of day`
+  - after completion is confirmed: `I'm TABC certified`
+
+### Warm restaurant inbox version
+
+Hello,
+
+[Contact Name] invited me to send my resume. Please find that attached.
+
+I’m looking for server, barback, or bartender opportunities in Nashville where I can learn the house, do the hard work, and earn trust quickly. I know my background is not traditional hospitality, but I think you will find that to be a strength, and I promise I won't waste your time.
+
+I'm a high performer who needs minimal direction. I’ve spent 19 years in customer-facing marketing, sales, operations, training, and high-pressure service environments. I’m bringing that same ownership mindset with me. And half of my career has been spent as a people manager.
+
+I’ll be TABC certified by end of day, available nights and weekends, and can start immediately.
+
+If there’s a role at [Restaurant/Venue] where you think I could be most useful, I’d love to talk.
+
+Thanks,
+Matt Dimock
+805-620-2826
+
+### Claim safety
+
+Do not change the TABC line to `I'm TABC certified` until Matt confirms the permit/certification is complete.
+
 ## Final guidance
 
 Good outreach earns a conversation because it feels relevant, not because it feels clever.
@@ -494,4 +531,3 @@ When in doubt:
 - give value
 - remove one claim
 - make the next step easier
-

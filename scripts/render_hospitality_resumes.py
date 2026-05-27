@@ -19,70 +19,94 @@ MUTED = RGBColor(95, 104, 113)
 RESUMES = [
     {
         "filename": "Matt Dimock - Barback Bar Support.docx",
-        "title": "Barback | Bar Support",
+        "title": "Barback",
         "summary": (
-            "Reliable, physically capable operations professional with recent experience managing fast-moving work, tight handoffs, and high expectations, "
-            "plus earlier retail team-lead experience in stocking, customer service, opening and closing, and department upkeep. "
-            "Familiar with common spirits and classic cocktail structure from years of home practice, and ready to earn trust quickly in a high-volume bar environment."
+            "Reliable, customer-facing operator with a background that spans hands-on retail support, team leadership, and later marketing and operations roles. "
+            "I was promoted early in retail, later built and led teams across operations-heavy environments, and bring calm communication, professionalism, "
+            "and strong follow-through to fast-paced service settings. I work well with people, stay organized under pressure, and take pride in helping "
+            "busy teams keep service smooth and guests well taken care of."
         ),
-        "strengths": [
-            "Immediate availability for nights, weekends, and holidays",
-            "Physically comfortable with long shifts, heavy lifting, and constant movement",
-            "Strong stocking, reset, cleanliness, and side-work discipline",
-            "Calm under pressure with clear communication and follow-through",
-            "Fast learner with strong memory for house standards and drink builds",
-            "Team-first mindset and low ego in support roles",
-        ],
+        "strengths": [],
+        "experience_heading": "Work Experience",
         "experience": [
             (
                 "Get Fractional",
                 "Growth Systems Consultant / Owner",
                 "Oct 2022-Present",
-                [
-                    "Managed fast-moving client and operator work across multiple priorities, built repeatable checklists and workflows, and kept execution clean under pressure.",
-                ],
+                [],
             ),
             (
                 "Prosper Wireless",
                 "Director of Growth & Retention",
                 "Sept 2023-Nov 2025",
-                [
-                    "Supported a large customer operation through training, documentation, and process discipline, strengthening responsiveness and consistency in a high-volume environment.",
-                ],
+                [],
+            ),
+            (
+                "Dealer Acceleration Group",
+                "Co-Founder / Chief Revenue Officer",
+                "Jan 2022-Dec 2022",
+                [],
+            ),
+            (
+                "Affordable Insurance Quotes",
+                "Chief Marketing Officer",
+                "Jun 2020-Dec 2021",
+                [],
+            ),
+            (
+                "Breakthrough Academy",
+                "Marketing Operations Manager",
+                "Aug 2019-Jun 2021",
+                [],
+            ),
+            (
+                "SkyFineUSA",
+                "Chief Marketing Officer / Head of Growth",
+                "Jan 2019-Aug 2019",
+                [],
             ),
             (
                 "Bob's Watches",
                 "Director of Marketing",
                 "Jan 2017-Dec 2018",
-                [
-                    "Coordinated cross-functional execution across staff and vendors in a busy ecommerce business where timing, standards, and customer-impacting details mattered every day.",
-                ],
+                [],
+            ),
+            (
+                "Swell Marketing",
+                "SEO Manager / SEO Director",
+                "Feb 2016-Jun 2016",
+                [],
+            ),
+            (
+                "iMarket Solutions",
+                "SEO Manager",
+                "May 2013-Jan 2016",
+                [],
+            ),
+            (
+                "National Positions",
+                "SEO Specialist / Director of Special Projects",
+                "Sep 2007-May 2013",
+                [],
             ),
             (
                 "Lowe's Home Improvement",
                 "Team Leader, Paint Department",
                 "Mar 2005-Feb 2007",
                 [
-                    "Promoted into a team-lead role within six months and oversaw customer service, merchandising, stocking, and day-to-day department execution.",
-                    "Opened and closed the department, supported a four-person team, and kept inventory, shelves, and customer flow organized during busy periods.",
+                    "Promoted into a team-lead role within six months and supported customer service, merchandising, stocking, inventory counts, opening and closing, and day-to-day department execution for a four-person team in a fast-paced retail environment.",
                 ],
             ),
             (
                 "Boething Treeland Nursery",
-                "Guide",
+                "Guide · Full-time",
                 "Dec 2003-Aug 2004",
                 [
-                    "Promoted from Loader to Guide within three months in a wholesale and retail nursery.",
-                    "Loaded customer vehicles, restocked product areas, maintained grounds, and helped customers find the right products quickly.",
+                    "Promoted from Loader to Guide within three months, supporting customers, restocking product areas, maintaining grounds, and keeping daily operations moving in a fast-paced retail environment.",
                 ],
             ),
         ],
-        "additional": [
-            "Local to Mount Juliet and open to downtown Nashville work",
-            "Familiar with common spirits, mixers, garnishes, and classic cocktail structure",
-            "Ready to complete TABC-certified alcohol awareness training immediately",
-            "Interested in growing into bartending after proving value in support work",
-        ],
+        "additional": [],
     },
     {
         "filename": "Matt Dimock - Food Runner.docx",
@@ -390,13 +414,15 @@ def build_resume(spec):
     add_header(doc, spec)
     add_section_heading(doc, "Professional Summary")
     add_body_paragraph(doc, spec["summary"])
-    add_section_heading(doc, "Core Strengths")
-    add_bullets(doc, spec["strengths"])
-    add_section_heading(doc, "Relevant Experience")
+    if spec.get("strengths"):
+        add_section_heading(doc, "Core Strengths")
+        add_bullets(doc, spec["strengths"])
+    add_section_heading(doc, spec.get("experience_heading", "Relevant Experience"))
     for company, title, dates, bullets in spec["experience"]:
         add_experience(doc, company, title, dates, bullets)
-    add_section_heading(doc, "Additional Information")
-    add_bullets(doc, spec["additional"])
+    if spec.get("additional"):
+        add_section_heading(doc, "Additional Information")
+        add_bullets(doc, spec["additional"])
 
     out_path = OUT_DIR / spec["filename"]
     doc.save(out_path)

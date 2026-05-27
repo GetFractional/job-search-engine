@@ -263,4 +263,4 @@ Stop and report the blocker when:
 - Resume Builder, Job Matcher, or Analyzer cannot be reached and the user has not approved a local-only fallback
 - Teal cannot persist target title, summary, selected skills, or export state after two careful attempts
 - export cannot be verified through the filesystem
-- the next action would submit, message, answer sensitive self-ID, delete, bulk-change, or permanently overwrite content without approval
+- the next action would submit, message, delete, bulk-change, or permanently overwrite content without approval. Self-ID fields may be answered from standing defaults when no contradictory instruction exists.

@@ -88,7 +88,7 @@ When the user says "Apply to a job for me" or "Apply to the next best job for me
 
 ### 5. Approve Before External Action
 - Present final assets, application answers, upload destination, and submit action.
-- Do not submit applications, send outreach, share references, answer sensitive voluntary self-ID, or negotiate externally without explicit approval.
+- Do not submit applications, send outreach, share references, or negotiate externally without explicit approval. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 
 ### 6. Close The Loop
 - After approved submission, update Teal status, applied date, Excitement, notes, submitted assets, compensation answer, and follow-up target.

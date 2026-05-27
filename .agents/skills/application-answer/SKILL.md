@@ -34,9 +34,8 @@ Answer application questions concisely and safely, including compensation and lo
 2. Choose concise or expanded answer format.
 3. Use safe proof and phrasing.
 4. Preserve compensation leverage.
-5. Use standing defaults for self-ID and eligibility fields when available, and flag only fields that lack a safe default.
-6. For hospitality and Harri-style forms, explicitly classify each answer as one of: standing default, user-provided fact, safe free-text fallback, or blocker.
-7. Re-check answers that commonly drift in hospitality forms: hourly pay, shift and weekend availability, start date, prior employer, referral, transportation, commute, and conflicting-employment language.
+5. Complete every exposed ATS/profile or pre-interview field to the fullest truthful extent before treating resume upload as sufficient.
+6. Use standing defaults for self-ID and eligibility fields when available, and flag only fields that lack a safe default.
 
 ## Output
 - Concise answer
@@ -47,15 +46,13 @@ Answer application questions concisely and safely, including compensation and lo
 
 ## Safety
 Do not submit. Do not hard-anchor low compensation unless required and approved.
+Do not skip optional structured fields that help the employer or ATS evaluate fit when the answer is truthful and available from source material, the resume, or standing defaults.
 For compensation fields:
 - Never guess an hourly or salary number just to get through a form.
 - If the field allows free text, prefer `Negotiable` unless Matt has given a specific target for that exact role.
-- If the field requires a numeric value and no approved number exists, stop and ask Matt what to use rather than inventing one.
+- For hospitality roles where Matt has approved numeric fallback handling, if the field requires a numeric value, use the active posting's pay evidence first. If no posted rate is visible, use current market evidence for the exact lane, such as barback, server assistant, server, host, or food runner, and note the source after submission.
+- If the field requires a numeric value and no approved number or fallback rule exists, stop and ask Matt what to use rather than inventing one.
 - Treat low-anchor guesses such as `18` for hospitality support roles as incorrect unless Matt explicitly instructed that number.
-For hospitality support roles:
-- Treat free-text hourly-pay prompts as `Negotiable` by default unless Matt has approved a specific number for that role.
-- Treat availability as a truth-sensitive live-form answer, not a convenience field. Do not broaden or narrow it at the last minute without checking the user's stated intent.
-- Treat immediate-start claims, transportation claims, and conflicting-employment acknowledgements as user-specific facts that must match current instructions.
 
 ## Standing Application Facts
 Use these only when the form asks and no contradictory user instruction exists:
@@ -74,4 +71,4 @@ Use these only when the form asks and no contradictory user instruction exists:
 - Disability status: no disability / no history or record of disability.
 - Security clearance: no active clearance unless Matt provides one for the exact application.
 - Pronouns: he/him only when asked.
-- Voluntary self-ID fields: fill using these standing defaults without pausing only when the labels map cleanly. If the form offers only decline-to-answer choices or wording does not map cleanly to these defaults, stop before submit and surface the exact field as a blocker instead of guessing.
+- Voluntary self-ID fields: fill using these standing defaults without pausing. If the form offers only decline-to-answer choices or wording does not map cleanly to these defaults, choose the closest truthful option and note it after submission.

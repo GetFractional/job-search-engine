@@ -11,7 +11,7 @@ description: Draft tailored two-page resumes using the selected role lane, job-t
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Use `docs/teal-ui-navigation.md` when working in Teal Resume Builder. It maps Content Editor, Analyzer, Job Matcher, Designer, Cover Letter, and export verification.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 - When the summary references tenure, calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required. Do not use stale shorthand like `15+ years`.
 
 ## Purpose
@@ -66,15 +66,28 @@ Create a tailored two-page resume using the correct lane, job-title language, va
 22. Keep brand-specific metrics under the correct employer or clearly named client context.
 23. Remove duplicate or near-duplicate lines across headline, summary, highlights, and experience.
 24. Keep tone human and direct. No em dashes. No AI-sounding phrasing.
-25. For Get Fractional/OC Ramps bullets, prefer sharper systems-and-outcome framing over weak baseline-comparison-only language. Stronger default angle: connect full Shopify store ownership, store strategy, design, copy, development coordination or implementation, product and collection page improvements, onsite CRO, SEO, email, GA4/GTM instrumentation, Shopify performance reporting, campaign planning, and agency accountability into a measurable ecommerce operating system; use the 39% H2 vs H1 lift or record December month when role-relevant.
-26. Use Designer only after content is stable, and only for layout, margins, template, and two-page fit.
+25. For Nashville hospitality resumes:
+   - use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact for server, bartender-track, barback, and adjacent high-volume floor roles
+   - preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it; do not replace it with the older barback-only summary
+   - default to a full-chronology resume with hospitality-relevant bullets across all roles, not only `Lowe's Home Improvement` and `Boething Treeland Nursery`
+   - keep every company, position, date, and location active unless Matt explicitly approves a shortened timeline
+   - include 1-2 selected transferable bullets per role when they prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution
+   - keep corporate metrics only when they strengthen credibility without making the resume read like a marketing leadership resume
+   - job-specific optimization can adjust the target title and truthful hard/soft skill phrasing for the target posting; only adjust the summary when the target job clearly requires it or Matt approves it
+   - do not present marketing bullets as if they are directly relevant hospitality experience
+   - remove relevance clutter by unchecking weak bullets and position descriptions, not by deactivating roles
+   - before export, verify checked narrative controls. Passing means every active bullet has a clear hospitality-transfer reason and the preview remains readable.
+   - do not claim unconfirmed bar-specific skills such as garnish prep, stock rotation, recipes, spirits familiarity, beverage products, restaurant operations, or sanitation routines unless Matt has explicitly confirmed them
+26. For Get Fractional/OC Ramps bullets, prefer sharper systems-and-outcome framing over weak baseline-comparison-only language. Stronger default angle: connect full Shopify store ownership, store strategy, design, copy, development coordination or implementation, product and collection page improvements, onsite CRO, SEO, email, GA4/GTM instrumentation, Shopify performance reporting, campaign planning, and agency accountability into a measurable ecommerce operating system; use the 39% H2 vs H1 lift or record December month when role-relevant.
+27. Use Designer only after content is stable, and only for layout, margins, template, and two-page fit.
    - Add enough spacing between company headings and prior bullets for readability.
    - Prefer simple bullet glyphs over double-angle symbols when Teal supports it.
-27. If an application accepts file upload, never paste the resume into a manual text field as an automation shortcut. If upload fails with `fileChooser.setFiles failed` and `Not allowed`, verify the Codex Chrome extension's `Allow access to file URLs` toggle at `chrome://extensions/?id=hehggadaopoacecdllhhajmbjkdcmajg`, restart Chrome or start the Chrome task again, then retry the visible upload control. Stop and report the upload blocker unless Matt explicitly approves manual entry or a narrow manual file-picker step.
-28. If reformatting outside Teal, remove local file path footers, browser print headers/footers, timestamps, URLs, and any machine-generated footer text before delivery or upload.
-29. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume.pdf`.
-30. If Teal exports a generic or suffixed filename, rename or copy the local file to the required format before upload or delivery. Never upload filenames containing `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
-31. Verify the export through the filesystem, not just by clicking `Export PDF`.
+28. If an application accepts file upload, never paste the resume into a manual text field as an automation shortcut. If upload fails with `fileChooser.setFiles failed` and `Not allowed`, verify the Codex Chrome extension's `Allow access to file URLs` toggle at `chrome://extensions/?id=hehggadaopoacecdllhhajmbjkdcmajg`, restart Chrome or start the Chrome task again, then retry the visible upload control. Stop and report the upload blocker unless Matt explicitly approves manual entry or a narrow manual file-picker step.
+29. If reformatting outside Teal, remove local file path footers, browser print headers/footers, timestamps, URLs, and any machine-generated footer text before delivery or upload.
+30. Export the final resume as `{Company} - {Role} - Matt Dimock - Resume.pdf`.
+31. Treat canonical naming as a blocking gate before delivery or upload. If the visible upload name is generic, suffixed, or job-board phrased, remove it and re-upload the approved-name file.
+32. If Teal exports a generic or suffixed filename, rename or copy the local file to the required format before upload or delivery. Never upload filenames containing `Teal`, `final`, `draft`, `v2`, dates, source labels, tool labels, or names such as `Barback at W Nashville.pdf`.
+33. Verify the export through the filesystem, not just by clicking `Export PDF`.
 
 ## Output
 - Tailored resume draft
