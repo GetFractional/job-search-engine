@@ -60,6 +60,11 @@ For resume and cover-letter work:
 - do not default external resume summaries to `in marketing since 2007` when the target asset expects a years-of-experience claim
 - never use em dashes in final assets
 - avoid AI-sounding phrasing, hype, or theatrical self-branding
+- for Nashville hospitality resumes, use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact
+- preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it
+- keep the default structure to full chronology with selected hospitality-transfer bullets across all roles
+- include bullets that prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution
+- do not use marketing bullets, extra Skills sections, or keyword stuffing as hospitality relevance proof by default
 
 ## Scenario Router
 For every request, classify it first:
@@ -145,6 +150,7 @@ For application work, do not finish until these are handled or explicitly blocke
 - job moved to Applying only after active asset work begins and the role still clears the pursue bar
 - research brief completed before final assets
 - live application flow inspected before optional asset work such as cover-letter drafting
+- exposed ATS/profile fields completed to the fullest truthful extent before relying on resume upload alone; when a portal parses the resume, review and correct parsed experience, skills, dates, employer names, eligibility, availability, and screening questions whenever the UI exposes those fields
 - Teal Resumes tab used
 - resume opened in Resume Builder
 - Job Matcher reviewed for missing hard and soft skills
@@ -165,13 +171,16 @@ For application work, do not finish until these are handled or explicitly blocke
 - final resume length checked in Teal preview/export, targeting strong two-page use without spilling to page 3
 - any local reformatting checked to remove file path footers, browser print headers/footers, timestamps, and URLs
 - resume and cover letter exported or blocked by Teal limitations
-- files named `{Company} - {Role} - Matt Dimock - Resume/Cover Letter`
-- if Teal exports a generic filename, the local file is renamed to the required format before upload or delivery
-- filenames checked before upload: no `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels
+- files named exactly `{Company} - {Role} - Matt Dimock - Resume.pdf` and, when used, `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`
+- if Teal exports a generic filename, the local file is renamed or copied to the required format before upload or delivery
+- filenames checked before upload: no `Teal`, `final`, `draft`, `v2`, dates, source labels, tool labels, or job-board phrasing such as `Barback at W Nashville.pdf`
+- if the wrong filename is visible in a live application upload, remove it and re-upload the approved-name file before continuing
 - if the application has a cover-letter slot, a tailored one-page Teal-designed cover letter is created and named canonically unless Matt explicitly opts out
 - interview pack created before submission readiness for roles that clear the pursue bar
 - attachment upload preflight completed when the application requires files; if Chrome reports `Not allowed`, verify `Allow access to file URLs` for the Codex extension and restart/retry before using any fallback
 - application answers prepared
+- structured application fields and pre-interview questions answered when visible; do not skip optional experience, skills, availability, or role-fit fields solely because the resume is attached
+- compensation answers preserve leverage: never guess a low pay number; use `Negotiable` when the form accepts text. For hospitality roles where Matt has approved numeric fallback handling, use the active posting's pay evidence first when a numeric field is required; if no posted pay is visible, use current market evidence for the exact lane and note the source after submission. Never use `$18/hr` as a blind fallback unless the active posting shows it or Matt approves it for that exact role.
 - final submission held for explicit user approval
 - Teal status moved to Applied only after user-approved submission is completed and confirmation is visible
 - after submission, Teal post-submit hygiene completed: Applied status, applied date, Excitement from fit score, submitted salary/comp answer, exact submitted asset filenames, follow-up target, and application ledger entry
@@ -197,9 +206,12 @@ Use these only when the form asks and the user has not overridden them:
 - Canada travel for work: yes, with prior business-travel history to Canada
 - family or relatives at target employer: no
 - previous employment at target employer: no unless evidence says otherwise
-- gender/race: white male only for voluntary self-ID when the user has approved answering
+- race/ethnicity: White / Not Hispanic or Latino for voluntary self-ID
+- gender: male for voluntary self-ID
 - pronouns: he/him only when asked
-- veteran status: not a veteran
+- veteran status: not a protected veteran / not a veteran
+- disability status: no disability / no history or record of disability
+- security clearance: no active clearance unless Matt provides one for the exact application
 
 ## Output
 Always end with:
@@ -221,4 +233,4 @@ When listing roles or recommendations, also include:
 - stale-risk assessment
 
 ## Safety
-Do not submit applications, send messages, share references, answer sensitive voluntary self-ID questions, or accept/decline/negotiate externally without explicit approval.
+Do not submit applications, send messages, share references, or accept/decline/negotiate externally without explicit approval. Voluntary self-ID, race, gender, veteran, disability, and clearance questions may be answered from standing defaults when no contradictory instruction exists.

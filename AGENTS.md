@@ -191,7 +191,7 @@ When the user asks to apply to a job:
 11. Download or save resume and cover letter as separate files named `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels in the filename.
 12. Prepare application answers from the exact live form questions. Use defaults only when the form asks and no contradictory evidence or user instruction exists.
 13. Create a role-specific interview pack before submission readiness for roles that clear the pursue bar, so likely screens, objections, story selection, questions to ask, and compensation strategy are ready.
-14. Stop for approval after the final resume, cover letter if used, application answers, upload destination, and submit action are visible/reviewable. Do not submit applications, send outreach, share references, or answer sensitive voluntary self-ID without explicit approval of the exact external action.
+14. Stop for approval after the final resume, cover letter if used, application answers, upload destination, and submit action are visible/reviewable. Do not submit applications, send outreach, share references, or negotiate externally without explicit approval of the exact external action. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 15. After an approved application is submitted and confirmation is visible, update the Teal status to Applied, add the application date, note the submitted assets and submitted salary/comp answer, verify Teal Excitement still matches the fit score, record a follow-up target, and update the application performance ledger. Do not mark Applied before the live submission is completed.
 
 Chat policy:
@@ -287,9 +287,12 @@ Default application answers when the form asks and no contradictory evidence exi
 - Canada travel for work: yes, has prior business-travel history to Canada
 - family or relatives at target employer: no
 - previously worked at target employer: no unless evidence says otherwise
-- gender/race: white male only for voluntary self-ID when approved
+- race/ethnicity: White / Not Hispanic or Latino for voluntary self-ID
+- gender: male for voluntary self-ID
 - pronouns: he/him only when asked
 - veteran status: not a veteran
+- disability status: no disability / no history or record of disability
+- security clearance: no active clearance unless Matt provides one for the exact application
 
 ## Human Approval Gates
 Ask for explicit approval before:
@@ -304,7 +307,6 @@ Ask for explicit approval before:
 - providing reference contact info
 - accepting or declining interviews
 - negotiating compensation externally
-- answering sensitive voluntary self-ID fields unless the user has provided standing permission
 
 Drafting, analysis, scoring, research, recommendations, and QA can proceed without approval.
 

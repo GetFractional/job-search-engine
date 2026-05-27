@@ -10,7 +10,7 @@ description: Draft LinkedIn connection notes, LinkedIn follow-ups, recruiter ema
 - Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 
 ## Purpose
 Create LinkedIn connection notes, LinkedIn follow-ups, recruiter emails, hiring manager emails, and warm-intro blurbs.
@@ -36,6 +36,8 @@ Create LinkedIn connection notes, LinkedIn follow-ups, recruiter emails, hiring 
 3. Use 1 to 3 safe proof points max.
 4. Keep it short, calm, specific, and easy to answer.
 5. Prepare QA and approval checklist.
+6. For Nashville hospitality warm leads, use the hospitality outreach section in `source-files/05_outreach_templates.md` as the default voice. Keep the same direct structure: who invited Matt, attached resume, target roles, nontraditional background as a strength, high performer/minimal direction, 19 years in customer-facing marketing/sales/operations/training/high-pressure service, people-management background, current TABC status, availability, and a simple request to talk.
+7. Do not state `I'm TABC certified` until Matt confirms the certification/permit is complete. Until then, use time-bound truthful language such as `I'll be TABC certified by end of day`.
 
 ## Output
 - Message options

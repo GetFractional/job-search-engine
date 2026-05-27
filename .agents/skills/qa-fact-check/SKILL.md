@@ -11,7 +11,7 @@ description: Audit job-search assets for factual accuracy, claim safety, tone, A
 - Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
 - Use `docs/teal-ui-navigation.md` for Teal preview, export, and PDF readiness checks.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, sensitive voluntary self-ID, or external compensation negotiation unless the user explicitly approves.
+- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 
 ## Purpose
 Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role fit, and overstatement.

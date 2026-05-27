@@ -120,7 +120,7 @@ Use this only after the probe passes.
    - Report verified state only.
    - Name the exported file.
    - Report page count and page-fill status.
-   - Stop before application submission, outreach, references, or sensitive voluntary self-ID.
+   - Stop before application submission, outreach, or references. Voluntary self-ID fields may be answered from standing defaults unless the form wording is ambiguous or contradictory.
 
 ## Diagnostic Commands And Checks
 
