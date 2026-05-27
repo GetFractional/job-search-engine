@@ -81,6 +81,8 @@ These have local resume/application artifacts and must be treated as already wor
 | The Hermitage Hotel | Bartender | Requires bar/mixology experience profile not currently supported |
 | Virgin Hotels Nashville | Part Time Barback | Requires currently valid Food Service Handler Card and TIPS certification; also lists high-volume craft cocktail bar experience |
 | Virgin Hotels Nashville | Part Time Weekend Server | Requires currently valid Food Service Handler Card and TIPS certification |
+| Hyatt | Pool Server | Requires minimum 1 year server experience plus Food Handling Certificate and TIPS Training Certificate |
+| Legends Global | Server, Premium - Nashville, TN | Requires 2-3 years in a fast-paced high-end club or restaurant |
 
 ## Recommendation Gate
 
