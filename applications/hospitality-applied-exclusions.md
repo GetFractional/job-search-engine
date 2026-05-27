@@ -31,6 +31,8 @@ Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check th
 | Image Hotel Management | Bartender, Mount Juliet | Applied | User confirmed submitted |
 | Hilton / Gray & Dudley - The Bankers Alley Hotel | Restaurant Server | Applied | Hilton Taleo thank-you screen confirmed online job opportunity experience completed on 2026-05-27 |
 | Ruby Slipper Restaurant Group / Ruby Sunshine | Server - We Do Days! | Applied | ClearCompany application showed `Thank you for applying` on 2026-05-27 |
+| White Lodging / Marriott Nashville - Central Bar + Kitchen | Server | Applied | Talemetry / White Lodging thank-you page confirmed application submitted on 2026-05-27 |
+| The Joseph / Yolan | AM Server | In process, blocked on ADP address state selector | ADP verification succeeded on 2026-05-27, but Personal Information could not advance because the State / Territory selector remained invalid despite visible Tennessee/address fields |
 | Dos Santos-Nashville | Server/Bartender | Denied | User confirmed denial |
 
 ## Expired / Stale Live-Source Blocks
