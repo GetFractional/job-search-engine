@@ -1,6 +1,6 @@
 # Hospitality Applied And Excluded Roles
 
-Updated: 2026-05-27
+Updated: 2026-05-28
 
 Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check this file before recommending, saving, or applying to server, barback, bartender-track, food runner, busser, host, or adjacent hospitality roles.
 
@@ -33,6 +33,7 @@ Purpose: hard exclusion gate for Nashville hospitality bridge searches. Check th
 | Ruby Slipper Restaurant Group / Ruby Sunshine | Server - We Do Days! | Applied | ClearCompany application showed `Thank you for applying` on 2026-05-27 |
 | White Lodging / Marriott Nashville - Central Bar + Kitchen | Server | Applied | Talemetry / White Lodging thank-you page confirmed application submitted on 2026-05-27 |
 | The Joseph / Yolan | AM Server | In process, blocked on ADP address state selector | ADP verification succeeded on 2026-05-27, but Personal Information could not advance because the State / Territory selector remained invalid despite visible Tennessee/address fields |
+| Event Aces / CMA Fest | Bartending / Event Bar Support | Contact submitted | Event Aces site only exposed a contact form; Chrome confirmation showed `Thanks for contacting us` on 2026-05-28 after submitting interest for CMA Fest bartending/bar support |
 | Dos Santos-Nashville | Server/Bartender | Denied | User confirmed denial |
 
 ## Expired / Stale Live-Source Blocks
@@ -48,6 +49,7 @@ These should not be retried unless a new active posting is found.
 | Bottarga Restaurant | Barback | Harri listing showed `Expired Job Post`, London location, and expiration date 2026-04-12 on 2026-05-26 |
 | Palm Palm | Server Assistant and Food Runner | CareerPlug live application resolved to Pittsburgh, PA and listed $400-$500/week on 2026-05-26, below the Farm House benchmark and outside the Nashville/Mount Juliet target geography |
 | WKND Club | All hospitality roles | User confirmed WKND club is closed |
+| Zuzu Nashville | Full-Time Server | Blocked by hard experience requirement | Indeed live listing reviewed 2026-05-28 showed `$25-$50/hr`, full-time, benefits, but required `5+ years experience in Fine Dining` plus proven fine-dining server experience |
 
 ## User Preference Blocks
 
