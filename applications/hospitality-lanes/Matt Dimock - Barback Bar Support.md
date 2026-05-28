@@ -51,5 +51,7 @@ Reliable, customer-facing operator with a background that spans hands-on retail 
 - Promoted from Loader to Guide within three months, supporting customers, restocking product areas, maintaining grounds, and keeping daily operations moving in a fast-paced retail environment.
 
 ## Additional Information
-- Approved barback baseline PDF: `applications/hospitality-lanes/Matt Dimock - Barback Baseline - Resume.pdf`
-- Future barback optimization may adjust target keywords for a specific job, but should use the newer Teal hospitality base and include hospitality-relevant bullets across all roles when they strengthen the application.
+- Approved barback PDF: `applications/hospitality-lanes/Matt Dimock - Barback Resume.pdf`
+- Approved server/general hospitality PDF: `applications/hospitality-lanes/Matt Dimock - Hospitality Resume.pdf`
+- Do not use older Broadway, Nashville Broadway, baseline, food runner, server assistant, or experimental hospitality resume drafts unless Matt explicitly approves that exact fallback.
+- Future barback optimization may adjust target keywords for a specific job, but should preserve the approved Farm House entry, full chronology, and hospitality-relevant bullets across all roles when they strengthen the application.
