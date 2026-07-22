@@ -115,6 +115,10 @@ The [name knockout screen](../reviews/way-ahead-name-knockout-screen-2026-07-21.
 
 CEO recommendation: use Way Ahead only as the current private checkpoint label, preserve `Your way ahead` as possible emotional territory, and queue a short distinctive-name sprint inside Private-Alpha Readiness. Do not spend engineering effort on a full rename, buy a domain, file a mark, or launch publicly. `My Way Ahead` remains the comparison control, not a cleared fallback. Legacy `my-way-ahead` paths and the isolated ClickUp folder remain stable identifiers until a separately reviewed migration prevents broken provenance.
 
+## Skills and operating durability
+
+The [skill-health audit](../reviews/my-way-ahead-skill-health-audit-2026-07-21.md) repaired the missing company-integrator and offer-journey governance, validated all 24 repo-managed skills, and confirmed both execution mirrors match the repo source. The recurring `Monthly My Way Ahead Skill Health Audit` automation is active for the first Monday of each month at 9:00 AM Central. It deeply reviews the company skills and every changed skill monthly, expands to the full Job Search library in January, April, July, and October, and remains read-only. It cannot edit code, ClickUp, Teal, automations, outreach, publication, spend, or submissions.
+
 ## Remaining risks
 
 1. Native iPhone Safari, touch, safe-area, cellular, VoiceOver, actual 200 percent zoom, device reduced motion, and cross-browser release proof remain open.
