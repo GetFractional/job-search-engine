@@ -22,6 +22,7 @@ The source and bundle hashes that bind the accepted evidence are recorded in `fi
 The final maker run executed:
 
 ```text
+npm run db:generate
 npm test
 npm run lint
 ```
@@ -32,9 +33,10 @@ Results:
 - production build: pass
 - Node truth, state, schema, economics, Remote-access, and regression tests: 40 passed, 0 failed, 0 skipped
 - ESLint: pass
+- Drizzle schema generation: pass; 30 tables read, no schema changes, nothing to migrate
 
 The suite includes current protections for Remote-versus-native-mobile truth, source-kind and external-approval boundaries, sample-workspace gating, persistent fixture labeling, arbitrary-job inputs, onboarding persistence, interrupted-route recovery, independent integrity cards, context-specific Career Path controls, full-row focus, customer-facing validation language, commercial hypothesis separation, schema lineage, cross-tenant isolation, economics allocations, one current Job Standard, one primary Career Path, and deterministic resume assignment.
 
 ## Provenance boundary
 
-The clean worktree began at commit `cb425a3117dca675bdc100915dba7ba4c4a877b0` on branch `codex/way-ahead-private-alpha`. The existing origin repository is public, so private-alpha product and personal job-search artifacts were not pushed there. Local branch and file hashes are the current provenance evidence pending a Board-approved private remote.
+The clean worktree began at commit `cb425a3117dca675bdc100915dba7ba4c4a877b0` on branch `codex/way-ahead-private-alpha`. The existing origin repository is public, so private-alpha product and personal job-search artifacts were not pushed there. Checkpoint `8adc7218dcfc706bf61f4453d2772a0b854a3a87` was pushed only to the private repository `GetFractional/way-ahead-private-alpha`; final corrections and this receipt are contained in the branch's closing evidence commit. The final handoff requires a private-upstream 0-ahead and 0-behind readback.

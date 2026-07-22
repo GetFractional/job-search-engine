@@ -1,14 +1,14 @@
-# My Way Ahead Company Operating System
+# Way Ahead Company Operating System
 
 **Version:** 1.1
 **Operating date:** 2026-07-21
 **Board and owner:** Matt Dimock
 **Accountable CEO and integrator:** Codex root, within the authority contract below
-**Company name:** My Way Ahead, provisional until domain control and legal clearance
-**Current company stage:** Founder-directed product reset, before private external alpha
+**Company name:** Way Ahead, temporary local founder-checkpoint label only; the master brand remains open after a high-collision knockout screen
+**Current company stage:** Board-reviewable local synthetic founder checkpoint, before private external alpha
 **Operating North Star:** Better-fit jobs found and pursued with less wasted effort and stronger honest proof
 
-> **Board amendment, 2026-07-21:** [Founder Feedback Product Reset](../strategy-system/16-founder-feedback-product-reset-2026-07-21.md) governs the customer promise, journey, schema, platform posture, offer ladder, acquisition surface, and next design gate. The [Unit Economics Ledger](my-way-ahead-unit-economics-ledger-2026-07-21.md) governs offer versions, revenue recognition, contribution definitions, free subsidy, support ceilings, cohort maturity, and the separate software, affiliate, and human-service ledgers. These controls supersede the job-checker-first homepage, required timeline interaction, $24 monthly Keep Watch preference, unstaffed human-service offers, and older economics ceilings. This Company Operating System continues to govern authority, exactly two active initiatives, source ownership, release gates, and reserved decisions.
+> **Board amendment, 2026-07-21:** [Founder Feedback Product Reset](../strategy-system/16-founder-feedback-product-reset-2026-07-21.md) governs the customer promise, journey, schema, platform posture, offer ladder, acquisition surface, and next design gate. The [Unit Economics Ledger](my-way-ahead-unit-economics-ledger-2026-07-21.md) governs offer versions, revenue recognition, contribution definitions, free subsidy, support ceilings, cohort maturity, and the separate software, affiliate, and human-service ledgers. These controls supersede the job-checker-first homepage, required timeline interaction, $24 monthly Keep Watch preference, unstaffed human-service offers, and older economics ceilings. Matt subsequently selected **Way Ahead** as the provisional internal name and authorized the local synthesis of Career Portfolio Reveal, Warm Editorial Guide, and Focused Career Workspace. That candidate passed independent local founder-checkpoint QA. Legacy `my-way-ahead` paths and the isolated ClickUp folder remain stable identifiers until a separately reviewed migration. This Company Operating System continues to govern authority, exactly two active initiatives, source ownership, release gates, and reserved decisions.
 
 ## Board resolution
 
@@ -53,7 +53,7 @@ The product must earn trust through direct-source identity, explicit unknowns, u
 
 ### The owned advantage
 
-My Way Ahead will own the customer product, Career Baseline, career and opportunity data model, decision policy, evidence and correction system, Pursuit workflow, and learning loop. Commodity infrastructure such as authentication, hosting, billing, email, and qualified model capacity may be integrated under portable contracts when authorized. Licensing or white-labeling another career platform as the core company is out.
+Way Ahead will own the customer product, Career Baseline, career and opportunity data model, decision policy, evidence and correction system, Pursuit workflow, and learning loop. Commodity infrastructure such as authentication, hosting, billing, email, and qualified model capacity may be integrated under portable contracts when authorized. Licensing or white-labeling another career platform as the core company is out.
 
 The company does not assume feature uniqueness. Competitor overlap is a benchmark requirement. The differentiated claim must be proven through execution:
 
@@ -279,16 +279,16 @@ Critical fabrication, false-active status, privacy or security incident, mislead
 ### Confirmed
 
 - Executive Evidence typography, color, and trust language remain design inputs. Matt rejected its connected timeline as the governing interaction pattern.
-- The prototype code passes TypeScript, production build, ESLint, and 14 rendered truth, state, funnel, leakage, offer, and regression tests after the P0 founder-feedback corrections.
+- The current candidate passes TypeScript, production build, ESLint, 40 automated tests, 30-table schema generation with no drift, exact-build visual QA, and independent local founder-checkpoint review.
 - The current prototype is local and synthetic. It does not ingest a live job, call a paid model, charge a card, send an application, or publish externally.
 - The prior screenshot folder under `prototypes/worthward-mobile/qa/ux-audit-2026-07-19/v2-final/` came from a stale bundle on port 3004 and is reference-only.
 - The exact current local build can be served through the detached QA service on port 3011.
-- Browser verification is restored through the Codex in-app browser. Prior independent evidence is stale for the changed source and must be rebuilt after the selected visual direction is implemented.
-- The older Job Filter ClickUp lists contain a separate legacy brand, repository, and architecture. My Way Ahead work is isolated in its own ClickUp folder and lists.
+- Browser verification is restored through the Codex in-app browser. Fresh accepted evidence covers 320, 390, 768, 1280, and 1440 widths; Light, Dark, and System; the core journey; recovery and approval states; focus and target measurements; and a matched 390 x 844 reference comparison.
+- The older Job Filter ClickUp lists contain a separate legacy brand, repository, and architecture. Way Ahead work remains isolated in the existing My Way Ahead ClickUp folder and lists.
 
 ### Not proven or authorized
 
-- My Way Ahead brand clearance or control of mywayahead.com.
+- Way Ahead trademark or entity-name clearance, domain control, or public-brand approval.
 - Homepage and pricing comprehension by first-time users.
 - Live job extraction, source rights, model quality, privacy route, security, billing, demand, retention, or unit economics.
 - Any private or public deployment, external alpha, paid offer, production connection, or job application.

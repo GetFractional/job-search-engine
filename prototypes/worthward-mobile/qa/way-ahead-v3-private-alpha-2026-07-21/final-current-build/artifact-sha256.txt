@@ -1,3 +1,5 @@
+3337917edade9dc6ba597e7644bf7a600da213b53f5f06ff5d0848304ac173fc  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/comparison-selected-timeline-vs-current-independent-checks-ready-390x844.jpg
+040e42e5a9c23ab28d17077f0ce3d3bbe5b6c80c9de95258a04fc12696851f78  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/career-paths-44px-targets-system-dark-390x844.jpg
 5b4cb6f129ae8e2033af16f7dd6ca0d88113c92041c6bd36c06f45a8c7c6a003  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/career-paths-compact-system-dark-390x844.jpg
 5c0516aa8cdcc656da9220007e04c00acd3f3751ede9f80f055c956f7d4e1a57  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/career-paths-selected-system-dark-390x844.jpg
 56e7bdc5b61e9302ce71b4069eb8bb8f066272fb72b11c3058623eaf39e6fbd9  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/direct-route-setup-boundary-system-dark-390x844.jpg
@@ -12,6 +14,7 @@ b1b44ba1c08bf3ef3082d7c64f4f40d0b9ed8378cf1f8157f744b467e2cfc01b  qa/way-ahead-v
 53aca9e33822a819b3bb9c55ec3e02bfe91350ce6381fbf0d1bff737fc22b311  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-light-390x844.jpg
 23672b87ca40ed5f4c146b0e358825d585e48f74de901bc11316f3984bbf5a85  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-light-768x900.jpg
 95b00ad23bd16a0b8bf94ceb13d691671209adda9a07080ea69873b76d31af96  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-system-resolved-dark-1280x900.jpg
+f0a779266bebacef76bae67f95917c790c47a4df999112993ac4143c91ce8215  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-system-resolved-dark-320x700-fresh.jpg
 a1fb42f1e2de5f81737fed0bbc76ce6199954fbc68d714aa68ea7066b44f0a22  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-system-resolved-dark-320x700.jpg
 b05013d6e0dad777abd6e1f1ac958db281ed4eb964f521abeebcb3ad7095e141  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-system-resolved-dark-390x844.jpg
 a4d4c8cdb2b2acbd3113e90cba7899c4460f785401e26d2e9dd1d32aa300e167  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/home-system-resolved-dark-768x900.jpg
@@ -27,13 +30,15 @@ ac4e7fb0325c946b02889341757dd1003fbd2aaa7f59c4c1ac2704724bacf4ab  qa/way-ahead-v
 5bb48b46cca8914530220053af44e7d351d6e8d1c51880754efe69345ec188dc  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/public-mobile-menu-system-dark-390x844.jpg
 f8fe8d9247f33596eeb23f4bf18426c2f6653c6a42aec81922665b33b2c08f77  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/settings-full-row-focus-system-dark-390x844.jpg
 de6c45330ad985407368d53f29f4c4968b46c2cd9e828f9cc842d4a36061c19e  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/settings-theme-row-focus-system-dark-390x844.jpg
+8bd883325286963c8704887e0cab994d82c015f7908a9aee40940ff424f26c86  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-approved-not-handed-off-system-dark-390x844.jpg
 bee76204e1f1cc064f696171e64250a901195835a707f60183371d345f312e7b  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-budget-system-dark-390x844.jpg
 62b50efcb0ab000c798d60ceea06a00ad06ba0df850c789cd7dbd24d4f22f493  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-capacity-system-dark-390x844.jpg
 36c2a6fddcf6909040196dfed09734a087f81d3b1b52f82e04376d105648e098  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-conflict-system-dark-390x844.jpg
+dc1d436f805834482ac893b07a844af9535b33903d8b23fb9c3a5fe6a18d6775  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-empty-no-action-system-dark-390x844.jpg
 0cd1aa149c81d1e42626aaa0aebac96ee970faca498d139b9613d860424056e9  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-error-system-dark-390x844.jpg
+8312da42e516f912ebee2005198c06c09bd0e427f5482a52956e8b7de6187411  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-exact-approval-unapproved-system-dark-390x844.jpg
 b0563fc16b7ae4c761b3081e121bb67d7bb20f647697464ce9b535506465ada6  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-loading-system-dark-390x844.jpg
 c0ee3ee28c889d26e6dbdcd61566c0ff35b200b374441f0f19cfe63fc72ba0de  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-offline-system-dark-390x844.jpg
 d3032639f24c16875722abb2830eea651600999b5e7f726f0638eb813c29494d  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-partial-system-dark-390x844.jpg
+7f5e789daaac75886fbd705714269d36686a6177708285c08ed4e3cfe1495486  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-revoked-after-package-change-system-dark-390x844.jpg
 d6a63955c1e2acf63366d0c4010ee991ba5f03d49376f64d8bcee4aaad315d90  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/screenshots/state-validation-system-dark-390x844.jpg
-5e5834de3b73f614a2146765b2d86986d279c8210482c982362a632884cb686f  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/comparison-selected-reference-vs-independent-checks-390x844.png
-d82e22fd83414e65a44b09077a8a3dee29977dee5f3689ce728120295b8b6d68  qa/way-ahead-v3-private-alpha-2026-07-21/final-current-build/comparison-selected-reference-vs-way-ahead-home-390x844.png

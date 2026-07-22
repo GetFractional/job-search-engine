@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-07-21",
+  "surface": "Codex in-app Browser",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "career_paths": {
+    "back_control_height": 44,
+    "evidence_disclosure_heights": [44, 44, 44],
+    "path_control_heights": [44, 44, 44, 44, 44, 44]
+  },
+  "home_audit": {
+    "h1_count": 1,
+    "main_count": 1,
+    "unnamed_interactive_count": 0,
+    "unlabeled_input_count": 0,
+    "small_target_count": 0,
+    "missing_alt_count": 0,
+    "duplicate_id_count": 0,
+    "horizontal_overflow": false
+  },
+  "application_audit": {
+    "h1_count": 1,
+    "main_count": 1,
+    "unnamed_interactive_count": 0,
+    "unlabeled_input_count": 0,
+    "small_target_count": 0,
+    "missing_alt_count": 0,
+    "duplicate_id_count": 0,
+    "horizontal_overflow": false
+  },
+  "narrow_home": {
+    "viewport_width": 320,
+    "viewport_height": 700,
+    "client_width": 320,
+    "scroll_width": 320,
+    "h1_count": 1
+  }
+}

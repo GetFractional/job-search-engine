@@ -8,7 +8,7 @@
 
 ## Executive decision
 
-My Way Ahead will not lead as a job-posting checker. It will become a user-controlled job-search operating system that understands the person once, finds and verifies worthwhile work, explains mutual fit, and prepares the strongest honest pursuit package for each selected opportunity.
+Way Ahead will not lead as a job-posting checker. It will become a user-controlled job-search operating system that understands the person once, finds and verifies worthwhile work, explains mutual fit, and prepares the strongest honest pursuit package for each selected opportunity.
 
 The job-posting investigation remains valuable, but it is trust infrastructure and an acquisition tool. It is not the primary promise.
 
@@ -24,13 +24,13 @@ The working homepage promise is:
 
 Supporting explanation:
 
-> My Way Ahead reveals the credible career paths your experience can open, finds the few current jobs that could improve your pay, time, growth, or stability, and helps build the job-specific resume, letter, research, and plan that give you the strongest honest chance.
+> Way Ahead reveals the credible career paths your experience can open, finds the few current jobs that could improve your pay, time, growth, or stability, and helps build the job-specific resume, letter, research, and plan that give you the strongest honest chance.
 
 Primary action: **Find better-fit jobs for me**
 Secondary action: **Check a job I found**
 Trust line: **No mass applying. No invented experience. Nothing sent without your approval.**
 
-The brand remains **My Way Ahead** provisionally. **Way Ahead** is shorter, but shortening or public use requires collision, domain-control, spoken-recall, and legal-clearance evidence.
+Matt selected **Way Ahead** as the provisional internal private-alpha name because it both shows a credible way forward and supports durable career advantage. The product must not turn that meaning into a guarantee or superiority claim. Public use still requires collision, domain-control, spoken-recall, and legal-clearance evidence.
 
 ## Founder feedback accepted
 
@@ -65,7 +65,7 @@ Likewise, permission to begin database and authentication work authorizes local,
 
 ## Product job and value loop
 
-The customer hires My Way Ahead to reduce five kinds of work:
+The customer hires Way Ahead to reduce five kinds of work:
 
 1. **Self-understanding:** turn scattered career evidence into an accurate, editable career record.
 2. **Search:** find current, legitimate opportunities across every credible career path.
@@ -260,7 +260,7 @@ Official public pricing and feature pages were refreshed on 2026-07-21. Prices c
 
 The Keep Watch hypothesis must therefore win on low effort, multiple credible paths, restrained high-quality alerts, useful no-opportunity reporting, and compounding career memory. A low introductory price is an acquisition lever, not the product's defensible advantage.
 
-Dribbble was used as a pattern library, not as proof of usability or permission to copy. Useful themes include [large labels and generous navigation areas](https://dribbble.com/shots/6607370-Mobile-app-dashboard), [engaging question-led recruitment onboarding](https://dribbble.com/shots/2792485-Recruiting-App-Onboarding), and current [job-app onboarding](https://dribbble.com/search/shots/popular/?q=job-app-onboarding) and [career-dashboard](https://dribbble.com/search/career%20dashboard) collections. My Way Ahead should adopt the principles of focus, full-row choices, clear hierarchy, and generous spacing while preserving its own Executive Evidence visual language and meeting accessibility and real-task evidence.
+Dribbble was used as a pattern library, not as proof of usability or permission to copy. Useful themes include [large labels and generous navigation areas](https://dribbble.com/shots/6607370-Mobile-app-dashboard), [engaging question-led recruitment onboarding](https://dribbble.com/shots/2792485-Recruiting-App-Onboarding), and current [job-app onboarding](https://dribbble.com/search/shots/popular/?q=job-app-onboarding) and [career-dashboard](https://dribbble.com/search/career%20dashboard) collections. Way Ahead should adopt the principles of focus, full-row choices, clear hierarchy, and generous spacing while preserving its own Executive Evidence visual language and meeting accessibility and real-task evidence.
 
 ## Offer architecture and economics
 
@@ -287,7 +287,7 @@ The former $199 Expert Review and $499 Guided Help hypotheses are paused. The co
 
 The first conditional candidate is **[MentorCruise](https://mentorcruise.com/partners/)**, a mentoring marketplace that is less likely than a resume vendor to cannibalize the software core. Its current vendor-published formula is 50 percent of MentorCruise's take rate, usually about 10 percent of a qualifying mentee transaction over $50. On its stated typical $160 to $220 monthly spend, that implies an unguaranteed $16 to $22 gross monthly planning range per active referred mentee. The public material does not establish cookie, attribution, payout, reversal, termination, trademark, traffic, geography, or partner-data terms; even the page's customer-count copy appears stale against a newer vendor page. This is not approval-ready.
 
-Use a direct link only, transfer no My Way Ahead profile or behavioral data, keep placement nonexclusive, disclose the commission beside the recommendation, and make ranking commission-neutral. Refer contextually for interview preparation, career transitions, negotiation, or a human second opinion. Do not claim that a user was "matched" unless My Way Ahead later implements and validates matching criteria.
+Use a direct link only, transfer no Way Ahead profile or behavioral data, keep placement nonexclusive, disclose the commission beside the recommendation, and make ranking commission-neutral. Refer contextually for interview preparation, career transitions, negotiation, or a human second opinion. Do not claim that a user was "matched" unless Way Ahead later implements and validates matching criteria.
 
 [ResumeSpice](https://resumespice.com/) is a narrow fallback only. Its Awin pages conflict on whether commission is a public 10 percent with a 15-day cookie or case-specific with a 60-day cookie; joining also requires a Board-gated $5 deposit. Its resume, LinkedIn, coaching, and application services directly overlap the product, and its customer terms create material career-data, marketing-tracking, license, and refund concerns. [Let's Eat, Grandma](https://www.letseatgrandma.com/affiliates/) is on hold because its affiliate path currently falls through to a generic Awin page, economics are undisclosed, and its dated privacy disclosures conflict. TopResume remains screened out for the current shortlist. Coursera may be useful only for a verified skill gap. Jobscan or resume-builder affiliates risk direct product cannibalization and should be used only in a narrow context.
 

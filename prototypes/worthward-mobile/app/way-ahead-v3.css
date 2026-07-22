@@ -761,7 +761,7 @@
   }
 
   .way-ahead-v3 .lane-screen .back-button {
-    min-height: 40px;
+    min-height: 44px;
     margin-bottom: 8px;
   }
 
@@ -820,14 +820,14 @@
   }
 
   .way-ahead-v3 .lane-evidence-details summary {
-    min-height: 40px;
+    min-height: 44px;
     padding: 9px 10px;
     font-size: 0.72rem;
   }
 
   .way-ahead-v3 .lane-controls label,
   .way-ahead-v3 .lane-primary-note {
-    min-height: 42px;
+    min-height: 44px;
     padding: 8px 9px;
     font-size: 0.7rem;
   }

@@ -3,7 +3,7 @@
 Role: Director of Revenue Operations
 Company: Seso Inc.
 Canonical application: https://job-boards.greenhouse.io/sesolabor/jobs/4700419005
-Form reviewed and refreshed: 2026-07-21
+Form reviewed: 2026-07-21; canonical role refreshed live: 2026-07-22
 Application submitted: **No**
 Teal records mutated: **No**
 Employer form mutated: **No**
@@ -12,29 +12,21 @@ Employer form mutated: **No**
 
 The package is locally prepared but **not ready for live submission**.
 
-The next reservable action is intended to be **Seso-specific Teal preparation and PDF export only**. It is not yet an executable exact-action request because the required workspace-readiness gate failed and the exact Teal destination record and pre-state remain unknown. Once a clean readiness surface exists, a read-only Teal preflight can resolve those fields without mutating Teal. The final reserved action must stop after the two exact files are exported and verified. Greenhouse form staging requires a later Board review and exact approval of the files, answers, and destination. Submission remains a third, separate approval.
+The clean-provenance gate and read-only Teal preflight are now complete. The exact preflight result was `No items found` for `Seso` in the refreshed Job Tracker. The previously authorized Gate 1 applied only if an exact canonical Seso record already existed and passed the status, duplicate, applied-date, canonical-source, and zero-incremental-cost checks. Because no record exists, no Teal mutation occurred.
+
+The next exact approval must therefore authorize adding or bookmarking the canonical Seso record before the bounded resume and cover-letter workflow can begin. That work must still stop after the two exact files are exported and verified. Greenhouse form staging requires a later Board review and exact approval of the files, answers, and destination. Submission remains a third, separate approval.
 
 ## Readiness And Authority Status
 
-The repo-mandated command `./scripts/prepare-job-search-workspace.sh` was run on 2026-07-21 and returned **Workspace readiness: NOT READY**:
+The private worktree at `/private/tmp/way-ahead-private-alpha-20260721` was prepared from current `origin/main`, isolated from the dirty hospitality branch, connected to the private `GetFractional/way-ahead-private-alpha` repository, and returned **Workspace readiness: READY** before the Teal preflight. The branch was `codex/way-ahead-private-alpha`, its private upstream was 0 ahead and 0 behind, hooks and skill mirrors matched, and no unrelated user work was stashed, overwritten, moved, or deleted.
 
-- branch: `codex/hospitality-approved-resumes`,
-- current commit: `cab7703`,
-- latest `origin/main` included: yes,
-- ahead or behind: 1 ahead, 0 behind,
-- tracked changes present: yes,
-- untracked items: 20,
-- hooks: configured,
-- Codex and Agents skill mirrors: matched,
-- skill metadata: valid.
+The read-only Chrome-backed Teal preflight then refreshed the Job Tracker and searched for `Seso`. The result was `No items found`. There is therefore no existing Teal record URL or identifier, stage, applied-date field, canonical-source field, or resume destination to bind. This is a missing-record stop, not permission to create one.
 
-No tracked or untracked work was stashed, overwritten, moved, or deleted. Under the workspace operating rules, live Teal work stops here. A clean approved provenance surface is required before the read-only preflight or any Gate 1 mutation.
-
-Teal entitlement and incremental-cost truth are also unresolved. The operating assumption is **no incremental cost under Matt's existing Teal access**, but this is not verified. Any upgrade prompt, paywall, paid feature, trial enrollment, billing change, or new subscription is an immediate stop; no spend is authorized by this packet.
+Teal entitlement and incremental-cost truth for the later asset workflow remain unresolved. The operating assumption is **no incremental cost under Matt's existing Teal access**, but this is not verified. Any upgrade prompt, paywall, paid feature, trial enrollment, billing change, or new subscription is an immediate stop; no spend is authorized by this packet.
 
 ## Live Greenhouse Form Receipt
 
-The following controls were visible on Seso's canonical Greenhouse page on 2026-07-21.
+The following controls were visible on Seso's canonical Greenhouse page and remained present on the 2026-07-22 refresh.
 
 | Live field | Required state shown | Claim-safe planned value | Status or note |
 |---|---|---|---|
@@ -122,7 +114,7 @@ Blocking rules:
 
 No item below has been written to Teal.
 
-The exact Teal record URL or record identifier, current stage, applied-date field, duplicate state, and current resume destination remain **unknown until the read-only preflight**. The canonical employer destination is fixed at `Seso Inc.` and the canonical requisition is fixed at `https://job-boards.greenhouse.io/sesolabor/jobs/4700419005`; no aggregator wrapper may be used.
+The refreshed Teal preflight found **no Seso item**. The exact record URL or identifier, stage, applied-date field, duplicate state, and resume destination therefore do not exist yet. The canonical employer destination is fixed at `Seso Inc.` and the canonical requisition is fixed at `https://job-boards.greenhouse.io/sesolabor/jobs/4700419005`; no aggregator wrapper may be used.
 
 | Teal field | Proposed value |
 |---|---|
@@ -139,50 +131,49 @@ The exact Teal record URL or record identifier, current stage, applied-date fiel
 | Logistics | Remote US |
 | Posted | 2026-05-28, official Greenhouse first-published date |
 | Deadline | No official deadline; 2026-07-29 is unverified third-party metadata and is not an urgency fact |
-| Freshness | 54 days old on 2026-07-21; canonical form live; medium-high stale risk |
+| Freshness | 55 days old on 2026-07-22; canonical form live; medium-high stale risk |
 | Main proof | HireHawk AI workflow; Prosper scale and onboarding systems; Affordable Insurance Quotes AMS |
 | Main risks | Salesforce expertise, ARR and forecasting, GTM cost modeling, territory or quota work, compensation planning, dedicated RevOps-team leadership |
 | Next action | Teal resume optimization and one-page Teal cover-letter export only; return the exact files for Board review before any Greenhouse staging |
 
 ### Proposed Teal note
 
-Seso Director of Revenue Operations, 84/100, 4 stars, Pursue. Remote US, $150K-$200K cash plus equity. Officially first published May 28; 54 days old on July 21; canonical Greenhouse form live; medium-high stale risk; no official deadline. A July 29 date appears only in unverified third-party metadata and is not an urgency fact. Strongest match: AI-assisted workflow design, CRM and operating-system builds, lifecycle and enablement infrastructure, dashboards, adoption, and cross-functional process design. Claim risks: Salesforce familiarity is not admin/configuration expertise; no validated direct ARR reconciliation, revenue forecasting, GTM cost modeling, territory/quota/comp-plan ownership, or dedicated RevOps-team management. Stop before external submission.
+Seso Director of Revenue Operations, 84/100, 4 stars, Pursue. Remote US, $150K-$200K cash plus equity. Officially first published May 28; 55 days old on July 22; canonical Greenhouse form live; medium-high stale risk; no official deadline. A July 29 date appears only in unverified third-party metadata and is not an urgency fact. Strongest match: AI-assisted workflow design, CRM and operating-system builds, lifecycle and enablement infrastructure, dashboards, adoption, and cross-functional process design. Claim risks: Salesforce familiarity is not admin/configuration expertise; no validated direct ARR reconciliation, revenue forecasting, GTM cost modeling, territory/quota/comp-plan ownership, or dedicated RevOps-team management. Stop before external submission.
 
 ## Gate 1: Teal Resume And Cover-Letter Work Order
 
-This work order is a **draft pending the clean-readiness and read-only-destination preflight**. It must not be approved or executed as presently written.
+This work order is a **draft pending exact approval to add or bookmark the canonical Seso role**. It must not be executed without that approval.
 
-### Read-only preflight, no Teal mutation
+### Completed read-only preflight, no Teal mutation
 
-After an approved clean provenance surface exists:
+1. The clean private worktree returned `READY` before live Teal inspection.
+2. A fresh Chrome-backed Teal working session refreshed the Job Tracker.
+3. The search term `Seso` returned `No items found`.
+4. No record, status, note, resume, cover letter, shared library, Greenhouse field, or external destination was changed.
+5. No paywall, trial, upgrade, or billing action was accepted.
 
-1. Run the workspace readiness command and stop unless it returns `READY`.
-2. Open a fresh Chrome-backed Teal working window, refresh once, and inspect only the canonical Seso record or search result.
-3. Record the exact Teal URL or identifier, company and role labels, current stage, applied date, canonical source, duplicate state, and relevant resume or cover-letter entitlement.
-4. Record whether any requested Teal feature requires incremental spend. Stop at any paywall, upgrade, trial, billing, or entitlement uncertainty.
-5. Make no record, status, note, resume, cover-letter, or shared-library change.
-6. Return the readback and replace the draft approval below with an exact destination-bound request.
-
-### Reserved mutation work, only after the final exact Gate 1 approval
+### Reserved mutation work, only after the exact missing-record Gate 1 approval
 
 1. Re-run the workspace readiness command and stop unless it returns `READY`.
-2. Refresh the exact preflighted Seso record and canonical source before trusting any state.
-3. Stop if the role is Applied, Interviewing, Negotiating, Accepted, Archived, Closed, shows an applied date, is duplicated, or no longer resolves to Seso requisition 4700419005.
-4. Capture the exact Teal pre-state before mutation.
-5. Move only that record to Applying because active asset work is beginning.
-6. Open Teal Resumes and create or open the exact Seso-specific resume with all master content initially available.
-7. Review Job Matcher and record truthful gaps by hard skill, soft skill, business term, and platform.
-8. Review Analyzer and identify content or formatting issues.
-9. Prefer activating existing truthful bullets and category-led skills.
-10. Leave every global-update option off; stop if a shared-library consequence cannot be isolated and shown.
-11. Do not add unsupported Salesforce, ARR, forecasting, territory, quota, compensation, SQL, churn, NRR, or CAC language.
-12. Check the two-page preview and remove duplicate or lower-value content before changing layout.
-13. Export and verify the correctly named resume PDF.
-14. Use Teal Cover Letter with a custom Seso prompt based on the local draft.
-15. Export and verify the correctly named one-page cover-letter PDF.
-16. Run claim-safety, preview, page-count, filename, and filesystem checks.
-17. Read back the exact record, status, asset names, and any shared-library effect.
-18. Stop. Return the two exact PDFs, the proposed form answers, and the canonical Greenhouse destination for Board review.
+2. Refresh the canonical Greenhouse source and confirm it is still Seso requisition 4700419005.
+3. Add or bookmark only that canonical role in Teal, then capture its exact URL or identifier and initial state.
+4. Search again for duplicates and stop if another wrapper or canonical record appears, an applied date exists, or another record shows Applied, Interviewing, Negotiating, Accepted, Archived, or Closed.
+5. Confirm the record resolves to Seso requisition 4700419005 and that the required workflow carries zero incremental cost; stop on any ambiguity.
+6. Capture the exact Teal pre-state before the first status or asset mutation.
+7. Move only that record to Applying because active asset work is beginning.
+8. Open Teal Resumes and create or open the exact Seso-specific resume with all master content initially available.
+9. Review Job Matcher and record truthful gaps by hard skill, soft skill, business term, and platform.
+10. Review Analyzer and identify content or formatting issues.
+11. Prefer activating existing truthful bullets and category-led skills.
+12. Leave every global-update option off; stop if a shared-library consequence cannot be isolated and shown.
+13. Do not add unsupported Salesforce, ARR, forecasting, territory, quota, compensation, SQL, churn, NRR, or CAC language.
+14. Check the two-page preview and remove duplicate or lower-value content before changing layout.
+15. Export and verify the correctly named resume PDF.
+16. Use Teal Cover Letter with a custom Seso prompt based on the local draft.
+17. Export and verify the correctly named one-page cover-letter PDF.
+18. Run claim-safety, preview, page-count, filename, and filesystem checks.
+19. Read back the exact record, status, asset names, and any shared-library effect.
+20. Stop. Return the two exact PDFs, the proposed form answers, and the canonical Greenhouse destination for Board review.
 
 Gate 1 does **not** authorize opening, populating, or uploading anything to the Greenhouse application form.
 
@@ -203,30 +194,24 @@ Gate 2 does **not** authorize clicking Submit application.
 
 ## Current Blockers
 
-1. The workspace readiness gate returned `NOT READY`; tracked and untracked user work was preserved.
-2. The exact Teal record or URL and pre-state are unresolved because the read-only preflight could not safely run.
-3. Teal entitlement and incremental cost are unverified; no spend is authorized.
-4. Teal canonical-record, duplicate, stage, and applied-date checks have not occurred.
-5. Teal status has not moved to Applying.
-6. Resume Builder has not been used for Seso.
-7. Job Matcher has not been reviewed.
-8. Analyzer has not been reviewed.
-9. Teal preview has not proven a two-page resume.
-10. Teal Cover Letter has not been used.
-11. Neither final PDF exists.
-12. The live Greenhouse form has not been verified in Matt's logged-in Chrome session.
-13. Exact Salesforce, HubSpot, Finance, sales-planning, and comparable-team depth remains unverified.
-14. Matt has not approved a destination-bound Gate 1 request.
-15. Matt has not reviewed or approved the exact exported files, answers, and destination for Gate 2 Greenhouse staging.
-16. Matt has not approved Gate 3 submission.
+1. The refreshed Teal Job Tracker contains no Seso item; creating or bookmarking the canonical record requires the exact approval below.
+2. Teal asset entitlement and incremental cost remain unverified; no spend is authorized.
+3. A post-creation duplicate, status, applied-date, and canonical-source readback does not yet exist.
+4. Teal status has not moved to Applying.
+5. Resume Builder, Job Matcher, Analyzer, shared-library inspection, and two-page preview have not been used for Seso.
+6. Teal Cover Letter and one-page preview have not been used.
+7. Neither final PDF exists.
+8. The live Greenhouse form has not been opened or mutated in Matt's logged-in Chrome session.
+9. Exact Salesforce, HubSpot, Finance, sales-planning, and comparable-team depth remains unverified.
+10. Matt has not approved the missing-record Gate 1 request.
+11. Matt has not reviewed or approved the exact exported files, answers, and destination for Gate 2 Greenhouse staging.
+12. Matt has not approved Gate 3 submission.
 
 ## Exact Next Approval Request
 
-**Gate 1 is not requested yet. First approve the separate clean-provenance Gate C in the Board packet. After the clean workspace returns `READY`, the company will perform the read-only Teal preflight above, identify the exact destination and pre-state, verify zero incremental cost or stop, and return a destination-bound Gate 1 request.**
+**Approve adding or bookmarking the canonical Seso Director of Revenue Operations role in Teal at `https://job-boards.greenhouse.io/sesolabor/jobs/4700419005`, then refreshing and recording its exact Teal pre-state. If it remains live, unique, not previously applied, eligible, and zero incremental cost, move only that record to `Applying`; prepare the truthful Seso-specific resume and matching cover letter in Teal with global or shared-library updates off; export `Seso - Director of Revenue Operations - Matt Dimock - Resume.pdf` and `Seso - Director of Revenue Operations - Matt Dimock - Cover Letter.pdf`; run visual, claim, page-count, filename, filesystem, and read-after-write QA; then stop and return the exact two PDFs, proposed answers, and canonical destination for Board review. Do not open, populate, upload to, or submit the Greenhouse form. Do not start a trial, upgrade, pay, send outreach, share references, or make any external commitment. Stop on any duplicate, prior application, canonical mismatch, paywall, entitlement ambiguity, or shared-library effect that cannot be isolated.**
 
-The future Gate 1 request must identify the exact Teal record URL or identifier, verified pre-state, verified zero-dollar entitlement, and exact Seso resume destination. Its action will be limited to status `Applying`, Seso-specific resume and cover-letter work, the two named PDF exports, and readback proof.
-
-A future destination-bound Gate 1 approval would authorize limited Seso-specific Teal preparation and export. It would not authorize:
+This approval would authorize limited Seso-specific Teal preparation and export. It would not authorize:
 
 - opening, populating, or uploading to the Greenhouse application form,
 - clicking Submit application,
@@ -240,7 +225,7 @@ A future destination-bound Gate 1 approval would authorize limited Seso-specific
 
 - **Consequence:** the exact Seso Teal record would move to `Applying`; role-specific resume and cover-letter assets would be added or changed; any unexpected shared-library effect could affect other Teal resumes and is therefore a stop condition.
 - **Alternatives:** keep the local package on hold; skip Seso; run only the read-only preflight; or evaluate Happy Money as the first fallback after its own current-source and Teal eligibility checks.
-- **Recommendation:** approve clean provenance first, then allow the zero-mutation preflight. Approve final Gate 1 only if Seso is eligible, still live, uses the exact canonical destination, and Teal confirms zero incremental cost.
+- **Recommendation:** approve the missing-record Gate 1 above. Execute it only if Seso remains live, the created record is unique and eligible, its source is the exact canonical destination, and Teal confirms zero incremental cost.
 - **Rollback:** retain screenshots and field readback of the exact pre-state. If a partial authorized mutation fails, stop immediately, do not continue to Greenhouse, and report the exact delta. Restore the prior status only if that restoration is within the approved Gate 1 scope; do not delete, overwrite shared content, or infer a destructive rollback without a new exact approval.
 
 ## Later Form-Staging Approval, Not Requested Yet

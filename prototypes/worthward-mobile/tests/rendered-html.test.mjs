@@ -336,6 +336,9 @@ test("gives full-row controls visible keyboard focus and keeps career paths comp
   assert.match(funnel, /className="lane-evidence-details"/);
   assert.match(funnel, /Why it fits and what to strengthen/);
   assert.match(css, /\.career-portfolio \.lane-controls[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(css, /\.lane-screen \.back-button\s*\{[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.lane-evidence-details summary\s*\{[\s\S]*?min-height:\s*44px/);
+  assert.match(css, /\.lane-controls label,[\s\S]*?\.lane-primary-note\s*\{[\s\S]*?min-height:\s*44px/);
 });
 
 test("keeps QA fixtures and private provenance out of customer surfaces", async () => {

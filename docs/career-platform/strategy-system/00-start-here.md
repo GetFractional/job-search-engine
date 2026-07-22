@@ -1,4 +1,4 @@
-# My Way Ahead Strategy System
+# Way Ahead Strategy System
 
 > **Company command layer:** `../company-os/my-way-ahead-company-operating-system-2026-07-20.md` now controls the current business plan, stage goal, evolving organization, portfolio, offer hypotheses, ClickUp boundary, automation, and transfer. This strategy library remains the detailed product, evidence, customer, design, measurement, and delivery authority.
 
@@ -6,9 +6,9 @@
 
 **Authority:** Founder-authorized direction, version 1.4
 **Research current through:** 2026-07-21
-**Working brand status:** My Way Ahead is the expert-refined form of Matt's Way Ahead placeholder and mywayahead.com is the candidate domain; neither is legally cleared, purchased, or approved for public launch
+**Working brand status:** Matt selected Way Ahead for the internal private-alpha checkpoint. A subsequent knockout screen found high software, career-category, and branded-search collision risk, so it is not recommended for master-brand lock or public launch. No domain is controlled and no name is legally cleared. Legacy `my-way-ahead` paths and ClickUp labels remain stable internal identifiers pending a separately reviewed migration.
 **First case study:** Matt Dimock
-**Build posture:** Build an owned mobile-first product. The current prototype is a corrected test harness and comparison baseline, not a founder-accepted customer experience. Exactly three grounded visual directions must be compared before the broad UI rebuild. Production data, spend, external testing, hosting, billing, partnerships, and public claims retain separate gates.
+**Build posture:** Build an owned mobile-first product. Matt selected the recommended synthesis of the three grounded directions; the resulting local synthetic candidate passed responsive, theme, interaction, state, rendered-accessibility, exact-build, and independent founder-checkpoint QA. Physical iPhone and native assistive-technology proof remain before external alpha. Production data, spend, external testing, hosting, billing, partnerships, and public claims retain separate gates.
 
 ## Start here
 
@@ -120,7 +120,7 @@ One product leader should synthesize the council. Specialists supply evidence an
 | Data and platform architecture | Version sources, facts, decisions, approvals, outcomes, and costs | Immutable inputs and versioned decisions with correction invalidation |
 | Growth and customer success | Recruit design partners, validate the owned product, deliver optional expert beta help, and capture learning | Product and service demand are measured separately; neither substitutes for the other |
 | Finance and unit economics | Set budgets, pricing tests, contribution targets, and stop conditions | No unlimited inference promise before observed cost distributions |
-| Brand and naming | Test memorability, category clarity, emotional safety, and collision risk | Use My Way Ahead and mywayahead.com as the one provisional identity across visual research; never shorten publicly to the crowded bare phrase; keep a plain-language career descriptor visible; formal clearance remains a public-use gate |
+| Brand and naming | Test memorability, category clarity, emotional safety, and collision risk | Use Way Ahead only as the current local checkpoint label; preserve the emotional territory while testing a more distinctive master name; do not claim availability, register a domain, or use any finalist publicly until collision, domain-control, and formal legal-clearance gates pass |
 
 **Matt, as the Board, owns:** company direction, target customer, brand selection, pricing commitments, spend, hiring, public claims, reserved approvals, and any external job-search action.
 **Codex root, as the accountable CEO within delegated authority, owns:** research synthesis, portfolio priorities, dynamic expert routing, product policy, experiment design, artifact quality, build sequencing, QA, economics visibility, risk escalation, and one coherent Board recommendation.
@@ -158,7 +158,7 @@ The CEO role is an operating delegation, not a statutory appointment or authorit
 
 ### Validate before commitment
 
-- Whether My Way Ahead passes spoken spelling, category comprehension, emotional safety, confusion, recall, domain-control, collision, and formal legal-clearance tests.
+- Whether Way Ahead passes spoken spelling, category comprehension, emotional safety, confusion, recall, domain-control, collision, and formal legal-clearance tests.
 - Whether qualified buyers subscribe to a demonstrably easier and more trustworthy owned product, and which buyers also pay for expert-guided pursuit.
 - Whether employed watchers pay for ongoing monitoring outside an active search.
 - Whether the Integrity Preview creates enough value to drive sign-up and whether the complete free Decision Receipt creates enough value to drive subscription or expert-offer intent.

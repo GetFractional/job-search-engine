@@ -328,7 +328,8 @@ Systems-driven growth and revenue operator with 18+ years building CRM, lifecycl
 
 ## Teal And Export Blockers
 
-- Teal record status and duplicate state are unknown.
+- The refreshed Teal Job Tracker contains no Seso item; a canonical record has not been added or bookmarked.
+- Post-creation status, duplicate, applied-date, and canonical-source checks do not yet exist.
 - Resume Builder has not been opened for Seso.
 - Job Matcher terms have not been reviewed.
 - Analyzer has not been reviewed.

@@ -7,8 +7,7 @@ Comparison viewport: 390 x 844 per side
 
 | File | Visible conclusion |
 |---|---|
-| `final-current-build/comparison-selected-reference-vs-way-ahead-home-390x844.png` | Current home retains the reference's editorial serif, mineral-dark surface, mint primary action, privacy promise, restrained borders, and premium density while changing the customer job from paste-first analysis to finding better-fit work. |
-| `final-current-build/comparison-selected-reference-vs-independent-checks-390x844.png` | The evidence-first intent remains, but the connected timeline is replaced by four independent cards so each check can be compartmentalized and carry its own truthful state. |
+| `final-current-build/comparison-selected-timeline-vs-current-independent-checks-ready-390x844.jpg` | A complete 390 x 844 rendering of the selected historical timeline sits beside a complete 390 x 844 current ready-state capture. The evidence-first intent remains, while the connected timeline is replaced by independent cards so each check can be compartmentalized and carry its own truthful state. |
 
 ## Visible-gap disposition
 
@@ -17,4 +16,4 @@ Comparison viewport: 390 x 844 per side
 - **Retained from the reference:** editorial type, dark premium tone, mint focus, privacy, visible uncertainty, and evidence-first language.
 - **Deferred honestly:** production data, real job ingestion, resume and LinkedIn parsing, voice transcription, application execution, billing, public hosting, and native-iPhone certification.
 
-The comparisons document the maker's deliberate departures. The independent reviewer still owns the quality verdict.
+The earlier incomplete or ambiguous composites were moved to `excluded-capture-artifacts/final-repair/` and cannot support acceptance. This replacement documents the maker's deliberate departure; the independent reviewer still owns the quality verdict.

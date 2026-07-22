@@ -1,7 +1,7 @@
 # Seso, Director of Revenue Operations
 
 Decision date: 2026-07-20
-Freshness refresh: 2026-07-21
+Freshness refresh: 2026-07-22
 Decision: **Pursue, with a medium-high-risk strategic freshness exception and reserved approval before live preparation**
 Fit score: **84/100**
 Teal Excitement mapping: **4 stars**
@@ -25,9 +25,9 @@ The correct decision is **Pursue**, not Pursue Aggressively. Local strategy and 
 
 ## Controlling Sources
 
-| Source | What it controls | Status on 2026-07-21 |
+| Source | What it controls | Current status |
 |---|---|---|
-| [Official Seso Greenhouse role](https://job-boards.greenhouse.io/sesolabor/jobs/4700419005) | Canonical employer, mandate, live form, compensation, logistics, benefits, and application fields | Live on 2026-07-21 |
+| [Official Seso Greenhouse role](https://job-boards.greenhouse.io/sesolabor/jobs/4700419005) | Canonical employer, mandate, live form, compensation, logistics, benefits, and application fields | Refreshed live on 2026-07-22 |
 | [Official Greenhouse Job Board API](https://boards-api.greenhouse.io/v1/boards/sesolabor/jobs/4700419005?content=true) | Official first-published date and official application-deadline field | First published 2026-05-28; no official deadline |
 | [Seso company site](https://www.sesolabor.com/) | Current product, customer, and operating claims | Live |
 | [Seso Series B announcement](https://www.businesswire.com/news/home/20240402182570/en/Seso-Closes-%2426M-Series-B-to-Build-Critical-Software-for-American-Farmers) | 2024 funding, expansion thesis, product direction, and category context | Published 2024-04-02 |
@@ -42,17 +42,18 @@ The correct decision is **Pursue**, not Pursue Aggressively. Local strategy and 
 
 - Canonical employer: Seso Inc.
 - Canonical source: Seso's Greenhouse requisition.
-- Source-active state: the canonical requisition and application form were refreshed and live on 2026-07-21.
+- Source-active state: the canonical requisition and application form were refreshed and live on 2026-07-22.
 - Official first-published date: 2026-05-28 according to Greenhouse's Job Board API.
-- Posting age at refresh: 54 days on 2026-07-21.
+- Posting age at refresh: 55 days on 2026-07-22.
 - Official deadline: none. Greenhouse's application-deadline field is empty.
 - Unverified third-party date: Himalayas reports 2026-07-29, but that date is not used as an urgency fact.
 - Freshness risk: medium-high because the role is older than 30 days, has no official deadline, and has no newer official publication signal.
 - Freshness exception: justified by the live canonical form, strongest-current-fit assessment, and the reversible, bounded nature of Gate 1 preparation. It is not justified by the unverified July 29 date.
 - Duplicate-wrapper risk: none in the reviewed public sources.
 - Canonical-employer status: resolved.
-- Teal duplicate, status, and applied-date check: not performed because Teal mutation and live Teal work were outside this authorized slice.
-- Application gate: before Teal or form work, refresh the canonical role and confirm that the role is not already applied, terminal-stage, or duplicated in Teal.
+- Teal preflight: the refreshed Job Tracker search for `Seso` returned `No items found`; no record, status, note, resume, cover letter, or external destination was changed.
+- Teal duplicate, status, and applied-date state: no canonical record exists yet, so those fields require post-creation readback after the exact missing-record approval.
+- Application gate: before asset work, refresh the canonical role, add or bookmark only the canonical requisition under exact approval, then confirm it is unique, not already applied, not terminal-stage, and zero incremental cost.
 
 Public visibility alone does not prove active hiring. The exception is a time-bounded decision to prepare locally because Seso remains the strongest current fit while the canonical form is live; the unverified July 29 date is not urgency evidence.
 
@@ -180,7 +181,7 @@ This decomposition uses `templates/fit-scorecard.md` as the controlling rubric f
 | Logistics fit | 10/10 | Remote US is a direct match. Annual retreat is reasonable based on current preferences, subject to exact travel requirements. |
 | Company and stage fit | 5/5 | Funded, post-traction vertical software company with clear operating complexity and a systems-building mandate. |
 | Hiring access | 0/5 | No warm referral, confirmed recruiter relationship, or confirmed hiring-manager access was found. |
-| Freshness and active-source risk | 3/5 | Officially first published 2026-05-28 and 54 days old on 2026-07-21; canonical form live; no official deadline; medium-high stale risk. |
+| Freshness and active-source risk | 3/5 | Officially first published 2026-05-28 and 55 days old on 2026-07-22; canonical form live; no official deadline; medium-high stale risk. |
 | Other risk adjustment | 3/5 | Material but addressable title, platform, Finance, and sales-planning gaps remain. |
 | **Total** | **84/100** | **Pursue.** |
 
@@ -253,13 +254,13 @@ Until resolved, these areas should appear as honest gaps, not resume keywords di
 
 | Rank | Role | Score | Compensation and logistics | Posting age or freshness signal | Risk and next action | Canonical source |
 |---:|---|---:|---|---|---|---|
-| 1 | Seso, Director of Revenue Operations | 84 | $150,000 to $200,000 cash plus equity; Remote US | Officially first published 2026-05-28; 54 days old on 2026-07-21; canonical form live; no official deadline; July 29 is unverified third-party metadata only | Medium-high stale risk with a time-bounded strategic exception. Gate 1 is on hold until clean readiness and exact Teal destination preflight; do not use July 29 as an urgency fact. | [Greenhouse role](https://job-boards.greenhouse.io/sesolabor/jobs/4700419005); [official metadata](https://boards-api.greenhouse.io/v1/boards/sesolabor/jobs/4700419005) |
-| 2 | Happy Money, Head of Lifecycle Marketing | 82 | $155,000 to $220,000 base; Remote US | Official Greenhouse first publication 2026-06-09; 42 days old; no official deadline; medium-high stale risk | Lending, credit eligibility, portfolio yield, and quantitative lifecycle depth are larger mandate gaps. Keep as the first fallback and refresh before action. | [Greenhouse role](https://job-boards.greenhouse.io/happymoney/jobs/4278658009); [official metadata](https://boards-api.greenhouse.io/v1/boards/happymoney/jobs/4278658009) |
-| 3 | Splitero, Director of Lifecycle Marketing | 80 | $210,000 to $235,000 on-target earnings; Remote | Official Greenhouse first publication 2026-07-15 and update 2026-07-21; 6 days old; no official deadline; low stale risk | Deep Salesforce Marketing Cloud and lending experience are not proven. Keep as a conditional fallback. | [Greenhouse role](https://job-boards.greenhouse.io/splitero/jobs/5356775008); [official metadata](https://boards-api.greenhouse.io/v1/boards/splitero/jobs/5356775008) |
-| 4 | Momentus Technologies, Senior Director of Revenue Operations | 79 | Compensation undisclosed; fully remote and Tennessee eligible | Official Paylocity `datePosted` 2026-06-02; 49 days old. A secondary employer LinkedIn listing displayed 2 days ago on July 21; that is a distribution signal, not a new canonical date. | Undisclosed pay and conventional RevOps, data-layer, and forecasting proof gaps keep it behind Seso, Happy Money, and Splitero. A primary-only conservative score is 77. | [Paylocity](https://recruiting.paylocity.com/recruiting/jobs/Details/4070190/Momentus/Senior-Director-of-Revenue-Operations); [secondary LinkedIn distribution signal](https://www.linkedin.com/jobs/view/senior-director-revenue-operations-at-momentus-technologies-4396368500) |
-| 5 | Built Technologies, Director, Revenue Operations | 76 | $220,000 to $240,000 plus equity; Nashville hybrid | Official Greenhouse first publication 2026-06-24 and update 2026-07-01; 27 days old; no official deadline; low stale risk. June 25 secondary metadata is rejected. | Mastery-level Salesforce, forecasting, territory, quota, compensation, and RevOps-organization requirements make it the largest evidence stretch. No asset work unless the Board chooses a reach bet. | [Greenhouse role](https://job-boards.greenhouse.io/getbuilt/jobs/4709325005); [official metadata](https://boards-api.greenhouse.io/v1/boards/getbuilt/jobs/4709325005) |
+| 1 | Seso, Director of Revenue Operations | 84 | $150,000 to $200,000 cash plus equity; Remote US | Officially first published 2026-05-28; 55 days old on 2026-07-22; canonical form live; no official deadline; July 29 is unverified third-party metadata only | Medium-high stale risk with a time-bounded strategic exception. The Teal preflight found no Seso record; exact approval is required to add the canonical requisition before asset work. Do not use July 29 as an urgency fact. | [Greenhouse role](https://job-boards.greenhouse.io/sesolabor/jobs/4700419005); [official metadata](https://boards-api.greenhouse.io/v1/boards/sesolabor/jobs/4700419005) |
+| 2 | Happy Money, Head of Lifecycle Marketing | 82 | $155,000 to $220,000 base; Remote US | Official Greenhouse first publication 2026-06-09; 43 days old on 2026-07-22; no official deadline; medium-high stale risk | Lending, credit eligibility, portfolio yield, and quantitative lifecycle depth are larger mandate gaps. Keep as the first fallback and refresh before action. | [Greenhouse role](https://job-boards.greenhouse.io/happymoney/jobs/4278658009); [official metadata](https://boards-api.greenhouse.io/v1/boards/happymoney/jobs/4278658009) |
+| 3 | Splitero, Director of Lifecycle Marketing | 80 | $210,000 to $235,000 on-target earnings; Remote | Official Greenhouse first publication 2026-07-15 and update 2026-07-21; 7 days old on 2026-07-22; no official deadline; low stale risk | Deep Salesforce Marketing Cloud and lending experience are not proven. Keep as a conditional fallback. | [Greenhouse role](https://job-boards.greenhouse.io/splitero/jobs/5356775008); [official metadata](https://boards-api.greenhouse.io/v1/boards/splitero/jobs/5356775008) |
+| 4 | Momentus Technologies, Senior Director of Revenue Operations | 79 | Compensation undisclosed; fully remote and Tennessee eligible | Official Paylocity `datePosted` 2026-06-02; 50 days old on 2026-07-22. A secondary employer LinkedIn listing displayed 2 days ago on July 21; that is a distribution signal, not a new canonical date. | Undisclosed pay and conventional RevOps, data-layer, and forecasting proof gaps keep it behind Seso, Happy Money, and Splitero. A primary-only conservative score is 77. | [Paylocity](https://recruiting.paylocity.com/recruiting/jobs/Details/4070190/Momentus/Senior-Director-of-Revenue-Operations); [secondary LinkedIn distribution signal](https://www.linkedin.com/jobs/view/senior-director-revenue-operations-at-momentus-technologies-4396368500) |
+| 5 | Built Technologies, Director, Revenue Operations | 76 | $220,000 to $240,000 plus equity; Nashville hybrid | Official Greenhouse first publication 2026-06-24 and update 2026-07-01; 28 days old on 2026-07-22; no official deadline; low stale risk. June 25 secondary metadata is rejected. | Mastery-level Salesforce, forecasting, territory, quota, compensation, and RevOps-organization requirements make it the largest evidence stretch. No asset work unless the Board chooses a reach bet. | [Greenhouse role](https://job-boards.greenhouse.io/getbuilt/jobs/4709325005); [official metadata](https://boards-api.greenhouse.io/v1/boards/getbuilt/jobs/4709325005) |
 
-The five-role comparison was refreshed on 2026-07-21. The canonical application pages for Seso, Happy Money, Splitero, Momentus Technologies, and Built Technologies were live. GoCanvas was removed on 2026-07-21 because its canonical ATS URL returned HTTP 410 when checked directly. Every remaining alternative still requires a fresh Teal status, duplicate, applied-date, and source check before replacing Seso or starting asset work.
+Seso's canonical page was refreshed live on 2026-07-22. The other four canonical pages were last directly rechecked on 2026-07-21; their ages above were advanced arithmetically to July 22 and their live status must be refreshed before action. GoCanvas was removed on 2026-07-21 because its canonical ATS URL returned HTTP 410 when checked directly. Every remaining alternative still requires a fresh canonical-source, Teal status, duplicate, applied-date, and source check before replacing Seso or starting asset work.
 
 ### Auditable fallback scorecards
 
@@ -310,15 +311,15 @@ The fallback order remains Happy Money, Splitero, Momentus, and Built. Splitero 
 
 | Decision component | Receipt |
 |---|---|
-| Recommended decision | Pursue, but hold live work until clean provenance passes and a read-only Teal eligibility and destination preflight is complete |
+| Recommended decision | Pursue; the clean-provenance and read-only preflight gates passed, but Teal contains no Seso record, so hold live work until Matt approves adding the canonical requisition |
 | Strategic upside | Best current Lane 1 mandate, strong AI differentiation, remote logistics, and $150,000 to $200,000 cash plus equity |
 | Main risk | The role may require deeper Salesforce, Finance, and sales-planning ownership than the source record proves |
 | Source confidence | High for current role terms, official first-published date, and absence of an official deadline; low for the unverified third-party July 29 date |
-| Freshness confidence | High for the observed live canonical form and official Greenhouse metadata; medium-high stale risk remains because the role was 54 days old on 2026-07-21 and has no official deadline |
+| Freshness confidence | High for the observed live canonical form and official Greenhouse metadata; medium-high stale risk remains because the role was 55 days old on 2026-07-22 and has no official deadline |
 | Expected pursuit effort | Medium-high because Teal optimization, two PDFs, claim review, and live form staging remain |
 | Proof used | HireHawk, Prosper, Affordable Insurance Quotes, SkyFineUSA, Breakthrough Academy, and Bob's Watches |
 | Proof excluded | Unsupported Salesforce administration, ARR forecasting, GTM cost modeling, territory or quota ownership, compensation-plan ownership, and dedicated RevOps-team management |
-| Next reserved decision | Board Gate C clean provenance. After readiness passes, run the read-only Teal preflight and return a destination-bound, zero-incremental-cost Gate 1 request. Greenhouse staging and submission remain later, separate Board gates. |
+| Next reserved decision | Approve adding or bookmarking only canonical requisition 4700419005, then require post-creation duplicate, status, applied-date, canonical-source, and zero-incremental-cost proof before Seso-specific Teal asset work. Greenhouse staging and submission remain later, separate Board gates. |
 
 ## Authority Boundary And Verification
 
@@ -326,8 +327,8 @@ The fallback order remains Happy Money, Splitero, Momentus, and Built. Splitero 
 - It is not a Teal-optimized resume, exported PDF, staged form, sent message, or submitted application.
 - No Teal, employer form, email, LinkedIn, reference, or application system was changed. ClickUp was synchronized only with status and evidence comments, with read-after-write proof.
 - The canonical role must be refreshed immediately before live work.
-- The required workspace readiness check currently returns `NOT READY`; no live Teal work may begin on this surface.
-- After approved clean provenance, a read-only Teal preflight must confirm the exact record, canonical employer, duplicate status, current stage, applied date, and zero-incremental-cost entitlement before any mutation request is presented.
-- Teal Resume Builder, Job Matcher, Analyzer, preview, export, and status mutation remain blocked until the later destination-bound Gate 1 approval.
+- The clean private worktree returned `READY` before the refreshed Chrome-backed Teal preflight.
+- The preflight search returned `No items found`; no Seso record, stage, applied date, duplicate state, or resume destination currently exists in Teal.
+- Teal record creation or bookmarking, Resume Builder, Job Matcher, Analyzer, preview, export, and status mutation remain blocked until the exact missing-record Gate 1 approval.
 - Gate 2 requires Matt's review and exact approval of the exported assets, proposed answers, and canonical destination before any Greenhouse form population or upload.
 - Gate 3 requires separate approval of the exact staged form before Submit application can be clicked.
