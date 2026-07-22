@@ -1,0 +1,51 @@
+{
+  "captured_on": "2026-07-20",
+  "server": "http://localhost:3011/#/",
+  "browser_surface": "Codex in-app browser",
+  "capture_format": "JPEG",
+  "theme_choice": "system",
+  "resolved_theme": "dark",
+  "source_hashes": {
+    "app/MyWayAheadPrototype.tsx": "eb614f7513c559edea825d886b9ba843fcf4d285d7fde46d922ff11bbecce13e",
+    "app/MyWayAheadFunnel.tsx": "d3f6f2e8c10861879a784a33d49bc0281a3c4b62c2eebdb3f84b3f7b6813db18",
+    "app/globals.css": "826f2f27957bd0f45619888bc7ff51bb0959e100f9ceaf0002e6382b7a5b7d79"
+  },
+  "results": [
+    {
+      "viewport": { "width": 320, "height": 700, "dpr": 1 },
+      "body": { "client_width": 320, "scroll_width": 320 },
+      "main": { "client_width": 320, "scroll_width": 320, "client_height": 642, "scroll_height": 4018, "scroll_top": 0 },
+      "minimum_visible_control_height": 44,
+      "notable_controls": { "job_input_height": 102, "primary_cta_height": 54 },
+      "file": "home-system-dark-320x700.jpg"
+    },
+    {
+      "viewport": { "width": 390, "height": 844, "dpr": 1 },
+      "body": { "client_width": 390, "scroll_width": 390 },
+      "main": { "client_width": 390, "scroll_width": 390, "client_height": 786, "scroll_height": 3774, "scroll_top": 0 },
+      "minimum_visible_control_height": 44,
+      "notable_controls": { "job_input_height": 102, "primary_cta_height": 54 },
+      "file": "home-system-dark-390x844.jpg"
+    },
+    {
+      "viewport": { "width": 768, "height": 900, "dpr": 1 },
+      "body": { "client_width": 768, "scroll_width": 768 },
+      "main": { "client_width": 768, "scroll_width": 768, "client_height": 842, "scroll_height": 3440, "scroll_top": 0 },
+      "minimum_visible_control_height": 44,
+      "notable_controls": { "job_input_height": 102, "primary_cta_height": 54 },
+      "file": "home-system-dark-768x900.jpg"
+    },
+    {
+      "viewport": { "width": 1280, "height": 900, "dpr": 1 },
+      "body": { "client_width": 1280, "scroll_width": 1280 },
+      "main": { "client_width": 1280, "scroll_width": 1280, "client_height": 828, "scroll_height": 2970, "scroll_top": 0 },
+      "minimum_visible_control_height": 44,
+      "notable_controls": { "job_input_height": 106, "primary_cta_height": 54 },
+      "file": "home-system-dark-1280x900.jpg"
+    }
+  ],
+  "rejected_capture": {
+    "file": "rejected-pre-hydration-home-system-390x844.jpg",
+    "reason": "Captured before the persisted System choice resolved to Dark; excluded from pass evidence."
+  }
+}

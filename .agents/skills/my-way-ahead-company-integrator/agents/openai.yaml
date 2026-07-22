@@ -1,0 +1,4 @@
+interface:
+  display_name: "My Way Ahead Company Integrator"
+  short_description: "Run evidence-first company delivery under Board gates"
+  default_prompt: "Use $my-way-ahead-company-integrator to turn this My Way Ahead request into a verified Board-ready outcome."

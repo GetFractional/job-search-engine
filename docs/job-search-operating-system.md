@@ -1,5 +1,7 @@
 # Job Search Operating System
 
+> Scope: this document governs Matt's current personal job-search operation. TealHQ is a temporary operating tool for that workflow and a source of competitor intelligence. It does not define the customer-product domain model, routes, MVP dependencies, or architecture. Product work must use native, provider-neutral objects and remain functional without Teal.
+
 ## Mission
 Optimize for interview conversion and fit quality, not application volume.
 
@@ -7,7 +9,7 @@ Codex handles structured thinking, research, scoring, asset drafting, QA, and in
 
 Use `docs/job-search-continuous-improvement.md` as the operating loop for making searches, qualification, Teal usage, assets, and applications faster over time.
 
-Use `docs/job-search-process-optimization.md` as the simplified execution and measurement blueprint when improving the system, training another operator, or cloning the workflow into a productized offer.
+Use `docs/job-search-process-optimization.md` as the simplified execution and measurement blueprint when improving Matt's operating system or training another operator. For the customer product, use the career-platform authority and screen-system packets; do not clone Teal-specific mechanics into the architecture.
 
 ## Workspace Readiness
 

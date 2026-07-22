@@ -334,6 +334,8 @@ For coding-style implementation threads, also include:
 This project includes official local skill playbooks under `.agents/skills`.
 
 Use them as task-specific operating guides:
+- my-way-ahead-company-integrator
+- my-way-ahead-offer-journey
 - job-search-scenarios
 - profile-understanding
 - role-intake
@@ -355,6 +357,8 @@ Use them as task-specific operating guides:
 - qa-fact-check
 - alen-sultanic-persuasion
 - expert-team-orchestration
+
+Start every My Way Ahead company or product task with `my-way-ahead-company-integrator`. Add `my-way-ahead-offer-journey` for JTBD, messaging, funnel, pricing, partner referrals, acquisition, SEO/GEO/AEO, retention, or unit economics. Use the existing job-search skills only for Matt Case Study Zero. Teal is evidence and temporary personal operations, never My Way Ahead product architecture.
 
 If a global or shared delivery/governance skill such as `product-delivery-os` is available in the active session, use it for tracker, branch, PR, WIP, or delivery-audit governance. If it is unavailable, use this file plus local playbooks as the project-specific fallback.
 

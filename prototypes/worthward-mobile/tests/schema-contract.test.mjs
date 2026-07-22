@@ -1,0 +1,1075 @@
+import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { readdirSync, readFileSync } from "node:fs";
+import test from "node:test";
+
+const migrationNames = readdirSync(new URL("../drizzle/", import.meta.url))
+  .filter((name) => name.endsWith(".sql"))
+  .sort();
+
+assert.ok(migrationNames.length > 0, "expected at least one generated SQL migration");
+
+const migrationSqlByName = new Map(
+  migrationNames.map((migrationName) => [
+    migrationName,
+    readFileSync(new URL(`../drizzle/${migrationName}`, import.meta.url), "utf8")
+      .replaceAll("--> statement-breakpoint", ""),
+  ]),
+);
+
+const migrationSql = [...migrationSqlByName.values()].join("\n");
+
+const runSql = (sql, { includeMigration = true } = {}) =>
+  spawnSync("/usr/bin/sqlite3", [":memory:"], {
+    input: [
+      ".bail on",
+      "PRAGMA foreign_keys=ON;",
+      includeMigration ? migrationSql : "",
+      sql,
+    ].join("\n"),
+    encoding: "utf8",
+  });
+
+const expectSqlPass = (sql, expectedOutput = "") => {
+  const result = runSql(sql);
+  assert.equal(
+    result.status,
+    0,
+    `SQLite contract unexpectedly failed:\n${result.stderr}`,
+  );
+  assert.equal(result.stdout.trim(), expectedOutput);
+};
+
+const expectSqlReject = (sql, pattern) => {
+  const result = runSql(sql);
+  assert.notEqual(result.status, 0, "expected SQLite to reject the invariant breach");
+  assert.match(result.stderr, pattern);
+};
+
+const usersSql = `
+  INSERT INTO users (id, auth_subject, email) VALUES
+    ('user-a', 'auth-a', 'a@example.test'),
+    ('user-b', 'auth-b', 'b@example.test');
+`;
+
+const sourceAndFactSql = `
+  ${usersSql}
+  INSERT INTO source_imports
+    (id, user_id, type, checksum_sha256)
+  VALUES
+    ('import-a', 'user-a', 'resume_pdf', 'hash-a'),
+    ('import-b', 'user-b', 'resume_pdf', 'hash-b');
+  INSERT INTO profile_facts
+    (id, user_id, source_import_id, fact_type, value_json, source_span,
+     extraction_method, extraction_policy_version, state)
+  VALUES
+    ('fact-a1', 'user-a', 'import-a', 'role_title', '{"value":"Director"}', 'p1:l2',
+     'deterministic_parser', 'parser-1', 'extracted'),
+    ('fact-a2', 'user-a', 'import-a', 'role_employer', '{"value":"Acme"}', 'p1:l1',
+     'model_extraction', 'extractor-2', 'suggested'),
+    ('fact-b1', 'user-b', 'import-b', 'role_title', '{"value":"Manager"}', 'p1:l2',
+     'deterministic_parser', 'parser-1', 'extracted');
+`;
+
+const rolesSql = `
+  ${sourceAndFactSql}
+  INSERT INTO experience_roles (id, user_id, employer, title) VALUES
+    ('role-a1', 'user-a', 'Acme', 'Director'),
+    ('role-a2', 'user-a', 'Acme', 'Head of Growth'),
+    ('role-b1', 'user-b', 'Beta', 'Manager');
+`;
+
+const resumeFixtureSql = `
+  ${usersSql}
+  INSERT INTO career_paths
+    (id, user_id, label, primary_lane, state, is_primary)
+  VALUES
+    ('path-a', 'user-a', 'Revenue Operations', 'revenue_operations', 'active', 1);
+  INSERT INTO resumes
+    (id, user_id, name, kind, version, content_json, template_key)
+  VALUES
+    ('resume-default', 'user-a', 'Master', 'master', 1, '{}', 'ats-basic'),
+    ('resume-path', 'user-a', 'Revenue Operations', 'path', 1, '{}', 'ats-basic'),
+    ('resume-job', 'user-a', 'Acme Director', 'job', 1, '{}', 'ats-basic'),
+    ('resume-b', 'user-b', 'Master', 'master', 1, '{}', 'ats-basic');
+  INSERT INTO job_sources (id, name, kind, rights_state)
+    VALUES ('source-1', 'Acme ATS', 'employer_ats', 'approved');
+  INSERT INTO job_postings
+    (id, source_id, external_id, canonical_url, employer, title, description_checksum)
+  VALUES
+    ('job-1', 'source-1', 'ext-1', 'https://example.test/job-1', 'Acme', 'Director', 'jd-hash');
+`;
+
+test("applies the 30-table migration with foreign keys intact", () => {
+  expectSqlPass(
+    `
+      SELECT count(*) FROM sqlite_master
+        WHERE type = 'table' AND name NOT LIKE 'sqlite_%';
+      SELECT count(*) FROM pragma_foreign_key_check;
+      SELECT count(*) || ':' || count(DISTINCT id) || ':' || min(on_delete)
+        FROM pragma_foreign_key_list('usage_events')
+       WHERE "table" = 'cost_events';
+      SELECT on_delete
+        FROM pragma_foreign_key_list('cost_events')
+       WHERE "table" = 'cost_allocation_groups'
+         AND "from" = 'allocation_group_id';
+    `,
+    "30\n0\n2:1:SET NULL\nRESTRICT",
+  );
+});
+
+test("supports transactional migration rollback", () => {
+  const result = runSql(
+    `
+      BEGIN;
+      ${migrationSql}
+      ROLLBACK;
+      SELECT count(*) FROM sqlite_master
+        WHERE type = 'table' AND name NOT LIKE 'sqlite_%';
+    `,
+    { includeMigration: false },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), "0");
+});
+
+test("upgrades a populated 23-table database without losing subscriptions", () => {
+  const result = spawnSync("/usr/bin/sqlite3", [":memory:"], {
+    input: [
+      ".bail on",
+      "PRAGMA foreign_keys=ON;",
+      migrationSqlByName.get("0000_tricky_jack_murdock.sql"),
+      `
+        INSERT INTO users (id, auth_subject, email)
+          VALUES ('user-a', 'auth-a', 'a@example.test');
+        INSERT INTO subscriptions
+          (id, user_id, plan_key, state, entitlements_json)
+        VALUES
+          ('legacy-subscription', 'user-a', 'legacy-watch', 'paused', '{}');
+      `,
+      ...migrationNames.slice(1).map((name) => migrationSqlByName.get(name)),
+      `
+        SELECT (s.offer_version_id IS NOT NULL) || ':' || ov.approval_state
+          FROM subscriptions s
+          JOIN offer_versions ov ON ov.id = s.offer_version_id
+         WHERE s.id = 'legacy-subscription';
+        SELECT "notnull" FROM pragma_table_info('subscriptions')
+         WHERE name = 'offer_version_id';
+        SELECT count(*) FROM pragma_foreign_key_check;
+      `,
+    ].join("\n"),
+    encoding: "utf8",
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), "1:retired\n1\n0");
+});
+
+test("preserves extraction policy, lineage, dependency, and user merge decisions", () => {
+  expectSqlPass(
+    `
+      ${rolesSql}
+      INSERT INTO profile_fact_dependencies
+        (user_id, dependent_fact_id, source_fact_id, relationship, invalidation_policy)
+      VALUES ('user-a', 'fact-a2', 'fact-a1', 'derived_from', 'invalidate');
+      INSERT INTO experience_role_facts
+        (user_id, experience_role_id, profile_fact_id, relationship)
+      VALUES ('user-a', 'role-a1', 'fact-a1', 'primary_source');
+      INSERT INTO experience_role_merge_proposals
+        (id, user_id, source_role_id, target_role_id, proposed_resolution_json)
+      VALUES ('merge-a', 'user-a', 'role-a1', 'role-a2', '{}');
+      UPDATE experience_role_merge_proposals
+        SET state = 'accepted', decided_by_user_at = 1
+        WHERE id = 'merge-a';
+      SELECT extraction_method || ':' || extraction_policy_version
+        FROM profile_facts WHERE id = 'fact-a1';
+      SELECT state FROM experience_role_merge_proposals WHERE id = 'merge-a';
+    `,
+    "deterministic_parser:parser-1\naccepted",
+  );
+});
+
+test("rejects cross-tenant profile and normalized-entity lineage", () => {
+  expectSqlReject(
+    `
+      ${rolesSql}
+      INSERT INTO profile_facts
+        (id, user_id, source_import_id, fact_type, value_json, state)
+      VALUES ('fact-cross', 'user-a', 'import-b', 'role_title', '{}', 'extracted');
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${rolesSql}
+      INSERT INTO experience_role_facts
+        (user_id, experience_role_id, profile_fact_id, relationship)
+      VALUES ('user-a', 'role-b1', 'fact-a1', 'primary_source');
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+});
+
+test("requires a Board reference and effective time for offer activation", () => {
+  expectSqlReject(
+    `
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type,
+         approval_state)
+      VALUES
+        ('offer-bad-state', 'software', 'bad_state', 1, 'Bad state', 900,
+         'monthly', 'publicly_live');
+    `,
+    /invalid offer approval state/,
+  );
+
+  expectSqlReject(
+    `
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type,
+         approval_state)
+      VALUES
+        ('offer-no-board-ref', 'software', 'no_board_ref', 1, 'No ref', 900,
+         'monthly', 'board_approved_private_test');
+    `,
+    /board decision reference required/,
+  );
+
+  expectSqlReject(
+    `
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type,
+         approval_state, board_decision_ref)
+      VALUES
+        ('offer-no-effective-at', 'software', 'no_effective_at', 1,
+         'No effective time', 900, 'monthly', 'active_private_test', 'board-1');
+    `,
+    /active offer effective time required/,
+  );
+
+  expectSqlPass(`
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type,
+       approval_state, board_decision_ref, effective_at)
+    VALUES
+      ('offer-authorized', 'software', 'authorized', 1, 'Authorized', 900,
+       'monthly', 'active_private_test', 'board-1', 1);
+    SELECT approval_state FROM offer_versions WHERE id = 'offer-authorized';
+  `, "active_private_test");
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type,
+         approval_state, board_decision_ref, effective_at)
+      VALUES ('offer-authorized', 'software', 'authorized', 1, 'Authorized',
+        900, 'monthly', 'active_private_test', 'board-1', 1);
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, acquisition_source, gross_amount_minor,
+         cash_collected_minor, service_starts_at, service_ends_at)
+      VALUES ('order-a', 'user-a', 'offer-authorized', 'organic', 900, 900, 1, 2);
+      UPDATE offer_versions
+         SET approval_state = 'hypothesis', board_decision_ref = NULL,
+             effective_at = NULL
+       WHERE id = 'offer-authorized';
+    `,
+    /offer approval history is immutable/,
+  );
+});
+
+test("rejects aggregate over-recognition and broken revenue continuity", () => {
+  const fixture = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type)
+    VALUES ('offer-watch-v1', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+    INSERT INTO cohort_memberships
+      (id, user_id, offer_version_id, acquisition_source, entered_at,
+       matures_at, observation_window_days)
+    VALUES ('cohort-a', 'user-a', 'offer-watch-v1', 'organic', 1, 2, 30);
+    INSERT INTO orders_charges
+      (id, user_id, offer_version_id, cohort_membership_id, acquisition_source,
+       gross_amount_minor, cash_collected_minor, service_starts_at,
+       service_ends_at, settlement_state)
+    VALUES ('order-a', 'user-a', 'offer-watch-v1', 'cohort-a', 'organic',
+      900, 900, 1, 2, 'paid');
+  `;
+
+  expectSqlReject(
+    `
+      ${fixture}
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, cash_collected_minor,
+         recognized_revenue_minor, closing_deferred_minor, close_state)
+      VALUES ('revenue-a', 'order-a', 'software', '2026-07', 900, 900, 0,
+        'reconciled');
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, cash_collected_minor,
+         recognized_revenue_minor, closing_deferred_minor)
+      VALUES ('revenue-b', 'order-a', 'software', '2026-08', 0, 0, 0);
+    `,
+    /reconciled revenue schedule is closed/,
+  );
+
+  expectSqlReject(
+    `
+      ${fixture}
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, opening_deferred_minor,
+         cash_collected_minor, recognized_revenue_minor, closing_deferred_minor)
+      VALUES ('revenue-a', 'order-a', 'software', '2026-07', 0, 900, 300, 600);
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, opening_deferred_minor,
+         recognized_revenue_minor, closing_deferred_minor)
+      VALUES ('revenue-b', 'order-a', 'software', '2026-08', 500, 300, 200);
+    `,
+    /revenue period opening balance mismatch/,
+  );
+});
+
+test("keeps software, affiliate, and human-service ledgers isolated", () => {
+  const offers = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type)
+    VALUES
+      ('offer-software', 'software', 'watch', 1, 'Watch', 900, 'monthly'),
+      ('offer-affiliate', 'affiliate', 'mentor', 1, 'Mentor', 0, 'commission');
+  `;
+
+  expectSqlReject(
+    `
+      ${offers}
+      INSERT INTO cohort_memberships
+        (id, user_id, offer_version_id, acquisition_source, entered_at,
+         matures_at, observation_window_days)
+      VALUES ('cohort-affiliate', 'user-a', 'offer-affiliate', 'organic', 1, 2, 30);
+    `,
+    /cohort offer must be software/,
+  );
+
+  expectSqlReject(
+    `
+      ${offers}
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, acquisition_source,
+         gross_amount_minor, service_starts_at, service_ends_at)
+      VALUES ('order-affiliate', 'user-a', 'offer-affiliate', 'organic', 0, 1, 2);
+    `,
+    /affiliate revenue belongs in affiliate_events/,
+  );
+
+  expectSqlReject(
+    `
+      ${offers}
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, acquisition_source, gross_amount_minor,
+         cash_collected_minor, service_starts_at, service_ends_at)
+      VALUES ('order-a', 'user-a', 'offer-software', 'organic', 900, 900, 1, 2);
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, cash_collected_minor,
+         recognized_revenue_minor, closing_deferred_minor)
+      VALUES ('revenue-a', 'order-a', 'affiliate', '2026-07', 900, 900, 0);
+    `,
+    /revenue stream mismatch/,
+  );
+});
+
+test("rejects cross-tenant usage-to-cost links", () => {
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type)
+      VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version, user_id,
+         allocated_offer_version_id, incurred_at)
+      VALUES ('cost-a', 'software', 'support', 'minute', 1000000, 1500000,
+        1500000, 'actual', 'noncash', 'labor-v1', 'user-a', 'offer-watch', 1);
+      INSERT INTO usage_events
+        (id, user_id, action, result_state, cost_event_id)
+      VALUES ('usage-cross', 'user-b', 'analysis', 'passed', 'cost-a');
+    `,
+    /usage cost event tenant mismatch|FOREIGN KEY constraint failed/,
+  );
+});
+
+test("rejects malformed and duplicate shared-cost allocations", () => {
+  const fixture = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type)
+    VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+  `;
+
+  expectSqlReject(
+    `
+      ${fixture}
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         allocated_offer_version_id, incurred_at)
+      VALUES ('cost-bad-math', 'software', 'support', 'minute', 1000000,
+        1500000, 1, 'actual', 'noncash', 'labor-v1', 'offer-watch', 1);
+    `,
+    /cost amount does not match units and rate/,
+  );
+
+  expectSqlReject(
+    `
+      ${fixture}
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('allocation-group-1', 'job-1', 'allocation-v1', 'equal',
+        'software', 'source_data', 50000);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros,
+         allocated_offer_version_id, incurred_at)
+      VALUES
+        ('cost-shared-a', 'software', 'source_data', 'job', 1000000, 25000,
+         25000, 'actual', 'cash', 'source-v1', 'job-1', 'equal', 'allocation-v1',
+         'allocation-group-1', 5000, 50000, 0, 'offer-watch', 1),
+        ('cost-shared-b', 'software', 'source_data', 'job', 1000000, 25000,
+         25000, 'actual', 'cash', 'source-v1', 'job-1', 'equal', 'allocation-v1',
+         'allocation-group-1', 5000, 50000, 0, 'offer-watch', 1);
+    `,
+    /UNIQUE constraint failed/,
+  );
+});
+
+test("prevents processor duplication, cost-link drift, and shared over-allocation", () => {
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type)
+      VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, acquisition_source, gross_amount_minor,
+         cash_collected_minor, processor_fee_micros, service_starts_at,
+         service_ends_at, settlement_state)
+      VALUES ('order-a', 'user-a', 'offer-watch', 'organic', 900, 900, 30000,
+        1, 2, 'paid');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version, user_id,
+         order_id, allocated_offer_version_id, incurred_at)
+      VALUES
+        ('processor-a', 'software', 'processor', 'transaction', 1000000, 30000,
+         30000, 'actual', 'cash', 'processor-v1', 'user-a', 'order-a',
+         'offer-watch', 1),
+        ('processor-b', 'software', 'processor', 'transaction', 1000000, 30000,
+         30000, 'actual', 'cash', 'processor-v1', 'user-a', 'order-a',
+         'offer-watch', 1);
+    `,
+    /UNIQUE constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type)
+      VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+      INSERT INTO cohort_memberships
+        (id, user_id, offer_version_id, acquisition_source, entered_at,
+         matures_at, observation_window_days)
+      VALUES
+        ('cohort-a', 'user-a', 'offer-watch', 'organic', 1, 2, 30),
+        ('cohort-b', 'user-a', 'offer-watch', 'organic', 1, 2, 30);
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, cohort_membership_id,
+         acquisition_source, gross_amount_minor, cash_collected_minor,
+         service_starts_at, service_ends_at, settlement_state)
+      VALUES ('order-a', 'user-a', 'offer-watch', 'cohort-a', 'organic', 900,
+        900, 1, 2, 'paid');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version, user_id,
+         order_id, cohort_membership_id, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-a', 'software', 'support', 'minute', 1000000, 10000, 10000,
+        'actual', 'noncash', 'labor-v1', 'user-a', 'order-a', 'cohort-a',
+        'offer-watch', 1);
+      UPDATE cost_events SET cohort_membership_id = 'cohort-b'
+       WHERE id = 'cost-a';
+    `,
+    /cost order cohort mismatch/,
+  );
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type)
+      VALUES
+        ('offer-a', 'software', 'watch_a', 1, 'Watch A', 900, 'monthly'),
+        ('offer-b', 'software', 'watch_b', 1, 'Watch B', 900, 'monthly');
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('allocation-group-1', 'batch-1', 'allocation-v1', 'weighted',
+        'software', 'source_data', 100000);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros,
+         allocated_offer_version_id, incurred_at)
+      VALUES
+        ('shared-a', 'software', 'source_data', 'batch', 1000000, 100000,
+         100000, 'actual', 'cash', 'source-v1', 'batch-1', 'weighted',
+         'allocation-v1', 'allocation-group-1', 10000, 100000, 0, 'offer-a', 1),
+        ('shared-b', 'software', 'source_data', 'batch', 1000000, 100000,
+         100000, 'actual', 'cash', 'source-v1', 'batch-1', 'weighted',
+         'allocation-v1', 'allocation-group-1', 10000, 100000, 0, 'offer-b', 1);
+    `,
+    /shared allocation exceeds source total/,
+  );
+});
+
+test("reconciles exactly one current shared-allocation version with rounding", () => {
+  const allocationFixture = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type)
+    VALUES
+      ('offer-a', 'software', 'watch_a', 1, 'Watch A', 900, 'monthly'),
+      ('offer-b', 'software', 'watch_b', 1, 'Watch B', 900, 'monthly');
+  `;
+
+  expectSqlReject(
+    `
+      ${allocationFixture}
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('group-a', 'batch-1', 'v1', 'equal', 'software', 'source_data',
+        100000);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-a', 'software', 'source_data', 'batch', 1000000, 100000,
+        100000, 'actual', 'cash', 'source-v1', 'batch-1', 'usage_weighted', 'v1',
+        'group-a', 10000, 100000, 0, 'offer-a', 1);
+    `,
+    /cost allocation group mismatch|shared allocation method mismatch/,
+  );
+
+  expectSqlPass(
+    `
+      ${allocationFixture}
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('group-v1', 'batch-1', 'v1', 'weighted', 'software',
+        'source_data', 100001);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES
+        ('cost-a', 'software', 'source_data', 'batch', 1000000, 50000, 50000,
+         'actual', 'cash', 'source-v1', 'batch-1', 'weighted', 'v1', 'group-v1',
+         5000, 100001, 0, 'offer-a', 1),
+        ('cost-b', 'software', 'source_data', 'batch', 1000000, 50001, 50001,
+         'actual', 'cash', 'source-v1', 'batch-1', 'weighted', 'v1', 'group-v1',
+         5000, 100001, 1, 'offer-b', 1);
+      UPDATE cost_allocation_groups
+         SET state = 'reconciled', is_current = 1, reconciled_at = 2
+       WHERE id = 'group-v1';
+      SELECT g.state || ':' || SUM(c.allocation_share_bps) || ':' ||
+             SUM(c.amount_micros)
+        FROM cost_allocation_groups g
+        JOIN cost_events c ON c.allocation_group_id = g.id
+       WHERE g.id = 'group-v1'
+       GROUP BY g.state;
+    `,
+    "reconciled:10000:100001",
+  );
+
+  expectSqlReject(
+    `
+      ${allocationFixture}
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('group-v1', 'batch-1', 'v1', 'weighted', 'software',
+        'source_data', 100000);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-v1', 'software', 'source_data', 'batch', 1000000, 100000,
+        100000, 'actual', 'cash', 'source-v1', 'batch-1', 'weighted', 'v1',
+        'group-v1', 10000, 100000, 0, 'offer-a', 1);
+      UPDATE cost_allocation_groups
+         SET state = 'reconciled', is_current = 1, reconciled_at = 2
+       WHERE id = 'group-v1';
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros, supersedes_group_id)
+      VALUES ('group-v2', 'batch-1', 'v2', 'weighted', 'software',
+        'source_data', 100000, 'group-v1');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-v2', 'software', 'source_data', 'batch', 1000000, 100000,
+        100000, 'actual', 'cash', 'source-v2', 'batch-1', 'weighted', 'v2',
+        'group-v2', 10000, 100000, 0, 'offer-b', 3);
+      UPDATE cost_allocation_groups
+         SET state = 'reconciled', is_current = 1, reconciled_at = 4
+       WHERE id = 'group-v2';
+    `,
+    /new allocation version must supersede the prior source version|UNIQUE constraint failed/,
+  );
+
+  expectSqlPass(
+    `
+      ${allocationFixture}
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros)
+      VALUES ('group-v1', 'batch-1', 'v1', 'weighted', 'software',
+        'source_data', 100000);
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-v1', 'software', 'source_data', 'batch', 1000000, 100000,
+        100000, 'actual', 'cash', 'source-v1', 'batch-1', 'weighted', 'v1',
+        'group-v1', 10000, 100000, 0, 'offer-a', 1);
+      UPDATE cost_allocation_groups
+         SET state = 'reconciled', is_current = 1, reconciled_at = 2
+       WHERE id = 'group-v1';
+      INSERT INTO cost_allocation_groups
+        (id, shared_object_ref, allocation_version, allocation_method, stream,
+         category, source_total_amount_micros, supersedes_group_id)
+      VALUES ('group-v2', 'batch-1', 'v2', 'weighted', 'software',
+        'source_data', 100000, 'group-v1');
+      UPDATE cost_allocation_groups
+         SET state = 'superseded', is_current = 0
+       WHERE id = 'group-v1';
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocation_method, allocation_version,
+         allocation_group_id, allocation_share_bps, shared_total_amount_micros,
+         allocation_remainder_micros, allocated_offer_version_id, incurred_at)
+      VALUES ('cost-v2', 'software', 'source_data', 'batch', 1000000, 100000,
+        100000, 'actual', 'cash', 'source-v2', 'batch-1', 'weighted', 'v2',
+        'group-v2', 10000, 100000, 0, 'offer-b', 3);
+      UPDATE cost_allocation_groups
+         SET state = 'reconciled', is_current = 1, reconciled_at = 4
+       WHERE id = 'group-v2';
+      SELECT group_concat(id || ':' || state || ':' || is_current, '|')
+        FROM (
+          SELECT id, state, is_current
+            FROM cost_allocation_groups
+           WHERE shared_object_ref = 'batch-1'
+           ORDER BY allocation_version
+        );
+    `,
+    "group-v1:superseded:0|group-v2:reconciled:1",
+  );
+});
+
+test("prevents post-reference economics and tenant drift", () => {
+  const orderFixture = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type)
+    VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+    INSERT INTO orders_charges
+      (id, user_id, offer_version_id, acquisition_source, gross_amount_minor,
+       cash_collected_minor, service_starts_at, service_ends_at, settlement_state)
+    VALUES ('order-a', 'user-a', 'offer-watch', 'organic', 900, 900, 1, 2, 'paid');
+  `;
+
+  expectSqlReject(
+    `
+      ${orderFixture}
+      UPDATE offer_versions SET stream = 'affiliate' WHERE id = 'offer-watch';
+    `,
+    /referenced offer economics are immutable/,
+  );
+
+  expectSqlReject(
+    `
+      ${orderFixture}
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, cash_collected_minor,
+         recognized_revenue_minor, closing_deferred_minor, close_state)
+      VALUES ('revenue-a', 'order-a', 'software', '2026-07', 900, 900, 0,
+        'reconciled');
+      UPDATE orders_charges SET gross_amount_minor = 1800 WHERE id = 'order-a';
+    `,
+    /scheduled order economics are immutable/,
+  );
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type)
+      VALUES ('offer-watch', 'software', 'watch', 1, 'Watch', 900, 'monthly');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version, user_id,
+         allocated_offer_version_id, incurred_at)
+      VALUES ('cost-a', 'software', 'support', 'minute', 1000000, 1500000,
+        1500000, 'actual', 'noncash', 'labor-v1', 'user-a', 'offer-watch', 1);
+      INSERT INTO usage_events
+        (id, user_id, action, result_state, cost_event_id)
+      VALUES ('usage-a', 'user-a', 'analysis', 'passed', 'cost-a');
+      UPDATE cost_events SET user_id = 'user-b' WHERE id = 'cost-a';
+    `,
+    /referenced cost-event identity is immutable/,
+  );
+});
+
+test("rejects self-dependencies and non-user merge decisions", () => {
+  expectSqlReject(
+    `
+      ${rolesSql}
+      INSERT INTO profile_fact_dependencies
+        (user_id, dependent_fact_id, source_fact_id, relationship)
+      VALUES ('user-a', 'fact-a1', 'fact-a1', 'derived_from');
+    `,
+    /CHECK constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${rolesSql}
+      INSERT INTO experience_role_merge_proposals
+        (id, user_id, source_role_id, target_role_id, proposed_resolution_json,
+         state)
+      VALUES ('merge-a', 'user-a', 'role-a1', 'role-a2', '{}', 'accepted');
+    `,
+    /CHECK constraint failed/,
+  );
+});
+
+test("protects tenant-scoped provenance references from physical deletion", () => {
+  expectSqlReject(
+    `
+      ${sourceAndFactSql}
+      DELETE FROM source_imports WHERE id = 'import-a';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${sourceAndFactSql}
+      INSERT INTO profile_facts
+        (id, user_id, fact_type, value_json, state, supersedes_fact_id)
+      VALUES ('fact-a3', 'user-a', 'role_title', '{}', 'user_corrected', 'fact-a1');
+      DELETE FROM profile_facts WHERE id = 'fact-a1';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${rolesSql}
+      INSERT INTO achievement_bullets
+        (id, user_id, experience_role_id, text)
+      VALUES ('bullet-a', 'user-a', 'role-a1', 'Built the operating system.');
+      DELETE FROM experience_roles WHERE id = 'role-a1';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${sourceAndFactSql}
+      INSERT INTO skills (id, canonical_name, category)
+        VALUES ('skill-1', 'Revenue Operations', 'function');
+      INSERT INTO profile_skills (user_id, skill_id, source_fact_id)
+        VALUES ('user-a', 'skill-1', 'fact-a1');
+      DELETE FROM profile_facts WHERE id = 'fact-a1';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  const analysisFixtureSql = `
+    ${usersSql}
+    INSERT INTO career_paths
+      (id, user_id, label, primary_lane, state, is_primary)
+    VALUES ('path-a', 'user-a', 'Revenue Operations', 'revenue_operations', 'active', 1);
+    INSERT INTO job_standards (id, user_id, version, is_current)
+      VALUES ('standard-a', 'user-a', 1, 1);
+    INSERT INTO job_sources (id, name, kind, rights_state)
+      VALUES ('source-1', 'Acme ATS', 'employer_ats', 'approved');
+    INSERT INTO job_postings
+      (id, source_id, external_id, canonical_url, employer, title, description_checksum)
+    VALUES
+      ('job-1', 'source-1', 'ext-1', 'https://example.test/job-1', 'Acme', 'Director', 'jd-hash');
+    INSERT INTO job_analyses
+      (id, user_id, job_posting_id, career_path_id, job_standard_id,
+       policy_version, evidence_version, integrity_gates_json, fit_json, recommendation)
+    VALUES
+      ('analysis-a', 'user-a', 'job-1', 'path-a', 'standard-a',
+       'policy-1', 'evidence-1', '{}', '{}', 'pursue');
+  `;
+
+  expectSqlReject(
+    `
+      ${analysisFixtureSql}
+      DELETE FROM career_paths WHERE id = 'path-a';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${analysisFixtureSql}
+      INSERT INTO pursuits
+        (id, user_id, job_posting_id, current_analysis_id)
+      VALUES ('pursuit-a', 'user-a', 'job-1', 'analysis-a');
+      DELETE FROM job_analyses WHERE id = 'analysis-a';
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+});
+
+test("enforces one current Job Standard and one active primary Career Path", () => {
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO job_standards (id, user_id, version, is_current)
+        VALUES ('standard-1', 'user-a', 1, 1);
+      INSERT INTO job_standards (id, user_id, version, is_current)
+        VALUES ('standard-2', 'user-a', 2, 1);
+    `,
+    /UNIQUE constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO career_paths
+        (id, user_id, label, primary_lane, state, is_primary)
+      VALUES ('path-a', 'user-a', 'Revenue Operations', 'revenue_operations',
+        'suggested', 1);
+    `,
+    /CHECK constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO career_paths
+        (id, user_id, label, primary_lane, state, is_primary)
+      VALUES
+        ('path-a', 'user-a', 'Revenue Operations', 'revenue_operations', 'active', 1),
+        ('path-b', 'user-a', 'Lifecycle', 'lifecycle', 'active', 1);
+    `,
+    /UNIQUE constraint failed/,
+  );
+});
+
+test("enforces deterministic job-to-path-to-default resume assignment", () => {
+  expectSqlPass(
+    `
+      ${resumeFixtureSql}
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope)
+      VALUES ('assignment-default', 'user-a', 'resume-default', 'default');
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope, career_path_id)
+      VALUES ('assignment-path', 'user-a', 'resume-path', 'path', 'path-a');
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope, job_posting_id)
+      VALUES ('assignment-job', 'user-a', 'resume-job', 'job', 'job-1');
+      SELECT resume_id
+        FROM resume_assignments
+       WHERE user_id = 'user-a'
+         AND (
+           (scope = 'job' AND job_posting_id = 'job-1') OR
+           (scope = 'path' AND career_path_id = 'path-a') OR
+           scope = 'default'
+         )
+       ORDER BY CASE scope WHEN 'job' THEN 3 WHEN 'path' THEN 2 ELSE 1 END DESC
+       LIMIT 1;
+    `,
+    "resume-job",
+  );
+
+  expectSqlReject(
+    `
+      ${resumeFixtureSql}
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope)
+      VALUES ('assignment-bad', 'user-a', 'resume-default', 'path');
+    `,
+    /CHECK constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${resumeFixtureSql}
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope)
+      VALUES
+        ('assignment-1', 'user-a', 'resume-default', 'default'),
+        ('assignment-2', 'user-a', 'resume-path', 'default');
+    `,
+    /UNIQUE constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${resumeFixtureSql}
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope)
+      VALUES ('assignment-cross', 'user-a', 'resume-b', 'default');
+    `,
+    /FOREIGN KEY constraint failed/,
+  );
+});
+
+test("preserves offer-versioned cash, deferred revenue, costs, and cohort provenance", () => {
+  expectSqlPass(
+    `
+      ${usersSql}
+      INSERT INTO offer_versions
+        (id, stream, offer_key, version, label, price_minor, billing_type,
+         term_days, variable_cost_cap_bps, support_cap_seconds, target_cm2_bps)
+      VALUES
+        ('offer-watch-3m-v1', 'software', 'keep_watch_3m', 1,
+         'Keep Watch three-month', 2400, 'prepaid_term', 90, 2000, 30, 8000);
+      INSERT INTO cohort_memberships
+        (id, user_id, offer_version_id, acquisition_source, entered_at,
+         matures_at, observation_window_days)
+      VALUES
+        ('cohort-a', 'user-a', 'offer-watch-3m-v1', 'organic', 1, 7776000001, 90);
+      INSERT INTO orders_charges
+        (id, user_id, offer_version_id, cohort_membership_id,
+         acquisition_source, gross_amount_minor, cash_collected_minor,
+         processor_fee_micros, service_starts_at, service_ends_at,
+         settlement_state)
+      VALUES
+        ('order-a', 'user-a', 'offer-watch-3m-v1', 'cohort-a', 'organic',
+         2400, 2400, 996000, 1, 7776000001, 'paid');
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, opening_deferred_minor,
+         cash_collected_minor, recognized_revenue_minor, closing_deferred_minor,
+         close_state)
+      VALUES
+        ('revenue-a-1', 'order-a', 'software', '2026-07', 0, 2400, 800, 1600, 'closed'),
+        ('revenue-a-2', 'order-a', 'software', '2026-08', 1600, 0, 800, 800, 'closed'),
+        ('revenue-a-3', 'order-a', 'software', '2026-09', 800, 0, 800, 0, 'reconciled');
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         user_id, order_id, allocated_offer_version_id, cohort_membership_id,
+         incurred_at)
+      VALUES
+        ('cost-a', 'software', 'processor', 'transaction', 1000000, 996000,
+         996000, 'actual', 'cash', 'stripe-public-2026-07-21',
+         'user-a', 'order-a', 'offer-watch-3m-v1', 'cohort-a', 2);
+      INSERT INTO subscriptions
+        (id, user_id, offer_version_id, plan_key, state, entitlements_json)
+      VALUES
+        ('subscription-a', 'user-a', 'offer-watch-3m-v1', 'keep_watch_3m',
+         'active', '{}');
+      SELECT sum(recognized_revenue_minor) || ':' || max(closing_deferred_minor)
+        FROM revenue_schedule WHERE order_id = 'order-a';
+      SELECT amount_micros || ':' || support_cap_seconds
+        FROM cost_events, offer_versions
+       WHERE cost_events.id = 'cost-a'
+         AND offer_versions.id = cost_events.allocated_offer_version_id;
+    `,
+    "2400:1600\n996000:30",
+  );
+});
+
+test("rejects malformed economics records and cross-tenant allocations", () => {
+  const economicsFixtureSql = `
+    ${usersSql}
+    INSERT INTO offer_versions
+      (id, stream, offer_key, version, label, price_minor, billing_type,
+       term_days, variable_cost_cap_bps)
+    VALUES
+      ('offer-watch-v1', 'software', 'keep_watch', 1, 'Keep Watch',
+       900, 'monthly', 30, 2000);
+    INSERT INTO cohort_memberships
+      (id, user_id, offer_version_id, acquisition_source, entered_at,
+       matures_at, observation_window_days)
+    VALUES
+      ('cohort-a', 'user-a', 'offer-watch-v1', 'organic', 1, 2592000001, 30);
+    INSERT INTO orders_charges
+      (id, user_id, offer_version_id, cohort_membership_id,
+       acquisition_source, gross_amount_minor, cash_collected_minor,
+       service_starts_at, service_ends_at, settlement_state)
+    VALUES
+      ('order-a', 'user-a', 'offer-watch-v1', 'cohort-a', 'organic',
+       900, 900, 1, 2592000001, 'paid');
+  `;
+
+  expectSqlReject(
+    `
+      ${economicsFixtureSql}
+      INSERT INTO revenue_schedule
+        (id, order_id, stream, recognition_period, opening_deferred_minor,
+         cash_collected_minor, recognized_revenue_minor, closing_deferred_minor)
+      VALUES ('bad-revenue', 'order-a', 'software', '2026-07', 0, 900, 500, 500);
+    `,
+    /CHECK constraint failed/,
+  );
+
+  expectSqlReject(
+    `
+      ${economicsFixtureSql}
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         user_id, order_id, allocated_offer_version_id, incurred_at)
+      VALUES
+        ('cross-cost', 'software', 'support', 'minute', 1000000, 1500000,
+         1500000, 'actual', 'noncash', 'labor-2026-07-21',
+         'user-b', 'order-a', 'offer-watch-v1', 2);
+    `,
+    /FOREIGN KEY constraint failed|cost order tenant or stream mismatch/,
+  );
+
+  expectSqlReject(
+    `
+      ${economicsFixtureSql}
+      INSERT INTO cost_events
+        (id, stream, category, unit_name, units_micros, rate_micros_per_unit,
+         amount_micros, estimate_state, cash_state, rate_card_version,
+         shared_object_ref, allocated_offer_version_id, incurred_at)
+      VALUES
+        ('unallocated-shared-cost', 'software', 'source_data', 'job', 1000000,
+         50000, 50000, 'estimated', 'cash', 'source-2026-07-21',
+         'canonical-job-1', 'offer-watch-v1', 2);
+    `,
+    /CHECK constraint failed|shared cost allocation is incomplete|shared allocation amount or share is invalid|cost allocation group mismatch/,
+  );
+});

@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1784654655270,
+      "tag": "0000_tricky_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1784679618488,
+      "tag": "0001_supreme_sir_ram",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784680522949,
+      "tag": "0002_clever_xorn",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1784681456017,
+      "tag": "0003_rainy_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1784681934754,
+      "tag": "0004_famous_puppet_master",
+      "breakpoints": true
+    }
+  ]
+}

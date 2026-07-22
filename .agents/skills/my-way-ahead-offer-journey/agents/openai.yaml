@@ -1,0 +1,4 @@
+interface:
+  display_name: "My Way Ahead Offer and Journey"
+  short_description: "Shape the product promise, journey, offers, and economics"
+  default_prompt: "Use $my-way-ahead-offer-journey to design an evidence-backed customer journey and offer recommendation for My Way Ahead."

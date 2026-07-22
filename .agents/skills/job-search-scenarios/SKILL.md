@@ -5,6 +5,10 @@ description: Route Matt's recurring job-search starting scenarios through the co
 
 # Job Search Scenarios
 
+## Product Architecture Boundary
+
+This skill governs Matt's current personal job-search execution. Teal may supply temporary operating evidence and competitor observations, but it may never define the customer career platform's domain model, routes, screen system, MVP dependency chain, or customer-facing copy. Product-strategy work must use native, provider-neutral objects and remain functional without Teal.
+
 ## Purpose
 Use this as the first skill for job-search execution. It routes the request, enforces Chrome + Teal workflow discipline, and calls the narrower skills only after the scenario is clear.
 
@@ -60,7 +64,12 @@ For resume and cover-letter work:
 - do not default external resume summaries to `in marketing since 2007` when the target asset expects a years-of-experience claim
 - never use em dashes in final assets
 - avoid AI-sounding phrasing, hype, or theatrical self-branding
-- for Nashville hospitality resumes, use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact
+- for Nashville hospitality applications, use only the approved local PDFs unless a live Teal export is created for that exact role:
+  - server, server-track, and general hospitality roles: `applications/hospitality-lanes/Matt Dimock - Hospitality Resume.pdf`
+  - barback and bartender-support roles: `applications/hospitality-lanes/Matt Dimock - Barback Resume.pdf`
+  - reusable non-branded server upload file: `applications/hospitality-lanes/Matt Dimock - Server Resume.pdf`
+  - reusable non-branded barback upload file: `applications/hospitality-lanes/Matt Dimock - Barback Upload Resume.pdf`
+- do not use older Broadway, Nashville Broadway, baseline, food runner, server assistant, or experimental hospitality resume drafts unless Matt explicitly approves that exact fallback
 - preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it
 - keep the default structure to full chronology with selected hospitality-transfer bullets across all roles
 - include bullets that prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution
