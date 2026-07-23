@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-07-22",
+  "assets": [
+    {
+      "type": "resume",
+      "filename": "Seso - Director of Revenue Operations - Matt Dimock - Resume.pdf",
+      "pageCount": 2,
+      "fileSha256": "ee37c056b563e5a506face8a58d176f24d4e57e6e963c6088630cf579757d98f",
+      "reviewState": "claim_safe"
+    },
+    {
+      "type": "cover_letter",
+      "filename": "Seso - Director of Revenue Operations - Matt Dimock - Cover Letter.pdf",
+      "pageCount": 1,
+      "fileSha256": "99569aeefb6b046ad9d3c2c2ff2db78c1d91dd6da8d24ba2953b3ed36e643ed9",
+      "reviewState": "claim_safe"
+    }
+  ]
+}

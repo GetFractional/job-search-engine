@@ -25,8 +25,9 @@ test("verifies keep-awake identity before reporting or terminating it", () => {
   assert.match(service, /Ignored stale keep-awake PID/);
 });
 
-test("keeps Remote host-browser proof separate from native iPhone Safari", () => {
-  assert.match(access, /This Remote path supports host-browser review/);
-  assert.match(access, /It is not native iPhone Safari/);
-  assert.match(access, /Do not enable Tailscale Funnel/);
+test("makes the authenticated hosted URL canonical across phone, laptop, and Remote", () => {
+  assert.match(access, /same HTTPS URL is the supported route/);
+  assert.match(access, /`localhost` means the iPhone itself/);
+  assert.match(access, /Tailscale, NetBird, Dev Tunnels, and router changes are not required/);
+  assert.match(access, /Do not switch to an unauthenticated public tunnel/);
 });

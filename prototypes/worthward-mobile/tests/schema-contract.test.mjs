@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readdirSync, readFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 const migrationNames = readdirSync(new URL("../drizzle/", import.meta.url))
@@ -9,11 +11,17 @@ const migrationNames = readdirSync(new URL("../drizzle/", import.meta.url))
 
 assert.ok(migrationNames.length > 0, "expected at least one generated SQL migration");
 
-const migrationSqlByName = new Map(
+const rawMigrationSqlByName = new Map(
   migrationNames.map((migrationName) => [
     migrationName,
-    readFileSync(new URL(`../drizzle/${migrationName}`, import.meta.url), "utf8")
-      .replaceAll("--> statement-breakpoint", ""),
+    readFileSync(new URL(`../drizzle/${migrationName}`, import.meta.url), "utf8"),
+  ]),
+);
+
+const migrationSqlByName = new Map(
+  [...rawMigrationSqlByName].map(([migrationName, migrationSqlText]) => [
+    migrationName,
+    migrationSqlText.replaceAll("--> statement-breakpoint", ""),
   ]),
 );
 
@@ -100,7 +108,7 @@ const resumeFixtureSql = `
     ('job-1', 'source-1', 'ext-1', 'https://example.test/job-1', 'Acme', 'Director', 'jd-hash');
 `;
 
-test("applies the 30-table migration with foreign keys intact", () => {
+test("applies the 34-table migration with foreign keys intact", () => {
   expectSqlPass(
     `
       SELECT count(*) FROM sqlite_master
@@ -114,8 +122,51 @@ test("applies the 30-table migration with foreign keys intact", () => {
        WHERE "table" = 'cost_allocation_groups'
          AND "from" = 'allocation_group_id';
     `,
-    "30\n0\n2:1:SET NULL\nRESTRICT",
+    "34\n0\n2:1:SET NULL\nRESTRICT",
   );
+});
+
+test("applies every migration statement across fresh SQLite connections", () => {
+  const migrationDirectory = mkdtempSync(join(tmpdir(), "way-ahead-d1-migrations-"));
+  const databasePath = join(migrationDirectory, "sequential.sqlite");
+
+  try {
+    for (const migrationName of migrationNames) {
+      const statements = rawMigrationSqlByName
+        .get(migrationName)
+        .split("--> statement-breakpoint")
+        .map((statement) => statement.trim())
+        .filter(Boolean);
+
+      for (const [statementIndex, statement] of statements.entries()) {
+        const result = spawnSync("/usr/bin/sqlite3", [databasePath], {
+          input: [".bail on", "PRAGMA foreign_keys=ON;", statement].join("\n"),
+          encoding: "utf8",
+        });
+
+        assert.equal(
+          result.status,
+          0,
+          `${migrationName} statement ${statementIndex + 1} failed after a schema reload:\n${result.stderr}`,
+        );
+      }
+    }
+
+    const verification = spawnSync("/usr/bin/sqlite3", [databasePath], {
+      input: [
+        ".bail on",
+        "PRAGMA foreign_keys=ON;",
+        "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';",
+        "SELECT count(*) FROM pragma_foreign_key_check;",
+      ].join("\n"),
+      encoding: "utf8",
+    });
+
+    assert.equal(verification.status, 0, verification.stderr);
+    assert.equal(verification.stdout.trim(), "34\n0");
+  } finally {
+    rmSync(migrationDirectory, { recursive: true, force: true });
+  }
 });
 
 test("supports transactional migration rollback", () => {
@@ -1071,5 +1122,640 @@ test("rejects malformed economics records and cross-tenant allocations", () => {
          'canonical-job-1', 'offer-watch-v1', 2);
     `,
     /CHECK constraint failed|shared cost allocation is incomplete|shared allocation amount or share is invalid|cost allocation group mismatch/,
+  );
+});
+
+const approvalAssetManifest = JSON.stringify({
+  assets: [
+    {
+      id: "asset-a",
+      type: "resume",
+      version: 1,
+      contentSha256: "asset-hash-a",
+      fileSha256: "resume-file-hash",
+      filename: "Employer - Director Revenue Operations - Matt Dimock - Resume.pdf",
+      pageCount: 2,
+      reviewState: "claim_safe",
+    },
+    {
+      id: "asset-cover-a",
+      type: "cover_letter",
+      version: 1,
+      contentSha256: "asset-hash-cover-a",
+      fileSha256: "cover-file-hash",
+      filename: "Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf",
+      pageCount: 1,
+      reviewState: "claim_safe",
+    },
+  ],
+});
+
+const productionPursuitSql = `
+  ${usersSql}
+  INSERT INTO job_standards
+    (id, user_id, version, is_current, pay_basis, minimum_pay_cents,
+     target_pay_cents)
+  VALUES
+    ('standard-a', 'user-a', 1, 1, 'salary', 12000000, 18000000),
+    ('standard-b', 'user-b', 1, 1, 'salary', 12000000, 18000000);
+  INSERT INTO career_paths
+    (id, user_id, label, primary_lane, state, is_primary)
+  VALUES
+    ('path-a', 'user-a', 'Revenue Operations', 'revenue_operations', 'active', 1),
+    ('path-b', 'user-b', 'Revenue Operations', 'revenue_operations', 'active', 1);
+  INSERT INTO job_sources (id, name, kind, rights_state)
+  VALUES ('source-live', 'Employer careers', 'employer_ats', 'approved');
+  INSERT INTO job_postings
+    (id, source_id, external_id, canonical_url, employer, title,
+     description_checksum, freshness_state)
+  VALUES
+    ('job-live', 'source-live', '123', 'https://employer.example/jobs/123',
+     'Employer', 'Director, Revenue Operations', 'job-hash', 'fresh');
+  INSERT INTO job_posting_versions
+    (id, job_posting_id, source_checked_at, source_url,
+     description_checksum, source_facts_json, source_conflicts_json,
+     capture_state)
+  VALUES
+    ('job-version-live', 'job-live', 1,
+     'https://employer.example/jobs/123', 'job-hash',
+     '{"questionSetChecksum":"form-hash"}', '[]', 'verified');
+  INSERT INTO job_analyses
+    (id, user_id, job_posting_id, career_path_id, job_standard_id,
+     policy_version, evidence_version, integrity_gates_json, fit_json,
+     unknowns_json, recommendation, validation_state)
+  VALUES
+    ('analysis-a', 'user-a', 'job-live', 'path-a', 'standard-a', 'policy-1',
+     'evidence-1', '{}', '{}', '[]', 'pursue', 'trusted'),
+    ('analysis-b', 'user-b', 'job-live', 'path-b', 'standard-b', 'policy-1',
+     'evidence-1', '{}', '{}', '[]', 'pursue', 'trusted');
+  INSERT INTO pursuits
+    (id, user_id, job_posting_id, current_analysis_id, state)
+  VALUES
+    ('pursuit-a', 'user-a', 'job-live', 'analysis-a', 'ready_for_approval'),
+    ('pursuit-b', 'user-b', 'job-live', 'analysis-b', 'ready_for_approval');
+  INSERT INTO generated_assets
+    (id, user_id, pursuit_id, type, source_versions_json,
+     generation_policy_version, version, content_json, content_sha256,
+     filename, page_count, review_state)
+  VALUES
+    ('asset-a', 'user-a', 'pursuit-a', 'resume', '{}', 'policy-1', 1,
+     '{"fileSha256":"resume-file-hash"}',
+     'asset-hash-a',
+     'Employer - Director Revenue Operations - Matt Dimock - Resume.pdf',
+     2, 'claim_safe'),
+    ('asset-cover-a', 'user-a', 'pursuit-a', 'cover_letter', '{}', 'policy-1', 1,
+     '{"fileSha256":"cover-file-hash"}',
+     'asset-hash-cover-a',
+     'Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf',
+     1, 'claim_safe'),
+    ('asset-b', 'user-b', 'pursuit-b', 'resume', '{}', 'policy-1', 1, '{}',
+     'asset-hash-b',
+     'Employer - Director Revenue Operations - Other Candidate - Resume.pdf',
+     2, 'claim_safe');
+`;
+
+const readyPackageSql = ({
+  id = "package-a",
+  jobVersionId = "job-version-live",
+  answersJson = '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+  manifest = approvalAssetManifest,
+  blockersJson = "[]",
+  payloadSha256 = "payload-a",
+  readinessState = "ready_for_review",
+} = {}) => `
+  INSERT INTO pursuit_packages
+    (id, user_id, pursuit_id, version, destination_url,
+     job_posting_version_id, answers_json, asset_manifest_json,
+     blockers_json, payload_sha256, readiness_state)
+  VALUES
+    ('${id}', 'user-a', 'pursuit-a', 1,
+     'https://employer.example/jobs/123/apply', '${jobVersionId}',
+     '${answersJson}', '${manifest}', '${blockersJson}', '${payloadSha256}',
+     '${readinessState}');
+`;
+
+const packageApprovalSql = ({
+  id = "approval-a",
+  action = "approve_application_package",
+  payloadSha256 = "payload-a",
+  state = "approved",
+} = {}) => `
+  INSERT INTO external_action_approvals
+    (id, user_id, pursuit_package_id, action, payload_sha256, state,
+     approved_at)
+  VALUES
+    ('${id}', 'user-a', 'package-a', '${action}', '${payloadSha256}',
+     '${state}', 2);
+`;
+
+test("binds external approval to one tenant's immutable ready package", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_at)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'approved', 2);
+      SELECT state || ':' || payload_sha256
+        FROM external_action_approvals WHERE id = 'approval-a';
+    `,
+    "approved:payload-a",
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-cross', 'user-b', 'package-a', 'approve_application_package',
+         'payload-a', 'approved');
+    `,
+    /FOREIGN KEY constraint failed|approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+});
+
+test("rejects blocked or mismatched approval and revokes approval when readiness changes", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '["proof missing"]', 'payload-a', 'blocked');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'approved');
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'wrong-payload', 'approved');
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_at)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'approved', 2);
+      UPDATE pursuit_packages
+         SET readiness_state = 'superseded', superseded_at = 3
+       WHERE id = 'package-a';
+      SELECT state FROM external_action_approvals WHERE id = 'approval-a';
+    `,
+    "revoked",
+  );
+});
+
+test("prevents mutation of a fingerprinted pursuit package payload", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      UPDATE pursuit_packages SET answers_json = '{"changed":true}'
+       WHERE id = 'package-a';
+    `,
+    /pursuit package identity and payload are immutable/,
+  );
+});
+
+test("binds approval to immutable asset versions and revokes it when a newer version exists", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      UPDATE generated_assets
+         SET content_sha256 = 'changed-after-package'
+       WHERE id = 'asset-a';
+    `,
+    /generated asset identity and version payload are immutable/,
+  );
+
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_at)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'approved', 2);
+      INSERT INTO generated_assets
+        (id, user_id, pursuit_id, type, source_versions_json,
+         generation_policy_version, version, content_json, content_sha256,
+         filename, page_count, supersedes_asset_id, review_state)
+      VALUES
+        ('asset-a-v2', 'user-a', 'pursuit-a', 'resume', '{}', 'policy-2', 2,
+         '{"fileSha256":"resume-file-hash-v2"}', 'asset-hash-a-v2',
+         'Employer - Director Revenue Operations - Matt Dimock - Resume.pdf',
+         2, 'asset-a', 'claim_safe');
+      SELECT a.state || ':' || p.readiness_state
+        FROM external_action_approvals a
+        JOIN pursuit_packages p ON p.id = a.pursuit_package_id
+       WHERE a.id = 'approval-a';
+    `,
+    "revoked:superseded",
+  );
+});
+
+test("rejects approval when the package manifest does not match stored assets", () => {
+  const mismatchedManifest = JSON.stringify({
+    assets: [
+      {
+        id: "asset-a",
+        type: "resume",
+        version: 1,
+        contentSha256: "wrong-hash",
+        fileSha256: "resume-file-hash",
+        filename: "Employer - Director Revenue Operations - Matt Dimock - Resume.pdf",
+        pageCount: 2,
+        reviewState: "claim_safe",
+      },
+      {
+        id: "asset-cover-a",
+        type: "cover_letter",
+        version: 1,
+        contentSha256: "asset-hash-cover-a",
+        fileSha256: "cover-file-hash",
+        filename: "Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf",
+        pageCount: 1,
+        reviewState: "claim_safe",
+      },
+    ],
+  });
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-a', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${mismatchedManifest}', '[]', 'payload-a', 'ready_for_review');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'approved');
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+});
+
+test("makes source versions, assets, packages, and approval fingerprints identity-immutable", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      UPDATE job_posting_versions SET id = 'job-version-rewritten'
+       WHERE id = 'job-version-live';
+    `,
+    /job posting version identity and payload are immutable/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      UPDATE generated_assets SET user_id = 'user-b' WHERE id = 'asset-a';
+    `,
+    /generated asset identity and version payload are immutable/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      UPDATE pursuit_packages SET version = 2 WHERE id = 'package-a';
+    `,
+    /pursuit package identity and payload are immutable/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE external_action_approvals
+         SET action = 'submit_application'
+       WHERE id = 'approval-a';
+    `,
+    /external approval identity and payload are immutable/,
+  );
+});
+
+test("supersedes the exact package and revokes approval when a newer source snapshot arrives", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('job-version-new', 'job-live', 3,
+         'https://employer.example/jobs/123', 'job-hash-new',
+         '{"questionSetChecksum":"form-hash-new"}', '[]', 'verified');
+      SELECT pp.readiness_state || ':' || a.state || ':' || p.state || ':' ||
+             p.external_approval_state
+        FROM pursuit_packages pp
+        JOIN external_action_approvals a ON a.pursuit_package_id = pp.id
+        JOIN pursuits p ON p.id = pp.pursuit_id
+       WHERE pp.id = 'package-a';
+    `,
+    "superseded:revoked:preparing:revoked",
+  );
+});
+
+test("supersedes an approved package and revokes its approval when a newer package version arrives", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE pursuits
+         SET external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-b', 'user-a', 'pursuit-a', 2,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt","lastName":"Dimock"}',
+         '${approvalAssetManifest}', '[]', 'payload-b', 'ready_for_review');
+      SELECT old_package.readiness_state || ':' || old_approval.state || ':' ||
+             pursuit.state || ':' || pursuit.external_approval_state || ':' ||
+             new_package.readiness_state
+        FROM pursuit_packages old_package
+        JOIN external_action_approvals old_approval
+          ON old_approval.pursuit_package_id = old_package.id
+        JOIN pursuits pursuit ON pursuit.id = old_package.pursuit_id
+        JOIN pursuit_packages new_package
+          ON new_package.pursuit_id = old_package.pursuit_id
+         AND new_package.id = 'package-b'
+       WHERE old_package.id = 'package-a';
+    `,
+    "superseded:revoked:preparing:revoked:ready_for_review",
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql({ id: "package-b", payloadSha256: "payload-b" })}
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-out-of-order', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-live',
+         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${approvalAssetManifest}', '[]', 'payload-old', 'ready_for_review');
+    `,
+    /pursuit package version must advance monotonically|UNIQUE constraint failed/,
+  );
+});
+
+test("rejects approval against a stale source version or mismatched employer form receipt", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('job-version-new', 'job-live', 3,
+         'https://employer.example/jobs/123', 'job-hash-new',
+         '{"questionSetChecksum":"form-hash-new"}', '[]', 'verified');
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql({
+        answersJson:
+          '{"questionSetChecksum":"wrong-form-hash","firstName":"Matt"}',
+      })}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+});
+
+test("allows a preserved source conflict but rejects incomplete source capture", () => {
+  const conflictSourceSql = productionPursuitSql.replace(
+    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'verified');",
+    "'{\"questionSetChecksum\":\"form-hash\"}', '[\"salary conflict\"]', 'conflict');",
+  );
+  assert.notEqual(conflictSourceSql, productionPursuitSql);
+  expectSqlPass(
+    `
+      ${conflictSourceSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      SELECT state FROM external_action_approvals WHERE id = 'approval-a';
+    `,
+    "approved",
+  );
+
+  const partialSourceSql = productionPursuitSql.replace(
+    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'verified');",
+    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'partial');",
+  );
+  assert.notEqual(partialSourceSql, productionPursuitSql);
+  expectSqlReject(
+    `
+      ${partialSourceSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+});
+
+test("rejects draft assets and missing or mismatched binary file fingerprints", () => {
+  const draftResumeSql = productionPursuitSql.replace(
+    "     2, 'claim_safe'),\n    ('asset-cover-a'",
+    "     2, 'draft'),\n    ('asset-cover-a'",
+  );
+  assert.notEqual(draftResumeSql, productionPursuitSql);
+  const draftManifest = JSON.stringify({
+    assets: approvalAssetManifest
+      ? JSON.parse(approvalAssetManifest).assets.map((asset) =>
+          asset.id === "asset-a" ? { ...asset, reviewState: "draft" } : asset,
+        )
+      : [],
+  });
+
+  expectSqlReject(
+    `
+      ${draftResumeSql}
+      ${readyPackageSql({ manifest: draftManifest })}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  const missingFileHashSql = productionPursuitSql.replace(
+    `     '{"fileSha256":"resume-file-hash"}',`,
+    "     '{}',",
+  );
+  assert.notEqual(missingFileHashSql, productionPursuitSql);
+  const missingFileHashManifest = JSON.stringify({
+    assets: JSON.parse(approvalAssetManifest).assets.map((asset) => {
+      if (asset.id !== "asset-a") return asset;
+      const withoutFileSha256 = { ...asset };
+      delete withoutFileSha256.fileSha256;
+      return withoutFileSha256;
+    }),
+  });
+
+  expectSqlReject(
+    `
+      ${missingFileHashSql}
+      ${readyPackageSql({ manifest: missingFileHashManifest })}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  const wrongFileHashManifest = JSON.stringify({
+    assets: JSON.parse(approvalAssetManifest).assets.map((asset) =>
+      asset.id === "asset-a" ? { ...asset, fileSha256: "wrong-file-hash" } : asset,
+    ),
+  });
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql({ manifest: wrongFileHashManifest })}
+      ${packageApprovalSql()}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+});
+
+test("keeps future application submission behind a distinct package approval", () => {
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql({ id: "submission-a", action: "submit_application" })}
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      ${packageApprovalSql({ id: "submission-a", action: "submit_application" })}
+      SELECT group_concat(action || ':' || state, '|')
+        FROM external_action_approvals
+       WHERE pursuit_package_id = 'package-a'
+       ORDER BY action;
+    `,
+    "approve_application_package:approved|submit_application:approved",
+  );
+});
+
+test("accepts only one founder workspace import receipt per user", () => {
+  expectSqlReject(
+    `
+      ${usersSql}
+      INSERT INTO audit_events
+        (id, user_id, actor_subject, event_type, entity_type, entity_id,
+         metadata_json)
+      VALUES
+        ('audit-import-1', 'user-a', 'auth-a', 'founder_workspace_imported',
+         'workspace', 'user-a', '{}'),
+        ('audit-import-2', 'user-a', 'auth-a', 'founder_workspace_imported',
+         'workspace', 'user-a', '{}');
+    `,
+    /UNIQUE constraint failed/,
   );
 });

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./way-ahead-v3.css";
+import "./production.css";
 
 export const metadata: Metadata = {
-  title: "Way Ahead | Find work that moves your life forward",
-  description: "Reveal credible career paths, find better-fit jobs, and prepare your strongest honest pursuit.",
+  title: "Way Ahead | Your next job, pursued with evidence",
+  description: "Find work worth pursuing, understand the real fit, and prepare a stronger, claim-safe application.",
   icons: {
     icon: "/favicon.svg",
   },

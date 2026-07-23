@@ -11,11 +11,10 @@ import {
 } from "drizzle-orm/sqlite-core";
 
 /**
- * Local private-alpha schema contract.
+ * Way Ahead production data contract.
  *
- * Defining these tables does not connect D1, collect customer data, or approve a
- * production identity provider. `.openai/hosting.json` intentionally keeps the
- * D1 and R2 bindings null until Matt approves the exact vendor and data packet.
+ * Every user-owned record is tenant scoped. External actions remain separately
+ * approval-gated even when the product is running in the founder environment.
  */
 
 export type ConsentPurpose =
@@ -100,6 +99,8 @@ export const users = sqliteTable(
   {
     id: text("id").primaryKey(),
     authSubject: text("auth_subject").notNull(),
+    identityProvider: text("identity_provider").notNull().default("chatgpt"),
+    role: text("role").$type<"owner" | "member">().notNull().default("member"),
     email: text("email").notNull(),
     displayName: text("display_name"),
     locale: text("locale").notNull().default("en-US"),
@@ -623,6 +624,38 @@ export const jobPostings = sqliteTable(
   ],
 );
 
+export const jobPostingVersions = sqliteTable(
+  "job_posting_versions",
+  {
+    id: text("id").primaryKey(),
+    jobPostingId: text("job_posting_id")
+      .notNull()
+      .references(() => jobPostings.id, { onDelete: "cascade" }),
+    sourceCheckedAt: integer("source_checked_at", { mode: "timestamp_ms" }).notNull(),
+    sourceUrl: text("source_url").notNull(),
+    descriptionChecksum: text("description_checksum").notNull(),
+    sourceFactsJson: text("source_facts_json", { mode: "json" }).$type<JsonObject>().notNull(),
+    sourceConflictsJson: text("source_conflicts_json", { mode: "json" })
+      .$type<StringList>()
+      .notNull()
+      .default(sql`'[]'`),
+    captureState: text("capture_state")
+      .$type<"verified" | "partial" | "conflict" | "unavailable">()
+      .notNull(),
+    createdAt: timestampMs("created_at"),
+  },
+  (table) => [
+    uniqueIndex("job_posting_versions_job_checksum_unique").on(
+      table.jobPostingId,
+      table.descriptionChecksum,
+    ),
+    index("job_posting_versions_job_checked_idx").on(
+      table.jobPostingId,
+      table.sourceCheckedAt,
+    ),
+  ],
+);
+
 export const resumeAssignments = sqliteTable(
   "resume_assignments",
   {
@@ -774,6 +807,13 @@ export const generatedAssets = sqliteTable(
       .notNull(),
     sourceVersionsJson: text("source_versions_json", { mode: "json" }).$type<JsonObject>().notNull(),
     generationPolicyVersion: text("generation_policy_version").notNull(),
+    version: integer("version").notNull().default(1),
+    contentJson: text("content_json", { mode: "json" }).$type<JsonObject>(),
+    contentSha256: text("content_sha256"),
+    filename: text("filename"),
+    pageCount: integer("page_count"),
+    supersedesAssetId: text("supersedes_asset_id"),
+    invalidatedAt: integer("invalidated_at", { mode: "timestamp_ms" }),
     reviewState: text("review_state")
       .$type<"draft" | "claim_safe" | "approved" | "superseded">()
       .notNull()
@@ -783,12 +823,115 @@ export const generatedAssets = sqliteTable(
     updatedAt: timestampMs("updated_at"),
   },
   (table) => [
+    uniqueIndex("generated_assets_user_id_unique").on(table.userId, table.id),
     foreignKey({
       columns: [table.userId, table.pursuitId],
       foreignColumns: [pursuits.userId, pursuits.id],
       name: "generated_assets_pursuit_tenant_fk",
     }).onDelete("cascade"),
+    uniqueIndex("generated_assets_pursuit_type_version_unique").on(
+      table.pursuitId,
+      table.type,
+      table.version,
+    ),
     index("generated_assets_pursuit_type_idx").on(table.pursuitId, table.type),
+  ],
+);
+
+export const pursuitPackages = sqliteTable(
+  "pursuit_packages",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pursuitId: text("pursuit_id").notNull(),
+    version: integer("version").notNull(),
+    destinationUrl: text("destination_url").notNull(),
+    jobPostingVersionId: text("job_posting_version_id")
+      .notNull()
+      .references(() => jobPostingVersions.id, { onDelete: "restrict" }),
+    answersJson: text("answers_json", { mode: "json" }).$type<JsonObject>().notNull(),
+    assetManifestJson: text("asset_manifest_json", { mode: "json" }).$type<JsonObject>().notNull(),
+    blockersJson: text("blockers_json", { mode: "json" })
+      .$type<StringList>()
+      .notNull()
+      .default(sql`'[]'`),
+    payloadSha256: text("payload_sha256").notNull(),
+    readinessState: text("readiness_state")
+      .$type<"blocked" | "ready_for_review" | "superseded">()
+      .notNull(),
+    supersededAt: integer("superseded_at", { mode: "timestamp_ms" }),
+    createdAt: timestampMs("created_at"),
+  },
+  (table) => [
+    uniqueIndex("pursuit_packages_user_id_unique").on(table.userId, table.id),
+    uniqueIndex("pursuit_packages_pursuit_version_unique").on(
+      table.pursuitId,
+      table.version,
+    ),
+    foreignKey({
+      columns: [table.userId, table.pursuitId],
+      foreignColumns: [pursuits.userId, pursuits.id],
+      name: "pursuit_packages_pursuit_tenant_fk",
+    }).onDelete("cascade"),
+    index("pursuit_packages_pursuit_state_idx").on(
+      table.pursuitId,
+      table.readinessState,
+    ),
+  ],
+);
+
+export const externalActionApprovals = sqliteTable(
+  "external_action_approvals",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pursuitPackageId: text("pursuit_package_id").notNull(),
+    action: text("action").$type<"approve_application_package" | "submit_application">().notNull(),
+    payloadSha256: text("payload_sha256").notNull(),
+    state: text("state")
+      .$type<"requested" | "approved" | "revoked" | "completed">()
+      .notNull()
+      .default("requested"),
+    approvedAt: integer("approved_at", { mode: "timestamp_ms" }),
+    revokedAt: integer("revoked_at", { mode: "timestamp_ms" }),
+    completedAt: integer("completed_at", { mode: "timestamp_ms" }),
+    createdAt: timestampMs("created_at"),
+  },
+  (table) => [
+    uniqueIndex("external_action_approvals_user_id_unique").on(table.userId, table.id),
+    foreignKey({
+      columns: [table.userId, table.pursuitPackageId],
+      foreignColumns: [pursuitPackages.userId, pursuitPackages.id],
+      name: "external_action_approvals_package_tenant_fk",
+    }).onDelete("restrict"),
+    index("external_action_approvals_package_state_idx").on(
+      table.pursuitPackageId,
+      table.state,
+    ),
+  ],
+);
+
+export const auditEvents = sqliteTable(
+  "audit_events",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    actorSubject: text("actor_subject").notNull(),
+    eventType: text("event_type").notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: text("entity_id"),
+    metadataJson: text("metadata_json", { mode: "json" }).$type<JsonObject>().notNull(),
+    createdAt: timestampMs("created_at"),
+  },
+  (table) => [
+    index("audit_events_user_created_idx").on(table.userId, table.createdAt),
+    index("audit_events_entity_idx").on(table.entityType, table.entityId),
   ],
 );
 

@@ -1,13 +1,22 @@
 # Job Search Codex Instructions
 
 ## Objective
-Operate as Matt Dimock's evidence-first AI job-search partner, using Codex for research, scoring, strategy, asset drafting, QA, and interview prep, with TealHQ as the job-search command center.
+Operate as Matt Dimock's evidence-first AI job-search partner, using Codex and Way Ahead for research, scoring, strategy, asset drafting, QA, approval review, and interview prep.
+
+## Way Ahead Operating Override (2026-07-22)
+
+- Way Ahead is Matt's job-search operating system and Case Study Zero surface.
+- Do not read, write, bookmark, score, stage, or otherwise operate Matt's job search in TealHQ. Teal may be inspected only as a competitor for product research, with no account mutation.
+- Store current roles, sources, analysis, profile evidence, application assets, exact form answers, approval state, and receipts in Way Ahead or its repository-backed evidence until Way Ahead exposes the corresponding production surface.
+- Use canonical employer sources and Matt's approved source hierarchy directly. Do not make Way Ahead dependent on Teal exports, scores, records, or workflow availability.
+- Stop before outreach, form population, file upload, or submission unless Matt approves that exact external action. Package approval and application submission are separate gates.
+- This section supersedes every lower Teal-operational instruction in this file and in repo skills. Retain those older sections only as historical competitor and migration context until the next full workflow rewrite.
 
 ## Account Scope
 - Use `mattdim805@gmail.com` as Matt's legitimate job-search Google identity for Gmail, Google Calendar, and Google Drive work tied to applications, recruiters, interviews, and job-search documents.
-- Use the logged-in personal Chrome profile for TealHQ, LinkedIn, Gmail/Google, job boards, company career sites, and application forms.
+- Use the logged-in personal Chrome profile for LinkedIn, Gmail/Google, job boards, company career sites, and application forms when authenticated access is needed.
 - Do not use `matt@getfractional.co` or any client/work Google account for personal job-search workflows unless Matt explicitly directs it for a specific task.
-- TealHQ is not a Codex connector. Use Teal through Chrome and the Teal Chrome extension.
+- TealHQ is competitor research only. Do not use Matt's Teal account as an operating surface.
 
 ## Workspace Consistency
 - Before non-trivial repo work in this workspace, run the repo-local workspace prep command:
