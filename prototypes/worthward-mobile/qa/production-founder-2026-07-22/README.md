@@ -8,6 +8,7 @@ Current verdict: **PASS for the bounded deployment envelope. BLOCK for final fou
 
 - [Deployment and access](deployment-and-access-receipt.md)
 - [Independent production verdict](independent-production-verdict.md)
+- [ClickUp read-after-write receipt](clickup-readback-receipt.md)
 - [Founder QA access runbook](../../QA_ACCESS.md)
 - [Production Board packet](../../../../docs/career-platform/company-os/board-packets/way-ahead-production-founder-board-packet-2026-07-22.md)
 - [Seso application-readiness receipt](../../../../applications/professional-lanes/seso-director-revenue-operations/way-ahead-application-readiness-receipt-2026-07-22.md)
