@@ -71,26 +71,29 @@ BEGIN
      AND `state` IN ('requested','approved');
   UPDATE `pursuits`
      SET `state` = 'preparing',
-         `external_approval_state` = CASE
-           WHEN EXISTS (
-             SELECT 1
-               FROM `external_action_approvals` approval
-               JOIN `pursuit_packages` previous
-                 ON previous.`id` = approval.`pursuit_package_id`
-                AND previous.`user_id` = approval.`user_id`
-              WHERE previous.`user_id` = NEW.`user_id`
-                AND previous.`pursuit_id` = NEW.`pursuit_id`
-                AND previous.`id` <> NEW.`id`
-                AND previous.`version` < NEW.`version`
-                AND approval.`state` = 'revoked'
-           ) THEN 'revoked'
-           ELSE 'not_requested'
-         END,
+         `external_approval_state` = 'not_requested',
          `next_action` = 'A new application package version exists. Review its exact source, answers, files, and fingerprint before any external action.',
          `updated_at` = unixepoch() * 1000
    WHERE `user_id` = NEW.`user_id`
      AND `id` = NEW.`pursuit_id`
      AND `state` NOT IN ('applied','interviewing','closed');
+  UPDATE `pursuits`
+     SET `external_approval_state` = 'revoked',
+         `updated_at` = unixepoch() * 1000
+   WHERE `user_id` = NEW.`user_id`
+     AND `id` = NEW.`pursuit_id`
+     AND EXISTS (
+       SELECT 1
+         FROM `external_action_approvals` approval
+         JOIN `pursuit_packages` previous
+           ON previous.`id` = approval.`pursuit_package_id`
+          AND previous.`user_id` = approval.`user_id`
+        WHERE previous.`user_id` = NEW.`user_id`
+          AND previous.`pursuit_id` = NEW.`pursuit_id`
+          AND previous.`id` <> NEW.`id`
+          AND previous.`version` < NEW.`version`
+          AND approval.`state` = 'revoked'
+     );
 END;--> statement-breakpoint
 CREATE TRIGGER `external_action_approvals_identity_payload_immutable`
 BEFORE UPDATE OF `id`,`user_id`,`pursuit_package_id`,`action`,`payload_sha256`

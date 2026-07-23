@@ -1595,6 +1595,18 @@ test("supersedes an approved package and revokes its approval when a newer packa
   );
 });
 
+test("keeps package replacement trigger compatible with the deployment SQL splitter", () => {
+  const migration = rawMigrationSqlByName.get("0007_exact_package_integrity.sql");
+  assert.ok(migration);
+  assert.doesNotMatch(
+    migration,
+    /SET\s+`external_approval_state`\s*=\s*CASE/,
+    "Wrangler's SQL splitter can mistake a SET CASE expression for the end of a trigger body",
+  );
+  assert.match(migration, /CREATE TRIGGER `external_action_approvals_insert_gate`/);
+  assert.match(migration, /CREATE TRIGGER `external_action_approvals_update_gate`/);
+});
+
 test("rejects approval against a stale source version or mismatched employer form receipt", () => {
   expectSqlReject(
     `
