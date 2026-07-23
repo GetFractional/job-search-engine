@@ -1,16 +1,18 @@
 # Way Ahead Company Operating System
 
-**Version:** 1.2
-**Operating date:** 2026-07-22
+**Version:** 1.3
+**Operating date:** 2026-07-23
 **Board and owner:** Matt Dimock
 **Accountable CEO and integrator:** Codex root, within the authority contract below
 **Company name:** Way Ahead, temporary local founder-checkpoint label only; the master brand remains open after a high-collision knockout screen
-**Current company stage:** Owner-only production foundation under authenticated hosted QA, before external-user alpha
+**Current company stage:** Public multi-user alpha rebuild after a failed owner-only product checkpoint
 **Operating North Star:** Better-fit jobs found and pursued with less wasted effort and stronger honest proof
 
 > **Board amendment, 2026-07-21:** [Founder Feedback Product Reset](../strategy-system/16-founder-feedback-product-reset-2026-07-21.md) governs the customer promise, journey, schema, platform posture, offer ladder, acquisition surface, and next design gate. The [Unit Economics Ledger](my-way-ahead-unit-economics-ledger-2026-07-21.md) governs offer versions, revenue recognition, contribution definitions, free subsidy, support ceilings, cohort maturity, and the separate software, affiliate, and human-service ledgers. These controls supersede the job-checker-first homepage, required timeline interaction, $24 monthly Keep Watch preference, unstaffed human-service offers, and older economics ceilings. Matt subsequently selected **Way Ahead** as the provisional internal name and authorized the local synthesis of Career Portfolio Reveal, Warm Editorial Guide, and Focused Career Workspace. That candidate passed independent local founder-checkpoint QA. Legacy `my-way-ahead` paths and the isolated ClickUp folder remain stable identifiers until a separately reviewed migration. This Company Operating System continues to govern authority, exactly two active initiatives, source ownership, release gates, and reserved decisions.
 
 > **Board amendment, 2026-07-22:** Matt superseded the prototype-only and Teal-operating assumptions. Way Ahead must now be the real operating surface for Matt's career record, current jobs, decisions, pursuit assets, and exact approval payload. Teal is competitor research only and may not hold or mutate Matt's job-search state. Matt authorized a zero-incremental-spend, owner-only production foundation with real authentication, tenant-bound D1 persistence, and a live HTTPS URL restricted to `mattdim805@gmail.com`. This authorization does not include external users, billing, public access, model or job-feed spend, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment. No customer-visible sample or demo content is permitted in the production founder workspace.
+
+> **Board amendment, 2026-07-23:** Matt rejected the owner-only Sites candidate as a product experience. The [current hosted audit](../../../prototypes/worthward-mobile/qa/production-reset-2026-07-23/README.md) confirms that the signed-out website is absent; a new account is sent directly into a Seso-specific workspace; Profile and Direction are dead-end empty states; Today is not a multi-path scoreboard; and no résumé or cover-letter creation and editing workflow exists. [Public Multi-User Alpha, Job Supply, and Growth Architecture](../strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md) now governs this correction. Matt authorized a zero-incremental-spend, non-indexed public alpha surface, self-service account creation through an approved SSO path, a separate personal workspace for each user, Terry's self-registration without an email allowlist, and the temporary `wayahead.getfractional.co` subdomain after the corrected deployment passes. This authorization includes the DNS records required by Sites for that exact hostname. It does not authorize a public marketing announcement, search indexing, paid infrastructure, billing, production email, paid model calls, source contracts, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment.
 
 ## Board resolution
 
@@ -111,10 +113,10 @@ Targets are internal test hypotheses until observed. A later stage does not ente
 
 | Objective | Current evidence | Advance gate | Accountable role | Guardrail |
 |---|---|---|---|---|
-| O1. Produce a founder-reviewable private-alpha candidate | Browser verification is restored; founder review rejected the current journey; P0 trust fixes now pass typecheck, build, lint, and 14 tests | Matt selects one of three grounded visual directions; the chosen journey is rebuilt; fresh responsive, theme, state, interaction, accessibility, physical iPhone, and independent evidence passes | Head of Product | No prior screenshot or verdict may be represented as current for the changed build |
+| O1. Produce a founder-reviewable public multi-user alpha | The current owner workspace persists, but the live first-user journey failed Matt's review and is retained only as rollback | Public website, self-service SSO, isolated personal workspaces, resumable onboarding, multi-path Today, functional navigation, and document studios pass fresh responsive, theme, state, interaction, accessibility, security, physical-iPhone, and independent review | Head of Product | No prior screenshot, local pass, or owner-only verdict may be represented as current for the corrected build |
 | O2. Prove trustworthy job interpretation | Seven adverse fixtures and data contract are designed, not yet fully benchmarked | Field-specific thresholds pass, critical fabrication is zero, unknowns stay unknown, every material recommendation traces to source and baseline | Head of Technology with Head of Career Intelligence | Cost or capacity never silently lowers integrity |
-| O3. Advance Matt's next-best job now | Seso is the current 84/100 recommendation with a claim-safe local package; freshness must be refreshed | Source-verified current shortlist, one integrated recommendation, proof gaps, claim-safe assets, and exact external action ready for Matt's approval | Head of Career Intelligence | Product work may not delay the job outcome; no Teal, application, or outreach mutation without approval |
-| O4. Prove the problem and alpha value | Strategy evidence exists; no external alpha is authorized | Ten recent-behavior interviews support the problem; in no more than five approved alphas, at least 4 accept or materially correct the decision and at least 3 change, confirm, or avoid an action | Head of Customer | Record every operator rescue; zero critical fabrication |
+| O3. Advance Matt's next-best job now | Seso is one previously researched candidate; its freshness and rank are not assumed current and the shortlist is being reopened across multiple credible career paths | Source-verified current shortlist across at least two paths, one integrated recommendation, proof gaps, claim-safe assets, and exact external action ready for Matt's approval inside Way Ahead | Head of Career Intelligence | Product work may not delay the job outcome; no Teal, employer form, application, or outreach mutation without approval |
+| O4. Prove the problem and alpha value | Strategy and founder evidence exist; Matt authorized self-registration and one separate tester workspace, but not recruitment or broad promotion | Matt and one self-registering tester can complete the core journey without tenant leakage; any later expansion to no more than five approved alphas requires its own recruitment gate and measured task outcomes | Head of Customer | Record every operator rescue; zero critical fabrication; Terry's access is not permission to contact or enroll anyone else |
 | O5. Prove paid software demand and partner usefulness separately | Prices and partner programs are hypotheses; no payment, partnership, or promotion is enabled | 5 of 25 qualified activated users buy disclosed software; at least 3 reach a second trusted decision or Pursuit action; partner click and conversion never alter recommendation suitability | Head of Growth and Revenue | Fewer than 10 percent refunds; no misleading scope, billing, or affiliate influence |
 | O6. Prove delivery economics and continuity | Planning assumptions only | CM2 at or above 80 percent by offer version, offer-specific support inside its calculated ceiling, reconciled cash/deferred/recognized revenue, and recurring value demonstrated without manufactured activity | Head of Finance and Operations | Founder labor remains visible even when noncash; software, affiliate, and human-service economics stay separate |
 | O7. Operate the company with accountable delivery | Strategy library exists; ClickUp company boundary is being established | Two-item WIP cap, one DRI and writer per initiative, read-after-write tracker proof, independent gate, weekly Board brief, and no unresolved authority drift | CEO and Chief of Staff | ClickUp, repo, code, and evidence each retain one defined source-of-truth role |
@@ -176,14 +178,14 @@ Company-level work in progress is capped at two. ClickUp setup is governance wor
 
 | State | Initiative | DRI | Acceptance and next gate |
 |---|---|---|---|
-| Active 1 | Private-alpha readiness and founder-feedback reset | Head of Product | P0 trust fixes; three grounded visual directions; Matt's selection; rebuilt journey; current-build responsive, theme, interaction, state, keyboard, zoom, accessibility, physical iPhone, and independent evidence |
-| Active 2 | Matt Case Study Zero | Head of Career Intelligence | Current source-verified shortlist; one next-best recommendation; proof gaps; claim-safe materials; exact external action ready for Board approval |
+| Active 1 | Private-Alpha Readiness | Head of Product | Public website before sign-in; self-service SSO; separate personal workspaces; resumable résumé-first onboarding; Job Standard and multiple career paths; path-segmented Today scoreboard; functional responsive navigation; editable résumé and cover-letter studios; current responsive, theme, interaction, state, accessibility, security, tenancy, and independent evidence |
+| Active 2 | Matt Case Study Zero | Head of Career Intelligence | Current source-verified roles across at least two career paths; path-specific ranking; one next-best recommendation; proof gaps; claim-safe résumé, cover letter, answers, and exact external action ready for Board approval inside Way Ahead |
 | Ready next | Job-intelligence adverse-fixture benchmark | Applied AI and Evaluation Lead | Requirements, compensation, equity, benefits, logistics, canonical source, duplicate, and unknown-preservation thresholds pass |
 | Backlog | Model-routing and cost telemetry | Head of Technology | Provider, policy version, cost, latency, correction, and fallback observability passes |
-| Board gated | Alpha research and consent system | Head of Customer | Exact recruiting cohort, consent, task, measure, data route, cost, and stop packet approved |
+| Backlog | Alpha learning and consent operations | Head of Customer | Self-registered testers see the data contract, consent, correction, export, deletion, feedback task, and stop path before entering career data |
 | Board gated | Offer and pricing validation | Head of Growth and Revenue | Comprehension and behavior protocol tests one material variable at a time |
-| Board gated | Private iPhone checkpoint | Head of Product | Current visual gate passes and Matt approves one private publication |
-| Board gated | Secure production, billing, and public launch | CEO | Alpha value, trust, economics, legal, security, and exact approval gates pass |
+| Authorized alpha | Temporary Get Fractional subdomain and self-service SSO | Head of Product | Corrected build passes first; Sites returns exact DNS records; `wayahead.getfractional.co` and SSL become active; new and returning users receive isolated personal workspaces |
+| Board gated | Billing, indexing, public promotion, and broad launch | CEO | Alpha value, trust, economics, legal, security, source rights, support, abuse, and exact approval gates pass |
 
 ### Live ClickUp operating surface
 
@@ -199,20 +201,21 @@ Company-level work in progress is capped at two. ClickUp setup is governance wor
 - [Backlog: alpha recruitment and consent](https://app.clickup.com/t/868ke7yfv)
 - [Board gate: private iPhone checkpoint](https://app.clickup.com/t/868ke7yge)
 
-The read-after-write audit confirmed that exactly two tasks are active, five are in backlog, task placement and priority are correct, and no legacy Job Filter task was renamed, moved, or overwritten.
+The 2026-07-23 tracker synchronization must preserve exactly two active parent tasks, add the corrected milestones and subtasks in backlog, and prove read-after-write state without touching legacy Job Filter lists.
 
 ## Decision rights and Board gates
 
 Matt's exact approval is required before:
 
 - public brand lock, domain purchase, trademark filing, or legal spend,
-- external tester recruiting or contact,
-- private or public publishing,
-- production customer data, authentication, model, source, or vendor connections,
+- public marketing announcements, search indexing, or broad recruitment beyond a shared alpha link,
+- authentication, model, source, or vendor connections other than the authorized Sites and ChatGPT SSO alpha path,
 - any spend, paid API, payment, price commitment, refund term, or billing activation,
 - hiring, contracting, partnership, data sharing, or legal obligation,
 - public outcome claim or guarantee,
 - Teal mutation, job application, outreach, reference use, submission, or negotiation.
+
+The 2026-07-23 Board amendment already authorizes the bounded zero-spend alpha publication, Sites-native `wayahead.getfractional.co` binding and required DNS records, ChatGPT SSO self-registration, and separate personal workspaces. It does not authorize an independent Google or LinkedIn OAuth app, paid model, production email, advertising, indexing, or any employer-facing action.
 
 An approval packet shows the exact action, destination, cost, consequence, evidence, alternatives, recommendation, rollback, and what is not authorized. Approval of one action is not blanket authority for adjacent actions.
 
@@ -282,35 +285,67 @@ Critical fabrication, false-active status, privacy or security incident, mislead
 
 - Executive Evidence typography, color, and trust language remain design inputs. Matt rejected its connected timeline as the governing interaction pattern.
 - The owner-only production foundation passes TypeScript, production build, ESLint, 49 automated checks, Sites migration convergence, exact 33-trigger integrity parity, founder-asset checks, local responsive/theme/state QA, and independent migration review.
-- The owner-only Sites deployment is live at `https://career-evidence-founder-2026.mattdimock.chatgpt.site`, restricted to `mattdim805@gmail.com`, and backed by tenant-bound D1 persistence. It holds Matt's real career record and current Seso pursuit without customer-visible sample or demo content.
+- The Sites deployment is live at `https://career-evidence-founder-2026.mattdimock.chatgpt.site` with tenant-bound D1 persistence. Sites access is public-capable, but the application code redirects signed-out visitors to ChatGPT authentication and rejects every account except `mattdim805@gmail.com`.
 - The production foundation does not call a paid model, charge a card, send outreach, populate an employer form, upload an application asset, or submit an application.
+- The 2026-07-23 current-host audit reproduced the missing website, direct-to-Seso first use, dead-end onboarding states, incomplete navigation and Today dashboard, and missing résumé and cover-letter editors. The current deployment is therefore a rollback surface, not a founder-accepted product alpha.
 - The prior screenshot folder under `prototypes/worthward-mobile/qa/ux-audit-2026-07-19/v2-final/` came from a stale bundle on port 3004 and is reference-only.
 - The exact current local build can be served through the founder QA service for engineering comparison, but the live Sites URL is the supported cross-device founder route.
-- Local browser verification covers mobile, tablet, and desktop; Light, Dark, and System; the real founder journey; source conflict, package, and approval states; focus and target measurements; and a matched mobile reference comparison. Hosted authenticated visual and D1 readback remain the final current-slice evidence gate.
+- Earlier local browser verification covers mobile, tablet, and desktop; Light, Dark, and System; the prior founder journey; source conflict, package, and approval states; focus and target measurements; and a matched mobile reference comparison. That evidence does not validate the corrected public journey.
 - The older Job Filter ClickUp lists contain a separate legacy brand, repository, and architecture. Way Ahead work remains isolated in the existing My Way Ahead ClickUp folder and lists.
 
 ### Not proven or authorized
 
 - Way Ahead trademark or entity-name clearance, domain control, or public-brand approval.
-- Homepage and pricing comprehension by first-time users.
+- Homepage, onboarding, navigation, Today, document-workspace, and pricing comprehension by first-time users.
 - Automated multi-source job ingestion, source-rights scalability, paid-model quality, billing, demand, retention, or observed unit economics.
 - Physical iPhone Safari, cellular, safe-area, VoiceOver, and cross-browser release quality.
-- Public deployment, external users, paid offers, employer-form population or upload, outreach, references, or application submission.
+- A separate second-user workspace, cross-user isolation, self-registration completion, custom-domain SSL, paid offers, employer-form population or upload, outreach, references, or application submission.
 
 ## Current execution goal
 
-The next task should use a bounded stage goal instead of reopening the company's entire future as one never-ending objective.
+This stage goal follows [OpenAI's Codex best practices](https://learn.chatgpt.com/guides/best-practices) and [prompting guidance](https://learn.chatgpt.com/docs/prompting): state the goal, include only result-changing context and constraints, define observable completion, and require final verification.
 
-> **Operate as the accountable CEO of Way Ahead under Matt's Board authority and close the owner-only production founder checkpoint while advancing Matt's strongest current job pursuit inside Way Ahead to exact-action approval readiness.** Keep exactly two active initiatives: Private-Alpha Readiness and Matt Case Study Zero. The stage is complete only when the current owner-authenticated hosted workflow and D1 persistence are proven; mobile, tablet, desktop, Light, Dark, System, interaction, state, and available accessibility evidence are current; automated tests pass; an independent verdict is recorded; ClickUp is synchronized with readback proof; the source-verified Seso recommendation and claim-safe exact assets are visible inside Way Ahead; and the Board receives one concise packet with results, risks, economics, and exact next approvals. Teal is competitor research only. Do not add external users, enable billing, spend, populate or upload to an employer form, send outreach, share references, submit an application, publish publicly, or make a legal commitment without the exact reserved approval.
+### Goal
+
+> **Operate as the accountable CEO of Way Ahead under Matt's Board authority and produce a reviewable, zero-incremental-spend public multi-user alpha that helps a new user understand the promise, create an account, build an accurate career record, define multiple career paths and a Job Standard, see the best current jobs for each path, and create and edit claim-safe pursuit assets, while using that same owned product to advance Matt's strongest current job to exact-action approval readiness.**
+
+### Controlling context
+
+- The current live build is a technically persistent owner workspace but a failed product checkpoint.
+- The selected Executive Evidence typography, color, and trust language remain; its timeline interaction does not.
+- Way Ahead must own the product and user state. Teal is competitor inspiration only.
+- The two active initiatives remain Private-Alpha Readiness and Matt Case Study Zero.
+
+### Constraints
+
+- Keep exactly two active parent initiatives and one writer per overlapping surface.
+- Use a public-capable Sites deployment, ChatGPT SSO, tenant-scoped D1, and `wayahead.getfractional.co` without incremental cash for this stage.
+- Do not use demo or sample customer content.
+- Do not spend, enable billing, connect a paid model or production email, index or broadly promote the site, populate or upload to an employer form, send outreach, share references, submit an application, or make a legal commitment without the exact reserved approval.
+- Preserve source truth, user corrections, privacy, tenant isolation, explicit unknowns, and exact approval boundaries.
+
+### Done when
+
+The stage is complete only when:
+
+1. signed-out visitors see a real public website before authentication;
+2. a new self-service SSO user enters resumable résumé-first onboarding and receives a separate private workspace;
+3. Job Standard, multiple career paths, path-segmented Today scoreboards, functional responsive navigation, Jobs, Pursuits, Career Profile, Resume Studio, and Cover Letter Studio work without sample data;
+4. current mobile, tablet, desktop, Light, Dark, System, interaction, empty, loading, error, success, accessibility, privacy, and two-user isolation evidence passes;
+5. typecheck, lint, build, migrations, unit, integration, and security tests pass after corrections and Independent Quality records a verdict;
+6. `wayahead.getfractional.co` and SSL are active against the verified build with rollback proven;
+7. Matt's source-verified shortlist spans at least two career paths and one next-best role has a claim-safe résumé, cover letter when useful, application answers, and exact approval payload inside Way Ahead;
+8. ClickUp has exactly two active parents, the corrected milestones and subtasks, and read-after-write proof; and
+9. the Board receives one concise packet with the working link first, results, user evidence, unresolved risks, unit economics, rollback, and exact next approvals.
 
 ## Current execution controls
 
-1. Use the live owner-only Sites URL for founder review and the exact current local build for engineering comparison.
-2. Never treat an unauthenticated sign-in page, stale screenshot, deployment status alone, or a local response as proof of the authenticated hosted workflow.
+1. Preserve the current live Sites version as the rollback baseline while the corrected source is built and verified locally.
+2. Never treat a sign-in page, deployment status, synthetic fixture, stale screenshot, or local response alone as proof of a first-user or multi-user workflow.
 3. Keep ClickUp limited to the two active parent tasks. ClickUp controls initiative status; repo docs control company and product truth; GitHub controls code provenance; test and hosted artifacts control verification.
-4. Use Way Ahead for Matt's career record, current jobs, scoring, pursuit assets, and approval payload. Use Teal only as competitor evidence.
+4. Use Way Ahead for Matt's career record, current jobs, scoring, pursuit assets, and approval payload. Use Teal only as competitor evidence and do not mutate it.
 5. Preserve source conflicts, proof gaps, fingerprints, exact approval boundaries, and automatic revocation when a destination, question, answer, or asset changes.
-6. Return with the live URL first, current visual files, test and deployment evidence, the Seso decision and exact PDFs, unresolved risks, economics, and exact Board approvals.
+6. Return founder checkpoints after each complete user-visible slice or two business days, with the working link first, one workflow to try, no more than three decisions, current evidence, cash delta, and material risk.
 
 ## Governing local sources
 
@@ -322,7 +357,10 @@ The next task should use a bounded stage goal instead of reopening the company's
 - `docs/career-platform/strategy-system/11-board-ceo-dynamic-expert-operating-graph.md`
 - `docs/career-platform/strategy-system/14-company-organization-and-prototype-reset-plan-2026-07-19.md`
 - `docs/career-platform/strategy-system/15-prototype-v2-implementation-and-qa-2026-07-19.md`
+- `docs/career-platform/strategy-system/16-founder-feedback-product-reset-2026-07-21.md`
+- `docs/career-platform/strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md`
 - `prototypes/worthward-mobile/`
+- `prototypes/worthward-mobile/qa/production-reset-2026-07-23/`
 - `output/visuals/my-way-ahead/selected-executive-evidence-timeline.png`
 - `output/visuals/my-way-ahead/my-way-ahead-company-org-chart-2026-07-19.png`
 

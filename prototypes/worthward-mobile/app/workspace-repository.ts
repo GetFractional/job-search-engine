@@ -9,13 +9,23 @@ import type {
   OpportunityRecord,
   WorkspaceRecord,
 } from "./production-types";
+import type {
+  OnboardingState,
+  OnboardingStep,
+  OnboardingStepPayload,
+} from "./onboarding-types";
 
-type RuntimeEnv = { DB?: D1Database };
+type RuntimeEnv = {
+  DB?: D1Database;
+  WAY_AHEAD_OWNER_EMAIL?: string;
+};
 
-type FounderRow = {
+export type UserRow = {
   id: string;
   email: string;
   display_name: string | null;
+  role: "owner" | "member";
+  lifecycle_state: string;
 };
 
 function database(): D1Database {
@@ -82,32 +92,61 @@ export async function sha256Hex(value: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export async function ensureFounder(actor: FounderActor): Promise<FounderRow> {
+function configuredOwnerEmail(): string | null {
+  const value = (env as unknown as RuntimeEnv).WAY_AHEAD_OWNER_EMAIL?.trim().toLowerCase();
+  return value && value.includes("@") ? value : null;
+}
+
+export async function ensureUser(actor: FounderActor): Promise<UserRow> {
   const db = database();
   const email = actor.email.trim().toLowerCase();
+  if (!email || !email.includes("@")) {
+    throw new Error("The signed-in account has no usable email address.");
+  }
+  const authSubject = `chatgpt:${email}`;
+  const role: UserRow["role"] = configuredOwnerEmail() === email ? "owner" : "member";
   const existing = await db
-    .prepare("SELECT id, email, display_name FROM users WHERE email = ? LIMIT 1")
+    .prepare("SELECT id, email, display_name, role, lifecycle_state FROM users WHERE email = ? LIMIT 1")
     .bind(email)
-    .first<FounderRow>();
+    .first<UserRow>();
   if (existing) {
     await db
       .prepare(
-        "UPDATE users SET display_name = ?, identity_provider = 'chatgpt', role = 'owner', updated_at = unixepoch() * 1000 WHERE id = ?",
+        "UPDATE users SET auth_subject = ?, display_name = ?, identity_provider = 'chatgpt', role = ?, updated_at = unixepoch() * 1000 WHERE id = ?",
       )
-      .bind(actor.displayName, existing.id)
+      .bind(authSubject, actor.displayName, role, existing.id)
       .run();
-    return { ...existing, display_name: actor.displayName };
+    return { ...existing, display_name: actor.displayName, role };
   }
 
-  const digest = await sha256Hex(email);
-  const id = `owner_${digest.slice(0, 24)}`;
+  const digest = await sha256Hex(authSubject);
+  const id = `${role === "owner" ? "owner" : "user"}_${digest.slice(0, 24)}`;
+  const lifecycleState = "onboarding";
   await db
     .prepare(
-      "INSERT INTO users (id, auth_subject, identity_provider, role, email, display_name, lifecycle_state) VALUES (?, ?, 'chatgpt', 'owner', ?, ?, 'founder_production')",
+      "INSERT INTO users (id, auth_subject, identity_provider, role, email, display_name, lifecycle_state) VALUES (?, ?, 'chatgpt', ?, ?, ?, ?)",
     )
-    .bind(id, `chatgpt:${email}`, email, actor.displayName)
+    .bind(id, authSubject, role, email, actor.displayName, lifecycleState)
     .run();
-  return { id, email, display_name: actor.displayName };
+  return {
+    id,
+    email,
+    display_name: actor.displayName,
+    role,
+    lifecycle_state: lifecycleState,
+  };
+}
+
+/**
+ * Owner bootstrap compatibility boundary. Calling this helper never promotes
+ * an account: ensureUser derives the role only from WAY_AHEAD_OWNER_EMAIL.
+ */
+export async function ensureFounder(actor: FounderActor): Promise<UserRow> {
+  const user = await ensureUser(actor);
+  if (user.role !== "owner") {
+    throw new Error("This action is reserved for the configured Way Ahead owner.");
+  }
+  return user;
 }
 
 type RawExperience = {
@@ -167,7 +206,7 @@ type RawPosting = {
 };
 
 export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecord> {
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const db = database();
   const [factRows, experienceRows, skillRows, standard, pathRows, postingRows] = await Promise.all([
     db
@@ -285,11 +324,276 @@ export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecor
     system: {
       environment: "founder_production",
       operatorAssisted: true,
+      canRecordOperatorAnalysis: founder.role === "owner",
       billingEnabled: false,
       submissionEnabled: false,
       refreshedAt: Date.now(),
     },
   };
+}
+
+type OwnerOpportunityAnalysisInput = {
+  jobPostingId: unknown;
+  sourceVersionId: unknown;
+  careerPathId: unknown;
+  fitScore: unknown;
+  moveValueScore: unknown;
+  pursuitReadinessScore: unknown;
+  recommendation: unknown;
+  unknowns: unknown;
+  evidenceNote: unknown;
+  sourceArtifact: unknown;
+  nextAction: unknown;
+  confirmation: unknown;
+};
+
+function optionalScore(value: unknown, label: string): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  if (
+    typeof value !== "number" ||
+    !Number.isInteger(value) ||
+    value < 0 ||
+    value > 100
+  ) {
+    throw new Error(`${label} must be a whole number from 0 to 100 or left open.`);
+  }
+  return value;
+}
+
+function boundedOperatorText(
+  value: unknown,
+  label: string,
+  maximum: number,
+  required = false,
+): string {
+  if (typeof value !== "string") throw new Error(`${label} must be text.`);
+  const normalized = value.trim();
+  if (required && !normalized) throw new Error(`${label} is required.`);
+  if (normalized.length > maximum) {
+    throw new Error(`${label} must be ${maximum} characters or fewer.`);
+  }
+  return normalized;
+}
+
+export async function recordOwnerOpportunityAnalysis(
+  actor: FounderActor,
+  input: OwnerOpportunityAnalysisInput,
+): Promise<{ analysisId: string; jobPostingId: string }> {
+  const owner = await ensureFounder(actor);
+  const jobPostingId = boundedOperatorText(
+    input.jobPostingId,
+    "Job",
+    120,
+    true,
+  );
+  const sourceVersionId = boundedOperatorText(
+    input.sourceVersionId,
+    "Source version",
+    120,
+    true,
+  );
+  const careerPathId = boundedOperatorText(
+    input.careerPathId,
+    "Career path",
+    120,
+    true,
+  );
+  const fitScore = optionalScore(input.fitScore, "Fit score");
+  const moveValueScore = optionalScore(input.moveValueScore, "Move Value");
+  const pursuitReadinessScore = optionalScore(
+    input.pursuitReadinessScore,
+    "Pursuit Readiness",
+  );
+  const allowedRecommendations = new Set([
+    "pursue",
+    "watch",
+    "pass",
+    "needs_evidence",
+  ]);
+  if (
+    typeof input.recommendation !== "string" ||
+    !allowedRecommendations.has(input.recommendation)
+  ) {
+    throw new Error("Choose a supported recommendation.");
+  }
+  const recommendation = input.recommendation as
+    | "pursue"
+    | "watch"
+    | "pass"
+    | "needs_evidence";
+  if (!Array.isArray(input.unknowns) || input.unknowns.length > 20) {
+    throw new Error("Record no more than 20 evidence unknowns.");
+  }
+  const unknowns = input.unknowns
+    .map((value, index) =>
+      boundedOperatorText(value, `Unknown ${index + 1}`, 500),
+    )
+    .filter(Boolean);
+  const evidenceNote = boundedOperatorText(
+    input.evidenceNote,
+    "Evidence note",
+    4_000,
+    true,
+  );
+  const sourceArtifact = boundedOperatorText(
+    input.sourceArtifact,
+    "Source artifact",
+    500,
+    true,
+  );
+  const nextAction = boundedOperatorText(
+    input.nextAction,
+    "Next action",
+    1_000,
+    true,
+  );
+  if (input.confirmation !== "record_reviewed_analysis") {
+    throw new Error(
+      "Confirm that the source, claim safety, and unresolved facts were reviewed.",
+    );
+  }
+
+  const db = database();
+  const [posting, sourceVersion, careerPath, standard] = await Promise.all([
+    db
+      .prepare(
+        "SELECT jp.id, jp.employer, jp.title, jp.freshness_state, js.rights_state FROM job_postings jp JOIN job_sources js ON js.id = jp.source_id WHERE jp.id = ? AND jp.removed_at IS NULL LIMIT 1",
+      )
+      .bind(jobPostingId)
+      .first<{
+        id: string;
+        employer: string;
+        title: string;
+        freshness_state: string;
+        rights_state: string;
+      }>(),
+    db
+      .prepare(
+        "SELECT id, capture_state, description_checksum FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
+      )
+      .bind(jobPostingId)
+      .first<{
+        id: string;
+        capture_state: string;
+        description_checksum: string;
+      }>(),
+    db
+      .prepare(
+        "SELECT id, label FROM career_paths WHERE id = ? AND user_id = ? AND state = 'active' LIMIT 1",
+      )
+      .bind(careerPathId, owner.id)
+      .first<{ id: string; label: string }>(),
+    db
+      .prepare(
+        "SELECT id, version FROM job_standards WHERE user_id = ? AND is_current = 1 LIMIT 1",
+      )
+      .bind(owner.id)
+      .first<{ id: string; version: number }>(),
+  ]);
+  if (!posting) throw new Error("The verified job is not available.");
+  if (!sourceVersion || sourceVersion.id !== sourceVersionId) {
+    throw new Error(
+      "The employer source changed. Refresh the job before recording analysis.",
+    );
+  }
+  if (posting.rights_state !== "approved") {
+    throw new Error("The job source is not approved for analysis.");
+  }
+  if (
+    sourceVersion.capture_state !== "verified" &&
+    sourceVersion.capture_state !== "partial"
+  ) {
+    throw new Error("Resolve the source capture before recording analysis.");
+  }
+  if (!careerPath) throw new Error("Choose one of your active career paths.");
+  if (!standard) throw new Error("Finish your Job Standard before analysis.");
+
+  const analysisCore = {
+    policyVersion: "way-ahead-operator-analysis-v1.1",
+    userId: owner.id,
+    jobPostingId,
+    sourceVersionId,
+    careerPathId,
+    fitScore,
+    jobStandardId: standard.id,
+    jobStandardVersion: standard.version,
+    moveValueScore,
+    pursuitReadinessScore,
+    recommendation,
+    unknowns,
+    evidenceNote,
+    sourceArtifact,
+    nextAction,
+  };
+  const analysisId = `analysis_${(
+    await sha256Hex(canonicalJson(analysisCore))
+  ).slice(0, 24)}`;
+  const integrityGates = {
+    jobVersionId: sourceVersion.id,
+    jobDescriptionChecksum: sourceVersion.description_checksum,
+    sourceCaptureState: sourceVersion.capture_state,
+    sourceRightsState: posting.rights_state,
+    jobStandardId: standard.id,
+    jobStandardVersion: standard.version,
+    careerPathId,
+    blockingUnknownCount: unknowns.length,
+    operatorReviewed: true,
+    externalActionAuthorized: false,
+  };
+  const fit = {
+    fitScore,
+    evidenceNote,
+    sourceArtifact,
+    nextAction,
+    careerPathLabel: careerPath.label,
+    scoringMethod: "operator-reviewed case-study evidence",
+  };
+
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO job_analyses (id, user_id, job_posting_id, career_path_id, job_standard_id, policy_version, evidence_version, integrity_gates_json, move_value_score, pursuit_readiness_score, fit_json, unknowns_json, recommendation, validation_state) VALUES (?, ?, ?, ?, ?, 'way-ahead-operator-analysis-v1.1', ?, ?, ?, ?, ?, ?, ?, 'trusted') ON CONFLICT(id) DO NOTHING",
+      )
+      .bind(
+        analysisId,
+        owner.id,
+        jobPostingId,
+        careerPathId,
+        standard.id,
+        sourceArtifact,
+        json(integrityGates),
+        moveValueScore,
+        pursuitReadinessScore,
+        json(fit),
+        json(unknowns),
+        recommendation,
+      ),
+    db
+      .prepare(
+        "UPDATE pursuits SET current_analysis_id = ?, next_action = ?, updated_at = unixepoch() * 1000 WHERE user_id = ? AND job_posting_id = ?",
+      )
+      .bind(analysisId, nextAction, owner.id, jobPostingId),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'owner_opportunity_analysis_recorded', 'job_analysis', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        owner.id,
+        `chatgpt:${owner.email}`,
+        analysisId,
+        json({
+          jobPostingId,
+          sourceVersionId,
+          careerPathId,
+          recommendation,
+          blockingUnknownCount: unknowns.length,
+          sourceArtifact,
+          externalActionAuthorized: false,
+        }),
+      ),
+  ]);
+  return { analysisId, jobPostingId };
 }
 
 async function readOpportunity(
@@ -451,6 +755,500 @@ async function readOpportunity(
   };
 }
 
+const ONBOARDING_POLICY_VERSION = "public-alpha-2026-07-23";
+
+function onboardingStepId(step: OnboardingStep): string {
+  return `step-${step}`;
+}
+
+async function completedOnboardingSteps(
+  db: D1Database,
+  userId: string,
+): Promise<OnboardingStep[]> {
+  const rows = await db
+    .prepare(
+      "SELECT entity_id FROM audit_events WHERE user_id = ? AND event_type = 'onboarding_step_completed' AND entity_type = 'onboarding_step' ORDER BY created_at",
+    )
+    .bind(userId)
+    .all<{ entity_id: string }>();
+  const completed = new Set<OnboardingStep>();
+  for (const row of rows.results) {
+    const match = row.entity_id.match(/^step-([1-6])$/);
+    if (match) completed.add(Number(match[1]) as OnboardingStep);
+  }
+  return [...completed].sort((left, right) => left - right);
+}
+
+function onboardingAuditStatement(
+  db: D1Database,
+  user: UserRow,
+  step: OnboardingStep,
+  metadata: JsonRecord,
+): D1PreparedStatement {
+  return db
+    .prepare(
+      "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'onboarding_step_completed', 'onboarding_step', ?, ?)",
+    )
+    .bind(
+      crypto.randomUUID(),
+      user.id,
+      `chatgpt:${user.email}`,
+      onboardingStepId(step),
+      json({ ...metadata, policyVersion: ONBOARDING_POLICY_VERSION }),
+    );
+}
+
+async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingState> {
+  const db = database();
+  const [completedStepsValue, goalFact, sourceFact, role, standard, pathRows] = await Promise.all([
+    completedOnboardingSteps(db, user.id),
+    db
+      .prepare(
+        "SELECT value_json FROM profile_facts WHERE user_id = ? AND fact_type = 'search_goal' AND invalidated_at IS NULL ORDER BY updated_at DESC LIMIT 1",
+      )
+      .bind(user.id)
+      .first<{ value_json: string }>(),
+    db
+      .prepare(
+        "SELECT value_json FROM profile_facts WHERE user_id = ? AND fact_type = 'career_source_text' AND invalidated_at IS NULL ORDER BY updated_at DESC LIMIT 1",
+      )
+      .bind(user.id)
+      .first<{ value_json: string }>(),
+    db
+      .prepare(
+        "SELECT employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1",
+      )
+      .bind(user.id)
+      .first<RawExperience>(),
+    db
+      .prepare(
+        "SELECT id, version, pay_basis, minimum_pay_cents, target_pay_cents, currency, work_arrangements_json, commute_miles, locations_json, travel_maximum_percent, schedule_requirements, benefits_json, growth_priorities_json, exclusions_json FROM job_standards WHERE user_id = ? AND is_current = 1 LIMIT 1",
+      )
+      .bind(user.id)
+      .first<RawStandard>(),
+    db
+      .prepare(
+        "SELECT id, label, primary_lane, secondary_lanes_json, fit_score, opportunity_score, rationale_json, gaps_json, state, is_primary FROM career_paths WHERE user_id = ? ORDER BY is_primary DESC, label",
+      )
+      .bind(user.id)
+      .all<RawCareerPath>(),
+  ]);
+
+  const legacyComplete = user.lifecycle_state === "founder_production";
+  const explicitlyComplete =
+    user.lifecycle_state === "alpha_active" || completedStepsValue.includes(6);
+  const complete = legacyComplete || explicitlyComplete;
+  const completedSteps: OnboardingStep[] = complete
+    ? [1, 2, 3, 4, 5, 6]
+    : completedStepsValue;
+  const currentStep = ([1, 2, 3, 4, 5, 6] as OnboardingStep[])
+    .find((step) => !completedSteps.includes(step)) ?? 6;
+
+  const goalValue = parseJson<{
+    priorities?: unknown;
+    notes?: unknown;
+  }>(goalFact?.value_json, {});
+  const priorities = Array.isArray(goalValue.priorities)
+    ? goalValue.priorities.filter((item): item is string => typeof item === "string")
+    : [];
+  const notes = typeof goalValue.notes === "string" ? goalValue.notes : "";
+
+  return {
+    account: {
+      displayName: user.display_name ?? user.email,
+      role: user.role,
+    },
+    currentStep,
+    completedSteps,
+    complete,
+    goal: goalFact ? { priorities, notes } : null,
+    careerInput: {
+      sourceText: valueFromFact(sourceFact?.value_json),
+      role: role
+        ? {
+            employer: role.employer,
+            title: role.title,
+            startDate: role.start_date,
+            endDate: role.end_date,
+            isCurrent: toBool(role.is_current),
+            location: role.location,
+            summary: role.summary,
+            reviewState: role.review_state,
+          }
+        : null,
+    },
+    jobStandard: standard
+      ? {
+          id: standard.id,
+          version: standard.version,
+          payBasis: standard.pay_basis,
+          minimumPayCents: standard.minimum_pay_cents,
+          targetPayCents: standard.target_pay_cents,
+          currency: standard.currency,
+          workArrangements: parseJson(standard.work_arrangements_json, []),
+          commuteMiles: standard.commute_miles,
+          locations: parseJson(standard.locations_json, []),
+          travelMaximumPercent: standard.travel_maximum_percent,
+          scheduleRequirements: standard.schedule_requirements,
+          benefits: parseJson(standard.benefits_json, []),
+          growthPriorities: parseJson(standard.growth_priorities_json, []),
+          exclusions: parseJson(standard.exclusions_json, []),
+        }
+      : null,
+    careerPaths: pathRows.results.map((path) => ({
+      id: path.id,
+      label: path.label,
+      primaryLane: path.primary_lane,
+      secondaryLanes: parseJson(path.secondary_lanes_json, []),
+      fitScore: path.fit_score,
+      opportunityScore: path.opportunity_score,
+      rationale: parseJson<JsonRecord | null>(path.rationale_json, null),
+      gaps: parseJson(path.gaps_json, []),
+      state: path.state,
+      isPrimary: toBool(path.is_primary),
+    })),
+  };
+}
+
+export async function readOnboardingState(actor: FounderActor): Promise<OnboardingState> {
+  const user = await ensureUser(actor);
+  return readOnboardingStateForUser(user);
+}
+
+async function assertOnboardingStepAvailable(
+  user: UserRow,
+  requestedStep: OnboardingStep,
+): Promise<void> {
+  const state = await readOnboardingStateForUser(user);
+  if (state.complete) {
+    throw new Error("Onboarding is already complete. Use your Career Profile to make changes.");
+  }
+  if (requestedStep > state.currentStep) {
+    throw new Error("Finish the current setup step before moving ahead.");
+  }
+}
+
+async function saveOnboardingGoal(
+  user: UserRow,
+  payload: Extract<OnboardingStepPayload, { step: 1 }>["data"],
+): Promise<void> {
+  const db = database();
+  const factId = `fact_${user.id}_search_goal`;
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO profile_facts (id, user_id, fact_type, value_json, extraction_method, extraction_policy_version, state, ownership) VALUES (?, ?, 'search_goal', ?, 'manual_entry', ?, 'user_confirmed', 'owned') ON CONFLICT(id) DO UPDATE SET value_json = excluded.value_json, extraction_method = excluded.extraction_method, extraction_policy_version = excluded.extraction_policy_version, state = excluded.state, ownership = excluded.ownership, invalidated_at = NULL, updated_at = unixepoch() * 1000 WHERE profile_facts.user_id = excluded.user_id",
+      )
+      .bind(
+        factId,
+        user.id,
+        json({ priorities: payload.priorities, notes: payload.notes }),
+        ONBOARDING_POLICY_VERSION,
+      ),
+    ...(["terms", "privacy", "profile_processing"] as const).map((purpose) =>
+      db
+        .prepare(
+          "INSERT INTO consents (id, user_id, purpose, policy_version, state, granted_at, source) VALUES (?, ?, ?, ?, 'granted', unixepoch() * 1000, 'onboarding')",
+        )
+        .bind(
+          `consent_${crypto.randomUUID()}`,
+          user.id,
+          purpose,
+          ONBOARDING_POLICY_VERSION,
+        ),
+    ),
+    onboardingAuditStatement(db, user, 1, {
+      priorities: payload.priorities,
+      hasNotes: Boolean(payload.notes),
+      consentAccepted: true,
+    }),
+  ]);
+}
+
+async function saveOnboardingCareerInput(
+  user: UserRow,
+  payload: Extract<OnboardingStepPayload, { step: 2 }>["data"],
+  context: "onboarding" | "profile_update" = "onboarding",
+): Promise<void> {
+  const db = database();
+  const auditStatement = (metadata: JsonRecord) =>
+    context === "onboarding"
+      ? onboardingAuditStatement(db, user, 2, metadata)
+      : db
+          .prepare(
+            "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'profile_source_updated', 'profile_source', ?, ?)",
+          )
+          .bind(
+            crypto.randomUUID(),
+            user.id,
+            `chatgpt:${user.email}`,
+            `profile-source-${crypto.randomUUID()}`,
+            json({
+              ...metadata,
+              policyVersion: ONBOARDING_POLICY_VERSION,
+              userConfirmedUpdate: true,
+            }),
+          );
+  if (payload.method === "paste") {
+    const sourceText = payload.careerText.trim();
+    const checksum = await sha256Hex(sourceText);
+    const importId = `import_${(await sha256Hex(`${user.id}:${checksum}`)).slice(0, 24)}`;
+    const factId = `fact_${user.id}_career_source_text`;
+    await db.batch([
+      db
+        .prepare(
+          "INSERT INTO source_imports (id, user_id, type, original_name, checksum_sha256, content_type, byte_size, parse_state, parser_version) VALUES (?, ?, 'pasted_text', 'Pasted career history', ?, 'text/plain', ?, 'review_ready', 'manual-review-only-v1') ON CONFLICT(id) DO UPDATE SET parse_state = 'review_ready', parser_version = 'manual-review-only-v1', deleted_at = NULL, updated_at = unixepoch() * 1000 WHERE source_imports.user_id = excluded.user_id",
+        )
+        .bind(importId, user.id, checksum, new TextEncoder().encode(sourceText).byteLength),
+      db
+        .prepare(
+          "INSERT INTO profile_facts (id, user_id, source_import_id, fact_type, value_json, source_span, extraction_method, extraction_policy_version, state, ownership) VALUES (?, ?, ?, 'career_source_text', ?, 'user-provided full text', 'manual_entry', ?, 'suggested', 'owned') ON CONFLICT(id) DO UPDATE SET source_import_id = excluded.source_import_id, value_json = excluded.value_json, source_span = excluded.source_span, extraction_method = excluded.extraction_method, extraction_policy_version = excluded.extraction_policy_version, state = excluded.state, ownership = excluded.ownership, invalidated_at = NULL, updated_at = unixepoch() * 1000 WHERE profile_facts.user_id = excluded.user_id",
+        )
+        .bind(
+          factId,
+          user.id,
+          importId,
+          json({ value: sourceText }),
+          ONBOARDING_POLICY_VERSION,
+        ),
+      auditStatement({
+        method: "paste",
+        characterCount: sourceText.length,
+        automaticExtraction: false,
+      }),
+    ]);
+    return;
+  }
+  if (payload.method === "file") {
+    const sourceText = payload.extractedText.trim();
+    const extractedChecksum = await sha256Hex(sourceText);
+    const importId = `import_${(await sha256Hex(`${user.id}:${extractedChecksum}`)).slice(0, 24)}`;
+    const factId = `fact_${user.id}_career_source_text`;
+    const importType =
+      payload.contentType === "application/pdf"
+        ? "pdf_extracted_text"
+        : payload.contentType ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ? "docx_extracted_text"
+          : "text_file";
+    await db.batch([
+      db
+        .prepare(
+          "INSERT INTO source_imports (id, user_id, type, original_name, checksum_sha256, content_type, byte_size, parse_state, parser_version) VALUES (?, ?, ?, ?, ?, ?, ?, 'review_ready', ?) ON CONFLICT(id) DO UPDATE SET original_name = excluded.original_name, content_type = excluded.content_type, byte_size = excluded.byte_size, parse_state = 'review_ready', parser_version = excluded.parser_version, deleted_at = NULL, updated_at = unixepoch() * 1000 WHERE source_imports.user_id = excluded.user_id",
+        )
+        .bind(
+          importId,
+          user.id,
+          importType,
+          payload.originalName,
+          extractedChecksum,
+          payload.contentType,
+          payload.byteSize,
+          payload.parser,
+        ),
+      db
+        .prepare(
+          "INSERT INTO profile_facts (id, user_id, source_import_id, fact_type, value_json, source_span, extraction_method, extraction_policy_version, state, ownership) VALUES (?, ?, ?, 'career_source_text', ?, 'client-side extracted text; raw file not uploaded', 'client_side_file_extraction', ?, 'suggested', 'owned') ON CONFLICT(id) DO UPDATE SET source_import_id = excluded.source_import_id, value_json = excluded.value_json, source_span = excluded.source_span, extraction_method = excluded.extraction_method, extraction_policy_version = excluded.extraction_policy_version, state = excluded.state, ownership = excluded.ownership, invalidated_at = NULL, updated_at = unixepoch() * 1000 WHERE profile_facts.user_id = excluded.user_id",
+        )
+        .bind(
+          factId,
+          user.id,
+          importId,
+          json({ value: sourceText }),
+          ONBOARDING_POLICY_VERSION,
+        ),
+      auditStatement({
+        method: "file",
+        contentType: payload.contentType,
+        parser: payload.parser,
+        byteSize: payload.byteSize,
+        pageCount: payload.pageCount,
+        extractedCharacterCount: sourceText.length,
+        extractedTextChecksumSha256: extractedChecksum,
+        clientFileChecksumSha256: payload.clientFileChecksumSha256,
+        rawFileUploaded: false,
+        automaticFactExtraction: false,
+      }),
+    ]);
+    return;
+  }
+
+  const roleId = `role_${(await sha256Hex(`${user.id}:onboarding-primary-role`)).slice(0, 24)}`;
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO experience_roles (id, user_id, employer, title, start_date, end_date, is_current, location, summary, review_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft') ON CONFLICT(id) DO UPDATE SET employer = excluded.employer, title = excluded.title, start_date = excluded.start_date, end_date = excluded.end_date, is_current = excluded.is_current, location = excluded.location, summary = excluded.summary, review_state = 'draft', updated_at = unixepoch() * 1000 WHERE experience_roles.user_id = excluded.user_id",
+      )
+      .bind(
+        roleId,
+        user.id,
+        payload.role.employer,
+        payload.role.title,
+        payload.role.startDate,
+        payload.role.endDate,
+        payload.role.isCurrent ? 1 : 0,
+        payload.role.location,
+        payload.role.summary,
+      ),
+    auditStatement({
+      method: "manual",
+      roleCount: 1,
+      automaticExtraction: false,
+    }),
+  ]);
+}
+
+async function confirmOnboardingProfile(
+  user: UserRow,
+  context: "onboarding" | "profile_update" = "onboarding",
+): Promise<void> {
+  const db = database();
+  const sourceCount = await db
+    .prepare(
+      "SELECT (SELECT count(*) FROM profile_facts WHERE user_id = ? AND fact_type = 'career_source_text' AND invalidated_at IS NULL) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) AS count",
+    )
+    .bind(user.id, user.id)
+    .first<{ count: number }>();
+  if ((sourceCount?.count ?? 0) < 1) {
+    throw new Error("Add career information before confirming your profile.");
+  }
+  await db.batch([
+    db
+      .prepare(
+        "UPDATE profile_facts SET state = 'user_confirmed', updated_at = unixepoch() * 1000 WHERE user_id = ? AND invalidated_at IS NULL AND state IN ('extracted', 'inferred', 'suggested')",
+      )
+      .bind(user.id),
+    db
+      .prepare(
+        "UPDATE experience_roles SET review_state = 'confirmed', updated_at = unixepoch() * 1000 WHERE user_id = ? AND review_state = 'draft'",
+      )
+      .bind(user.id),
+    context === "onboarding"
+      ? onboardingAuditStatement(db, user, 3, {
+          userConfirmed: true,
+          automaticExtraction: false,
+        })
+      : db
+          .prepare(
+            "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'profile_source_confirmed', 'profile_source', ?, ?)",
+          )
+          .bind(
+            crypto.randomUUID(),
+            user.id,
+            `chatgpt:${user.email}`,
+            `profile-source-confirmation-${crypto.randomUUID()}`,
+            json({
+              policyVersion: ONBOARDING_POLICY_VERSION,
+              userConfirmed: true,
+              automaticExtraction: false,
+            }),
+          ),
+  ]);
+}
+
+async function saveOnboardingCareerPaths(
+  user: UserRow,
+  paths: string[],
+  primaryIndex: number,
+): Promise<void> {
+  const db = database();
+  const statements: D1PreparedStatement[] = [
+    db
+      .prepare(
+        "UPDATE career_paths SET state = 'paused', is_primary = 0, updated_at = unixepoch() * 1000 WHERE user_id = ?",
+      )
+      .bind(user.id),
+  ];
+  for (const [index, label] of paths.entries()) {
+    const normalizedLane = label
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    const id = `path_${(await sha256Hex(`${user.id}:${label.toLowerCase()}`)).slice(0, 24)}`;
+    statements.push(
+      db
+        .prepare(
+          "INSERT INTO career_paths (id, user_id, label, primary_lane, secondary_lanes_json, fit_score, opportunity_score, rationale_json, gaps_json, state, is_primary) VALUES (?, ?, ?, ?, '[]', NULL, NULL, ?, '[]', 'active', ?) ON CONFLICT(id) DO UPDATE SET label = excluded.label, primary_lane = excluded.primary_lane, secondary_lanes_json = '[]', fit_score = NULL, opportunity_score = NULL, rationale_json = excluded.rationale_json, gaps_json = '[]', state = 'active', is_primary = excluded.is_primary, updated_at = unixepoch() * 1000 WHERE career_paths.user_id = excluded.user_id",
+        )
+        .bind(
+          id,
+          user.id,
+          label,
+          normalizedLane || "user_selected",
+          json({
+            source: "user_selected",
+            scoreState: "not_scored",
+            note: "Way Ahead has not run an automated fit analysis.",
+          }),
+          index === primaryIndex ? 1 : 0,
+        ),
+    );
+  }
+  statements.push(
+    onboardingAuditStatement(db, user, 5, {
+      pathCount: paths.length,
+      primaryIndex,
+      automaticScoring: false,
+    }),
+  );
+  await db.batch(statements);
+}
+
+export async function saveOnboardingStep(
+  actor: FounderActor,
+  payload: OnboardingStepPayload,
+): Promise<OnboardingState> {
+  const user = await ensureUser(actor);
+  const existingState = await readOnboardingStateForUser(user);
+  if (existingState.complete) {
+    if (payload.step !== 2) {
+      throw new Error(
+        "Onboarding is complete. Use the corresponding workspace editor to make changes.",
+      );
+    }
+    await saveOnboardingCareerInput(user, payload.data, "profile_update");
+    await confirmOnboardingProfile(user, "profile_update");
+    return readOnboardingStateForUser(user);
+  }
+  await assertOnboardingStepAvailable(user, payload.step);
+
+  if (payload.step === 1) {
+    await saveOnboardingGoal(user, payload.data);
+  } else if (payload.step === 2) {
+    await saveOnboardingCareerInput(user, payload.data);
+  } else if (payload.step === 3) {
+    await confirmOnboardingProfile(user);
+  } else if (payload.step === 4) {
+    await saveJobStandard(actor, payload.data);
+    const db = database();
+    await onboardingAuditStatement(db, user, 4, {
+      jobStandardVersionCreated: true,
+    }).run();
+  } else if (payload.step === 5) {
+    await saveOnboardingCareerPaths(user, payload.data.paths, payload.data.primaryIndex);
+  } else {
+    const completed = await completedOnboardingSteps(database(), user.id);
+    if (![1, 2, 3, 4, 5].every((step) => completed.includes(step as OnboardingStep))) {
+      throw new Error("Finish every setup step before activating your workspace.");
+    }
+    const db = database();
+    await db.batch([
+      db
+        .prepare(
+          "UPDATE users SET lifecycle_state = 'alpha_active', updated_at = unixepoch() * 1000 WHERE id = ?",
+        )
+        .bind(user.id),
+      onboardingAuditStatement(db, user, 6, {
+        userConfirmed: true,
+        externalActionsAuthorized: false,
+      }),
+    ]);
+    user.lifecycle_state = "alpha_active";
+  }
+
+  return readOnboardingStateForUser(user);
+}
+
 function assertBootstrapPayload(payload: unknown): asserts payload is FounderBootstrapPayload {
   if (!payload || typeof payload !== "object") throw new Error("A structured founder import is required.");
   const candidate = payload as Partial<FounderBootstrapPayload>;
@@ -473,7 +1271,14 @@ type BootstrapOpportunity = FounderBootstrapPayload["opportunities"][number];
 async function normalizeBootstrapOpportunity(
   opportunity: BootstrapOpportunity,
 ): Promise<BootstrapOpportunity> {
-  if (!opportunity.pursuit) return opportunity;
+  const analysis = {
+    ...opportunity.analysis,
+    integrityGates: {
+      ...opportunity.analysis.integrityGates,
+      jobVersionId: opportunity.version.id,
+    },
+  };
+  if (!opportunity.pursuit) return { ...opportunity, analysis };
 
   const assets = await Promise.all(opportunity.pursuit.assets.map(async (asset) => {
     const contentSha256 = await sha256Hex(canonicalJson(asset.content));
@@ -534,6 +1339,7 @@ async function normalizeBootstrapOpportunity(
   const payloadSha256 = await sha256Hex(canonicalJson(packageCore));
   return {
     ...opportunity,
+    analysis,
     pursuit: {
       ...opportunity.pursuit,
       assets,
@@ -823,7 +1629,7 @@ export async function saveJobStandard(
   actor: FounderActor,
   input: Omit<JobStandardRecord, "id" | "version">,
 ): Promise<void> {
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const db = database();
   const maxRow = await db
     .prepare("SELECT coalesce(max(version), 0) AS version FROM job_standards WHERE user_id = ?")
@@ -868,7 +1674,7 @@ export async function saveJobStandard(
 }
 
 export async function setPrimaryCareerPath(actor: FounderActor, pathId: string): Promise<void> {
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const db = database();
   const owned = await db
     .prepare("SELECT id FROM career_paths WHERE id = ? AND user_id = ? LIMIT 1")
@@ -884,7 +1690,7 @@ export async function setPrimaryCareerPath(actor: FounderActor, pathId: string):
 }
 
 export async function createPursuit(actor: FounderActor, jobPostingId: string): Promise<string> {
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const db = database();
   const job = await db
     .prepare("SELECT id FROM job_postings WHERE id = ? AND removed_at IS NULL LIMIT 1")
@@ -959,7 +1765,7 @@ export async function ingestGreenhouseJob(
   actor: FounderActor,
   sourceUrl: string,
 ): Promise<{ jobPostingId: string; title: string; employer: string }> {
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const { board, jobId } = parseGreenhouseUrl(sourceUrl.trim());
   const endpoint = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(board)}/jobs/${encodeURIComponent(jobId)}`;
   const requestHeaders = { Accept: "application/json", "User-Agent": "WayAheadFounder/1.0" };
@@ -1065,6 +1871,222 @@ export async function ingestGreenhouseJob(
   return { jobPostingId: postingId, title: job.title, employer };
 }
 
+type LeverJobResponse = {
+  id?: string;
+  text?: string;
+  createdAt?: number;
+  hostedUrl?: string;
+  applyUrl?: string;
+  workplaceType?: string;
+  descriptionPlain?: string;
+  additionalPlain?: string;
+  categories?: {
+    commitment?: string;
+    department?: string;
+    level?: string;
+    location?: string;
+    allLocations?: string[];
+    team?: string;
+  };
+  lists?: Array<{ text?: string; content?: string }>;
+  salaryRange?: {
+    currency?: string;
+    interval?: string;
+    min?: number;
+    max?: number;
+  };
+};
+
+function parseLeverUrl(input: string): { site: string; jobId: string } {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    throw new Error("Enter a complete Lever employer job URL.");
+  }
+  if (url.protocol !== "https:" || url.hostname.toLowerCase() !== "jobs.lever.co") {
+    throw new Error("Enter a direct jobs.lever.co employer URL.");
+  }
+  const match = url.pathname.match(/^\/([^/]+)\/([a-f0-9-]{20,})\/?$/i);
+  if (!match) throw new Error("The Lever URL does not identify a canonical employer job.");
+  return { site: decodeURIComponent(match[1]), jobId: match[2] };
+}
+
+function employerFromLeverSite(site: string): string {
+  return site
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function freshnessFromPostedAt(postedAt: number | null, now: number) {
+  if (!postedAt) return "unknown" as const;
+  const ageDays = Math.max(0, (now - postedAt) / (24 * 60 * 60 * 1000));
+  if (ageDays > 60) return "stale" as const;
+  if (ageDays > 30) return "stale_risk" as const;
+  return "fresh" as const;
+}
+
+async function ingestLeverJob(
+  actor: FounderActor,
+  sourceUrl: string,
+): Promise<{ jobPostingId: string; title: string; employer: string }> {
+  const user = await ensureUser(actor);
+  const { site, jobId } = parseLeverUrl(sourceUrl.trim());
+  const endpoint = `https://api.lever.co/v0/postings/${encodeURIComponent(site)}/${encodeURIComponent(jobId)}?mode=json`;
+  const response = await fetch(endpoint, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "WayAhead/1.0",
+    },
+  });
+  if (response.status === 404) {
+    throw new Error("The employer no longer returns this job.");
+  }
+  if (!response.ok) {
+    throw new Error("The employer job source is temporarily unavailable.");
+  }
+  const contentLength = Number(response.headers.get("content-length") ?? 0);
+  if (contentLength > 1_000_000) {
+    throw new Error("The employer job record is larger than this alpha accepts.");
+  }
+  const job = (await response.json()) as LeverJobResponse;
+  if (job.id !== jobId || !job.text?.trim()) {
+    throw new Error("The employer source returned an unexpected job record.");
+  }
+  const checkedAt = Date.now();
+  const postedAt =
+    typeof job.createdAt === "number" && Number.isFinite(job.createdAt)
+      ? job.createdAt
+      : null;
+  const locations = Array.isArray(job.categories?.allLocations)
+    ? job.categories.allLocations
+        .filter((location): location is string => typeof location === "string")
+        .map((location) => location.trim())
+        .filter(Boolean)
+        .slice(0, 20)
+    : job.categories?.location?.trim()
+      ? [job.categories.location.trim()]
+      : [];
+  const sourceSnapshot = {
+    id: job.id,
+    title: job.text.trim(),
+    createdAt: postedAt,
+    hostedUrl: job.hostedUrl ?? null,
+    applyUrl: job.applyUrl ?? null,
+    workplaceType: job.workplaceType ?? null,
+    descriptionPlain: job.descriptionPlain ?? "",
+    additionalPlain: job.additionalPlain ?? "",
+    categories: job.categories ?? {},
+    lists: (job.lists ?? []).slice(0, 30).map((item) => ({
+      text: typeof item.text === "string" ? item.text : "",
+      content: typeof item.content === "string" ? item.content : "",
+    })),
+    salaryRange: job.salaryRange ?? null,
+  };
+  const descriptionChecksum = await sha256Hex(canonicalJson(sourceSnapshot));
+  const sourceId = `lever_${(await sha256Hex(site)).slice(0, 20)}`;
+  const postingId = `job_${(await sha256Hex(`lever:${site}:${jobId}`)).slice(0, 24)}`;
+  const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const employer = employerFromLeverSite(site);
+  const hostedUrl =
+    typeof job.hostedUrl === "string" &&
+    job.hostedUrl.startsWith(`https://jobs.lever.co/${site}/${jobId}`)
+      ? job.hostedUrl
+      : sourceUrl;
+  const sourceFacts: JsonRecord = {
+    employer,
+    title: job.text.trim(),
+    locations,
+    createdAt: postedAt,
+    workplaceType: job.workplaceType ?? null,
+    commitment: job.categories?.commitment ?? null,
+    department: job.categories?.department ?? null,
+    level: job.categories?.level ?? null,
+    team: job.categories?.team ?? null,
+    salaryRange: job.salaryRange ?? null,
+    hostedUrl,
+    applyUrl: job.applyUrl ?? null,
+    descriptionCharacterCount: job.descriptionPlain?.length ?? 0,
+    questionSetCapture: "not_exposed_by_public_postings_get",
+    retrieval: "Lever public Postings GET API",
+  };
+  const db = database();
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO job_sources (id, name, kind, rights_state, terms_version) VALUES (?, ?, 'employer_ats', 'approved', 'lever-public-postings-api-2026-07') ON CONFLICT(id) DO UPDATE SET name = excluded.name, rights_state = excluded.rights_state, terms_version = excluded.terms_version",
+      )
+      .bind(sourceId, `${employer} careers`),
+    db
+      .prepare(
+        "INSERT INTO job_postings (id, source_id, external_id, canonical_url, employer, title, locations_json, compensation_json, description_checksum, first_seen_at, last_checked_at, posted_at, freshness_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(source_id, external_id) DO UPDATE SET canonical_url = excluded.canonical_url, employer = excluded.employer, title = excluded.title, locations_json = excluded.locations_json, compensation_json = excluded.compensation_json, description_checksum = excluded.description_checksum, last_checked_at = excluded.last_checked_at, posted_at = excluded.posted_at, removed_at = NULL, freshness_state = excluded.freshness_state",
+      )
+      .bind(
+        postingId,
+        sourceId,
+        jobId,
+        hostedUrl,
+        employer,
+        job.text.trim(),
+        json(locations),
+        json({ sourceRange: job.salaryRange ?? null, state: "source_reported" }),
+        descriptionChecksum,
+        checkedAt,
+        checkedAt,
+        postedAt,
+        freshnessFromPostedAt(postedAt, checkedAt),
+      ),
+    db
+      .prepare(
+        "INSERT INTO job_posting_versions (id, job_posting_id, source_checked_at, source_url, description_checksum, source_facts_json, source_conflicts_json, capture_state) VALUES (?, ?, ?, ?, ?, ?, '[]', 'verified') ON CONFLICT(job_posting_id, description_checksum) DO NOTHING",
+      )
+      .bind(
+        versionId,
+        postingId,
+        checkedAt,
+        hostedUrl,
+        descriptionChecksum,
+        json(sourceFacts),
+      ),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'lever_job_ingested', 'job_posting', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        user.id,
+        `chatgpt:${user.email}`,
+        postingId,
+        json({ site, externalId: jobId, descriptionChecksum }),
+      ),
+  ]);
+  return { jobPostingId: postingId, title: job.text.trim(), employer };
+}
+
+export async function ingestEmployerJob(
+  actor: FounderActor,
+  sourceUrl: string,
+): Promise<{ jobPostingId: string; title: string; employer: string }> {
+  let url: URL;
+  try {
+    url = new URL(sourceUrl.trim());
+  } catch {
+    throw new Error("Enter a complete direct employer job URL.");
+  }
+  const host = url.hostname.toLowerCase();
+  if (host === "job-boards.greenhouse.io" || host === "boards.greenhouse.io") {
+    return ingestGreenhouseJob(actor, sourceUrl);
+  }
+  if (host === "jobs.lever.co") {
+    return ingestLeverJob(actor, sourceUrl);
+  }
+  throw new Error(
+    "This alpha currently verifies direct Greenhouse and Lever employer URLs.",
+  );
+}
+
 export async function approvePursuitPackage(
   actor: FounderActor,
   packageId: string,
@@ -1074,7 +2096,7 @@ export async function approvePursuitPackage(
   if (confirmation !== "approve_application_package") {
     throw new Error("Confirm the exact application package and employer form version before approval.");
   }
-  const founder = await ensureFounder(actor);
+  const founder = await ensureUser(actor);
   const db = database();
   const packageRecord = await db
     .prepare(

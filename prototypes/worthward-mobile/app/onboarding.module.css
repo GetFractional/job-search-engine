@@ -1,0 +1,947 @@
+.shell {
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 14% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
+    var(--canvas);
+  color: var(--ink);
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 100;
+  top: 10px;
+  left: 12px;
+  transform: translateY(-160%);
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--canvas);
+  padding: 10px 14px;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.header {
+  position: sticky;
+  z-index: 40;
+  top: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 72px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--canvas) 94%, transparent);
+  padding: 0 clamp(18px, 4vw, 60px);
+  backdrop-filter: blur(18px);
+}
+
+.brand,
+.account a,
+.mobileNav a {
+  text-decoration: none;
+}
+
+.brand {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+}
+
+.brandMark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--border));
+  border-radius: 11px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.headerContext {
+  color: var(--ink-tertiary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.account {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 14px;
+}
+
+.account > span {
+  max-width: 210px;
+  overflow: hidden;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.main {
+  display: grid;
+  width: min(1180px, calc(100% - 40px));
+  grid-template-columns: 280px minmax(0, 760px);
+  justify-content: center;
+  gap: clamp(42px, 7vw, 94px);
+  margin: 0 auto;
+  padding: 64px 0 90px;
+}
+
+.progress {
+  align-self: start;
+  position: sticky;
+  top: 112px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  padding: 22px;
+  box-shadow: var(--shadow-small);
+}
+
+.progress > p:first-child {
+  margin-bottom: 18px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.progressHeading {
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-family: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  font-size: clamp(1.45rem, 2.7vw, 2.1rem);
+  font-weight: 580;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+.progress ol {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progress li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 10px;
+  align-items: center;
+  border-radius: 11px;
+  color: var(--ink-tertiary);
+  padding: 9px;
+}
+
+.progress li > span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.progress li > div {
+  display: grid;
+  gap: 2px;
+}
+
+.progress strong {
+  font-size: 12px;
+}
+
+.progress small {
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.progress .current {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.progress .current > span,
+.progress .complete > span {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-on);
+}
+
+.progress .complete {
+  color: var(--ink-secondary);
+}
+
+.progressTrust {
+  margin: 18px 0 0;
+  border-top: 1px solid var(--border);
+  color: var(--ink-tertiary);
+  padding-top: 16px;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.stepPanel {
+  min-width: 0;
+}
+
+.stepCounter,
+.eyebrow {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 820;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.stepCounter {
+  margin-bottom: 20px;
+  color: var(--ink-tertiary);
+}
+
+.eyebrow {
+  margin-bottom: 12px;
+}
+
+.stepPanel h1 {
+  max-width: 720px;
+  margin-bottom: 20px;
+  font-size: clamp(44px, 5.8vw, 66px);
+  font-weight: 530;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.intro {
+  max-width: 720px;
+  margin-bottom: 34px;
+  color: var(--ink-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.error {
+  margin-bottom: 24px;
+  border: 1px solid color-mix(in srgb, var(--danger) 50%, var(--border));
+  border-radius: 14px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 720;
+}
+
+.choiceFieldset,
+.methodFieldset,
+.pathFieldset,
+.compactFieldset {
+  min-width: 0;
+  margin: 0 0 28px;
+  border: 0;
+  padding: 0;
+}
+
+.choiceFieldset legend,
+.methodFieldset legend,
+.pathFieldset legend,
+.compactFieldset legend {
+  margin-bottom: 12px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.choiceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.choiceGrid label {
+  display: grid;
+  min-height: 84px;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 16px;
+  cursor: pointer;
+}
+
+.choiceGrid label:hover,
+.choiceGrid .choiceSelected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.choiceGrid input,
+.methodFieldset input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.choiceGrid label > span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 2px solid var(--border-strong);
+  border-radius: 7px;
+  color: var(--accent-on);
+}
+
+.choiceGrid .choiceSelected > span {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.choiceGrid label:has(input:focus-visible),
+.methodFieldset label:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.choiceGrid strong {
+  font-size: 13px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 0 13px;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 112px;
+  padding: 13px;
+  line-height: 1.6;
+}
+
+.field small {
+  color: var(--ink-tertiary);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--surface);
+  padding: 17px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.consent input,
+.inlineCheck input,
+.compactFieldset input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.consent span {
+  display: grid;
+  gap: 5px;
+}
+
+.consent strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 28px;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+}
+
+.primaryButton,
+.secondaryButton,
+.fileButton,
+.removeButton {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 12px;
+  font-weight: 760;
+}
+
+.primaryButton {
+  background: var(--accent);
+  color: var(--accent-on);
+  padding: 0 20px;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.secondaryButton,
+.fileButton {
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 16px;
+}
+
+.actions > span {
+  color: var(--ink-tertiary);
+  font-size: 10px;
+}
+
+.filePanel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 20px;
+}
+
+.filePanel > svg {
+  color: var(--accent);
+}
+
+.filePanel > div {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+}
+
+.filePanel strong {
+  font-size: 14px;
+}
+
+.filePanel p,
+.fileTruth,
+.fileNotice {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 11px;
+}
+
+.fileButton {
+  position: relative;
+  min-height: 48px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.fileButton input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.fileButton:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.fileTruth {
+  margin: 10px 2px 0;
+  line-height: 1.55;
+}
+
+.fileNotice {
+  margin-top: 11px;
+  border-radius: 10px;
+  background: var(--info-soft);
+  color: var(--info);
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+.fileNoticeError {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.methodFieldset {
+  margin-top: 28px;
+}
+
+.methodFieldset > div {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.methodFieldset label {
+  display: grid;
+  gap: 5px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--surface);
+  padding: 17px;
+  cursor: pointer;
+}
+
+.methodFieldset .methodSelected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.methodFieldset strong {
+  font-size: 13px;
+}
+
+.methodFieldset span {
+  color: var(--ink-secondary);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+}
+
+.fullField {
+  grid-column: 1 / -1;
+}
+
+.inlineCheck {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.reviewCard {
+  display: grid;
+  gap: 18px;
+  max-height: 460px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 20px;
+}
+
+.reviewCard > span,
+.reviewCard article > span,
+.planGrid article > span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reviewCard pre {
+  margin: 0;
+  color: var(--ink-secondary);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.reviewCard article {
+  border-top: 1px solid var(--border);
+  padding-top: 17px;
+}
+
+.reviewCard h2 {
+  margin: 7px 0 3px;
+  font-size: 24px;
+}
+
+.reviewCard article p {
+  color: var(--ink-secondary);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.compactFieldset {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  gap: 8px 14px;
+  margin-bottom: 20px;
+}
+
+.compactFieldset legend {
+  width: 100%;
+}
+
+.compactFieldset label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.pathFieldset {
+  display: grid;
+  gap: 10px;
+}
+
+.pathFieldset > div {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 14px;
+}
+
+.pathFieldset .primaryPath {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.pathFieldset .field {
+  margin: 0;
+}
+
+.primaryRadio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.primaryRadio input {
+  position: absolute;
+  opacity: 0;
+}
+
+.primaryRadio span {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
+}
+
+.primaryRadio input:checked + span {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 4px var(--accent-soft);
+}
+
+.primaryRadio:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.removeButton {
+  min-height: 42px;
+  background: transparent;
+  color: var(--danger);
+  padding: 0 10px;
+  font-size: 11px;
+}
+
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.planGrid article {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 18px;
+}
+
+.planGrid article > strong {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.planGrid article > p {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 11px;
+}
+
+.fullPlanCard {
+  grid-column: 1 / -1;
+}
+
+.fullPlanCard ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fullPlanCard li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.fullPlanCard li:first-child {
+  border-top: 0;
+}
+
+.fullPlanCard li small {
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 4px 7px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.fullPlanCard li > span {
+  color: var(--ink-tertiary);
+  font-size: 10px;
+}
+
+.mobileNav {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .header {
+    grid-template-columns: 1fr auto;
+  }
+
+  .headerContext,
+  .account > span {
+    display: none;
+  }
+
+  .main {
+    width: min(100% - 32px, 760px);
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 112px;
+  }
+
+  .progress {
+    position: static;
+    overflow-x: auto;
+    padding: 13px;
+  }
+
+  .progress > p:first-child,
+  .progressTrust,
+  .progress small {
+    display: none;
+  }
+
+  .progress ol {
+    grid-template-columns: repeat(6, minmax(66px, 1fr));
+  }
+
+  .progress li {
+    grid-template-columns: 28px 1fr;
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .mobileNav {
+    position: fixed;
+    z-index: 38;
+    inset: auto 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    min-height: calc(70px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 95%, transparent);
+    padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+    backdrop-filter: blur(18px);
+  }
+
+  .mobileNav a {
+    display: grid;
+    min-height: 52px;
+    place-items: center;
+    align-content: center;
+    gap: 3px;
+    border-radius: 11px;
+    color: var(--ink-tertiary);
+    font-size: 10px;
+    font-weight: 740;
+  }
+
+  .mobileNav .activeMobileNav {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    min-height: 64px;
+    padding: 0 16px;
+  }
+
+  .brandMark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .account a > span {
+    display: none;
+  }
+
+  .main {
+    width: min(100% - 28px, 760px);
+    padding-top: 30px;
+  }
+
+  .progress {
+    margin-right: -14px;
+    margin-left: -14px;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .progress ol {
+    min-width: 510px;
+  }
+
+  .stepPanel h1 {
+    font-size: clamp(39px, 11.2vw, 49px);
+  }
+
+  .intro {
+    font-size: 15px;
+  }
+
+  .choiceGrid,
+  .methodFieldset > div,
+  .formGrid,
+  .planGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullField,
+  .fullPlanCard {
+    grid-column: 1;
+  }
+
+  .pathFieldset > div {
+    grid-template-columns: 1fr auto;
+  }
+
+  .primaryRadio {
+    grid-column: 1;
+  }
+
+  .pathFieldset .field {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .removeButton {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+
+  .actions > span {
+    text-align: center;
+  }
+
+  .fullPlanCard li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .fullPlanCard li > span {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    scroll-behavior: auto;
+  }
+}

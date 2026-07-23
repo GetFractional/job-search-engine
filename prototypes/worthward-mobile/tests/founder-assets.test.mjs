@@ -1,14 +1,20 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const assetRoot = path.join(appRoot, "public", "founder-assets");
+const publicAssetRoot = path.join(appRoot, "public", "founder-assets");
+const assetRoot = path.resolve(
+  appRoot,
+  "../..",
+  "docs/career-platform/case-study-zero/private-assets/seso-application-package",
+);
 
-test("founder application files match the claim-safe binary manifest", async () => {
+test("keeps founder application files out of the public bundle and preserves their manifest", async () => {
+  await assert.rejects(access(publicAssetRoot));
   const manifest = JSON.parse(await readFile(path.join(assetRoot, "manifest.json"), "utf8"));
   assert.equal(manifest.version, 1);
   assert.deepEqual(

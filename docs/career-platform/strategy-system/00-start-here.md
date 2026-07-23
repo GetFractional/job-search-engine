@@ -4,11 +4,13 @@
 
 > **2026-07-21 governing product reset:** `16-founder-feedback-product-reset-2026-07-21.md` supersedes the job-checker-first homepage, timeline-led interaction, prior Keep Watch price, unstaffed human-service offers, and any claim that the current prototype is founder-accepted private alpha. The Executive Evidence typography, color, and trust language remain design inputs; its timeline layout does not.
 
-**Authority:** Founder-authorized direction, version 1.4
-**Research current through:** 2026-07-21
-**Working brand status:** Matt selected Way Ahead for the internal private-alpha checkpoint. A subsequent knockout screen found high software, career-category, and branded-search collision risk, so it is not recommended for master-brand lock or public launch. No domain is controlled and no name is legally cleared. Legacy `my-way-ahead` paths and ClickUp labels remain stable internal identifiers pending a separately reviewed migration.
+> **2026-07-23 public-product correction:** `17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md` governs the public website, self-service account creation, personal-workspace isolation, résumé-first onboarding, multi-path job supply and scoreboards, document studios, digest architecture, job-title acquisition pages, authorized temporary subdomain, and corrected founder checkpoint. It supersedes the owner-only first-user path and any claim that the current hosted app is founder-accepted.
+
+**Authority:** Founder-authorized direction, version 1.5
+**Research current through:** 2026-07-23
+**Working brand status:** Matt selected Way Ahead for the alpha checkpoint and authorized temporary use of `wayahead.getfractional.co` after the corrected build passes. A prior knockout screen found high software, career-category, and branded-search collision risk, so the temporary subdomain is not master-brand lock or legal clearance. Legacy `my-way-ahead` paths and ClickUp labels remain stable internal identifiers pending a separately reviewed migration.
 **First case study:** Matt Dimock
-**Build posture:** Build an owned mobile-first product. Matt selected the recommended synthesis of the three grounded directions; the resulting local synthetic candidate passed responsive, theme, interaction, state, rendered-accessibility, exact-build, and independent founder-checkpoint QA. Physical iPhone and native assistive-technology proof remain before external alpha. Production data, spend, external testing, hosting, billing, partnerships, and public claims retain separate gates.
+**Build posture:** Build an owned, public-capable, multi-user, mobile-first SaaS. Preserve the selected visual synthesis, but replace the failed auth-first and backend-first journey with a public website, self-service SSO, resumable résumé-first onboarding, multi-path Today scoreboards, functional navigation, and editable document studios. The current hosted version is a rollback surface. Spend, paid models, email, billing, indexing, public promotion, partnerships, legal commitments, and employer-facing actions retain separate gates.
 
 ## Start here
 
@@ -75,7 +77,7 @@ The company should maintain four connected control layers:
 
 | Surface | Job | Primary user | Governing content |
 |---|---|---|---|
-| **Canonical Strategy Library** | Preserve current evidence, decisions, assumptions, policies, and supersession history | CEO and specialists | The fifteen chapters in this strategy system |
+| **Canonical Strategy Library** | Preserve current evidence, decisions, assumptions, policies, and supersession history | CEO and specialists | The seventeen chapters in this strategy system |
 | **Founder Strategy Center** | Show the current decision, evidence, risks, metrics, WIP, owners, and next approvals without file hunting | Matt | Start Here, decision register, experiment portfolio, economics, control cadence |
 | **Executive Operating Graph** | Turn the Board mandate into bounded missions, expert routing, independent review, shared state, and explicit escalation | CEO, mission owners, and reviewers | Board and CEO contract, mission packets, shared-state records, graph rewrite rules, Board briefs |
 | **Customer Career Strategy Brief** | Explain what career strategy currently governs the user's Radar and Pursuits, why, and what changed | End user | Desired outcome, supported lanes, market thesis, baseline, proof capital, Radar rules, active bets, learning, one next action |
@@ -102,6 +104,7 @@ The Strategy Center and Career Strategy Brief can later become responsive produc
 | What actual company roles own the reset, and how will the evaluation and rebuild run? | 14 Company Organization and Prototype Experience Reset |
 | What was implemented in Prototype V2, what passed, and which release gates remain open? | 15 Prototype V2 Implementation and Quality Review |
 | What product, journey, schema, architecture, offer, acquisition, and delivery corrections govern after Matt's founder review? | 16 Founder Feedback Product Reset |
+| How will the public multi-user alpha, job-supply graph, multi-path scoreboards, document system, notification cadence, and low-cash growth path work? | 17 Public Multi-User Alpha, Job Supply, and Growth Architecture |
 
 ## Expert council and decision rights
 
@@ -148,7 +151,7 @@ The CEO role is an operating delegation, not a statutory appointment or authorit
 - Separate Integrity Gates, Move Value, and Pursuit Readiness.
 - Use a provider-agnostic AI route with deterministic rules, golden-data evaluation, and graceful degradation.
 - Preserve explicit light, dark, and system themes with semantic parity.
-- Keep Teal out of the customer architecture. It remains competitor intelligence and a temporary first-case-study tool only.
+- Keep Teal out of the customer architecture and Matt's operating workflow. It is competitor intelligence only and may not hold or mutate Way Ahead state.
 - Build and own the customer product, career data model, decision policy, evidence system, and learning loop; do not license another career platform as the core company.
 - Treat feature overlap as a benchmark requirement, not a reason to omit a capability that helps the target user.
 - Treat the 19-family full-funnel prototype as concept and usability research, not authorization to build the entire production suite before paid validation.
@@ -178,12 +181,15 @@ The CEO role is an operating delegation, not a statutory appointment or authorit
 
 ## Current phase gate
 
-Matt has authorized the owned-product direction and continued local, reversible design and architecture work. The browser-verification blocker is repaired and the P0 trust defects reproduced in founder review are corrected, with typecheck, build, 14 truth/state/regression tests, and lint passing. The founder rejected the current journey and timeline as the governing customer experience. The correct sequence is:
+Matt's 2026-07-23 review invalidated the owner-only hosted candidate as a first-user product. The selected visual direction remains useful; the information architecture and interaction model do not. The correct sequence is:
 
-1. Compare exactly three mobile-first visual directions grounded in the current product, founder feedback, and Executive Evidence design language.
-2. Stop broad UI implementation for Matt's selection or refinement of one direction.
-3. Implement the selected promise, stable navigation shell, task-focused onboarding, personalized job feed, opportunity decision, pursuit workspace, and Settings experience.
-4. Continue local schema, provenance, import, career-path, resume-library, and source-rights contracts without connecting production vendors or customer data.
-5. Rebuild the responsive, theme, interaction, state, accessibility, truth, and matched-reference evidence matrix and obtain Independent Quality's verdict.
-6. In parallel, keep Matt Case Study Zero approval-ready without Teal, application, or outreach mutation.
-7. Keep hosting, external recruitment, partnerships, production data, payment, publication, spend, and job actions behind their exact Board gates.
+1. Preserve the current Sites version as rollback and capture the failed signed-out, new-user, Today, Jobs, Direction, Profile, Pursuit, and account states.
+2. Replace the auth-first root with a public, source-rendered website that explains the customer outcome before account creation.
+3. Generalize ChatGPT SSO from one owner allowlist to self-service accounts with one isolated personal workspace per user; route every incomplete account to the last unfinished onboarding step.
+4. Implement résumé upload or text/manual fallback, user-reviewed extraction, Job Standard, multiple active career paths, and one direct review screen before Today.
+5. Replace the single-job Today billboard with a comprehensive opportunity scoreboard segmented by career path, plus changed jobs, pursuits needing action, monitoring cadence, document gaps, and truthful no-result states.
+6. Add Resume Studio and Cover Letter Studio with master, path, and job scopes; AI-first draft contracts; complete user editing; bounded design controls; immutable versions; and approval invalidation after changes. Paid model calls remain disabled until approved.
+7. Add the Sites-native `wayahead.getfractional.co` binding and exact DNS validation records only after the corrected deployment passes locally; then prove signed-out, new-user, returning-user, owner, and mobile behavior.
+8. Rebuild responsive, theme, interaction, empty, loading, error, success, accessibility, security, privacy, two-user isolation, and matched-reference evidence and obtain Independent Quality's verdict.
+9. In parallel, use Way Ahead, not Teal, to rank current roles across at least two of Matt's career paths and prepare one next-best claim-safe package to exact-action approval readiness.
+10. Keep spend, paid models, production email, billing, indexing, public promotion, partnerships, legal commitments, and employer-facing actions behind their exact Board gates.

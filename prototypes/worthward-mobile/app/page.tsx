@@ -1,30 +1,31 @@
-import WayAheadApp from "./WayAheadApp";
-import { FounderAccessError, requireFounderPage } from "./server-auth";
+import type { Metadata } from "next";
+import PublicSite from "./PublicSite";
+import {
+  chatGPTSignInPath,
+  getChatGPTUser,
+} from "./chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const result = await requireFounderPage("/")
-    .then((actor) => ({ actor }))
-    .catch((error: unknown) => ({ error }));
-  if ("error" in result && result.error instanceof FounderAccessError && result.error.status === 403) {
-    return (
-      <main className="wa-access-denied">
-        <LockMessage />
-      </main>
-    );
-  }
-  if ("error" in result) throw result.error;
-  return <WayAheadApp actor={result.actor} />;
-}
+export const metadata: Metadata = {
+  title: "Way Ahead | Find jobs worth pursuing",
+  description:
+    "Define a better move, focus on current jobs worth your effort, and build a stronger truthful application.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
-function LockMessage() {
+export default async function Home() {
+  const user = await getChatGPTUser();
+  const signedIn = Boolean(user);
   return (
-    <section>
-      <p className="wa-eyebrow">Private founder environment</p>
-      <h1>This account does not have access.</h1>
-      <p>Sign out and use the ChatGPT account authorized for Way Ahead.</p>
-      <a className="wa-primary-button" href="/signout-with-chatgpt?return_to=%2F">Sign out</a>
-    </section>
+    <PublicSite
+      primaryHref={signedIn ? "/app" : chatGPTSignInPath("/app")}
+      primaryLabel={signedIn ? "Open workspace" : "Get started"}
+      signInHref={signedIn ? "/app" : chatGPTSignInPath("/app")}
+      signedIn={signedIn}
+    />
   );
 }

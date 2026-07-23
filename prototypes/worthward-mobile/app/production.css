@@ -102,7 +102,9 @@
 .wa-account-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-width: 46px;
   min-height: 46px;
   color: var(--ink-secondary);
   font-size: 13px;
@@ -141,6 +143,33 @@
   color: var(--ink-tertiary);
   font-size: 12px;
   text-overflow: ellipsis;
+}
+
+.wa-account-links {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+
+.wa-account-links button {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--ink-secondary);
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.wa-account-links button:hover,
+.wa-account-links button.is-active {
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .wa-theme-fieldset {
@@ -216,6 +245,53 @@
   width: min(1160px, 100%);
   margin: 0 auto;
   animation: wa-enter 240ms ease-out both;
+}
+
+.wa-today-dashboard,
+.wa-document-studio {
+  padding-top: clamp(10px, 2vw, 24px);
+}
+
+.wa-studio-switcher {
+  position: sticky;
+  z-index: 12;
+  top: -2px;
+  display: grid;
+  width: min(420px, 100%);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 0 24px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--surface-muted) 94%, transparent);
+  padding: 5px;
+  backdrop-filter: blur(16px);
+}
+
+.wa-studio-switcher button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-secondary);
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.wa-studio-switcher button.is-active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: var(--shadow-small);
+}
+
+.wa-studio-switcher button:focus-visible,
+.wa-account-links button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
 }
 
 @keyframes wa-enter {
@@ -401,7 +477,7 @@
 
 .wa-decision-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 72px;
 }
@@ -648,6 +724,104 @@
 .wa-package-card small {
   color: var(--ink-tertiary);
   font-size: 11px;
+}
+
+.wa-operator-panel {
+  margin-top: 44px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.wa-operator-panel > summary {
+  min-height: 54px;
+  cursor: pointer;
+  padding: 17px 20px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.wa-operator-panel[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.wa-operator-panel form {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.wa-operator-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.5fr);
+  gap: 28px;
+  align-items: end;
+}
+
+.wa-operator-heading h2 {
+  margin-bottom: 0;
+  font-size: 28px;
+}
+
+.wa-operator-heading > p {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.wa-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.wa-operator-panel label {
+  display: grid;
+  gap: 7px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.wa-operator-panel input,
+.wa-operator-panel select,
+.wa-operator-panel textarea {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface-muted);
+  color: var(--ink);
+  padding: 11px 13px;
+  font: inherit;
+}
+
+.wa-operator-panel textarea {
+  min-height: 94px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.wa-operator-panel .wa-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.wa-operator-panel .wa-checkbox-row input {
+  width: 20px;
+  min-height: 20px;
+  margin-top: 1px;
+  accent-color: var(--accent);
+}
+
+.wa-operator-panel .wa-primary-button {
+  justify-self: start;
 }
 
 .wa-form-message {
@@ -1541,7 +1715,7 @@ input[aria-invalid="true"] {
   }
 
   .wa-decision-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .wa-system-receipt {
@@ -1594,6 +1768,16 @@ input[aria-invalid="true"] {
 
   .wa-main {
     padding: 88px 16px 132px;
+  }
+
+  .wa-today-dashboard,
+  .wa-document-studio {
+    padding-top: 0;
+  }
+
+  .wa-studio-switcher {
+    top: -1px;
+    margin-bottom: 18px;
   }
 
   .wa-hero {
@@ -1652,13 +1836,13 @@ input[aria-invalid="true"] {
   }
 
   .wa-decision-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-bottom: 46px;
   }
 
   .wa-score-card {
-    min-height: 188px;
-    padding: 20px;
+    min-height: 154px;
+    padding: 16px;
   }
 
   .wa-two-column-section,
@@ -1696,6 +1880,19 @@ input[aria-invalid="true"] {
   }
 
   .wa-add-job .wa-primary-button {
+    width: 100%;
+  }
+
+  .wa-operator-panel form {
+    padding: 18px;
+  }
+
+  .wa-operator-heading,
+  .wa-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wa-operator-panel .wa-primary-button {
     width: 100%;
   }
 
@@ -1811,6 +2008,14 @@ input[aria-invalid="true"] {
 
   .wa-mobile-nav button {
     font-size: 10px;
+  }
+
+  .wa-decision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wa-score-card {
+    min-height: 138px;
   }
 
   .wa-path-card {

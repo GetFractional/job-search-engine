@@ -18,6 +18,13 @@ export class FounderAccessError extends Error {
   }
 }
 
+/**
+ * FounderAccessError is retained as the compatibility name used by the
+ * existing API routes. Access is now account-level; owner authorization is
+ * enforced only by the owner-only repository action.
+ */
+export { FounderAccessError as UserAccessError };
+
 function runtimeEnv(): RuntimeEnv {
   return env as unknown as RuntimeEnv;
 }
@@ -55,34 +62,38 @@ function developmentActor(requestHeaders: Headers): ChatGPTUser | null {
   return email ? { email, fullName: "Matt Dimock", displayName: "Matt Dimock" } : null;
 }
 
-function authorizeFounder(user: ChatGPTUser | null): ChatGPTUser {
+function authorizeUser(user: ChatGPTUser | null): ChatGPTUser {
   if (!user) throw new FounderAccessError("Sign in with ChatGPT to continue.", 401);
-  const ownerEmail = normalizedEmail(runtimeEnv().WAY_AHEAD_OWNER_EMAIL);
-  if (!ownerEmail) {
-    throw new FounderAccessError("Owner access is not configured.", 503);
-  }
-  if (normalizedEmail(user.email) !== ownerEmail) {
-    throw new FounderAccessError("This founder environment is not shared with this account.", 403);
-  }
-  return { ...user, email: ownerEmail };
+  const email = normalizedEmail(user.email);
+  if (!email) throw new FounderAccessError("The signed-in account has no usable email address.", 401);
+  return { ...user, email };
 }
 
-export function requireFounderRequest(request: Request): ChatGPTUser {
-  return authorizeFounder(
+export function requireUserRequest(request: Request): ChatGPTUser {
+  return authorizeUser(
     fromRequestHeaders(request.headers) ?? developmentActor(request.headers),
   );
 }
 
-export async function requireFounderPage(returnTo = "/"): Promise<ChatGPTUser> {
+export async function requireUserPage(returnTo = "/app"): Promise<ChatGPTUser> {
   const requestHeaders = await headers();
   const user = fromRequestHeaders(requestHeaders) ?? developmentActor(requestHeaders);
   if (!user) redirect(chatGPTSignInPath(returnTo));
-  return authorizeFounder(user);
+  return authorizeUser(user);
 }
 
-export function founderAuthErrorResponse(error: unknown): Response {
+export function userAuthErrorResponse(error: unknown): Response {
   if (error instanceof FounderAccessError) {
     return Response.json({ error: error.message }, { status: error.status });
   }
   return Response.json({ error: "The request could not be authorized." }, { status: 401 });
 }
+
+/**
+ * Compatibility aliases keep the current API routes working while their
+ * imports move from founder language to user language. They do not grant the
+ * owner role.
+ */
+export const requireFounderRequest = requireUserRequest;
+export const requireFounderPage = requireUserPage;
+export const founderAuthErrorResponse = userAuthErrorResponse;

@@ -8,14 +8,12 @@ import {
   CaretDown,
   CheckCircle,
   Compass,
-  Database,
   Desktop,
   FileText,
   LockKey,
   Moon,
   Plus,
   RoadHorizon,
-  ShieldCheck,
   SignOut,
   Sun,
   Target,
@@ -23,6 +21,9 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CoverLetterStudio } from "./CoverLetterStudio";
+import { ResumeStudio } from "./ResumeStudio";
+import { TodayDashboard } from "./TodayDashboard";
 import type {
   AssetRecord,
   CareerPathRecord,
@@ -32,7 +33,14 @@ import type {
   WorkspaceRecord,
 } from "./production-types";
 
-type ViewKey = "today" | "jobs" | "pursuit" | "direction" | "profile";
+type ViewKey =
+  | "today"
+  | "jobs"
+  | "pursuit"
+  | "studio"
+  | "direction"
+  | "profile";
+type StudioKey = "resume" | "cover";
 type ThemeChoice = "light" | "dark" | "system";
 type FormMessage = { text: string; kind: "success" | "error" };
 
@@ -43,10 +51,19 @@ const NAVIGATION: Array<{
 }> = [
   { key: "today", label: "Today", icon: Compass },
   { key: "jobs", label: "Jobs", icon: Briefcase },
-  { key: "pursuit", label: "Pursuit", icon: Target },
-  { key: "direction", label: "Direction", icon: RoadHorizon },
-  { key: "profile", label: "Profile", icon: UserCircle },
+  { key: "pursuit", label: "Pursuits", icon: Target },
+  { key: "studio", label: "Studio", icon: FileText },
+  { key: "direction", label: "Plan", icon: RoadHorizon },
 ];
+
+const VIEW_KEYS = new Set<ViewKey>([
+  "today",
+  "jobs",
+  "pursuit",
+  "studio",
+  "direction",
+  "profile",
+]);
 
 const THEMES: Array<{ value: ThemeChoice; label: string; icon: typeof Sun }> = [
   { value: "light", label: "Light", icon: Sun },
@@ -57,7 +74,19 @@ const THEMES: Array<{ value: ThemeChoice; label: string; icon: typeof Sun }> = [
 function currentView(): ViewKey {
   if (typeof window === "undefined") return "today";
   const view = new URLSearchParams(window.location.search).get("view");
-  return NAVIGATION.some((item) => item.key === view) ? (view as ViewKey) : "today";
+  return VIEW_KEYS.has(view as ViewKey) ? (view as ViewKey) : "today";
+}
+
+function currentStudio(): StudioKey {
+  if (typeof window === "undefined") return "resume";
+  return new URLSearchParams(window.location.search).get("asset") === "cover"
+    ? "cover"
+    : "resume";
+}
+
+function currentJobId(): string | null {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("job");
 }
 
 function applyTheme(choice: ThemeChoice) {
@@ -73,11 +102,6 @@ function money(cents: number | null, currency = "USD"): string {
     currency,
     maximumFractionDigits: 0,
   }).format(cents / 100);
-}
-
-function shortDate(value: number | null): string {
-  if (!value) return "Not reported";
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(value);
 }
 
 function scoreLabel(score: number | null): string {
@@ -242,8 +266,16 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   const hasLoadedWorkspaceRef = useRef(false);
 
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
+    const syncLocation = () => {
       setView(currentView());
+      const jobId = currentJobId();
+      if (jobId) {
+        setSelectedJobId(jobId);
+        setSelectedPursuitJobId(jobId);
+      }
+    };
+    const frame = window.requestAnimationFrame(() => {
+      syncLocation();
       const storedTheme = window.localStorage.getItem("way-ahead-theme");
       const choice: ThemeChoice = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "system";
       setTheme(choice);
@@ -251,9 +283,11 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
     });
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onSystemChange = () => document.documentElement.dataset.themeChoice === "system" && applyTheme("system");
+    window.addEventListener("popstate", syncLocation);
     media.addEventListener("change", onSystemChange);
     return () => {
       window.cancelAnimationFrame(frame);
+      window.removeEventListener("popstate", syncLocation);
       media.removeEventListener("change", onSystemChange);
     };
   }, []);
@@ -311,14 +345,16 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
     return () => window.clearTimeout(timer);
   }, [refresh]);
 
-  const navigate = (nextView: ViewKey) => {
+  const navigate = (nextView: ViewKey, jobId?: string) => {
     const main = document.querySelector<HTMLElement>("#main-content");
     if (main) main.scrollTop = 0;
     setView(nextView);
     setSettingsOpen(false);
     const url = new URL(window.location.href);
     url.searchParams.set("view", nextView);
-    window.history.replaceState({}, "", url);
+    if (jobId) url.searchParams.set("job", jobId);
+    if (nextView !== "studio") url.searchParams.delete("asset");
+    window.history.pushState({}, "", url);
     window.requestAnimationFrame(() => {
       if (main) main.scrollTop = 0;
       main?.focus();
@@ -334,11 +370,22 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   const selectedJob = workspace?.opportunities.find((job) => job.id === selectedJobId) ?? null;
   const pursuedJobs = workspace?.opportunities.filter((job) => job.pursuit) ?? [];
   const pursuedJob = pursuedJobs.find((job) => job.id === selectedPursuitJobId) ?? pursuedJobs[0] ?? null;
-  const activeLabel = NAVIGATION.find((item) => item.key === view)?.label ?? "Today";
+  const activeLabel =
+    NAVIGATION.find((item) => item.key === view)?.label ??
+    (view === "profile" ? "Career profile" : "Today");
 
   const openPursuit = (jobId: string) => {
     setSelectedPursuitJobId(jobId);
-    navigate("pursuit");
+    navigate("pursuit", jobId);
+  };
+
+  const selectJob = (jobId: string | null) => {
+    setSelectedJobId(jobId);
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "jobs");
+    if (jobId) url.searchParams.set("job", jobId);
+    else url.searchParams.delete("job");
+    window.history.replaceState({}, "", url);
   };
 
   return (
@@ -383,14 +430,31 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
               aria-modal="false"
               aria-label="Account and appearance"
               ref={accountMenuRef}
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setSettingsOpen(false);
-              }}
             >
               <div className="wa-account-identity">
                 <strong>{actor.displayName}</strong>
                 <span>{actor.email}</span>
               </div>
+              <nav className="wa-account-links" aria-label="Account navigation">
+                <button
+                  type="button"
+                  className={view === "profile" ? "is-active" : ""}
+                  onClick={() => navigate("profile")}
+                  aria-current={view === "profile" ? "page" : undefined}
+                >
+                  <UserCircle size={18} aria-hidden="true" />
+                  Career profile
+                </button>
+                <button
+                  type="button"
+                  className={view === "direction" ? "is-active" : ""}
+                  onClick={() => navigate("direction")}
+                  aria-current={view === "direction" ? "page" : undefined}
+                >
+                  <RoadHorizon size={18} aria-hidden="true" />
+                  Search plan
+                </button>
+              </nav>
               <fieldset className="wa-theme-fieldset">
                 <legend>Appearance</legend>
                 <div className="wa-theme-options">
@@ -426,12 +490,20 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
         {!loading && error ? <WorkspaceError message={error} onRetry={refresh} /> : null}
         {!loading && !error && workspace ? (
           <>
-            {view === "today" ? <TodayView workspace={workspace} pursuedJob={pursuedJob} navigate={navigate} /> : null}
+            {view === "today" ? (
+              <div className="wa-page wa-today-dashboard">
+                <TodayDashboard />
+              </div>
+            ) : null}
             {view === "jobs" ? (
               <JobsView
                 opportunities={workspace.opportunities}
                 selectedJob={selectedJob}
-                onSelect={setSelectedJobId}
+                careerPaths={workspace.careerPaths}
+                canRecordOperatorAnalysis={
+                  workspace.system.canRecordOperatorAnalysis
+                }
+                onSelect={selectJob}
                 onRefresh={refresh}
                 onOpenPursuit={openPursuit}
               />
@@ -446,6 +518,7 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
                 onRefresh={refresh}
               />
             ) : null}
+            {view === "studio" ? <DocumentStudioView /> : null}
             {view === "direction" ? <DirectionView workspace={workspace} onRefresh={refresh} /> : null}
             {view === "profile" ? <ProfileView workspace={workspace} /> : null}
           </>
@@ -473,6 +546,49 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   );
 }
 
+function DocumentStudioView() {
+  const [studio, setStudio] = useState<StudioKey>(currentStudio);
+
+  const chooseStudio = (nextStudio: StudioKey) => {
+    const main = document.querySelector<HTMLElement>("#main-content");
+    setStudio(nextStudio);
+    const url = new URL(window.location.href);
+    url.searchParams.set("view", "studio");
+    url.searchParams.set("asset", nextStudio);
+    window.history.replaceState({}, "", url);
+    if (main) main.scrollTop = 0;
+    window.requestAnimationFrame(() => main?.focus());
+  };
+
+  return (
+    <div className="wa-page wa-document-studio">
+      <div className="wa-studio-switcher" aria-label="Application document">
+        <button
+          type="button"
+          className={studio === "resume" ? "is-active" : ""}
+          onClick={() => chooseStudio("resume")}
+          aria-pressed={studio === "resume"}
+        >
+          <FileText size={18} aria-hidden="true" />
+          Resumes
+        </button>
+        <button
+          type="button"
+          className={studio === "cover" ? "is-active" : ""}
+          onClick={() => chooseStudio("cover")}
+          aria-pressed={studio === "cover"}
+        >
+          <FileText size={18} aria-hidden="true" />
+          Cover letters
+        </button>
+      </div>
+      <section id="document-studio-content" tabIndex={-1}>
+        {studio === "resume" ? <ResumeStudio /> : <CoverLetterStudio />}
+      </section>
+    </div>
+  );
+}
+
 function WorkspaceLoading() {
   return (
     <section className="wa-state-panel" aria-live="polite" aria-busy="true">
@@ -496,141 +612,278 @@ function WorkspaceError({ message, onRetry }: { message: string; onRetry: () => 
   );
 }
 
-function TodayView({
-  workspace,
-  pursuedJob,
-  navigate,
+function OwnerAnalysisPanel({
+  job,
+  careerPaths,
+  onRefresh,
 }: {
-  workspace: WorkspaceRecord;
-  pursuedJob: OpportunityRecord | null;
-  navigate: (view: ViewKey) => void;
+  job: OpportunityRecord;
+  careerPaths: CareerPathRecord[];
+  onRefresh: () => Promise<void>;
 }) {
-  const opportunity = pursuedJob ?? workspace.opportunities[0] ?? null;
-  const packageBlockers = opportunity?.pursuit?.package?.blockers ?? [];
-  const attentionItems = [...new Set([
-    ...packageBlockers,
-    ...(opportunity?.analysis?.unknowns ?? []),
-    ...(opportunity?.sourceVersion?.conflicts ?? []),
-  ])];
-  const recommendation = opportunity?.analysis?.recommendation
-    ? titleCase(opportunity.analysis.recommendation)
-    : "Needs evidence";
+  const activePaths = careerPaths.filter((path) => path.state === "active");
+  const existingPath =
+    typeof job.analysis?.integrityGates.careerPathId === "string"
+      ? job.analysis.integrityGates.careerPathId
+      : "";
+  const [careerPathId, setCareerPathId] = useState(
+    existingPath || activePaths.find((path) => path.isPrimary)?.id || activePaths[0]?.id || "",
+  );
+  const [moveValue, setMoveValue] = useState(
+    job.analysis?.moveValueScore === null ||
+      job.analysis?.moveValueScore === undefined
+      ? ""
+      : String(job.analysis.moveValueScore),
+  );
+  const [fitScore, setFitScore] = useState(
+    typeof job.analysis?.fit.fitScore === "number"
+      ? String(job.analysis.fit.fitScore)
+      : typeof job.analysis?.fit.score === "number"
+        ? String(job.analysis.fit.score)
+        : "",
+  );
+  const [readiness, setReadiness] = useState(
+    job.analysis?.pursuitReadinessScore === null ||
+      job.analysis?.pursuitReadinessScore === undefined
+      ? ""
+      : String(job.analysis.pursuitReadinessScore),
+  );
+  const [recommendation, setRecommendation] = useState(
+    job.analysis?.recommendation ?? "needs_evidence",
+  );
+  const [unknowns, setUnknowns] = useState(
+    job.analysis?.unknowns.join("\n") ?? "",
+  );
+  const [evidenceNote, setEvidenceNote] = useState(
+    typeof job.analysis?.fit.evidenceNote === "string"
+      ? job.analysis.fit.evidenceNote
+      : "",
+  );
+  const [sourceArtifact, setSourceArtifact] = useState(
+    typeof job.analysis?.fit.sourceArtifact === "string"
+      ? job.analysis.fit.sourceArtifact
+      : "",
+  );
+  const [nextAction, setNextAction] = useState(
+    job.pursuit?.nextAction ??
+      (typeof job.analysis?.fit.nextAction === "string"
+        ? job.analysis.fit.nextAction
+        : ""),
+  );
+  const [confirmed, setConfirmed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<FormMessage | null>(null);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/operator-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobPostingId: job.id,
+          sourceVersionId: job.sourceVersion?.id,
+          careerPathId,
+          fitScore: fitScore.trim() ? Number(fitScore) : null,
+          moveValueScore: moveValue.trim() ? Number(moveValue) : null,
+          pursuitReadinessScore: readiness.trim()
+            ? Number(readiness)
+            : null,
+          recommendation,
+          unknowns: unknowns
+            .split("\n")
+            .map((item) => item.trim())
+            .filter(Boolean),
+          evidenceNote,
+          sourceArtifact,
+          nextAction,
+          confirmation: confirmed ? "record_reviewed_analysis" : "",
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(result.error ?? "The analysis receipt could not be recorded.");
+      }
+      setConfirmed(false);
+      setMessage({
+        text: "Reviewed analysis recorded against this exact source version.",
+        kind: "success",
+      });
+      await onRefresh();
+    } catch (saveError) {
+      setMessage({
+        text:
+          saveError instanceof Error
+            ? saveError.message
+            : "The analysis receipt could not be recorded.",
+        kind: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="wa-page wa-today-page">
-      <section className="wa-hero">
-        <div>
-          <p className="wa-eyebrow">Your next best move</p>
-          {opportunity ? (
-            <>
-              <h1>Stop wasting your best effort on the wrong jobs.</h1>
-              <p className="wa-hero-role"><strong>{opportunity.title}</strong> at {opportunity.employer} is your strongest current pursuit.</p>
-              <p className="wa-hero-copy">
-                Way Ahead finds the work worth pursuing, proves the real fit, and builds your strongest truthful case for the offer.
-              </p>
-              <div className="wa-hero-actions">
-                <button className="wa-primary-button" type="button" onClick={() => navigate(opportunity.pursuit ? "pursuit" : "jobs")}>
-                  {opportunity.pursuit ? "Finish this pursuit" : "Review this job"} <ArrowRight size={19} aria-hidden="true" />
-                </button>
-                <a className="wa-text-link" href={opportunity.canonicalUrl} target="_blank" rel="noreferrer">
-                  View employer source <ArrowSquareOut size={17} aria-hidden="true" />
-                </a>
-              </div>
-            </>
-          ) : (
-            <>
-              <h1>Find the job worth changing your life for.</h1>
-              <p className="wa-hero-copy">Your career record and standards are ready. Add a direct employer job to begin the first evidence-backed pursuit.</p>
-              <button className="wa-primary-button" type="button" onClick={() => navigate("jobs")}>Add a live job <ArrowRight size={19} /></button>
-            </>
-          )}
-        </div>
-        {opportunity ? (
-          <aside className="wa-hero-brief" aria-label="Why this opportunity is next">
-            <div>
-              <span>Current recommendation</span>
-              <strong>{recommendation} · {scoreLabel(opportunity.analysis?.moveValueScore ?? null)}/100 move value</strong>
-            </div>
-            <div>
-              <span>Next action</span>
-              <strong>{packageBlockers.length ? `Resolve ${packageBlockers.length} package blocker${packageBlockers.length === 1 ? "" : "s"} before approval.` : attentionItems.length ? `Review the exact package with ${attentionItems.length} recorded risk${attentionItems.length === 1 ? "" : "s"}.` : "Review the exact package for approval."}</strong>
-            </div>
-            <div className="wa-hero-privacy">
-              <LockKey size={20} weight="duotone" aria-hidden="true" />
-              <span>Private. Nothing is sent without exact approval.</span>
-            </div>
-          </aside>
-        ) : (
-          <div className="wa-trust-card">
-            <LockKey size={27} weight="duotone" aria-hidden="true" />
-            <div>
-              <strong>Private and approval-bound</strong>
-              <span>Nothing is submitted, messaged, billed, or shared from this environment.</span>
-            </div>
+    <details className="wa-operator-panel">
+      <summary>Owner analysis receipt</summary>
+      <form onSubmit={submit}>
+        <div className="wa-operator-heading">
+          <div>
+            <p className="wa-eyebrow">Internal owner control</p>
+            <h2>Bind a reviewed decision to this source version.</h2>
           </div>
-        )}
-      </section>
-
-      {opportunity ? (
-        <section className="wa-decision-grid" aria-label="Current decision evidence">
-          <article className="wa-score-card wa-score-card-strong">
-            <span>Move value</span>
-            <strong>{scoreLabel(opportunity.analysis?.moveValueScore ?? null)}</strong>
-            <p>Is this job better than your current baseline?</p>
-          </article>
-          <article className="wa-score-card">
-            <span>Pursuit readiness</span>
-            <strong>{scoreLabel(opportunity.analysis?.pursuitReadinessScore ?? null)}</strong>
-            <p>Can your evidence support a strong application now?</p>
-          </article>
-          <article className={opportunity.sourceVersion?.captureState === "conflict" ? "wa-score-card wa-score-card-warning" : "wa-score-card"}>
-            <span>Source status</span>
-            <strong className="wa-word-score wa-source-score">
-              {opportunity.sourceVersion?.captureState === "conflict" ? <WarningCircle size={25} weight="fill" aria-hidden="true" /> : null}
-              {opportunity.sourceVersion?.captureState === "conflict" ? "Conflict recorded" : titleCase(opportunity.sourceVersion?.captureState ?? "unavailable")}
-            </strong>
-            <p>Checked {shortDate(opportunity.lastCheckedAt)} at the employer source.</p>
-          </article>
-        </section>
-      ) : null}
-
-      <section className="wa-section wa-two-column-section">
-        <div>
-          <p className="wa-eyebrow">What needs attention</p>
-          <h2>{attentionItems.length ? `${attentionItems.length} recorded risk${attentionItems.length === 1 ? "" : "s"} need your attention.` : "The evidence is ready for your review."}</h2>
+          <p>
+            This changes Matt’s private scoreboard only. It does not generate,
+            populate, upload, send, or submit anything.
+          </p>
         </div>
-        <div className="wa-action-list">
-          {attentionItems.length ? attentionItems.map((item) => (
-            <div className="wa-action-row" key={item}>
-              <WarningCircle size={22} weight="fill" aria-hidden="true" />
-              <span>{item}</span>
-            </div>
-          )) : (
-            <div className="wa-action-row is-positive">
-              <CheckCircle size={22} weight="fill" aria-hidden="true" />
-              <span>No unresolved package blocker is recorded.</span>
-            </div>
-          )}
+        <div className="wa-form-grid">
+          <label>
+            Career path
+            <select
+              value={careerPathId}
+              onChange={(event) => setCareerPathId(event.target.value)}
+              required
+            >
+              <option value="">Choose an active path</option>
+              {activePaths.map((path) => (
+                <option key={path.id} value={path.id}>
+                  {path.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Recommendation
+            <select
+              value={recommendation}
+              onChange={(event) =>
+                setRecommendation(
+                  event.target.value as
+                    | "pursue"
+                    | "watch"
+                    | "pass"
+                    | "needs_evidence",
+                )
+              }
+            >
+              <option value="needs_evidence">Needs evidence</option>
+              <option value="pursue">Pursue</option>
+              <option value="watch">Keep watch</option>
+              <option value="pass">Pass</option>
+            </select>
+          </label>
+          <label>
+            Fit score
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              value={fitScore}
+              onChange={(event) => setFitScore(event.target.value)}
+              placeholder="Role alignment"
+            />
+          </label>
+          <label>
+            Move Value
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              value={moveValue}
+              onChange={(event) => setMoveValue(event.target.value)}
+              placeholder="Leave open if not scored"
+            />
+          </label>
+          <label>
+            Pursuit Readiness
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              value={readiness}
+              onChange={(event) => setReadiness(event.target.value)}
+              placeholder="Leave open while facts are missing"
+            />
+          </label>
         </div>
-      </section>
-
-      <section className="wa-section wa-system-receipt">
-        <div><Database size={24} weight="duotone" /><span><strong>Durable account</strong>Your decisions persist across phone and laptop.</span></div>
-        <div><ShieldCheck size={24} weight="duotone" /><span><strong>Evidence first</strong>Unknowns and conflicts remain visible.</span></div>
-        <div><Target size={24} weight="duotone" /><span><strong>Exact approval</strong>Any package change invalidates approval.</span></div>
-      </section>
-    </div>
+        <label>
+          Unresolved facts, one per line
+          <textarea
+            value={unknowns}
+            onChange={(event) => setUnknowns(event.target.value)}
+            rows={5}
+          />
+        </label>
+        <label>
+          Evidence note
+          <textarea
+            value={evidenceNote}
+            onChange={(event) => setEvidenceNote(event.target.value)}
+            rows={4}
+            required
+          />
+        </label>
+        <label>
+          Source artifact
+          <input
+            type="text"
+            value={sourceArtifact}
+            onChange={(event) => setSourceArtifact(event.target.value)}
+            placeholder="Private review artifact or source receipt"
+            required
+          />
+        </label>
+        <label>
+          Exact next action
+          <textarea
+            value={nextAction}
+            onChange={(event) => setNextAction(event.target.value)}
+            rows={3}
+            required
+          />
+        </label>
+        <label className="wa-checkbox-row">
+          <input
+            type="checkbox"
+            checked={confirmed}
+            onChange={(event) => setConfirmed(event.target.checked)}
+            required
+          />
+          I reviewed the canonical source, claim safety, and every unresolved
+          fact recorded above.
+        </label>
+        <button
+          className="wa-primary-button"
+          type="submit"
+          disabled={saving || !job.sourceVersion}
+        >
+          {saving ? "Recording…" : "Record reviewed analysis"}
+        </button>
+        <FormFeedback message={message} />
+      </form>
+    </details>
   );
 }
 
 function JobsView({
   opportunities,
   selectedJob,
+  careerPaths,
+  canRecordOperatorAnalysis,
   onSelect,
   onRefresh,
   onOpenPursuit,
 }: {
   opportunities: OpportunityRecord[];
   selectedJob: OpportunityRecord | null;
+  careerPaths: CareerPathRecord[];
+  canRecordOperatorAnalysis: boolean;
   onSelect: (id: string | null) => void;
   onRefresh: () => Promise<void>;
   onOpenPursuit: (jobId: string) => void;
@@ -644,7 +897,7 @@ function JobsView({
     setSaving(true);
     setMessage(null);
     try {
-      const response = await fetch("/api/jobs/greenhouse", {
+      const response = await fetch("/api/jobs/intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
@@ -701,6 +954,7 @@ function JobsView({
           </div>
         ) : null}
         <section className="wa-decision-grid">
+          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof selectedJob.analysis?.fit.fitScore === "number" ? selectedJob.analysis.fit.fitScore : typeof selectedJob.analysis?.fit.score === "number" ? selectedJob.analysis.fit.score : null)}</strong><p>How closely the role matches this career path.</p></article>
           <article className="wa-score-card wa-score-card-strong"><span>Move value</span><strong>{scoreLabel(selectedJob.analysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
           <article className="wa-score-card"><span>Pursuit readiness</span><strong>{scoreLabel(selectedJob.analysis?.pursuitReadinessScore ?? null)}</strong><p>Grounded in confirmed profile evidence.</p></article>
           <article className="wa-score-card"><span>Recommendation</span><strong className="wa-word-score">{titleCase(selectedJob.analysis?.recommendation ?? "needs_evidence")}</strong><p>{selectedJob.analysis ? "Analysis stored in your account." : "A verified source needs operator analysis."}</p></article>
@@ -719,6 +973,14 @@ function JobsView({
         </section>
         {!selectedJob.pursuit ? <button className="wa-primary-button" type="button" disabled={saving} onClick={() => startPursuit(selectedJob)}>Start this pursuit <ArrowRight size={19} /></button> : <button className="wa-primary-button" type="button" onClick={() => onOpenPursuit(selectedJob.id)}>Open pursuit <ArrowRight size={19} /></button>}
         <FormFeedback message={message} />
+        {canRecordOperatorAnalysis ? (
+          <OwnerAnalysisPanel
+            key={`${selectedJob.id}:${selectedJob.sourceVersion?.id ?? "none"}:${selectedJob.analysis?.id ?? "none"}`}
+            job={selectedJob}
+            careerPaths={careerPaths}
+            onRefresh={onRefresh}
+          />
+        ) : null}
       </div>
     );
   }
@@ -730,22 +992,22 @@ function JobsView({
         <p>Every job here keeps its canonical source, freshness, evidence gaps, and pursuit state visible.</p>
       </section>
       <form className="wa-add-job" onSubmit={addJob}>
-        <label htmlFor="greenhouse-job-url">Add a direct employer job</label>
+        <label htmlFor="employer-job-url">Add a direct employer job</label>
         <div>
           <input
-            id="greenhouse-job-url"
+            id="employer-job-url"
             type="url"
             value={url}
             onChange={(event) => setUrl(event.target.value)}
-            placeholder="https://job-boards.greenhouse.io/company/jobs/123"
+            placeholder="Paste a direct Greenhouse or Lever job URL"
             required
             aria-invalid={message?.kind === "error" ? true : undefined}
-            aria-describedby="greenhouse-job-url-help greenhouse-job-url-feedback"
+            aria-describedby="employer-job-url-help employer-job-url-feedback"
           />
           <button type="submit" className="wa-primary-button" disabled={saving}>{saving ? "Verifying…" : <><Plus size={18} /> Add job</>}</button>
         </div>
-        <small id="greenhouse-job-url-help">Current live intake supports canonical Greenhouse employer URLs. It never submits an application.</small>
-        <FormFeedback message={message} id="greenhouse-job-url-feedback" />
+        <small id="employer-job-url-help">Current live intake verifies canonical Greenhouse and Lever employer URLs. It never submits an application.</small>
+        <FormFeedback message={message} id="employer-job-url-feedback" />
       </form>
       <div className="wa-job-list">
         {opportunities.length ? opportunities.map((job) => (
@@ -1021,7 +1283,12 @@ function AssetCard({ asset }: { asset: AssetRecord }) {
       </summary>
       <div className="wa-asset-content">
         <div className="wa-asset-receipt"><span>Version {asset.version}</span><span>{asset.pageCount ? `${asset.pageCount} page${asset.pageCount === 1 ? "" : "s"}` : "Page count open"}</span><span>{asset.contentSha256 ? `${asset.contentSha256.slice(0, 12)}…` : "Fingerprint open"}</span></div>
-        {asset.filename ? <a className="wa-asset-download" href={`/founder-assets/${encodeURIComponent(asset.filename)}`} download aria-label={`Download ${asset.filename}`}>Download {assetLabel(asset.type)} PDF <ArrowSquareOut size={16} aria-hidden="true" /></a> : null}
+        {asset.filename ? (
+          <p className="wa-muted">
+            The recorded filename is private. Re-render it from Studio to
+            download a current, user-scoped copy.
+          </p>
+        ) : null}
         {lines.length ? lines.map((line, index) => <p key={`${asset.id}-${index}`}>{line}</p>) : <p className="wa-muted">Structured content is stored, but this asset has no readable text view yet.</p>}
       </div>
     </details>
@@ -1177,6 +1444,25 @@ function ProfileView({ workspace }: { workspace: WorkspaceRecord }) {
       {currentConflicts.length ? (
         <div className="wa-alert wa-alert-warning"><WarningCircle size={24} weight="fill" /><div><strong>Current-work timeline needs a decision</strong>{currentConflicts.map((role) => <span key={role.id}>{role.title} at {role.employer} is marked as current and conflicting.</span>)}</div></div>
       ) : null}
+      <section className="wa-section wa-profile-source">
+        <div className="wa-section-heading">
+          <div>
+            <p className="wa-eyebrow">Source record</p>
+            <h2>Review or replace the experience behind your profile.</h2>
+          </div>
+          <a
+            className="wa-secondary-button"
+            href="/app/onboarding/experience"
+          >
+            Update experience
+          </a>
+        </div>
+        <p className="wa-muted">
+          Upload a PDF or DOCX, paste your career history, or enter a role. Way
+          Ahead reads files locally and saves only the text you review and
+          confirm.
+        </p>
+      </section>
       <section className="wa-section wa-profile-summary"><p className="wa-eyebrow">Positioning</p><h2>{workspace.profile.summary ?? "Your confirmed professional summary has not been stored yet."}</h2></section>
       <section className="wa-section">
         <div className="wa-section-heading"><div><p className="wa-eyebrow">Experience</p><h2>The record behind every claim.</h2></div><span>{workspace.profile.experiences.length} roles</span></div>

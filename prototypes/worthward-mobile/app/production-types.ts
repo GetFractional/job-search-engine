@@ -154,6 +154,7 @@ export type WorkspaceRecord = {
   system: {
     environment: "founder_production";
     operatorAssisted: true;
+    canRecordOperatorAnalysis: boolean;
     billingEnabled: false;
     submissionEnabled: false;
     refreshedAt: number;

@@ -16,19 +16,24 @@ async function productionBundleText() {
   return (await Promise.all(files.map((file) => readFile(file, "utf8")))).join("\n");
 }
 
-test("compiles the owner-only production shell and sign-in boundary", async () => {
-  const [bundle, page, auth, layout] = await Promise.all([
+test("compiles the public website and account-level sign-in boundary", async () => {
+  const [bundle, page, appPage, auth, layout] = await Promise.all([
     productionBundleText(),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/server-auth.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /requireFounderPage\("\/"\)/);
+  assert.match(page, /getChatGPTUser/);
+  assert.doesNotMatch(page, /requireFounderPage|redirect\(/);
+  assert.match(appPage, /requireUserPage\("\/app"\)/);
+  assert.match(appPage, /readOnboardingState/);
   assert.match(auth, /redirect\(chatGPTSignInPath\(returnTo\)\)/);
-  assert.match(auth, /This founder environment is not shared with this account/);
+  assert.match(auth, /export function requireUserRequest/);
+  assert.doesNotMatch(auth, /not shared with this account/);
   assert.match(layout, /Way Ahead \| Your next job, pursued with evidence/);
   assert.match(bundle, /Loading the evidence behind your next move/);
-  assert.match(bundle, /Primary navigation/);
+  assert.match(bundle, /Stop wasting your best effort on jobs that are not worth it/);
   assert.doesNotMatch(bundle, /Worthward|Cedarfield|Tebra|THNKS|Lumeris|Babylist|TextNow|Finite State/i);
 });
 
@@ -49,10 +54,24 @@ test("keeps legacy placeholder content out of the production bundle", async () =
   }
 });
 
+test("keeps founder files and local machine paths out of the production bundle", async () => {
+  const bundle = await productionBundleText();
+  for (const forbidden of [
+    /\/founder-assets\//,
+    /\/Users\/mattdimock\//,
+    /\/private\/tmp\/way-ahead/i,
+    /Documents\/Jobs\/Job Search/i,
+    /file:\/\/\/Users\//i,
+  ]) {
+    assert.doesNotMatch(bundle, forbidden);
+  }
+});
+
 test("keeps the production UI data-backed, responsive, and approval-bound", async () => {
-  const [page, app, repository, auth, apiUtils, css, globals, hosting] = await Promise.all([
+  const [page, app, publicSite, repository, auth, apiUtils, css, globals, hosting] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/WayAheadApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/PublicSite.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/workspace-repository.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/server-auth.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/api-utils.ts", import.meta.url), "utf8"),
@@ -61,9 +80,10 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
     readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /requireFounderPage/);
+  assert.match(page, /getChatGPTUser/);
   assert.match(auth, /oai-authenticated-user-email/);
-  assert.match(auth, /WAY_AHEAD_OWNER_EMAIL/);
+  assert.match(repository, /WAY_AHEAD_OWNER_EMAIL/);
+  assert.match(repository, /role:\s*UserRow\["role"\]\s*=\s*configuredOwnerEmail\(\) === email \? "owner" : "member"/);
   assert.match(repository, /WHERE user_id = \?/);
   assert.match(repository, /validation_state = 'invalidated'/);
   assert.match(repository, /readiness_state = 'superseded'/);
@@ -75,7 +95,7 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.match(apiUtils, /maximumBytes/);
   assert.match(hosting, /"d1": "DB"/);
   assert.match(hosting, /"r2": null/);
-  assert.match(app, /Nothing is submitted, messaged, billed, or shared/);
+  assert.match(publicSite, /Nothing sent without[\s\S]*your approval/);
   assert.match(app, /Way Ahead has no employer-form population, upload, outreach, or submission capability/);
   assert.match(app, /Maximum commute \(miles\)/);
   assert.match(app, /role="radiogroup"/);
@@ -114,7 +134,8 @@ test("makes package approval visibly exact and separate from submission", async 
   assert.match(app, /without the current Zaytinya bridge role/);
   assert.match(app, /packageRecord\.approvalState === "approved"/);
   assert.match(app, /key=\{`\$\{pursuedJob\?\.id[\s\S]*pursuedJob\?\.pursuit\?\.package\?\.payloadSha256/);
-  assert.match(app, /\/founder-assets\/\$\{encodeURIComponent\(asset\.filename\)\}/);
+  assert.doesNotMatch(app, /\/founder-assets\//);
+  assert.match(app, /Re-render it from Studio/);
   assert.doesNotMatch(app, /confirmation: "submit_application"/);
   assert.match(css, /\.wa-package-review-block/);
   assert.match(css, /\.wa-hash-code/);
@@ -135,8 +156,10 @@ test("derives package fingerprints server-side and versions employer content wit
 });
 
 test("keeps mobile trust, account focus, and form feedback behavior explicit", async () => {
-  const [app, css] = await Promise.all([
+  const [app, today, todayRepository, css] = await Promise.all([
     readFile(new URL("../app/WayAheadApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/TodayDashboard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/today-repository.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/production.css", import.meta.url), "utf8"),
   ]);
 
@@ -150,8 +173,8 @@ test("keeps mobile trust, account focus, and form feedback behavior explicit", a
   assert.match(app, /pathMessage/);
   assert.match(app, /id="job-standard-feedback"/);
   assert.match(app, /id="career-path-feedback"/);
-  assert.match(app, /Conflict recorded/);
-  assert.match(app, /wa-score-card-warning/);
+  assert.match(today, /data-state=\{job\.sourceStatus\}/);
+  assert.match(todayRepository, /row\.capture_state === "conflict"\) return "Conflict"/);
   assert.match(css, /\.wa-today-page \.wa-hero-brief \.wa-hero-privacy[\s\S]*order:\s*-1/);
   assert.match(css, /padding:\s*88px 16px 132px/);
 });
@@ -167,7 +190,9 @@ test("exposes no application-submission endpoint", async () => {
   }
   await walk(apiRoot);
   assert.ok(paths.includes("/workspace/route.ts"));
+  assert.ok(paths.includes("/jobs/intake/route.ts"));
   assert.ok(paths.includes("/jobs/greenhouse/route.ts"));
+  assert.ok(paths.includes("/operator-analysis/route.ts"));
   assert.ok(paths.includes("/owner-bootstrap/route.ts"));
   assert.equal(paths.some((path) => /submit|apply|outreach|message/i.test(path)), false);
 });
