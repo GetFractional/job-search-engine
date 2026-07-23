@@ -11,6 +11,11 @@ test("keeps every D1 migration intact through the Sites Wrangler SQL splitter", 
 
   for (const migrationName of migrationNames) {
     const rawSql = await readFile(new URL(migrationName, migrationDirectory), "utf8");
+    assert.doesNotMatch(
+      rawSql,
+      /CREATE\s+TRIGGER\b/i,
+      `${migrationName} contains a compound trigger program that Sites cannot migrate safely`,
+    );
     const drizzleStatements = rawSql
       .split("--> statement-breakpoint")
       .map((statement) => statement.trim())

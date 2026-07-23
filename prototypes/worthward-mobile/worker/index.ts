@@ -1,5 +1,6 @@
 /** Cloudflare Worker entry point for the owner-only Way Ahead workspace. */
 import handler from "vinext/server/app-router-entry";
+import { ensureRuntimeIntegrityTriggers } from "../db/integrity";
 
 interface Env {
   ASSETS: Fetcher;
@@ -33,7 +34,18 @@ function secureResponse(response: Response, request: Request): Response {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return secureResponse(await handler.fetch(request, env, ctx), request);
+    try {
+      await ensureRuntimeIntegrityTriggers(env.DB);
+      return secureResponse(await handler.fetch(request, env, ctx), request);
+    } catch {
+      return secureResponse(
+        Response.json(
+          { error: "Way Ahead storage integrity is not ready yet." },
+          { status: 503 },
+        ),
+        request,
+      );
+    }
   },
 };
 

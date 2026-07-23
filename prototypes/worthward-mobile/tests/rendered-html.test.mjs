@@ -179,5 +179,11 @@ test("hardens every worker response and exposes no image transformation surface"
   assert.match(worker, /X-Content-Type-Options/);
   assert.match(worker, /Permissions-Policy/);
   assert.match(worker, /private, no-store/);
+  assert.match(
+    worker,
+    /await ensureRuntimeIntegrityTriggers\(env\.DB\);[\s\S]*handler\.fetch/,
+    "the request handler must wait for all database integrity guards",
+  );
+  assert.match(worker, /storage integrity is not ready yet[\s\S]*status: 503/);
   assert.doesNotMatch(worker, /handleImageOptimization|IMAGES|_vinext\/image/);
 });

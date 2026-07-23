@@ -18,6 +18,26 @@ const rawMigrationSqlByName = new Map(
   ]),
 );
 
+const integrityTriggerDefinitions = JSON.parse(
+  readFileSync(new URL("../db/integrity-triggers.json", import.meta.url), "utf8"),
+);
+const sitesV1StaleTriggerDefinitions = JSON.parse(
+  readFileSync(
+    new URL("./sites-v1-stale-integrity-triggers.json", import.meta.url),
+    "utf8",
+  ),
+);
+
+assert.equal(
+  integrityTriggerDefinitions.length,
+  33,
+  "expected the complete production integrity-trigger set",
+);
+
+const runtimeIntegritySql = integrityTriggerDefinitions
+  .map(({ sql }) => sql)
+  .join("\n");
+
 const migrationSqlByName = new Map(
   [...rawMigrationSqlByName].map(([migrationName, migrationSqlText]) => [
     migrationName,
@@ -25,7 +45,10 @@ const migrationSqlByName = new Map(
   ]),
 );
 
-const migrationSql = [...migrationSqlByName.values()].join("\n");
+const migrationSql = [
+  ...migrationSqlByName.values(),
+  runtimeIntegritySql,
+].join("\n");
 
 const runSql = (sql, { includeMigration = true } = {}) =>
   spawnSync("/usr/bin/sqlite3", [":memory:"], {
@@ -152,18 +175,107 @@ test("applies every migration statement across fresh SQLite connections", () => 
       }
     }
 
+    for (const { name, sql } of integrityTriggerDefinitions) {
+      const result = spawnSync("/usr/bin/sqlite3", [databasePath], {
+        input: [".bail on", "PRAGMA foreign_keys=ON;", sql].join("\n"),
+        encoding: "utf8",
+      });
+
+      assert.equal(
+        result.status,
+        0,
+        `${name} failed as a complete runtime D1 statement:\n${result.stderr}`,
+      );
+    }
+
     const verification = spawnSync("/usr/bin/sqlite3", [databasePath], {
       input: [
         ".bail on",
         "PRAGMA foreign_keys=ON;",
         "SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';",
         "SELECT count(*) FROM pragma_foreign_key_check;",
+        "SELECT count(*) FROM sqlite_master WHERE type = 'trigger';",
       ].join("\n"),
       encoding: "utf8",
     });
 
     assert.equal(verification.status, 0, verification.stderr);
-    assert.equal(verification.stdout.trim(), "34\n0");
+    assert.equal(verification.stdout.trim(), "34\n0\n33");
+  } finally {
+    rmSync(migrationDirectory, { recursive: true, force: true });
+  }
+});
+
+test("converges a partially migrated Sites v1 database to the exact trigger set", () => {
+  const migrationDirectory = mkdtempSync(join(tmpdir(), "way-ahead-sites-v1-repair-"));
+  const databasePath = join(migrationDirectory, "repair.sqlite");
+  const staleByName = new Map(
+    sitesV1StaleTriggerDefinitions.map((definition) => [definition.name, definition]),
+  );
+  const v1MissingNames = new Set([
+    "external_action_approvals_identity_payload_immutable",
+    "job_posting_versions_new_snapshot_supersedes_packages",
+    "pursuit_packages_new_version_supersedes_previous",
+    "pursuit_packages_version_monotonic",
+  ]);
+  const sitesV1Definitions = integrityTriggerDefinitions
+    .filter(({ name }) => !v1MissingNames.has(name))
+    .map((definition) => staleByName.get(definition.name) ?? definition);
+  const normalizeSql = (sql) =>
+    sql
+      .replace(/CREATE TRIGGER IF NOT EXISTS/i, "CREATE TRIGGER")
+      .replace(/\s+/g, " ")
+      .replace(/;$/, "")
+      .trim();
+
+  assert.equal(sitesV1Definitions.length, 29);
+  assert.equal(staleByName.size, 5);
+
+  try {
+    const schemaBeforeRepair = migrationNames
+      .filter((name) => name !== "0008_sites_trigger_convergence.sql")
+      .map((name) => migrationSqlByName.get(name))
+      .join("\n");
+    const seeded = spawnSync("/usr/bin/sqlite3", [databasePath], {
+      input: [
+        ".bail on",
+        "PRAGMA foreign_keys=ON;",
+        schemaBeforeRepair,
+        ...sitesV1Definitions.map(({ sql }) => sql),
+        "SELECT count(*) FROM sqlite_master WHERE type = 'trigger';",
+      ].join("\n"),
+      encoding: "utf8",
+    });
+    assert.equal(seeded.status, 0, seeded.stderr);
+    assert.equal(seeded.stdout.trim(), "29");
+
+    const repaired = spawnSync("/usr/bin/sqlite3", [databasePath], {
+      input: [
+        ".bail on",
+        "PRAGMA foreign_keys=ON;",
+        migrationSqlByName.get("0008_sites_trigger_convergence.sql"),
+        ...integrityTriggerDefinitions.map(({ sql }) => sql),
+      ].join("\n"),
+      encoding: "utf8",
+    });
+    assert.equal(repaired.status, 0, repaired.stderr);
+
+    const rows = JSON.parse(
+      spawnSync(
+        "/usr/bin/sqlite3",
+        [
+          "-json",
+          databasePath,
+          "SELECT name, sql FROM sqlite_master WHERE type = 'trigger' ORDER BY name;",
+        ],
+        { encoding: "utf8" },
+      ).stdout,
+    );
+    assert.equal(rows.length, 33);
+    assert.deepEqual(
+      rows.map(({ name, sql }) => [name, normalizeSql(sql)]),
+      integrityTriggerDefinitions.map(({ name, sql }) => [name, normalizeSql(sql)]),
+    );
   } finally {
     rmSync(migrationDirectory, { recursive: true, force: true });
   }
@@ -200,6 +312,7 @@ test("upgrades a populated 23-table database without losing subscriptions", () =
           ('legacy-subscription', 'user-a', 'legacy-watch', 'paused', '{}');
       `,
       ...migrationNames.slice(1).map((name) => migrationSqlByName.get(name)),
+      runtimeIntegritySql,
       `
         SELECT (s.offer_version_id IS NOT NULL) || ':' || ov.approval_state
           FROM subscriptions s
@@ -1595,16 +1708,21 @@ test("supersedes an approved package and revokes its approval when a newer packa
   );
 });
 
-test("keeps package replacement trigger compatible with the deployment SQL splitter", () => {
-  const migration = rawMigrationSqlByName.get("0007_exact_package_integrity.sql");
-  assert.ok(migration);
-  assert.doesNotMatch(
-    migration,
-    /SET\s+`external_approval_state`\s*=\s*CASE/,
-    "Wrangler's SQL splitter can mistake a SET CASE expression for the end of a trigger body",
+test("keeps runtime integrity triggers outside the Sites migration parser", () => {
+  for (const [name, migration] of rawMigrationSqlByName) {
+    assert.doesNotMatch(
+      migration,
+      /CREATE\s+TRIGGER\b/i,
+      `${name} must keep compound SQLite trigger programs out of Sites migrations`,
+    );
+  }
+
+  const triggerNames = new Set(
+    integrityTriggerDefinitions.map(({ name }) => name),
   );
-  assert.match(migration, /CREATE TRIGGER `external_action_approvals_insert_gate`/);
-  assert.match(migration, /CREATE TRIGGER `external_action_approvals_update_gate`/);
+  assert.ok(triggerNames.has("external_action_approvals_insert_gate"));
+  assert.ok(triggerNames.has("external_action_approvals_update_gate"));
+  assert.ok(triggerNames.has("pursuit_packages_new_version_supersedes_previous"));
 });
 
 test("rejects approval against a stale source version or mismatched employer form receipt", () => {

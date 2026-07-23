@@ -57,6 +57,13 @@
       "when": 1784817348236,
       "tag": "0007_exact_package_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1784832467688,
+      "tag": "0008_sites_trigger_convergence",
+      "breakpoints": true
     }
   ]
 }

@@ -8,8 +8,7 @@ CREATE TABLE `audit_events` (
 	`metadata_json` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
+);--> statement-breakpoint
 CREATE INDEX `audit_events_user_created_idx` ON `audit_events` (`user_id`,`created_at`);--> statement-breakpoint
 CREATE INDEX `audit_events_entity_idx` ON `audit_events` (`entity_type`,`entity_id`);--> statement-breakpoint
 CREATE TABLE `external_action_approvals` (
@@ -25,8 +24,7 @@ CREATE TABLE `external_action_approvals` (
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`,`pursuit_package_id`) REFERENCES `pursuit_packages`(`user_id`,`id`) ON UPDATE no action ON DELETE restrict
-);
---> statement-breakpoint
+);--> statement-breakpoint
 CREATE UNIQUE INDEX `external_action_approvals_user_id_unique` ON `external_action_approvals` (`user_id`,`id`);--> statement-breakpoint
 CREATE INDEX `external_action_approvals_package_state_idx` ON `external_action_approvals` (`pursuit_package_id`,`state`);--> statement-breakpoint
 CREATE TABLE `job_posting_versions` (
@@ -40,8 +38,7 @@ CREATE TABLE `job_posting_versions` (
 	`capture_state` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,
 	FOREIGN KEY (`job_posting_id`) REFERENCES `job_postings`(`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
+);--> statement-breakpoint
 CREATE UNIQUE INDEX `job_posting_versions_job_checksum_unique` ON `job_posting_versions` (`job_posting_id`,`description_checksum`);--> statement-breakpoint
 CREATE INDEX `job_posting_versions_job_checked_idx` ON `job_posting_versions` (`job_posting_id`,`source_checked_at`);--> statement-breakpoint
 CREATE TABLE `pursuit_packages` (
@@ -61,8 +58,7 @@ CREATE TABLE `pursuit_packages` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`job_posting_version_id`) REFERENCES `job_posting_versions`(`id`) ON UPDATE no action ON DELETE restrict,
 	FOREIGN KEY (`user_id`,`pursuit_id`) REFERENCES `pursuits`(`user_id`,`id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
+);--> statement-breakpoint
 CREATE UNIQUE INDEX `pursuit_packages_user_id_unique` ON `pursuit_packages` (`user_id`,`id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `pursuit_packages_pursuit_version_unique` ON `pursuit_packages` (`pursuit_id`,`version`);--> statement-breakpoint
 CREATE INDEX `pursuit_packages_pursuit_state_idx` ON `pursuit_packages` (`pursuit_id`,`readiness_state`);--> statement-breakpoint
@@ -76,61 +72,4 @@ ALTER TABLE `generated_assets` ADD `invalidated_at` integer;--> statement-breakp
 CREATE UNIQUE INDEX `generated_assets_user_id_unique` ON `generated_assets` (`user_id`,`id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `generated_assets_pursuit_type_version_unique` ON `generated_assets` (`pursuit_id`,`type`,`version`);--> statement-breakpoint
 ALTER TABLE `users` ADD `identity_provider` text DEFAULT 'chatgpt' NOT NULL;--> statement-breakpoint
-ALTER TABLE `users` ADD `role` text DEFAULT 'member' NOT NULL;--> statement-breakpoint
-CREATE TRIGGER `pursuit_packages_payload_immutable`
-BEFORE UPDATE OF `destination_url`,`job_posting_version_id`,`answers_json`,`asset_manifest_json`,`payload_sha256`
-ON `pursuit_packages`
-BEGIN
-  SELECT RAISE(ABORT, 'pursuit package payload is immutable');
-END;--> statement-breakpoint
-CREATE TRIGGER `external_action_approvals_insert_gate`
-BEFORE INSERT ON `external_action_approvals`
-WHEN NEW.`action` <> 'submit_application'
-  OR NEW.`state` NOT IN ('requested','approved','revoked','completed')
-  OR (
-    NEW.`state` IN ('approved','completed')
-    AND NOT EXISTS (
-      SELECT 1
-      FROM `pursuit_packages` p
-      WHERE p.`id` = NEW.`pursuit_package_id`
-        AND p.`user_id` = NEW.`user_id`
-        AND p.`payload_sha256` = NEW.`payload_sha256`
-        AND p.`readiness_state` = 'ready_for_review'
-        AND p.`blockers_json` = '[]'
-    )
-  )
-BEGIN
-  SELECT RAISE(ABORT, 'approval package is not ready or payload does not match');
-END;--> statement-breakpoint
-CREATE TRIGGER `external_action_approvals_update_gate`
-BEFORE UPDATE OF `pursuit_package_id`,`payload_sha256`,`action`,`state`
-ON `external_action_approvals`
-WHEN NEW.`action` <> 'submit_application'
-  OR NEW.`state` NOT IN ('requested','approved','revoked','completed')
-  OR (
-    NEW.`state` IN ('approved','completed')
-    AND NOT EXISTS (
-      SELECT 1
-      FROM `pursuit_packages` p
-      WHERE p.`id` = NEW.`pursuit_package_id`
-        AND p.`user_id` = NEW.`user_id`
-        AND p.`payload_sha256` = NEW.`payload_sha256`
-        AND p.`readiness_state` = 'ready_for_review'
-        AND p.`blockers_json` = '[]'
-    )
-  )
-BEGIN
-  SELECT RAISE(ABORT, 'approval package is not ready or payload does not match');
-END;--> statement-breakpoint
-CREATE TRIGGER `pursuit_packages_revoke_approval_after_state_change`
-AFTER UPDATE OF `readiness_state`,`blockers_json`
-ON `pursuit_packages`
-WHEN NEW.`readiness_state` <> 'ready_for_review' OR NEW.`blockers_json` <> '[]'
-BEGIN
-  UPDATE `external_action_approvals`
-     SET `state` = 'revoked',
-         `revoked_at` = unixepoch() * 1000
-   WHERE `user_id` = NEW.`user_id`
-     AND `pursuit_package_id` = NEW.`id`
-     AND `state` IN ('requested','approved');
-END;
+ALTER TABLE `users` ADD `role` text DEFAULT 'member' NOT NULL;
