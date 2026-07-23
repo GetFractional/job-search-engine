@@ -1,14 +1,16 @@
 # Way Ahead Company Operating System
 
-**Version:** 1.1
-**Operating date:** 2026-07-21
+**Version:** 1.2
+**Operating date:** 2026-07-22
 **Board and owner:** Matt Dimock
 **Accountable CEO and integrator:** Codex root, within the authority contract below
 **Company name:** Way Ahead, temporary local founder-checkpoint label only; the master brand remains open after a high-collision knockout screen
-**Current company stage:** Board-reviewable local synthetic founder checkpoint, before private external alpha
+**Current company stage:** Owner-only production foundation under authenticated hosted QA, before external-user alpha
 **Operating North Star:** Better-fit jobs found and pursued with less wasted effort and stronger honest proof
 
 > **Board amendment, 2026-07-21:** [Founder Feedback Product Reset](../strategy-system/16-founder-feedback-product-reset-2026-07-21.md) governs the customer promise, journey, schema, platform posture, offer ladder, acquisition surface, and next design gate. The [Unit Economics Ledger](my-way-ahead-unit-economics-ledger-2026-07-21.md) governs offer versions, revenue recognition, contribution definitions, free subsidy, support ceilings, cohort maturity, and the separate software, affiliate, and human-service ledgers. These controls supersede the job-checker-first homepage, required timeline interaction, $24 monthly Keep Watch preference, unstaffed human-service offers, and older economics ceilings. Matt subsequently selected **Way Ahead** as the provisional internal name and authorized the local synthesis of Career Portfolio Reveal, Warm Editorial Guide, and Focused Career Workspace. That candidate passed independent local founder-checkpoint QA. Legacy `my-way-ahead` paths and the isolated ClickUp folder remain stable identifiers until a separately reviewed migration. This Company Operating System continues to govern authority, exactly two active initiatives, source ownership, release gates, and reserved decisions.
+
+> **Board amendment, 2026-07-22:** Matt superseded the prototype-only and Teal-operating assumptions. Way Ahead must now be the real operating surface for Matt's career record, current jobs, decisions, pursuit assets, and exact approval payload. Teal is competitor research only and may not hold or mutate Matt's job-search state. Matt authorized a zero-incremental-spend, owner-only production foundation with real authentication, tenant-bound D1 persistence, and a live HTTPS URL restricted to `mattdim805@gmail.com`. This authorization does not include external users, billing, public access, model or job-feed spend, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment. No customer-visible sample or demo content is permitted in the production founder workspace.
 
 ## Board resolution
 
@@ -279,35 +281,36 @@ Critical fabrication, false-active status, privacy or security incident, mislead
 ### Confirmed
 
 - Executive Evidence typography, color, and trust language remain design inputs. Matt rejected its connected timeline as the governing interaction pattern.
-- The current candidate passes TypeScript, production build, ESLint, 40 automated tests, 30-table schema generation with no drift, exact-build visual QA, and independent local founder-checkpoint review.
-- The current prototype is local and synthetic. It does not ingest a live job, call a paid model, charge a card, send an application, or publish externally.
+- The owner-only production foundation passes TypeScript, production build, ESLint, 49 automated checks, Sites migration convergence, exact 33-trigger integrity parity, founder-asset checks, local responsive/theme/state QA, and independent migration review.
+- The owner-only Sites deployment is live at `https://career-evidence-founder-2026.mattdimock.chatgpt.site`, restricted to `mattdim805@gmail.com`, and backed by tenant-bound D1 persistence. It holds Matt's real career record and current Seso pursuit without customer-visible sample or demo content.
+- The production foundation does not call a paid model, charge a card, send outreach, populate an employer form, upload an application asset, or submit an application.
 - The prior screenshot folder under `prototypes/worthward-mobile/qa/ux-audit-2026-07-19/v2-final/` came from a stale bundle on port 3004 and is reference-only.
-- The exact current local build can be served through the detached QA service on port 3011.
-- Browser verification is restored through the Codex in-app browser. Fresh accepted evidence covers 320, 390, 768, 1280, and 1440 widths; Light, Dark, and System; the core journey; recovery and approval states; focus and target measurements; and a matched 390 x 844 reference comparison.
+- The exact current local build can be served through the founder QA service for engineering comparison, but the live Sites URL is the supported cross-device founder route.
+- Local browser verification covers mobile, tablet, and desktop; Light, Dark, and System; the real founder journey; source conflict, package, and approval states; focus and target measurements; and a matched mobile reference comparison. Hosted authenticated visual and D1 readback remain the final current-slice evidence gate.
 - The older Job Filter ClickUp lists contain a separate legacy brand, repository, and architecture. Way Ahead work remains isolated in the existing My Way Ahead ClickUp folder and lists.
 
 ### Not proven or authorized
 
 - Way Ahead trademark or entity-name clearance, domain control, or public-brand approval.
 - Homepage and pricing comprehension by first-time users.
-- Live job extraction, source rights, model quality, privacy route, security, billing, demand, retention, or unit economics.
-- Any private or public deployment, external alpha, paid offer, production connection, or job application.
+- Automated multi-source job ingestion, source-rights scalability, paid-model quality, billing, demand, retention, or observed unit economics.
+- Physical iPhone Safari, cellular, safe-area, VoiceOver, and cross-browser release quality.
+- Public deployment, external users, paid offers, employer-form population or upload, outreach, references, or application submission.
 
-## Next execution goal
+## Current execution goal
 
 The next task should use a bounded stage goal instead of reopening the company's entire future as one never-ending objective.
 
-> **Operate as the accountable CEO of My Way Ahead under Matt's Board authority and produce a Board-reviewable private-alpha candidate while advancing Matt's next-best job to exact-action approval readiness.** Keep no more than two active initiatives: (1) restore exact current-build visual QA, compare against the selected Executive Evidence reference, correct the prototype, and assemble the founder checkpoint; and (2) find, verify, rank, and prepare Matt's strongest current job pursuit. The stage is complete only when the fresh responsive, theme, interaction, state, and accessibility evidence exists; local tests pass after corrections; the independent quality verdict is recorded; ClickUp is synchronized with readback proof; Matt has a source-verified shortlist and one integrated next-job recommendation with claim-safe assets ready for approval; and the Board receives one concise packet containing results, risks, economics, and the exact next approvals. Do not publish, spend, connect production data, recruit external users, enable billing, mutate Teal, send outreach, submit an application, or make a legal commitment without the exact reserved approval.
+> **Operate as the accountable CEO of Way Ahead under Matt's Board authority and close the owner-only production founder checkpoint while advancing Matt's strongest current job pursuit inside Way Ahead to exact-action approval readiness.** Keep exactly two active initiatives: Private-Alpha Readiness and Matt Case Study Zero. The stage is complete only when the current owner-authenticated hosted workflow and D1 persistence are proven; mobile, tablet, desktop, Light, Dark, System, interaction, state, and available accessibility evidence are current; automated tests pass; an independent verdict is recorded; ClickUp is synchronized with readback proof; the source-verified Seso recommendation and claim-safe exact assets are visible inside Way Ahead; and the Board receives one concise packet with results, risks, economics, and exact next approvals. Teal is competitor research only. Do not add external users, enable billing, spend, populate or upload to an employer form, send outreach, share references, submit an application, publish publicly, or make a legal commitment without the exact reserved approval.
 
-## First instructions for the next task
+## Current execution controls
 
-1. Create the goal above without a token budget.
-2. Read this Company Operating System and the strategy Start Here before taking action.
-3. Read the current ClickUp My Way Ahead folder and its two active tasks. ClickUp controls initiative status; repo docs control product and company truth.
-4. Start the prototype from `prototypes/worthward-mobile` on a fresh port and verify that the rendered copy matches source before using screenshots as evidence.
-5. Repair browser verification or establish a proven clean workaround. Never substitute stale images for current evidence.
-6. Run private-alpha readiness and Matt Case Study Zero as the only two active initiatives. Keep one writer per shared surface and independent reviewers read-only.
-7. Return to Matt only with the working prototype link first, current visual files, verified test evidence, the next-job decision packet, and exact Board approvals.
+1. Use the live owner-only Sites URL for founder review and the exact current local build for engineering comparison.
+2. Never treat an unauthenticated sign-in page, stale screenshot, deployment status alone, or a local response as proof of the authenticated hosted workflow.
+3. Keep ClickUp limited to the two active parent tasks. ClickUp controls initiative status; repo docs control company and product truth; GitHub controls code provenance; test and hosted artifacts control verification.
+4. Use Way Ahead for Matt's career record, current jobs, scoring, pursuit assets, and approval payload. Use Teal only as competitor evidence.
+5. Preserve source conflicts, proof gaps, fingerprints, exact approval boundaries, and automatic revocation when a destination, question, answer, or asset changes.
+6. Return with the live URL first, current visual files, test and deployment evidence, the Seso decision and exact PDFs, unresolved risks, economics, and exact Board approvals.
 
 ## Governing local sources
 

@@ -6,6 +6,8 @@
 **Status:** Governing product reset for the next design and architecture phase
 **Public release:** Not authorized
 
+> **Board amendment, 2026-07-22:** Matt authorized the reset to advance from a synthetic prototype into a zero-incremental-spend, owner-only production foundation with Sites authentication, tenant-bound D1 persistence, a live HTTPS URL, Matt's real career record, and a native Seso Case Study Zero. No customer-visible sample or demo content is permitted. Teal is competitor research only and is no longer an operating surface for Matt's job search. Public access, external users, billing, paid models or feeds, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, and legal commitments remain reserved Board gates.
+
 ## Executive decision
 
 Way Ahead will not lead as a job-posting checker. It will become a user-controlled job-search operating system that understands the person once, finds and verifies worthwhile work, explains mutual fit, and prepares the strongest honest pursuit package for each selected opportunity.

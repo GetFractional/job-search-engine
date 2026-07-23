@@ -2,7 +2,9 @@
 
 ## Live founder workspace
 
-The production URL will be recorded here immediately after the first owner-only deployment succeeds.
+[Open the owner-only Way Ahead workspace](https://career-evidence-founder-2026.mattdimock.chatgpt.site)
+
+The July 22 production deployment succeeded and is restricted to `mattdim805@gmail.com`. The first visit displays the Sites `Continue with ChatGPT` gate before Way Ahead loads. The current deployment source is local commit `605fe2c2fcaccf21939483b0d207ae117c942172`; the private GitHub mirror has an equivalent tree at `ee546e4e218efb5824bc34180999b874c2055dbf`.
 
 The same HTTPS URL is the supported route on Matt's iPhone, laptop, and ChatGPT remote browser. Sign in with the ChatGPT account for `mattdim805@gmail.com`. Hosting access and the application allowlist both reject other accounts.
 
