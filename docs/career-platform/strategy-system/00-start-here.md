@@ -18,20 +18,24 @@
 
 ### Executive decision
 
-Build an **owned, mobile-first career opportunity platform** that helps people choose better career moves, find and monitor worthwhile opportunities, and pursue them effectively. Launch with one narrow, high-stakes decision-and-pursuit workflow plus optional expert help. Do not license a competitor's product as the company, and do not begin as another broad job board, resume builder, generic match score, or autonomous application bot.
+Build an **owned, mobile-first Career OS** that helps people define what their
+next job must deliver, find and monitor worthwhile jobs, decide which deserve
+effort, and build the strongest truthful pursuit. Do not license a competitor's
+product as the company, and do not begin as another broad job board, generic
+match score, résumé-only tool, or autonomous application bot.
 
 Concierge delivery is a learning and premium-support layer, not a substitute for building the software. Commodity infrastructure such as hosting, authentication, billing, permitted data sources, and qualified model providers may be bought or integrated when that is safer and more economical. The customer experience, career model, decision policy, evidence system, learning loop, and brand remain owned.
 
 The product should continuously help a person answer four questions:
 
-1. What career moves could materially improve my life and earning trajectory?
+1. Which next jobs could materially improve my life and earning trajectory?
 2. Which fresh, legitimate opportunities are worth my attention now?
 3. Why should I pursue, watch, or pass, and what remains uncertain?
 4. If I pursue, what is the strongest honest way to compete and what exactly will happen outside the product?
 
 The user-facing promise is:
 
-> **Know whether a career move is truly better for you, then make your strongest honest case.**
+> **Find the best next job with less wasted effort, then build your strongest truthful case for it.**
 
 The internal organizing rule is:
 
@@ -41,11 +45,11 @@ Proof, provenance, and human approval remain essential trust infrastructure. The
 
 ### Customer outcome
 
-> **Make better career moves with less wasted effort, less uncertainty, and no need to exaggerate who you are.**
+> **Find and pursue the best next job with less wasted effort, less uncertainty, and no need to exaggerate who you are.**
 
 ### The shared journey
 
-> **Understand -> Baseline -> Explore -> Monitor -> Decide -> Prepare -> Approve -> Pursue -> Learn -> Advance**
+> **Understand -> Set Up -> Find -> Decide -> Prepare -> Approve -> Apply -> Interview -> Choose -> Learn**
 
 The journey is a loop, not a placement funnel. A new role becomes the next Career Baseline. Outcomes update what the system believes, while user corrections continue to outrank model inference.
 

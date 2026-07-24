@@ -949,6 +949,13 @@ function JobsView({
   };
 
   if (selectedJob) {
+    const currentAnalysis =
+      selectedJob.analysis?.validationState === "trusted"
+        ? selectedJob.analysis
+        : null;
+    const analysisNeedsRefresh =
+      Boolean(selectedJob.analysis) && !currentAnalysis;
+
     return (
       <div className="wa-page">
         <button className="wa-back-button" type="button" onClick={() => onSelect(null)}><ArrowLeft size={18} /> All jobs</button>
@@ -966,11 +973,24 @@ function JobsView({
             <div><strong>Source conflict</strong>{selectedJob.sourceVersion.conflicts.map((conflict) => <span key={conflict}>{conflict}</span>)}</div>
           </div>
         ) : null}
+        {analysisNeedsRefresh ? (
+          <div className="wa-alert wa-alert-warning" role="status">
+            <WarningCircle size={23} weight="fill" />
+            <div>
+              <strong>Recheck this job</strong>
+              <span>
+                Your profile, Job Standard, or source changed. The previous
+                analysis is preserved as history, but its scores are hidden
+                until the job is analyzed again.
+              </span>
+            </div>
+          </div>
+        ) : null}
         <section className="wa-decision-grid">
-          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof selectedJob.analysis?.fit.fitScore === "number" ? selectedJob.analysis.fit.fitScore : typeof selectedJob.analysis?.fit.score === "number" ? selectedJob.analysis.fit.score : null)}</strong><p>How closely the job matches this Job Path.</p></article>
-          <article className="wa-score-card wa-score-card-strong"><span>Job value</span><strong>{scoreLabel(selectedJob.analysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
-          <article className="wa-score-card"><span>Pursuit readiness</span><strong>{scoreLabel(selectedJob.analysis?.pursuitReadinessScore ?? null)}</strong><p>Grounded in confirmed profile evidence.</p></article>
-          <article className="wa-score-card"><span>Recommendation</span><strong className="wa-word-score">{titleCase(selectedJob.analysis?.recommendation ?? "needs_evidence")}</strong><p>{selectedJob.analysis ? "Analysis stored in your account." : "A verified source needs operator analysis."}</p></article>
+          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof currentAnalysis?.fit.fitScore === "number" ? currentAnalysis.fit.fitScore : typeof currentAnalysis?.fit.score === "number" ? currentAnalysis.fit.score : null)}</strong><p>How closely the job matches this Job Path.</p></article>
+          <article className="wa-score-card wa-score-card-strong"><span>Job value</span><strong>{scoreLabel(currentAnalysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
+          <article className="wa-score-card"><span>Pursuit readiness</span><strong>{scoreLabel(currentAnalysis?.pursuitReadinessScore ?? null)}</strong><p>Grounded in confirmed profile evidence.</p></article>
+          <article className="wa-score-card"><span>Recommendation</span><strong className="wa-word-score">{analysisNeedsRefresh ? "Recheck needed" : titleCase(currentAnalysis?.recommendation ?? "needs_evidence")}</strong><p>{analysisNeedsRefresh ? "Previous analysis preserved as history." : currentAnalysis ? "Current analysis stored in your account." : "A verified source needs analysis."}</p></article>
         </section>
         <p className="wa-muted">
           These percentages describe alignment with verified criteria. They do
@@ -983,9 +1003,14 @@ function JobsView({
           </div>
           <div>
             <h3>Open questions</h3>
-            {selectedJob.analysis?.unknowns.length ? (
-              <ul className="wa-clean-list">{selectedJob.analysis.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}</ul>
-            ) : <p className="wa-muted">No analysis unknowns are stored yet.</p>}
+            {currentAnalysis?.unknowns.length ? (
+              <ul className="wa-clean-list">{currentAnalysis.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}</ul>
+            ) : analysisNeedsRefresh ? (
+              <p className="wa-muted">
+                Re-run the analysis before relying on previous questions or
+                preparing application assets.
+              </p>
+            ) : <p className="wa-muted">No current analysis unknowns are stored yet.</p>}
           </div>
         </section>
         {!selectedJob.pursuit ? <button className="wa-primary-button" type="button" disabled={saving} onClick={() => startPursuit(selectedJob)}>Start this pursuit <ArrowRight size={19} /></button> : <button className="wa-primary-button" type="button" onClick={() => onOpenPursuit(selectedJob.id)}>Open pursuit <ArrowRight size={19} /></button>}

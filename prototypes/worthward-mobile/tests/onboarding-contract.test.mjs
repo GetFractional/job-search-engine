@@ -70,6 +70,15 @@ test("persists a resumable six-step setup with user-scoped records", () => {
   assert.match(repository, /event_type = 'onboarding_step_completed'/);
   assert.match(repository, /WHERE user_id = \?/);
   assert.match(repository, /lifecycle_state = 'alpha_active'/);
+  assert.match(repository, /const minimumComplete =/);
+  assert.match(
+    repository,
+    /completedStepsValue\.includes\(6\) && minimumComplete/,
+  );
+  assert.doesNotMatch(
+    repository,
+    /user\.lifecycle_state === "alpha_active" \|\| completedStepsValue\.includes\(6\)/,
+  );
   assert.match(repository, /automaticExtraction:\s*false/);
   assert.match(repository, /automaticScoring:\s*false/);
   assert.match(onboardingApi, /requireUserRequest/);

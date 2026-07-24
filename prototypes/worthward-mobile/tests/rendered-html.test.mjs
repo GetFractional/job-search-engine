@@ -111,6 +111,10 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.match(repository, /role:\s*UserRow\["role"\]\s*=\s*configuredOwnerEmail\(\) === email \? "owner" : "member"/);
   assert.match(repository, /WHERE user_id = \?/);
   assert.match(repository, /validation_state = 'invalidated'/);
+  assert.match(app, /selectedJob\.analysis\?\.validationState === "trusted"/);
+  assert.match(app, /Recheck this job/);
+  assert.match(app, /analysis is preserved as history/i);
+  assert.match(app, /Recheck needed/);
   assert.match(repository, /readiness_state = 'superseded'/);
   assert.match(repository, /Greenhouse public Job Board GET API/);
   assert.match(repository, /founder workspace is already initialized/i);

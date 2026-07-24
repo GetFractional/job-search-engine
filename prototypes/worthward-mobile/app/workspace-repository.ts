@@ -862,14 +862,15 @@ async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingStat
       .all<RawCareerPath>(),
   ]);
 
-  const legacyComplete =
-    user.lifecycle_state === "founder_production" &&
+  const minimumComplete =
     Boolean(goalFact) &&
     Boolean(sourceFact || role) &&
     Boolean(standard) &&
     pathRows.results.some((path) => path.state === "active");
+  const legacyComplete =
+    user.lifecycle_state === "founder_production" && minimumComplete;
   const explicitlyComplete =
-    user.lifecycle_state === "alpha_active" || completedStepsValue.includes(6);
+    completedStepsValue.includes(6) && minimumComplete;
   const complete = legacyComplete || explicitlyComplete;
   const completedSteps: OnboardingStep[] = complete
     ? [1, 2, 3, 4, 5, 6]

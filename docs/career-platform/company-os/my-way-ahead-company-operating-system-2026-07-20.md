@@ -18,7 +18,12 @@
 
 ## Board resolution
 
-Build and validate an owned, mobile-first career-opportunity company that helps people define a better move, find credible jobs, decide which deserve pursuit, and prepare the strongest honest path forward. The company begins with one narrow, high-value decision instead of attempting every career workflow at once.
+Build and validate an owned, mobile-first Career OS that helps people define
+what their next job must deliver, find credible current jobs, decide which
+deserve effort, build the strongest truthful pursuit, and manage the search
+through application, interview, offer, and learning. The company earns this
+broader promise through one complete vertical slice rather than disconnected
+features.
 
 Matt is the Board. Codex operates as the accountable CEO and company integrator for research, planning, reversible local execution, expert routing, quality control, and decision synthesis. This is an operating designation, not a legal appointment and not authority to bind Matt or a future legal entity.
 
@@ -63,9 +68,9 @@ Way Ahead will own the customer product, Career Baseline, career and opportunity
 
 The company does not assume feature uniqueness. Competitor overlap is a benchmark requirement. The differentiated claim must be proven through execution:
 
-1. compare a job with the person's current reality and definition of better,
+1. compare a job with the person's current reality and Job Standard,
 2. preserve source truth and consequential uncertainty,
-3. separate integrity, move value, and pursuit readiness,
+3. separate Source Verification, Job Value, Evidence Coverage, Pursuit Readiness, and Priority,
 4. turn a decision into grounded preparation without unauthorized action,
 5. learn from corrections and outcomes without turning one founder case into general proof.
 
