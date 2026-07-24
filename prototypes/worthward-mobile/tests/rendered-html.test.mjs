@@ -63,6 +63,10 @@ test("allows founder recovery only when every decision and pursuit surface is em
   assert.match(repository, /active_count/);
   assert.match(repository, /preserved_profile_fact_count/);
   assert.match(repository, /preservedProfileFacts/);
+  assert.match(repository, /matching_partial_workspace_repair/);
+  assert.match(repository, /payloadAnalysisIds\.has\(row\.id\)/);
+  assert.match(repository, /payloadPursuitIds\.has\(row\.id\)/);
+  assert.match(repository, /active_count \?\? 0\) === existingMatchingRecordCount/);
   assert.match(repository, /job_standards WHERE user_id = \? AND is_current = 1/);
   assert.match(repository, /career_paths WHERE user_id = \? AND state = 'active'/);
   assert.match(repository, /hasPriorWorkspaceState && \(existingWorkspace\?\.active_count \?\? 0\) === 0/);

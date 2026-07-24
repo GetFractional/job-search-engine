@@ -1353,7 +1353,10 @@ export async function bootstrapFounderWorkspace(
   payloadValue: unknown,
 ): Promise<{
   imported: true;
-  mode: "initial_import" | "empty_workspace_repair";
+  mode:
+    | "initial_import"
+    | "empty_workspace_repair"
+    | "matching_partial_workspace_repair";
   counts: Record<string, number>;
 }> {
   assertBootstrapPayload(payloadValue);
@@ -1389,7 +1392,40 @@ export async function bootstrapFounderWorkspace(
   const hasPriorWorkspaceState = (existingWorkspace?.count ?? 0) > 0;
   const canRepairEmptyWorkspace =
     hasPriorWorkspaceState && (existingWorkspace?.active_count ?? 0) === 0;
-  if (hasPriorWorkspaceState && !canRepairEmptyWorkspace) {
+  const [existingAnalyses, existingPursuits] = hasPriorWorkspaceState
+    ? await Promise.all([
+        db
+          .prepare("SELECT id FROM job_analyses WHERE user_id = ?")
+          .bind(founder.id)
+          .all<{ id: string }>(),
+        db
+          .prepare("SELECT id FROM pursuits WHERE user_id = ?")
+          .bind(founder.id)
+          .all<{ id: string }>(),
+      ])
+    : [{ results: [] }, { results: [] }];
+  const payloadAnalysisIds = new Set(
+    payload.opportunities.map((opportunity) => opportunity.analysis.id),
+  );
+  const payloadPursuitIds = new Set(
+    payload.opportunities.flatMap((opportunity) =>
+      opportunity.pursuit ? [opportunity.pursuit.id] : [],
+    ),
+  );
+  const existingMatchingRecordCount =
+    existingAnalyses.results.length + existingPursuits.results.length;
+  const canRepairMatchingPartialWorkspace =
+    hasPriorWorkspaceState &&
+    existingMatchingRecordCount > 0 &&
+    (existingWorkspace?.active_count ?? 0) === existingMatchingRecordCount &&
+    existingAnalyses.results.every((row) => payloadAnalysisIds.has(row.id)) &&
+    existingPursuits.results.every((row) => payloadPursuitIds.has(row.id));
+  const repairMode = canRepairEmptyWorkspace
+    ? "empty_workspace_repair"
+    : canRepairMatchingPartialWorkspace
+      ? "matching_partial_workspace_repair"
+      : null;
+  if (hasPriorWorkspaceState && !repairMode) {
     throw new Error("The founder workspace is already initialized. Use versioned product workflows for corrections.");
   }
   const normalizedOpportunities = await Promise.all(payload.opportunities.map(normalizeBootstrapOpportunity));
@@ -1630,16 +1666,20 @@ export async function bootstrapFounderWorkspace(
         crypto.randomUUID(),
         founder.id,
         `chatgpt:${founder.email}`,
-        canRepairEmptyWorkspace
+        repairMode
           ? "founder_workspace_repaired"
           : "founder_workspace_imported",
         founder.id,
         json({
-          mode: canRepairEmptyWorkspace
-            ? "empty_workspace_repair"
-            : "initial_import",
-          preservedProfileFacts: canRepairEmptyWorkspace
+          mode: repairMode ?? "initial_import",
+          preservedProfileFacts: repairMode
             ? existingWorkspace?.preserved_profile_fact_count ?? 0
+            : 0,
+          matchedExistingAnalyses: repairMode
+            ? existingAnalyses.results.length
+            : 0,
+          matchedExistingPursuits: repairMode
+            ? existingPursuits.results.length
             : 0,
           profileFacts: payload.profile.facts.length,
           careerPaths: payload.careerPaths.length,
@@ -1651,9 +1691,7 @@ export async function bootstrapFounderWorkspace(
 
   return {
     imported: true,
-    mode: canRepairEmptyWorkspace
-      ? "empty_workspace_repair"
-      : "initial_import",
+    mode: repairMode ?? "initial_import",
     counts: {
       profileFacts: payload.profile.facts.length,
       experiences: payload.profile.experiences.length,
