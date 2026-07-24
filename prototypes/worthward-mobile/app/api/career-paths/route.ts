@@ -10,7 +10,7 @@ export async function PUT(request: Request) {
     requireSameOrigin(request);
     const payload = await readBoundedJson(request, 10_000) as { pathId?: unknown };
     if (typeof payload.pathId !== "string" || !payload.pathId.trim()) {
-      throw new Error("Choose a career path to make primary.");
+      throw new Error("Choose a Job Path to make primary.");
     }
     await setPrimaryCareerPath(actor, payload.pathId);
     return Response.json({ saved: true });

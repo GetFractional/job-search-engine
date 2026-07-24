@@ -24,7 +24,9 @@ test("keeps the website public and protects only product routes", () => {
   assert.match(publicSite, /id="public-mobile-menu"/);
   assert.match(productPage, /requireUserPage\("\/app"\)/);
   assert.match(productPage, /redirect\(`\/app\/onboarding\?step=/);
+  assert.match(productPage, /deletedAccountNeedsRestart/);
   assert.match(onboardingPage, /requireUserPage\("\/app\/onboarding"\)/);
+  assert.match(onboardingPage, /deletedAccountNeedsRestart/);
   assert.match(onboardingPage, /if \(state\.complete\) redirect\("\/app"\)/);
   assert.match(
     experiencePage,
@@ -73,6 +75,10 @@ test("persists a resumable six-step setup with user-scoped records", () => {
   assert.match(onboardingApi, /requireUserRequest/);
   assert.match(onboardingApi, /requireSameOrigin/);
   assert.match(onboardingApi, /readBoundedJson\(request, 100_000\)/);
+  assert.match(onboardingApi, /noticeAccepted/);
+  assert.match(onboardingApi, /processingAccepted/);
+  assert.match(onboarding, /Alpha Data Notice/);
+  assert.match(onboarding, /Data &amp; privacy/);
 });
 
 test("parses bounded resume files locally and saves only reviewable extracted text", () => {

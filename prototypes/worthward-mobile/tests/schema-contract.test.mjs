@@ -131,7 +131,7 @@ const resumeFixtureSql = `
     ('job-1', 'source-1', 'ext-1', 'https://example.test/job-1', 'Acme', 'Director', 'jd-hash');
 `;
 
-test("applies the 34-table migration with foreign keys intact", () => {
+test("applies the 35-table migration with foreign keys intact", () => {
   expectSqlPass(
     `
       SELECT count(*) FROM sqlite_master
@@ -145,7 +145,7 @@ test("applies the 34-table migration with foreign keys intact", () => {
        WHERE "table" = 'cost_allocation_groups'
          AND "from" = 'allocation_group_id';
     `,
-    "34\n0\n2:1:SET NULL\nRESTRICT",
+    "35\n0\n2:1:SET NULL\nRESTRICT",
   );
 });
 
@@ -200,7 +200,7 @@ test("applies every migration statement across fresh SQLite connections", () => 
     });
 
     assert.equal(verification.status, 0, verification.stderr);
-    assert.equal(verification.stdout.trim(), "34\n0\n33");
+    assert.equal(verification.stdout.trim(), "35\n0\n33");
   } finally {
     rmSync(migrationDirectory, { recursive: true, force: true });
   }

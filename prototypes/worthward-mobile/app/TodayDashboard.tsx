@@ -21,7 +21,7 @@ function formatTime(value: number | null): string {
 }
 
 function score(value: number | null): string {
-  return value === null ? "—" : String(value);
+  return value === null ? "—" : `${value}%`;
 }
 
 function JobIdentity({ job }: { job: TodayScoreboardItem }) {
@@ -47,14 +47,14 @@ export function TodayDashboard() {
           error?: string;
         };
         if (!response.ok) {
-          throw new Error(payload.error ?? "Today could not load.");
+          throw new Error(payload.error ?? "Home could not load.");
         }
         if (active) setRecord(payload);
       })
       .catch((reason: unknown) => {
         if (active) {
           setError(
-            reason instanceof Error ? reason.message : "Today could not load.",
+            reason instanceof Error ? reason.message : "Home could not load.",
           );
         }
       });
@@ -76,7 +76,7 @@ export function TodayDashboard() {
     return (
       <section className={styles.empty} role="alert">
         <div>
-          <h2>Today’s trusted view did not load.</h2>
+          <h2>Your trusted job-search view did not load.</h2>
           <p>{error} Your saved profile and decisions were not changed.</p>
         </div>
       </section>
@@ -108,18 +108,18 @@ export function TodayDashboard() {
   return (
     <section className={styles.dashboard} aria-labelledby="today-title">
       <header className={styles.heading}>
-        <p className="wa-eyebrow">Today</p>
-        <h1 id="today-title">Your best next moves</h1>
+        <p className="wa-eyebrow">Home</p>
+        <h1 id="today-title">Your job search, prioritized.</h1>
         <p>
-          Ranked across your active career paths using your Job Standard,
+          Ranked across your active Job Paths using your Job Standard,
           approved experience, and current source checks.
         </p>
       </header>
 
       <span className={styles.pathHint} aria-hidden="true">
-        Swipe to compare career paths →
+        Swipe to compare Job Paths →
       </span>
-      <nav className={styles.pathTabs} aria-label="Career path view">
+      <nav className={styles.pathTabs} aria-label="Job Path view">
         <button
           data-active={selectedPath === "all"}
           onClick={() => setSelectedPath("all")}
@@ -159,8 +159,9 @@ export function TodayDashboard() {
             <h2 id="scoreboard-title">Jobs worth your attention</h2>
           </div>
           <p>
-            Fit shows role alignment. Priority appears only when both Move
-            Value and Pursuit Readiness are defensible.
+            Fit shows role alignment. Priority appears only when both Job
+            Value and Pursuit Readiness are defensible. These percentages are
+            not predictions of being hired.
           </p>
         </div>
 
@@ -174,11 +175,11 @@ export function TodayDashboard() {
                     <th>Role</th>
                     <th>Fit</th>
                     <th>Priority</th>
-                    <th>Move value</th>
+                    <th>Job value</th>
                     <th>Readiness</th>
                     <th>Evidence</th>
                     <th>Source</th>
-                    <th>Next move</th>
+                    <th>Next action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -193,13 +194,11 @@ export function TodayDashboard() {
                       <td>
                         <span className={styles.score}>
                           {score(job.fitScore)}
-                          <span>/100</span>
                         </span>
                       </td>
                       <td>
                         <span className={styles.score}>
                           {score(job.pursuitPriority)}
-                          <span>/100</span>
                         </span>
                       </td>
                       <td>{score(job.moveValue)}</td>
@@ -272,7 +271,7 @@ export function TodayDashboard() {
                     </div>
                     <div className={styles.metric}>
                       <strong>{score(job.moveValue)}</strong>
-                      <span>Move value</span>
+                      <span>Job value</span>
                     </div>
                     <div className={styles.metric}>
                       <strong>{score(job.pursuitReadiness)}</strong>
@@ -327,7 +326,11 @@ export function TodayDashboard() {
         </p>
       </section>
 
-      <section className={styles.module} aria-labelledby="changed-title">
+      <section
+        className={styles.module}
+        aria-labelledby="changed-title"
+        hidden={verifiedToday.length === 0}
+      >
         <div className={styles.moduleHeader}>
           <div>
             <p className="wa-eyebrow">Current evidence</p>
@@ -370,10 +373,14 @@ export function TodayDashboard() {
         )}
       </section>
 
-      <section className={styles.module} aria-labelledby="path-pulse-title">
+      <section
+        className={styles.module}
+        aria-labelledby="path-pulse-title"
+        hidden={!record.paths.some((path) => path.state === "active")}
+      >
         <div className={styles.moduleHeader}>
           <div>
-            <p className="wa-eyebrow">Career path pulse</p>
+            <p className="wa-eyebrow">Job Path pulse</p>
             <h2 id="path-pulse-title">What each search is finding</h2>
           </div>
         </div>
@@ -409,7 +416,11 @@ export function TodayDashboard() {
         </div>
       </section>
 
-      <section className={styles.module} aria-labelledby="pursuits-title">
+      <section
+        className={styles.module}
+        aria-labelledby="pursuits-title"
+        hidden={activePursuits.length === 0}
+      >
         <div className={styles.moduleHeader}>
           <div>
             <p className="wa-eyebrow">Pursuits needing you</p>
@@ -453,7 +464,11 @@ export function TodayDashboard() {
         )}
       </section>
 
-      <section className={styles.module} aria-labelledby="documents-title">
+      <section
+        className={styles.module}
+        aria-labelledby="documents-title"
+        hidden={documentGaps.length === 0}
+      >
         <div className={styles.moduleHeader}>
           <div>
             <p className="wa-eyebrow">Documents to strengthen</p>

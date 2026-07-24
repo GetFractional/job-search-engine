@@ -188,7 +188,7 @@
 
 .wa-theme-options {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
 }
 
@@ -249,6 +249,10 @@
 
 .wa-today-dashboard,
 .wa-document-studio {
+  padding-top: clamp(10px, 2vw, 24px);
+}
+
+.wa-account-privacy {
   padding-top: clamp(10px, 2vw, 24px);
 }
 

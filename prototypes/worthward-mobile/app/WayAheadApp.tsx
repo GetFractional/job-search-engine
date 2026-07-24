@@ -8,7 +8,6 @@ import {
   CaretDown,
   CheckCircle,
   Compass,
-  Desktop,
   FileText,
   LockKey,
   Moon,
@@ -22,6 +21,7 @@ import {
 } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CoverLetterStudio } from "./CoverLetterStudio";
+import { PrivacyCenter } from "./PrivacyCenter";
 import { ResumeStudio } from "./ResumeStudio";
 import { TodayDashboard } from "./TodayDashboard";
 import type {
@@ -39,9 +39,10 @@ type ViewKey =
   | "pursuit"
   | "studio"
   | "direction"
-  | "profile";
+  | "profile"
+  | "account";
 type StudioKey = "resume" | "cover";
-type ThemeChoice = "light" | "dark" | "system";
+type ThemeChoice = "light" | "dark";
 type FormMessage = { text: string; kind: "success" | "error" };
 
 const NAVIGATION: Array<{
@@ -49,7 +50,7 @@ const NAVIGATION: Array<{
   label: string;
   icon: typeof Compass;
 }> = [
-  { key: "today", label: "Today", icon: Compass },
+  { key: "today", label: "Home", icon: Compass },
   { key: "jobs", label: "Jobs", icon: Briefcase },
   { key: "pursuit", label: "Pursuits", icon: Target },
   { key: "studio", label: "Studio", icon: FileText },
@@ -63,12 +64,12 @@ const VIEW_KEYS = new Set<ViewKey>([
   "studio",
   "direction",
   "profile",
+  "account",
 ]);
 
 const THEMES: Array<{ value: ThemeChoice; label: string; icon: typeof Sun }> = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Desktop },
 ];
 
 function currentView(): ViewKey {
@@ -90,8 +91,7 @@ function currentJobId(): string | null {
 }
 
 function applyTheme(choice: ThemeChoice) {
-  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.documentElement.dataset.theme = choice === "system" ? (systemDark ? "dark" : "light") : choice;
+  document.documentElement.dataset.theme = choice;
   document.documentElement.dataset.themeChoice = choice;
 }
 
@@ -105,7 +105,7 @@ function money(cents: number | null, currency = "USD"): string {
 }
 
 function scoreLabel(score: number | null): string {
-  return score === null ? "Open" : String(score);
+  return score === null ? "Open" : `${score}%`;
 }
 
 function titleCase(value: string): string {
@@ -256,7 +256,7 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   const [workspace, setWorkspace] = useState<WorkspaceRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState<ThemeChoice>("system");
+  const [theme, setTheme] = useState<ThemeChoice>("light");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [selectedPursuitJobId, setSelectedPursuitJobId] = useState<string | null>(null);
@@ -277,18 +277,14 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
     const frame = window.requestAnimationFrame(() => {
       syncLocation();
       const storedTheme = window.localStorage.getItem("way-ahead-theme");
-      const choice: ThemeChoice = storedTheme === "light" || storedTheme === "dark" ? storedTheme : "system";
+      const choice: ThemeChoice = storedTheme === "dark" ? "dark" : "light";
       setTheme(choice);
       applyTheme(choice);
     });
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onSystemChange = () => document.documentElement.dataset.themeChoice === "system" && applyTheme("system");
     window.addEventListener("popstate", syncLocation);
-    media.addEventListener("change", onSystemChange);
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("popstate", syncLocation);
-      media.removeEventListener("change", onSystemChange);
     };
   }, []);
 
@@ -372,7 +368,11 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   const pursuedJob = pursuedJobs.find((job) => job.id === selectedPursuitJobId) ?? pursuedJobs[0] ?? null;
   const activeLabel =
     NAVIGATION.find((item) => item.key === view)?.label ??
-    (view === "profile" ? "Career profile" : "Today");
+    (view === "profile"
+      ? "Career profile"
+      : view === "account"
+        ? "Data & privacy"
+        : "Home");
 
   const openPursuit = (jobId: string) => {
     setSelectedPursuitJobId(jobId);
@@ -454,6 +454,15 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
                   <RoadHorizon size={18} aria-hidden="true" />
                   Search plan
                 </button>
+                <button
+                  type="button"
+                  className={view === "account" ? "is-active" : ""}
+                  onClick={() => navigate("account")}
+                  aria-current={view === "account" ? "page" : undefined}
+                >
+                  <LockKey size={18} aria-hidden="true" />
+                  Data &amp; privacy
+                </button>
               </nav>
               <fieldset className="wa-theme-fieldset">
                 <legend>Appearance</legend>
@@ -499,10 +508,6 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
               <JobsView
                 opportunities={workspace.opportunities}
                 selectedJob={selectedJob}
-                careerPaths={workspace.careerPaths}
-                canRecordOperatorAnalysis={
-                  workspace.system.canRecordOperatorAnalysis
-                }
                 onSelect={selectJob}
                 onRefresh={refresh}
                 onOpenPursuit={openPursuit}
@@ -521,6 +526,18 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
             {view === "studio" ? <DocumentStudioView /> : null}
             {view === "direction" ? <DirectionView workspace={workspace} onRefresh={refresh} /> : null}
             {view === "profile" ? <ProfileView workspace={workspace} /> : null}
+            {view === "account" ? (
+              <div className="wa-page wa-account-privacy">
+                <PrivacyCenter
+                  role={
+                    workspace.system.canRecordOperatorAnalysis
+                      ? "owner"
+                      : "member"
+                  }
+                  signOutHref="/signout-with-chatgpt?return_to=%2F"
+                />
+              </div>
+            ) : null}
           </>
         ) : null}
       </main>
@@ -594,7 +611,7 @@ function WorkspaceLoading() {
     <section className="wa-state-panel" aria-live="polite" aria-busy="true">
       <div className="wa-pulse-orb" aria-hidden="true" />
       <p className="wa-eyebrow">Secure workspace</p>
-      <h1>Loading the evidence behind your next move.</h1>
+      <h1>Loading the evidence behind your next job.</h1>
       <p>Your profile, standards, live jobs, and application work are being read from your private account.</p>
     </section>
   );
@@ -605,14 +622,14 @@ function WorkspaceError({ message, onRetry }: { message: string; onRetry: () => 
     <section className="wa-state-panel wa-state-error" role="alert">
       <WarningCircle size={30} weight="fill" aria-hidden="true" />
       <p className="wa-eyebrow">Workspace unavailable</p>
-      <h1>Your records are safe. This view did not load.</h1>
+      <h1>Your workspace did not load.</h1>
       <p>{message}</p>
       <button className="wa-primary-button" type="button" onClick={onRetry}>Try again</button>
     </section>
   );
 }
 
-function OwnerAnalysisPanel({
+export function OwnerAnalysisPanel({
   job,
   careerPaths,
   onRefresh,
@@ -727,21 +744,21 @@ function OwnerAnalysisPanel({
 
   return (
     <details className="wa-operator-panel">
-      <summary>Owner analysis receipt</summary>
+      <summary>Operator analysis</summary>
       <form onSubmit={submit}>
         <div className="wa-operator-heading">
           <div>
-            <p className="wa-eyebrow">Internal owner control</p>
+            <p className="wa-eyebrow">Internal operator control</p>
             <h2>Bind a reviewed decision to this source version.</h2>
           </div>
           <p>
-            This changes Matt’s private scoreboard only. It does not generate,
+            This changes the account&apos;s private scoreboard only. It does not generate,
             populate, upload, send, or submit anything.
           </p>
         </div>
         <div className="wa-form-grid">
           <label>
-            Career path
+            Job Path
             <select
               value={careerPathId}
               onChange={(event) => setCareerPathId(event.target.value)}
@@ -788,7 +805,7 @@ function OwnerAnalysisPanel({
             />
           </label>
           <label>
-            Move Value
+            Job Value
             <input
               type="number"
               min="0"
@@ -874,16 +891,12 @@ function OwnerAnalysisPanel({
 function JobsView({
   opportunities,
   selectedJob,
-  careerPaths,
-  canRecordOperatorAnalysis,
   onSelect,
   onRefresh,
   onOpenPursuit,
 }: {
   opportunities: OpportunityRecord[];
   selectedJob: OpportunityRecord | null;
-  careerPaths: CareerPathRecord[];
-  canRecordOperatorAnalysis: boolean;
   onSelect: (id: string | null) => void;
   onRefresh: () => Promise<void>;
   onOpenPursuit: (jobId: string) => void;
@@ -954,11 +967,15 @@ function JobsView({
           </div>
         ) : null}
         <section className="wa-decision-grid">
-          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof selectedJob.analysis?.fit.fitScore === "number" ? selectedJob.analysis.fit.fitScore : typeof selectedJob.analysis?.fit.score === "number" ? selectedJob.analysis.fit.score : null)}</strong><p>How closely the role matches this career path.</p></article>
-          <article className="wa-score-card wa-score-card-strong"><span>Move value</span><strong>{scoreLabel(selectedJob.analysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
+          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof selectedJob.analysis?.fit.fitScore === "number" ? selectedJob.analysis.fit.fitScore : typeof selectedJob.analysis?.fit.score === "number" ? selectedJob.analysis.fit.score : null)}</strong><p>How closely the job matches this Job Path.</p></article>
+          <article className="wa-score-card wa-score-card-strong"><span>Job value</span><strong>{scoreLabel(selectedJob.analysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
           <article className="wa-score-card"><span>Pursuit readiness</span><strong>{scoreLabel(selectedJob.analysis?.pursuitReadinessScore ?? null)}</strong><p>Grounded in confirmed profile evidence.</p></article>
           <article className="wa-score-card"><span>Recommendation</span><strong className="wa-word-score">{titleCase(selectedJob.analysis?.recommendation ?? "needs_evidence")}</strong><p>{selectedJob.analysis ? "Analysis stored in your account." : "A verified source needs operator analysis."}</p></article>
         </section>
+        <p className="wa-muted">
+          These percentages describe alignment with verified criteria. They do
+          not predict whether an employer will hire you.
+        </p>
         <section className="wa-section wa-detail-grid">
           <div>
             <p className="wa-eyebrow">Decision evidence</p>
@@ -973,14 +990,6 @@ function JobsView({
         </section>
         {!selectedJob.pursuit ? <button className="wa-primary-button" type="button" disabled={saving} onClick={() => startPursuit(selectedJob)}>Start this pursuit <ArrowRight size={19} /></button> : <button className="wa-primary-button" type="button" onClick={() => onOpenPursuit(selectedJob.id)}>Open pursuit <ArrowRight size={19} /></button>}
         <FormFeedback message={message} />
-        {canRecordOperatorAnalysis ? (
-          <OwnerAnalysisPanel
-            key={`${selectedJob.id}:${selectedJob.sourceVersion?.id ?? "none"}:${selectedJob.analysis?.id ?? "none"}`}
-            job={selectedJob}
-            careerPaths={careerPaths}
-            onRefresh={onRefresh}
-          />
-        ) : null}
       </div>
     );
   }
@@ -1017,7 +1026,13 @@ function JobsView({
             <span>{job.locations.join(" · ") || "Location not reported"}</span>
             <div className="wa-job-meta">
               <span className={`wa-status wa-status-${job.sourceVersion?.captureState ?? "unavailable"}`}>{titleCase(job.sourceVersion?.captureState ?? "unavailable")}</span>
-              <span>{job.analysis?.moveValueScore ?? "Open"} move value</span>
+              <span>
+                {job.analysis?.moveValueScore === null ||
+                job.analysis?.moveValueScore === undefined
+                  ? "Open"
+                  : `${job.analysis.moveValueScore}%`}{" "}
+                job value
+              </span>
               <span>{job.pursuit ? titleCase(job.pursuit.state) : "Not pursued"}</span>
             </div>
             <ArrowRight className="wa-job-arrow" size={21} aria-hidden="true" />
@@ -1184,7 +1199,7 @@ function PursuitView({
       <section className="wa-section wa-approval-section">
         <div>
           <p className="wa-eyebrow">Exact action gate</p>
-          <h2>{blockers.length ? "Approval stays locked until the package is internally consistent." : "This exact package is ready for Matt's decision."}</h2>
+          <h2>{blockers.length ? "Approval stays locked until the package is internally consistent." : "This exact package is ready for your decision."}</h2>
           <p>Approval is bound to the employer destination, source version, answers, filenames, asset versions, and payload fingerprint shown here.</p>
         </div>
         {packageRecord ? (
@@ -1250,7 +1265,7 @@ function PursuitView({
                   <span>
                     <strong>Approval attestation</strong>
                     I approve only this exact package and employer-form version for staging at {opportunity.employer}. This is not submission authorization.
-                    <small>I attest that I have not previously applied to this exact {opportunity.employer} role and intentionally approve the professional resume without the current Zaytinya bridge role.</small>
+                    <small>I confirm that the application history and included career evidence shown here are accurate for this exact {opportunity.employer} role.</small>
                   </span>
                 </label>
                 <button className="wa-primary-button" type="button" disabled={!approvalChecked || approvalBusy} onClick={recordApproval}>
@@ -1313,11 +1328,11 @@ function DirectionView({ workspace, onRefresh }: { workspace: WorkspaceRecord; o
         body: JSON.stringify({ pathId: path.id }),
       });
       const result = await response.json() as { error?: string };
-      if (!response.ok) throw new Error(result.error ?? "The career path could not be saved.");
+      if (!response.ok) throw new Error(result.error ?? "The Job Path could not be saved.");
       await onRefresh();
       setPathMessage({ text: `${path.label} is now your primary path.`, kind: "success" });
     } catch (pathError) {
-      setPathMessage({ text: pathError instanceof Error ? pathError.message : "The career path could not be saved.", kind: "error" });
+      setPathMessage({ text: pathError instanceof Error ? pathError.message : "The Job Path could not be saved.", kind: "error" });
     } finally {
       setSaving(false);
     }
@@ -1385,8 +1400,8 @@ function DirectionView({ workspace, onRefresh }: { workspace: WorkspaceRecord; o
       </section>
 
       <section className="wa-section">
-        <div className="wa-section-heading"><div><p className="wa-eyebrow">Career paths</p><h2>Choose a primary lane without giving up credible options.</h2></div><span>{workspace.careerPaths.filter((path) => path.state === "active").length} active</span></div>
-        <div className="wa-path-list" role="radiogroup" aria-label="Primary career path" ref={pathListRef}>
+        <div className="wa-section-heading"><div><p className="wa-eyebrow">Job Paths</p><h2>Choose a primary role family without giving up credible options.</h2></div><span>{workspace.careerPaths.filter((path) => path.state === "active").length} active</span></div>
+        <div className="wa-path-list" role="radiogroup" aria-label="Primary Job Path" ref={pathListRef}>
           {workspace.careerPaths.map((path, index) => (
             <button
               key={path.id}
@@ -1448,13 +1463,13 @@ function ProfileView({ workspace }: { workspace: WorkspaceRecord }) {
         <div className="wa-section-heading">
           <div>
             <p className="wa-eyebrow">Source record</p>
-            <h2>Review or replace the experience behind your profile.</h2>
+            <h2>Add or update the experience behind your profile.</h2>
           </div>
           <a
             className="wa-secondary-button"
             href="/app/onboarding/experience"
           >
-            Update experience
+            Add or update experience
           </a>
         </div>
         <p className="wa-muted">

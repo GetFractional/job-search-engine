@@ -6,6 +6,7 @@ import {
   Check,
   File,
   FileDoc,
+  ShieldCheck,
   SignOut,
   UserCircle,
 } from "@phosphor-icons/react";
@@ -26,6 +27,7 @@ import {
   parseResumeFile,
   type ParsedResumeFile,
 } from "./resume-import";
+import { PrivacyCenter } from "./PrivacyCenter";
 import styles from "./onboarding.module.css";
 
 type OnboardingFlowProps = {
@@ -65,6 +67,7 @@ export default function OnboardingFlow({
   const [state, setState] = useState(initialState);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -116,6 +119,14 @@ export default function OnboardingFlow({
         </span>
         <div className={styles.account}>
           <span>{state.account.displayName}</span>
+          <button
+            className={styles.privacyButton}
+            type="button"
+            onClick={() => setPrivacyOpen(true)}
+          >
+            <ShieldCheck size={18} />
+            <span>Data &amp; privacy</span>
+          </button>
           <a href={signOutHref}>
             <SignOut size={18} />
             <span>Sign out</span>
@@ -123,6 +134,19 @@ export default function OnboardingFlow({
         </div>
       </header>
 
+      {privacyOpen ? (
+        <main
+          id="onboarding-main"
+          className={styles.privacyMain}
+          tabIndex={-1}
+        >
+          <PrivacyCenter
+            role={state.account.role}
+            signOutHref={signOutHref}
+            onBack={() => setPrivacyOpen(false)}
+          />
+        </main>
+      ) : (
       <main
         id="onboarding-main"
         className={styles.main}
@@ -217,6 +241,7 @@ export default function OnboardingFlow({
           ) : null}
         </section>
       </main>
+      )}
 
       <nav className={styles.mobileNav} aria-label="Account navigation">
         <Link href="/">
@@ -227,6 +252,14 @@ export default function OnboardingFlow({
           <UserCircle size={20} />
           Setup
         </Link>
+        <button
+          className={privacyOpen ? styles.activeMobileNav : ""}
+          type="button"
+          onClick={() => setPrivacyOpen(true)}
+        >
+          <ShieldCheck size={20} />
+          Privacy
+        </button>
         <a href={signOutHref}>
           <SignOut size={20} />
           Sign out
@@ -255,13 +288,19 @@ function GoalStep({ state, busy, save }: StepProps) {
     state.goal?.priorities ?? [],
   );
   const [notes, setNotes] = useState(state.goal?.notes ?? "");
-  const [consentAccepted, setConsentAccepted] = useState(false);
+  const [noticeAccepted, setNoticeAccepted] = useState(false);
+  const [processingAccepted, setProcessingAccepted] = useState(false);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
     void save({
       step: 1,
-      data: { priorities, notes, consentAccepted },
+      data: {
+        priorities,
+        notes,
+        noticeAccepted,
+        processingAccepted,
+      },
     });
   };
 
@@ -304,7 +343,7 @@ function GoalStep({ state, busy, save }: StepProps) {
         </div>
       </fieldset>
       <label className={styles.field}>
-        <span>Anything else the next move needs to solve?</span>
+        <span>Anything else your next job needs to solve?</span>
         <textarea
           value={notes}
           maxLength={500}
@@ -313,17 +352,54 @@ function GoalStep({ state, busy, save }: StepProps) {
           placeholder="For example: I need a healthier schedule and work where I can see the impact I own."
         />
       </label>
+      <details className={styles.dataNotice}>
+        <summary>Alpha Data Notice</summary>
+        <div>
+          <p>
+            Way Ahead saves the answers and reviewed text you submit, plus file
+            name, type, size, and checksums when you import a résumé. PDF and
+            DOCX bytes stay in this browser and are not uploaded in this alpha.
+          </p>
+          <p>
+            This information is used only for your private career profile, job
+            standard, job paths, scores, pursuits, and documents. Do not enter
+            Social Security, banking, medical, voluntary self-identification,
+            password, or reference-contact information.
+          </p>
+          <p>
+            Paid AI, email, billing, employer-form changes, outreach, and
+            application submission are not connected. You can correct your
+            data, download an export, or delete a member account from Data &amp;
+            privacy. Hosting recovery history may persist for up to 30 days
+            after deletion.
+          </p>
+        </div>
+      </details>
       <label className={styles.consent}>
         <input
           type="checkbox"
-          checked={consentAccepted}
-          onChange={(event) => setConsentAccepted(event.target.checked)}
+          checked={noticeAccepted}
+          onChange={(event) => setNoticeAccepted(event.target.checked)}
         />
         <span>
-          <strong>I want Way Ahead to save and process the career information I provide.</strong>
-          This public alpha stores my answers in my private workspace so I can
-          review, correct, export, or request deletion. Model generation, email,
-          billing, and employer actions are not enabled.
+          <strong>I read the Alpha Data Notice.</strong>
+          I understand what this alpha saves, why it is used, and what I should
+          not enter.
+        </span>
+      </label>
+      <label className={styles.consent}>
+        <input
+          type="checkbox"
+          checked={processingAccepted}
+          onChange={(event) => setProcessingAccepted(event.target.checked)}
+        />
+        <span>
+          <strong>
+            I want Way Ahead to process the career information I choose to
+            provide.
+          </strong>
+          I can review and correct it, download an export, or delete a member
+          account.
         </span>
       </label>
       <StepSubmit busy={busy}>Save and add my experience</StepSubmit>
@@ -867,11 +943,11 @@ function CareerPathsStep({ state, busy, save }: StepProps) {
       <h1>Choose the paths worth exploring</h1>
       <p className={styles.intro}>
         Add the career directions you want to monitor. Choose one primary focus
-        for Today, while keeping the others visible as separate scoreboards.
+        for Home, while keeping the others visible as separate scoreboards.
         Way Ahead has not scored these paths yet.
       </p>
       <fieldset className={styles.pathFieldset}>
-        <legend>Career paths</legend>
+        <legend>Job Paths</legend>
         {paths.map((path, index) => (
           <div
             key={`${index}-${paths.length}`}
@@ -888,7 +964,7 @@ function CareerPathsStep({ state, busy, save }: StepProps) {
               Primary
             </label>
             <label className={styles.field}>
-              <span>Career path {index + 1}</span>
+              <span>Job Path {index + 1}</span>
               <input
                 value={path}
                 maxLength={80}
@@ -914,7 +990,7 @@ function CareerPathsStep({ state, busy, save }: StepProps) {
           type="button"
           onClick={() => setPaths((current) => [...current, ""])}
         >
-          Add another career path
+          Add another Job Path
         </button>
       ) : null}
       <StepSubmit busy={busy}>Build my search plan</StepSubmit>
@@ -942,7 +1018,7 @@ function PlanReviewStep({ state, busy, save }: StepProps) {
       <p className={styles.eyebrow}>Review before activation</p>
       <h1>Your search has a direction now.</h1>
       <p className={styles.intro}>
-        This is the plan Way Ahead will use to organize Today. Scores and job
+        This is the plan Way Ahead will use to organize Home. Scores and job
         recommendations will appear only after current source evidence and your
         career proof have actually been evaluated.
       </p>
@@ -962,7 +1038,7 @@ function PlanReviewStep({ state, busy, save }: StepProps) {
           <p>{standard?.workArrangements.join(", ") || "Arrangement not set"}</p>
         </article>
         <article className={styles.fullPlanCard}>
-          <span>Career paths</span>
+          <span>Job Paths</span>
           <ul>
             {state.careerPaths.map((path) => (
               <li key={path.id}>
@@ -987,7 +1063,7 @@ function PlanReviewStep({ state, busy, save }: StepProps) {
           This does not authorize outreach or application submission.
         </span>
       </label>
-      <StepSubmit busy={busy}>Finish setup and see Today</StepSubmit>
+      <StepSubmit busy={busy}>Finish setup and see Home</StepSubmit>
     </form>
   );
 }

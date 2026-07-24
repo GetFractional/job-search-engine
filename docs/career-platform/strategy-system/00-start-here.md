@@ -6,11 +6,13 @@
 
 > **2026-07-23 public-product correction:** `17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md` governs the public website, self-service account creation, personal-workspace isolation, résumé-first onboarding, multi-path job supply and scoreboards, document studios, digest architecture, job-title acquisition pages, authorized temporary subdomain, and corrected founder checkpoint. It supersedes the owner-only first-user path and any claim that the current hosted app is founder-accepted.
 
-**Authority:** Founder-authorized direction, version 1.5
+> **2026-07-23 Career OS journey correction:** `18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md` governs the literal job-search journey, account lifecycle, Home architecture, customer/operator separation, Career Evidence Library, Job Paths, document precedence, score language, Light/Dark policy, acquisition pilots, AI provider gate, screen states, and current critical path. It supersedes customer-facing “move” language, Today as the product concept, System theme, and lifecycle-only onboarding completion.
+
+**Authority:** Founder-authorized direction, version 1.6
 **Research current through:** 2026-07-23
 **Working brand status:** Matt selected Way Ahead for the alpha checkpoint and authorized temporary use of `wayahead.getfractional.co` after the corrected build passes. A prior knockout screen found high software, career-category, and branded-search collision risk, so the temporary subdomain is not master-brand lock or legal clearance. Legacy `my-way-ahead` paths and ClickUp labels remain stable internal identifiers pending a separately reviewed migration.
 **First case study:** Matt Dimock
-**Build posture:** Build an owned, public-capable, multi-user, mobile-first SaaS. Preserve the selected visual synthesis, but replace the failed auth-first and backend-first journey with a public website, self-service SSO, resumable résumé-first onboarding, multi-path Today scoreboards, functional navigation, and editable document studios. The current hosted version is a rollback surface. Spend, paid models, email, billing, indexing, public promotion, partnerships, legal commitments, and employer-facing actions retain separate gates.
+**Build posture:** Build an owned, public-capable, multi-user, mobile-first SaaS. Preserve the selected visual synthesis, but organize the product around public understanding, resumable setup, a structured Career Profile, Job Standard, Job Paths, state-aware Home, current jobs, Pursuits, editable document studios, application-package approval, interview management, and outcome learning. Spend, paid or unqualified models, email, billing, indexing, public promotion, partnerships, legal commitments, and employer-facing actions retain separate gates.
 
 ## Start here
 
@@ -105,6 +107,7 @@ The Strategy Center and Career Strategy Brief can later become responsive produc
 | What was implemented in Prototype V2, what passed, and which release gates remain open? | 15 Prototype V2 Implementation and Quality Review |
 | What product, journey, schema, architecture, offer, acquisition, and delivery corrections govern after Matt's founder review? | 16 Founder Feedback Product Reset |
 | How will the public multi-user alpha, job-supply graph, multi-path scoreboards, document system, notification cadence, and low-cash growth path work? | 17 Public Multi-User Alpha, Job Supply, and Growth Architecture |
+| What literal customer journey, account lifecycle, routes, states, profile model, Home architecture, and critical path now govern the Career OS? | 18 Career OS Customer Journey, Screen-State Architecture, and Critical Path |
 
 ## Expert council and decision rights
 

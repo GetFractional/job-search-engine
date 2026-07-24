@@ -59,7 +59,9 @@ function developmentActor(requestHeaders: Headers): ChatGPTUser | null {
   const host = requestHeaders.get("host")?.split(":")[0];
   if (host !== "localhost" && host !== "127.0.0.1") return null;
   const email = normalizedEmail(config.WAY_AHEAD_DEV_EMAIL);
-  return email ? { email, fullName: "Matt Dimock", displayName: "Matt Dimock" } : null;
+  return email
+    ? { email, fullName: "Local QA User", displayName: "Local QA User" }
+    : null;
 }
 
 function authorizeUser(user: ChatGPTUser | null): ChatGPTUser {

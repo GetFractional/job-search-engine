@@ -165,10 +165,21 @@ function validatePayload(value: unknown): OnboardingStepPayload {
     if (priorities.length === 0 && !notes) {
       throw new Error("Choose at least one change or describe what matters.");
     }
-    if (data.consentAccepted !== true) {
-      throw new Error("Review and accept the alpha data agreement to continue.");
+    if (data.noticeAccepted !== true) {
+      throw new Error("Read and acknowledge the Alpha Data Notice to continue.");
     }
-    return { step, data: { priorities, notes, consentAccepted: true } };
+    if (data.processingAccepted !== true) {
+      throw new Error("Choose whether Way Ahead may process the career information you provide.");
+    }
+    return {
+      step,
+      data: {
+        priorities,
+        notes,
+        noticeAccepted: true,
+        processingAccepted: true,
+      },
+    };
   }
 
   if (step === 2) {
@@ -300,13 +311,13 @@ function validatePayload(value: unknown): OnboardingStepPayload {
 
   if (step === 5) {
     const paths = stringList(data.paths, "Career paths", 5, 80);
-    if (paths.length < 1) throw new Error("Add at least one career path.");
+    if (paths.length < 1) throw new Error("Add at least one Job Path.");
     if (
       !Number.isInteger(data.primaryIndex) ||
       (data.primaryIndex as number) < 0 ||
       (data.primaryIndex as number) >= paths.length
     ) {
-      throw new Error("Choose one primary career path.");
+      throw new Error("Choose one primary Job Path.");
     }
     return {
       step,

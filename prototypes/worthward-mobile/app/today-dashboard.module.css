@@ -98,6 +98,10 @@
   gap: 16px;
 }
 
+.module[hidden] {
+  display: none;
+}
+
 .moduleHeader {
   display: flex;
   align-items: end;

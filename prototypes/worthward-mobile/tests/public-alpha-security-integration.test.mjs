@@ -820,7 +820,7 @@ test("Lever intake accepts only canonical employer URLs and records freshness wi
   assert.doesNotMatch(app, /fetch\("\/api\/jobs\/greenhouse"/);
 });
 
-test("owner analysis is exact-version bound, deliberate, auditable, and unavailable to members", () => {
+test("operator analysis is exact-version bound, deliberate, auditable, and absent from customer job screens", () => {
   const { ast, node } = findFunction(
     "app/workspace-repository.ts",
     "recordOwnerOpportunityAnalysis",
@@ -848,7 +848,183 @@ test("owner analysis is exact-version bound, deliberate, auditable, and unavaila
 
   const app = read("app/WayAheadApp.tsx");
   assert.match(app, /canRecordOperatorAnalysis/);
-  assert.match(app, /This changes Matt’s private scoreboard only/);
+  assert.match(app, /This changes the account&apos;s private scoreboard only/);
   assert.match(app, /record_reviewed_analysis/);
   assert.match(app, /does not generate,[\s\S]*populate, upload, send, or submit/);
+  assert.doesNotMatch(app, /<OwnerAnalysisPanel/);
+  assert.doesNotMatch(app, /Owner analysis receipt/);
+});
+
+test("account export, deletion, and restart stay same-origin and authenticated-account scoped", () => {
+  const repository = read("app/account-repository.ts");
+  const datasetsBlock = repository.match(
+    /export const ACCOUNT_EXPORT_DATASETS:[\s\S]*?=\s*\[([\s\S]*?)\]\s*as const;/,
+  );
+  assert.ok(datasetsBlock, "expected the account export dataset contract");
+  const datasets = [
+    ...datasetsBlock[1].matchAll(
+      /key:\s*"([^"]+)",\s*sql:\s*"([^"]+)",\s*userIdBindings:\s*(\d+)/g,
+    ),
+  ].map((match) => ({
+    key: match[1],
+    sql: match[2],
+    bindings: Number(match[3]),
+  }));
+  assert.ok(datasets.length >= 30, "expected a comprehensive account export");
+  for (const dataset of datasets) {
+    assert.ok(dataset.bindings >= 1, `${dataset.key} must be account scoped`);
+    assert.equal(
+      (dataset.sql.match(/\?/g) ?? []).length,
+      dataset.bindings,
+      `${dataset.key} binding count must match its SQL`,
+    );
+  }
+  const compiled = runSql(
+    datasets
+      .map((dataset) =>
+        `${bindAnonymousSql(
+          dataset.sql,
+          Array.from({ length: dataset.bindings }, () => "user-a"),
+        )};`,
+      )
+      .join("\n"),
+    { integrityTriggers: false },
+  );
+  assert.equal(
+    compiled.status,
+    0,
+    `Every export query must compile against the current schema:\n${compiled.stderr}`,
+  );
+
+  const routes = [
+    "app/api/account/route.ts",
+    "app/api/account/export/route.ts",
+    "app/api/account/restart/route.ts",
+  ].map(read);
+  for (const route of routes) {
+    assert.match(route, /requireUserRequest\(request\)/);
+    assert.match(route, /requireSameOrigin\(request\)/);
+    assert.match(route, /readBoundedJson\(request, 2_000\)/);
+    assert.doesNotMatch(route, /payload\.(?:userId|email|tenantId)/);
+  }
+
+  assert.match(repository, /ACCOUNT_DELETION_CONFIRMATION/);
+  assert.match(repository, /user\.role !== "member"/);
+  assert.match(repository, /action = 'account_deleted'/);
+  assert.match(repository, /user_id IS NULL/);
+  assert.match(repository, /ACCOUNT_RESTART_CONFIRMATION/);
+});
+
+test("explicit account purge removes one tenant while preserving another and shared jobs", () => {
+  const repository = read("app/account-repository.ts");
+  const purgeBlock = repository.match(
+    /export const ACCOUNT_PURGE_SQL:[\s\S]*?=\s*\[([\s\S]*?)\]\s*as const;/,
+  );
+  assert.ok(purgeBlock, "expected an explicit dependency-ordered purge");
+  const purgeStatements = [
+    ...purgeBlock[1].matchAll(/"([^"]+)"/g),
+  ].map((match) => match[1]);
+  assert.ok(purgeStatements.length >= 20);
+  assert.ok(
+    purgeStatements.some((sql) => sql.includes("DELETE FROM user_job_links")),
+  );
+  assert.ok(
+    purgeStatements.some((sql) => sql.includes("DELETE FROM cost_events")),
+  );
+
+  const fixture = `
+    INSERT INTO users
+      (id, auth_subject, identity_provider, role, email, display_name, lifecycle_state)
+    VALUES
+      ('user-a', 'chatgpt:a@example.com', 'chatgpt', 'member', 'a@example.com', 'A', 'alpha_active'),
+      ('user-b', 'chatgpt:b@example.com', 'chatgpt', 'member', 'b@example.com', 'B', 'alpha_active');
+    INSERT INTO source_imports
+      (id, user_id, type, checksum_sha256, parse_state)
+    VALUES
+      ('import-a', 'user-a', 'pasted_text', 'hash-a', 'review_ready'),
+      ('import-b', 'user-b', 'pasted_text', 'hash-b', 'review_ready');
+    INSERT INTO profile_facts
+      (id, user_id, source_import_id, fact_type, value_json, state)
+    VALUES
+      ('fact-a', 'user-a', 'import-a', 'headline', '{"value":"A"}', 'user_confirmed'),
+      ('fact-b', 'user-b', 'import-b', 'headline', '{"value":"B"}', 'user_confirmed');
+    INSERT INTO job_sources
+      (id, name, kind, rights_state)
+    VALUES ('source-shared', 'Shared Employer ATS', 'employer_ats', 'approved');
+    INSERT INTO job_postings
+      (id, source_id, external_id, canonical_url, employer, title, description_checksum)
+    VALUES
+      ('job-shared', 'source-shared', 'external-1', 'https://example.com/job', 'Example', 'Director', 'job-hash');
+    INSERT INTO user_job_links
+      (id, user_id, job_posting_id, source, state)
+    VALUES
+      ('link-a', 'user-a', 'job-shared', 'user_added', 'active'),
+      ('link-b', 'user-b', 'job-shared', 'user_added', 'active');
+    INSERT INTO cost_events
+      (id, stream, category, unit_name, units_micros, rate_micros_per_unit, amount_micros, estimate_state, cash_state, rate_card_version, user_id, incurred_at)
+    VALUES
+      ('cost-a', 'software', 'other', 'request', 1000000, 1, 1, 'estimated', 'cash', 'test-v1', 'user-a', 1);
+  `;
+
+  const directDelete = runSql(
+    `${fixture}\nDELETE FROM users WHERE id = 'user-a';`,
+    { integrityTriggers: false },
+  );
+  assert.notEqual(
+    directDelete.status,
+    0,
+    "a direct user delete must not bypass retained dependency rows",
+  );
+  assert.match(directDelete.stderr, /FOREIGN KEY constraint failed/);
+
+  const purgeSql = purgeStatements
+    .map((sql) => `${bindAnonymousSql(sql, ["user-a"])};`)
+    .join("\n");
+  const explicitDelete = runSql(
+    `
+      ${fixture}
+      ${purgeSql}
+      INSERT INTO usage_events
+        (id, user_id, action, policy_version, result_state, workload_ref, metadata_json)
+      VALUES
+        ('deletion-a', 'user-a', 'account_deleted', 'public-alpha-2026-07-23', 'completed', 'deleted_identity:a', '{}');
+      DELETE FROM users WHERE id = 'user-a' AND role = 'member';
+      SELECT count(*) FROM users WHERE id = 'user-a';
+      SELECT count(*) FROM source_imports WHERE user_id = 'user-a';
+      SELECT count(*) FROM profile_facts WHERE user_id = 'user-a';
+      SELECT count(*) FROM users WHERE id = 'user-b';
+      SELECT count(*) FROM profile_facts WHERE user_id = 'user-b';
+      SELECT count(*) FROM user_job_links WHERE user_id = 'user-b';
+      SELECT count(*) FROM job_postings WHERE id = 'job-shared';
+      SELECT count(*) FROM usage_events
+        WHERE id = 'deletion-a' AND user_id IS NULL;
+    `,
+    { integrityTriggers: false },
+  );
+  assert.equal(
+    explicitDelete.status,
+    0,
+    `the explicit purge must satisfy the current FK graph:\n${explicitDelete.stderr}`,
+  );
+  assert.equal(explicitDelete.stdout.trim(), "0\n0\n0\n1\n1\n1\n1\n1");
+});
+
+test("member job visibility is explicitly linked and ingestion creates only the current user's link", () => {
+  const repository = read("app/workspace-repository.ts");
+  assert.match(
+    repository,
+    /EXISTS \(SELECT 1 FROM user_job_links ujl WHERE ujl\.user_id = \? AND ujl\.job_posting_id = jp\.id AND ujl\.state = 'active'\)/,
+  );
+  assert.match(
+    repository,
+    /\.bind\(founder\.id, founder\.id, founder\.id, founder\.id\)/,
+  );
+  assert.ok(
+    (repository.match(/INSERT INTO user_job_links/g) ?? []).length >= 4,
+    "bootstrap, intake, and pursuit creation must preserve user-job ownership",
+  );
+  assert.match(
+    repository,
+    /ON CONFLICT\(user_id, job_posting_id\) DO UPDATE SET state = 'active'/,
+  );
 });

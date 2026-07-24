@@ -40,7 +40,8 @@
 
 .brand,
 .account a,
-.mobileNav a {
+.mobileNav a,
+.mobileNav button {
   text-decoration: none;
 }
 
@@ -91,7 +92,8 @@
   white-space: nowrap;
 }
 
-.account a {
+.account a,
+.privacyButton {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -99,6 +101,10 @@
   color: var(--accent);
   font-size: 12px;
   font-weight: 760;
+}
+
+.privacyButton {
+  background: transparent;
 }
 
 .main {
@@ -109,6 +115,12 @@
   gap: clamp(42px, 7vw, 94px);
   margin: 0 auto;
   padding: 64px 0 90px;
+}
+
+.privacyMain {
+  width: min(940px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 96px;
 }
 
 .progress {
@@ -382,6 +394,30 @@
   cursor: pointer;
   font-size: 11px;
   line-height: 1.55;
+}
+
+.dataNotice {
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--accent-soft);
+  color: var(--ink-secondary);
+  padding: 17px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.dataNotice summary {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.dataNotice div {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
 }
 
 .consent input,
@@ -784,7 +820,8 @@
   }
 
   .headerContext,
-  .account > span {
+  .account > span,
+  .privacyButton {
     display: none;
   }
 
@@ -822,7 +859,7 @@
     z-index: 38;
     inset: auto 0 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     min-height: calc(70px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--border);
     background: color-mix(in srgb, var(--surface) 95%, transparent);
@@ -830,7 +867,8 @@
     backdrop-filter: blur(18px);
   }
 
-  .mobileNav a {
+  .mobileNav a,
+  .mobileNav button {
     display: grid;
     min-height: 52px;
     place-items: center;
@@ -840,6 +878,10 @@
     color: var(--ink-tertiary);
     font-size: 10px;
     font-weight: 740;
+  }
+
+  .mobileNav button {
+    background: transparent;
   }
 
   .mobileNav .activeMobileNav {

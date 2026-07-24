@@ -1,5 +1,7 @@
 # Way Ahead Company Operating System
 
+> **2026-07-23 governing Career OS correction:** [Career OS Customer Journey, Screen-State Architecture, and Critical Path](../strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md) now controls the literal job-search journey, account lifecycle, customer/operator separation, Home architecture, Career Evidence Library, Job Paths, document precedence, score language, Light/Dark policy, acquisition pilots, AI provider gate, screen states, and product critical path. Historical “move,” Today, System-theme, owner-first, and lifecycle-only completion language below is superseded where it conflicts.
+
 **Version:** 1.3
 **Operating date:** 2026-07-23
 **Board and owner:** Matt Dimock

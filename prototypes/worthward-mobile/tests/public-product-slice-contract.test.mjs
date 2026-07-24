@@ -19,8 +19,11 @@ test("document studios expose editable content, design, preview, and immutable s
   assert.match(resumeStudio, /Design|design/);
   assert.match(resumeStudio, /Preview|preview/);
   assert.match(resumeStudio, /Save new version/);
-  assert.match(resumeStudio, /Career path/);
+  assert.match(resumeStudio, /Job Path/);
   assert.match(resumeStudio, /Specific job/);
+  assert.match(resumeStudio, /type="month"/);
+  assert.match(resumeStudio, /Type a skill and press Enter/);
+  assert.match(resumeStudio, /Each item stays separate/);
   assert.match(coverLetterStudio, /Save new version/);
   assert.match(coverLetterStudio, /Add paragraph/);
   assert.match(coverLetterStudio, /Nothing is uploaded or submitted/);
@@ -57,7 +60,7 @@ test("claim-safe starters use confirmed profile state and do not claim AI", () =
   assert.match(resumeStudio, /No invented experience is added/);
 });
 
-test("Today is path-segmented and keeps priority distinct from outcome probability", () => {
+test("Home is path-segmented, state-aware, and keeps priority distinct from outcome probability", () => {
   assert.match(todayApi, /requireUserRequest/);
   assert.match(today, /career_path_id/);
   assert.match(today, /0\.55/);
@@ -66,6 +69,9 @@ test("Today is path-segmented and keeps priority distinct from outcome probabili
   assert.match(today, /validation_state/);
   assert.match(todayUi, /All paths/);
   assert.match(todayUi, /Opportunity scoreboard/);
+  assert.match(todayUi, /Your job search, prioritized/);
+  assert.match(todayUi, /hidden=\{activePursuits\.length === 0\}/);
+  assert.match(todayUi, /hidden=\{documentGaps\.length === 0\}/);
   assert.match(
     `${today}\n${todayUi}`,
     /not the probability of an interview or offer/i,

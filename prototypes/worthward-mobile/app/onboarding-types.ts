@@ -11,7 +11,7 @@ export const ONBOARDING_STEPS: ReadonlyArray<{
   { id: 2, shortLabel: "Experience", title: "Bring in your experience" },
   { id: 3, shortLabel: "Review", title: "Make your profile accurate" },
   { id: 4, shortLabel: "Standard", title: "Define a job worth taking" },
-  { id: 5, shortLabel: "Paths", title: "Choose the paths worth exploring" },
+  { id: 5, shortLabel: "Job Paths", title: "Choose the Job Paths worth exploring" },
   { id: 6, shortLabel: "Plan", title: "Review your search plan" },
 ];
 
@@ -50,7 +50,8 @@ export type OnboardingStepPayload =
       data: {
         priorities: string[];
         notes: string;
-        consentAccepted: boolean;
+        noticeAccepted: boolean;
+        processingAccepted: boolean;
       };
     }
   | {

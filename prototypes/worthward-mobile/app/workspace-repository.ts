@@ -92,6 +92,28 @@ export async function sha256Hex(value: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+export async function deletedIdentityWorkloadRef(
+  actor: FounderActor,
+): Promise<string> {
+  const email = actor.email.trim().toLowerCase();
+  return `deleted_identity:${await sha256Hex(`chatgpt:${email}`)}`;
+}
+
+export async function deletedAccountNeedsRestart(
+  actor: FounderActor,
+): Promise<boolean> {
+  const email = actor.email.trim().toLowerCase();
+  if (!email || !email.includes("@")) return false;
+  const db = database();
+  const receipt = await db
+    .prepare(
+      "SELECT id FROM usage_events WHERE user_id IS NULL AND action = 'account_deleted' AND workload_ref = ? LIMIT 1",
+    )
+    .bind(await deletedIdentityWorkloadRef(actor))
+    .first<{ id: string }>();
+  return Boolean(receipt);
+}
+
 function configuredOwnerEmail(): string | null {
   const value = (env as unknown as RuntimeEnv).WAY_AHEAD_OWNER_EMAIL?.trim().toLowerCase();
   return value && value.includes("@") ? value : null;
@@ -117,6 +139,11 @@ export async function ensureUser(actor: FounderActor): Promise<UserRow> {
       .bind(authSubject, actor.displayName, role, existing.id)
       .run();
     return { ...existing, display_name: actor.displayName, role };
+  }
+  if (await deletedAccountNeedsRestart(actor)) {
+    throw new Error(
+      "This Way Ahead account was deleted. Choose Start a new empty account before continuing.",
+    );
   }
 
   const digest = await sha256Hex(authSubject);
@@ -247,8 +274,9 @@ export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecor
       .all<RawCareerPath>(),
     db
       .prepare(
-        "SELECT jp.id, jp.employer, jp.title, jp.canonical_url, jp.locations_json, jp.compensation_json, jp.freshness_state, jp.posted_at, jp.last_checked_at, js.name AS source_name, js.rights_state AS source_rights_state FROM job_postings jp JOIN job_sources js ON js.id = jp.source_id WHERE jp.removed_at IS NULL ORDER BY jp.last_checked_at DESC LIMIT 30",
+        "SELECT jp.id, jp.employer, jp.title, jp.canonical_url, jp.locations_json, jp.compensation_json, jp.freshness_state, jp.posted_at, jp.last_checked_at, js.name AS source_name, js.rights_state AS source_rights_state FROM job_postings jp JOIN job_sources js ON js.id = jp.source_id WHERE jp.removed_at IS NULL AND (EXISTS (SELECT 1 FROM user_job_links ujl WHERE ujl.user_id = ? AND ujl.job_posting_id = jp.id AND ujl.state = 'active') OR EXISTS (SELECT 1 FROM job_analyses ja WHERE ja.user_id = ? AND ja.job_posting_id = jp.id) OR EXISTS (SELECT 1 FROM pursuits p WHERE p.user_id = ? AND p.job_posting_id = jp.id) OR EXISTS (SELECT 1 FROM resume_assignments ra WHERE ra.user_id = ? AND ra.job_posting_id = jp.id)) ORDER BY jp.last_checked_at DESC LIMIT 30",
       )
+      .bind(founder.id, founder.id, founder.id, founder.id)
       .all<RawPosting>(),
   ]);
 
@@ -505,7 +533,7 @@ export async function recordOwnerOpportunityAnalysis(
   ) {
     throw new Error("Resolve the source capture before recording analysis.");
   }
-  if (!careerPath) throw new Error("Choose one of your active career paths.");
+  if (!careerPath) throw new Error("Choose one of your active Job Paths.");
   if (!standard) throw new Error("Finish your Job Standard before analysis.");
 
   const analysisCore = {
@@ -834,7 +862,12 @@ async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingStat
       .all<RawCareerPath>(),
   ]);
 
-  const legacyComplete = user.lifecycle_state === "founder_production";
+  const legacyComplete =
+    user.lifecycle_state === "founder_production" &&
+    Boolean(goalFact) &&
+    Boolean(sourceFact || role) &&
+    Boolean(standard) &&
+    pathRows.results.some((path) => path.state === "active");
   const explicitlyComplete =
     user.lifecycle_state === "alpha_active" || completedStepsValue.includes(6);
   const complete = legacyComplete || explicitlyComplete;
@@ -945,7 +978,7 @@ async function saveOnboardingGoal(
         json({ priorities: payload.priorities, notes: payload.notes }),
         ONBOARDING_POLICY_VERSION,
       ),
-    ...(["terms", "privacy", "profile_processing"] as const).map((purpose) =>
+    ...(["alpha_data_use", "profile_processing"] as const).map((purpose) =>
       db
         .prepare(
           "INSERT INTO consents (id, user_id, purpose, policy_version, state, granted_at, source) VALUES (?, ?, ?, ?, 'granted', unixepoch() * 1000, 'onboarding')",
@@ -960,7 +993,8 @@ async function saveOnboardingGoal(
     onboardingAuditStatement(db, user, 1, {
       priorities: payload.priorities,
       hasNotes: Boolean(payload.notes),
-      consentAccepted: true,
+      noticeAccepted: true,
+      processingAccepted: true,
     }),
   ]);
 }
@@ -1073,7 +1107,16 @@ async function saveOnboardingCareerInput(
     return;
   }
 
-  const roleId = `role_${(await sha256Hex(`${user.id}:onboarding-primary-role`)).slice(0, 24)}`;
+  const roleIdentity =
+    context === "onboarding"
+      ? `${user.id}:onboarding-primary-role`
+      : [
+          user.id,
+          payload.role.employer.trim().toLocaleLowerCase(),
+          payload.role.title.trim().toLocaleLowerCase(),
+          payload.role.startDate ?? "unknown-start",
+        ].join(":");
+  const roleId = `role_${(await sha256Hex(roleIdentity)).slice(0, 24)}`;
   await db.batch([
     db
       .prepare(
@@ -1552,6 +1595,9 @@ export async function bootstrapFounderWorkspace(
 
   for (const opportunity of normalizedOpportunities) {
     const { source, posting, version, analysis, pursuit } = opportunity;
+    const userJobLinkId = `joblink_${(
+      await sha256Hex(`${founder.id}:${posting.id}`)
+    ).slice(0, 24)}`;
     statements.push(
       db
         .prepare(
@@ -1592,6 +1638,11 @@ export async function bootstrapFounderWorkspace(
           json(version.sourceConflicts),
           version.captureState,
         ),
+      db
+        .prepare(
+          "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'import', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+        )
+        .bind(userJobLinkId, founder.id, posting.id),
       db
         .prepare(
           "INSERT INTO job_analyses (id, user_id, job_posting_id, career_path_id, job_standard_id, policy_version, evidence_version, integrity_gates_json, move_value_score, pursuit_readiness_score, fit_json, unknowns_json, recommendation, validation_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET career_path_id = excluded.career_path_id, job_standard_id = excluded.job_standard_id, policy_version = excluded.policy_version, evidence_version = excluded.evidence_version, integrity_gates_json = excluded.integrity_gates_json, move_value_score = excluded.move_value_score, pursuit_readiness_score = excluded.pursuit_readiness_score, fit_json = excluded.fit_json, unknowns_json = excluded.unknowns_json, recommendation = excluded.recommendation, validation_state = excluded.validation_state WHERE job_analyses.user_id = excluded.user_id",
@@ -1768,7 +1819,7 @@ export async function setPrimaryCareerPath(actor: FounderActor, pathId: string):
     .prepare("SELECT id FROM career_paths WHERE id = ? AND user_id = ? LIMIT 1")
     .bind(pathId, founder.id)
     .first<{ id: string }>();
-  if (!owned) throw new Error("That career path is not available in this workspace.");
+  if (!owned) throw new Error("That Job Path is not available in this workspace.");
   await db.batch([
     db.prepare("UPDATE career_paths SET is_primary = 0 WHERE user_id = ?").bind(founder.id),
     db
@@ -1789,18 +1840,35 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
     .prepare("SELECT id FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1")
     .bind(founder.id, jobPostingId)
     .first<{ id: string }>();
-  if (existing) return existing.id;
+  const linkId = `joblink_${(
+    await sha256Hex(`${founder.id}:${jobPostingId}`)
+  ).slice(0, 24)}`;
+  if (existing) {
+    await db
+      .prepare(
+        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+      )
+      .bind(linkId, founder.id, jobPostingId)
+      .run();
+    return existing.id;
+  }
   const analysis = await db
     .prepare("SELECT id FROM job_analyses WHERE user_id = ? AND job_posting_id = ? ORDER BY created_at DESC LIMIT 1")
     .bind(founder.id, jobPostingId)
     .first<{ id: string }>();
   const id = `pursuit_${crypto.randomUUID()}`;
-  await db
-    .prepare(
-      "INSERT INTO pursuits (id, user_id, job_posting_id, current_analysis_id, state, next_action, external_approval_state) VALUES (?, ?, ?, ?, 'researching', 'Complete evidence review before generating application assets.', 'not_requested')",
-    )
-    .bind(id, founder.id, jobPostingId, analysis?.id ?? null)
-    .run();
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+      )
+      .bind(linkId, founder.id, jobPostingId),
+    db
+      .prepare(
+        "INSERT INTO pursuits (id, user_id, job_posting_id, current_analysis_id, state, next_action, external_approval_state) VALUES (?, ?, ?, ?, 'researching', 'Complete evidence review before generating application assets.', 'not_requested')",
+      )
+      .bind(id, founder.id, jobPostingId, analysis?.id ?? null),
+  ]);
   return id;
 }
 
@@ -1896,6 +1964,9 @@ export async function ingestGreenhouseJob(
   const questionSetChecksum = await sha256Hex(canonicalJson(questionSet));
   const descriptionChecksum = await sha256Hex(`${job.content ?? ""}\n${canonicalJson(questionSet)}`);
   const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const linkId = `joblink_${(
+    await sha256Hex(`${founder.id}:${postingId}`)
+  ).slice(0, 24)}`;
   const employer = job.company_name?.trim() || board;
   const canonicalUrl = job.absolute_url?.startsWith("https://") ? job.absolute_url : sourceUrl;
   const location = job.location?.name?.trim();
@@ -1944,6 +2015,11 @@ export async function ingestGreenhouseJob(
         "INSERT INTO job_posting_versions (id, job_posting_id, source_checked_at, source_url, description_checksum, source_facts_json, source_conflicts_json, capture_state) VALUES (?, ?, ?, ?, ?, ?, '[]', 'verified') ON CONFLICT(job_posting_id, description_checksum) DO NOTHING",
       )
       .bind(versionId, postingId, checkedAt, canonicalUrl, descriptionChecksum, json(sourceFacts)),
+    db
+      .prepare(
+        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+      )
+      .bind(linkId, founder.id, postingId),
     db
       .prepare(
         "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'greenhouse_job_ingested', 'job_posting', ?, ?)",
@@ -2077,6 +2153,9 @@ async function ingestLeverJob(
   const sourceId = `lever_${(await sha256Hex(site)).slice(0, 20)}`;
   const postingId = `job_${(await sha256Hex(`lever:${site}:${jobId}`)).slice(0, 24)}`;
   const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const linkId = `joblink_${(
+    await sha256Hex(`${user.id}:${postingId}`)
+  ).slice(0, 24)}`;
   const employer = employerFromLeverSite(site);
   const hostedUrl =
     typeof job.hostedUrl === "string" &&
@@ -2138,6 +2217,11 @@ async function ingestLeverJob(
         descriptionChecksum,
         json(sourceFacts),
       ),
+    db
+      .prepare(
+        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+      )
+      .bind(linkId, user.id, postingId),
     db
       .prepare(
         "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'lever_job_ingested', 'job_posting', ?, ?)",

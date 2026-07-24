@@ -32,8 +32,10 @@ test("compiles the public website and account-level sign-in boundary", async () 
   assert.match(auth, /export function requireUserRequest/);
   assert.doesNotMatch(auth, /not shared with this account/);
   assert.match(layout, /Way Ahead \| Your next job, pursued with evidence/);
-  assert.match(bundle, /Loading the evidence behind your next move/);
+  assert.match(bundle, /Loading the evidence behind your next job/);
   assert.match(bundle, /Stop wasting your best effort on jobs that are not worth it/);
+  assert.match(bundle, /finds current jobs worth pursuing/);
+  assert.doesNotMatch(bundle, /Your next move|better move|real move value/);
   assert.doesNotMatch(bundle, /Worthward|Cedarfield|Tebra|THNKS|Lumeris|Babylist|TextNow|Finite State/i);
 });
 
@@ -121,6 +123,9 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.match(publicSite, /Nothing sent without[\s\S]*your approval/);
   assert.match(app, /Way Ahead has no employer-form population, upload, outreach, or submission capability/);
   assert.match(app, /Maximum commute \(miles\)/);
+  assert.match(app, /type ThemeChoice = "light" \| "dark"/);
+  assert.doesNotMatch(app, /label: "System"/);
+  assert.match(app, /Data &amp; privacy/);
   assert.match(app, /role="radiogroup"/);
   assert.match(app, /aria-current/);
   assert.match(css, /height:\s*100dvh/);
@@ -153,8 +158,8 @@ test("makes package approval visibly exact and separate from submission", async 
   assert.match(app, /approve_application_package/);
   assert.match(app, /Approve exact package for form staging/);
   assert.match(app, /This is not submission authorization/);
-  assert.match(app, /have not previously applied to this exact/);
-  assert.match(app, /without the current Zaytinya bridge role/);
+  assert.match(app, /application history and included career evidence shown here are accurate/);
+  assert.doesNotMatch(app, /Matt|Zaytinya|Owner analysis receipt/);
   assert.match(app, /packageRecord\.approvalState === "approved"/);
   assert.match(app, /key=\{`\$\{pursuedJob\?\.id[\s\S]*pursuedJob\?\.pursuit\?\.package\?\.payloadSha256/);
   assert.doesNotMatch(app, /\/founder-assets\//);

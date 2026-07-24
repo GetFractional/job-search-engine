@@ -8,6 +8,7 @@ import {
   Plus,
   ShieldCheck,
   Trash,
+  X,
 } from "@phosphor-icons/react";
 import { DocumentDesignControls } from "./DocumentDesignControls";
 import {
@@ -37,7 +38,7 @@ type Panel = "content" | "design" | "preview";
 
 function recordType(kind: ResumeStudioRecord["kind"]): string {
   if (kind === "master") return "Master";
-  if (kind === "path") return "Career path";
+  if (kind === "path") return "Job Path";
   return "Job";
 }
 
@@ -320,10 +321,10 @@ export function ResumeStudio() {
         <div className={styles.headingCopy}>
           <p className="wa-eyebrow">Resume Studio</p>
           <h1 id="resume-studio-title">
-            One career record. The right resume for each move.
+            One trusted career record. The right resume for each job.
           </h1>
           <p>
-            Start with one accurate master, then save career-path and job
+            Start with one accurate master, then save Job Path and job
             versions without losing the source truth.
           </p>
           <span className={styles.trustLine}>
@@ -507,13 +508,13 @@ export function ResumeStudio() {
                           }}
                         >
                           <option value="master">Master</option>
-                          <option value="path">Career path</option>
+                          <option value="path">Job Path</option>
                           <option value="job">Specific job</option>
                         </select>
                       </div>
                       {kind === "path" ? (
                         <div className={styles.field}>
-                          <label htmlFor="resume-path">Career path</label>
+                          <label htmlFor="resume-path">Job Path</label>
                           <select
                             id="resume-path"
                             value={careerPathId}
@@ -659,6 +660,7 @@ export function ResumeStudio() {
                           <label className={styles.field}>
                             <span>Start</span>
                             <input
+                              type="month"
                               value={experience.startDate}
                               onChange={(event) =>
                                 updateExperience(index, {
@@ -670,6 +672,7 @@ export function ResumeStudio() {
                           <label className={styles.field}>
                             <span>End</span>
                             <input
+                              type="month"
                               value={experience.endDate}
                               onChange={(event) =>
                                 updateExperience(index, {
@@ -761,29 +764,20 @@ export function ResumeStudio() {
                             }
                           />
                         </label>
-                        <label className={styles.fieldWide}>
-                          <span>Skills, separated by commas</span>
-                          <input
-                            value={group.skills.join(", ")}
-                            onChange={(event) =>
-                              setContent({
-                                ...content,
-                                skillGroups: content.skillGroups.map(
-                                  (item, itemIndex) =>
-                                    itemIndex === index
-                                      ? {
-                                          ...item,
-                                          skills: event.target.value
-                                            .split(",")
-                                            .map((skill) => skill.trim())
-                                            .filter(Boolean),
-                                        }
-                                      : item,
-                                ),
-                              })
-                            }
-                          />
-                        </label>
+                        <SkillTokenInput
+                          skills={group.skills}
+                          onChange={(skills) =>
+                            setContent({
+                              ...content,
+                              skillGroups: content.skillGroups.map(
+                                (item, itemIndex) =>
+                                  itemIndex === index
+                                    ? { ...item, skills }
+                                    : item,
+                              ),
+                            })
+                          }
+                        />
                       </div>
                     ))}
                   </section>
@@ -882,5 +876,59 @@ export function ResumeStudio() {
         </div>
       )}
     </section>
+  );
+}
+
+function SkillTokenInput({
+  skills,
+  onChange,
+}: {
+  skills: string[];
+  onChange: (skills: string[]) => void;
+}) {
+  const [draft, setDraft] = useState("");
+
+  const addDraft = () => {
+    const next = draft.trim().replace(/,$/, "").trim();
+    if (!next) return;
+    const duplicate = skills.some(
+      (skill) => skill.toLocaleLowerCase() === next.toLocaleLowerCase(),
+    );
+    if (!duplicate) onChange([...skills, next]);
+    setDraft("");
+  };
+
+  return (
+    <div className={styles.tokenField}>
+      <span>Skills and platforms</span>
+      <div className={styles.tokenEditor}>
+        {skills.map((skill) => (
+          <span className={styles.token} key={skill}>
+            {skill}
+            <button
+              type="button"
+              aria-label={`Remove ${skill}`}
+              onClick={() => onChange(skills.filter((item) => item !== skill))}
+            >
+              <X aria-hidden="true" />
+            </button>
+          </span>
+        ))}
+        <input
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          onBlur={addDraft}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === ",") {
+              event.preventDefault();
+              addDraft();
+            }
+          }}
+          placeholder="Type a skill and press Enter"
+          aria-label="Add a skill or platform"
+        />
+      </div>
+      <small>Each item stays separate so Way Ahead can reuse and compare it.</small>
+    </div>
   );
 }

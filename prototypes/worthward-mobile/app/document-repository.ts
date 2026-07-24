@@ -504,13 +504,13 @@ async function validateAssignment(
 ) {
   if (assignment.scope === "path") {
     if (!assignment.careerPathId) {
-      throw new Error("Choose a career path for this resume.");
+      throw new Error("Choose a Job Path for this resume.");
     }
     const owned = await db
       .prepare("SELECT id FROM career_paths WHERE id = ? AND user_id = ?")
       .bind(assignment.careerPathId, userId)
       .first();
-    if (!owned) throw new Error("That career path is not available.");
+    if (!owned) throw new Error("That Job Path is not available.");
   }
   if (assignment.scope === "job") {
     if (!assignment.jobPostingId) {
@@ -715,7 +715,7 @@ export async function saveResumeVersion(
         (input.assignment.jobPostingId ?? null)
     ) {
       throw new Error(
-        "Save as a new resume to change its name, career path, or job assignment.",
+        "Save as a new resume to change its name, Job Path, or job assignment.",
       );
     }
   }

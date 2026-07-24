@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Way Ahead | Find jobs worth pursuing",
   description:
-    "Define a better move, focus on current jobs worth your effort, and build a stronger truthful application.",
+    "Define the job you want, focus on current openings worth your effort, and build a stronger truthful application.",
   robots: {
     index: false,
     follow: false,

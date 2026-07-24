@@ -20,6 +20,7 @@ import {
 export type ConsentPurpose =
   | "terms"
   | "privacy"
+  | "alpha_data_use"
   | "profile_processing"
   | "voice_transcription"
   | "job_alerts"
@@ -621,6 +622,35 @@ export const jobPostings = sqliteTable(
     uniqueIndex("job_postings_source_external_unique").on(table.sourceId, table.externalId),
     index("job_postings_employer_title_idx").on(table.employer, table.title),
     index("job_postings_freshness_idx").on(table.freshnessState, table.lastCheckedAt),
+  ],
+);
+
+export const userJobLinks = sqliteTable(
+  "user_job_links",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    jobPostingId: text("job_posting_id")
+      .notNull()
+      .references(() => jobPostings.id, { onDelete: "cascade" }),
+    source: text("source")
+      .$type<"user_added" | "operator" | "monitoring" | "import">()
+      .notNull(),
+    state: text("state")
+      .$type<"active" | "archived">()
+      .notNull()
+      .default("active"),
+    createdAt: timestampMs("created_at"),
+    updatedAt: timestampMs("updated_at"),
+  },
+  (table) => [
+    uniqueIndex("user_job_links_user_job_unique").on(
+      table.userId,
+      table.jobPostingId,
+    ),
+    index("user_job_links_user_state_idx").on(table.userId, table.state),
   ],
 );
 

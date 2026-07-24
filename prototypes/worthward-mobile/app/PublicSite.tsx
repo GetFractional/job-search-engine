@@ -112,9 +112,9 @@ export default function PublicSite({
             <p className={styles.eyebrow}>Career search, built around you</p>
             <h1>Stop wasting your best effort on jobs that are not worth it.</h1>
             <p className={styles.lede}>
-              Way Ahead helps you define what a better move means, focus on the
-              current jobs most worth pursuing, and build a strong, truthful
-              application for each one.
+              Way Ahead learns what you are good at and what your next job must
+              deliver, finds current jobs worth pursuing, and helps you build
+              the strongest truthful application for each one.
             </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryButton} href={primaryHref}>
@@ -135,20 +135,20 @@ export default function PublicSite({
           </div>
 
           <aside className={styles.decisionCard} aria-label="Way Ahead outcome">
-            <p className={styles.cardLabel}>Your next move, made clearer</p>
+            <p className={styles.cardLabel}>Your next job, made clearer</p>
             <div>
               <span>1</span>
               <p>
-                <strong>Define better.</strong>
-                Tell Way Ahead what must change and what is non-negotiable.
+                <strong>Define the job you want.</strong>
+                Tell Way Ahead what must improve and what is non-negotiable.
               </p>
             </div>
             <div>
               <span>2</span>
               <p>
                 <strong>See what deserves effort.</strong>
-                Compare current roles by career path, evidence, and real move
-                value.
+                Compare current jobs by role family, evidence, and how well
+                each one meets your standard.
               </p>
             </div>
             <div>
@@ -168,7 +168,7 @@ export default function PublicSite({
             <h2>Know where to focus before another application takes your night.</h2>
             <p>
               Start with your real experience and standards. Way Ahead organizes
-              the work around the career paths you choose, then shows what is
+              the work around the Job Paths you choose, then shows what is
               known, what is missing, and what to do next.
             </p>
           </div>
@@ -183,7 +183,7 @@ export default function PublicSite({
             </article>
             <article>
               <Briefcase size={27} weight="duotone" />
-              <h3>Multiple career paths</h3>
+              <h3>Multiple Job Paths</h3>
               <p>
                 Keep separate scoreboards for the directions you are exploring
                 without flattening them into one generic search.
@@ -212,11 +212,11 @@ export default function PublicSite({
             </p>
             <p>
               <strong>Opportunity Scoreboards</strong>
-              Current roles organized by the career paths you actually want.
+              Current jobs organized by the Job Paths you actually want.
             </p>
             <p>
               <strong>Resume and Cover Letter Studios</strong>
-              Master, career-path, and job-specific materials with user editing
+              Master, Job Path, and job-specific materials with user editing
               and version control.
             </p>
           </div>
@@ -239,7 +239,7 @@ export default function PublicSite({
         <section className={styles.finalCta}>
           <div>
             <p className={styles.eyebrow}>Make the next effort count</p>
-            <h2>Build a search around the move you actually want.</h2>
+            <h2>Find the next job you actually want.</h2>
           </div>
           <a className={styles.primaryButton} href={primaryHref}>
             {primaryLabel}

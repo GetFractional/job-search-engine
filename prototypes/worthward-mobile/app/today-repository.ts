@@ -284,7 +284,7 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
         ),
         pursuitPriority: priority(row, analysisCurrent, verificationCurrent),
         priorityFormula:
-          "55% Move Value + 45% Pursuit Readiness after source and validation gates",
+          "55% Job Value + 45% Pursuit Readiness after source and validation gates",
         fitScore,
         moveValue: row.move_value_score,
         pursuitReadiness: row.pursuit_readiness_score,
@@ -379,9 +379,9 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
           href: "/app?view=jobs",
         }
       : {
-          label: "Finish choosing your career paths",
+          label: "Finish choosing your Job Paths",
           detail:
-            "Today can rank work only after you define at least one active path.",
+            "Home can rank work only after you define at least one active Job Path.",
           href: "/app?view=direction",
         };
 

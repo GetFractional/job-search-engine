@@ -1,45 +1,71 @@
 # Way Ahead QA Access
 
-## Live founder workspace
+## Live review
 
-[Open the owner-only Way Ahead workspace](https://career-evidence-founder-2026.mattdimock.chatgpt.site)
+[Open Way Ahead](https://wayahead.getfractional.co)
 
-The July 22 production deployment succeeded and is restricted to `mattdim805@gmail.com`. The first visit displays the Sites `Continue with ChatGPT` gate before Way Ahead loads. The current deployment source is local commit `605fe2c2fcaccf21939483b0d207ae117c942172`; the private GitHub mirror has an equivalent tree at `ee546e4e218efb5824bc34180999b874c2055dbf`.
+Fallback host: [career-evidence-founder-2026.mattdimock.chatgpt.site](https://career-evidence-founder-2026.mattdimock.chatgpt.site)
 
-The same HTTPS URL is the supported route on Matt's iPhone, laptop, and ChatGPT remote browser. Sign in with the ChatGPT account for `mattdim805@gmail.com`. Hosting access and the application allowlist both reject other accounts.
+The public website is available before sign-in. Selecting **Get started** uses
+ChatGPT SSO and creates a private member workspace for a new account. Terry can
+register himself; Matt does not need to provide or allowlist Terry's email.
+Only `mattdim805@gmail.com` receives the configured owner role.
 
-Unlike a localhost preview, the hosted workspace does not depend on the Mac staying awake, being on the same Wi-Fi, or running a tunnel. Tailscale, NetBird, Dev Tunnels, and router changes are not required.
+Matt's production workspace is initialized with his provenance-backed career
+record, Job Standard, Job Paths, preserved Seso pursuit, and the current
+Wpromote review. A new member receives the six-step setup journey instead of
+Matt's data.
 
-## Cross-device proof checklist
+The same HTTPS URL is the supported route on phone, laptop, and the remote
+browser. It does not depend on the Mac staying awake, a shared Wi-Fi network,
+or a tunnel. On a phone, `localhost` means the iPhone itself, not Matt's laptop.
+Tailscale, NetBird, Dev Tunnels, and router changes are not required.
+Do not switch to an unauthenticated public tunnel; use the hosted URL above.
 
-1. Open the live URL on the laptop and sign in.
-2. Confirm Today shows the current Seso pursuit and its source conflict.
-3. Change appearance to Light, Dark, and System.
-4. Open the same URL on the phone and sign in with the same account.
-5. Confirm the profile, Job Standard, career paths, job, pursuit, assets, package fingerprint, and blockers match.
-6. Confirm the bottom navigation remains reachable and no page scrolls sideways.
-7. Confirm Approval remains unavailable while the listed blockers exist.
+## Founder review checklist
 
-The founder environment must not show sample records, local source paths, a fake checkout, a submission control, or a Teal workflow.
+1. Open the live domain while signed out and review the website and mobile
+   menu.
+2. Select **Get started** and continue with Matt's ChatGPT account.
+3. Confirm Home ranks Wpromote first at 84% aligned and leaves Job Value and
+   Pursuit Readiness open.
+4. Open Profile and confirm the career record shows 10 roles and 20 tracked
+   skills.
+5. Open Plan and confirm the $150,000 minimum, $180,000 target, and multiple
+   Job Paths.
+6. Open Resume Studio and Cover Letter Studio. Confirm the content and design
+   controls are editable and no employer-facing action exists.
+7. Switch between Light and Dark in the account menu; Light is the default.
+8. Open **Data & privacy** and confirm export, account deletion, sign-out, and
+   recovery-history disclosures are visible. Do not delete the owner account.
+9. Repeat the review on the phone. Confirm the bottom navigation is reachable,
+   the page does not scroll sideways, and the menu closes with Escape or the
+   close control.
 
-## Local engineering route
+## Terry test
 
-For implementation work only:
-
-```bash
-npm run dev -- --host 127.0.0.1 --port 3015
-```
-
-Open `http://127.0.0.1:3015/` on the same Mac. On an iPhone, `localhost` means the iPhone itself and cannot reach the Mac. Local access is not a substitute for hosted cross-device proof.
+Terry opens the same live domain, selects **Get started**, and signs in with his
+own ChatGPT account. He should see onboarding and an empty private workspace,
+never Matt's profile, jobs, assets, or preferences. Stop and report immediately
+if any Matt data appears.
 
 ## Troubleshooting
 
-- **Sign-in loop:** verify the live Sites URL is being used and the browser is signed into the expected ChatGPT account.
-- **Access denied:** the authenticated email does not match the configured owner email, or the Sites access policy drifted from owner-only.
-- **Empty workspace:** the authenticated owner bootstrap has not been completed for that deployment's D1 database.
-- **Old data:** reload once, then compare the source-check timestamp and package fingerprint. Do not re-bootstrap over unexpected records until the database state has been inspected.
-- **Phone layout issue:** record the phone model, browser, orientation, theme, screen, and a screenshot. Do not switch to an unauthenticated public tunnel.
+- **Sign-in loop:** reload the custom domain once, confirm ChatGPT sign-in
+  completed, and retry **Get started**.
+- **Wrong workspace:** sign out from the account menu and sign back in with the
+  intended ChatGPT account.
+- **Old content:** reload once and compare the Wpromote source-check time and
+  fit score.
+- **Phone layout issue:** record phone model, browser, orientation, theme,
+  screen, and a screenshot.
+- **Custom-domain issue:** use the fallback host above and report the failing
+  URL and timestamp.
 
-## Security boundary
+## Current boundary
 
-This is a private founder environment, not a public launch. Do not add users, groups, billing, production uploads, model credentials, external application actions, or public sharing without the exact reserved approval and a new verification receipt.
+This is a noindex public alpha, not a commercial launch. Billing, paid model
+generation, recurring job monitoring, production email, employer-form
+population or upload, outreach, references, and application submission are not
+enabled. Do not add those capabilities or publish prices or outcome claims
+without the reserved approval and a new verification receipt.
