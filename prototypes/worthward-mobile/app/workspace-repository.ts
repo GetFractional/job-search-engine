@@ -1362,7 +1362,7 @@ export async function bootstrapFounderWorkspace(
   const db = database();
   const existingWorkspace = await db
     .prepare(
-      "SELECT ((SELECT count(*) FROM profile_facts WHERE user_id = ?) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ?) + (SELECT count(*) FROM career_paths WHERE user_id = ?) + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?) + (SELECT count(*) FROM audit_events WHERE user_id = ? AND event_type IN ('founder_workspace_imported', 'founder_workspace_repaired'))) AS count, ((SELECT count(*) FROM profile_facts WHERE user_id = ? AND invalidated_at IS NULL) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ? AND is_current = 1) + (SELECT count(*) FROM career_paths WHERE user_id = ? AND state = 'active') + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?)) AS active_count",
+      "SELECT ((SELECT count(*) FROM profile_facts WHERE user_id = ?) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ?) + (SELECT count(*) FROM career_paths WHERE user_id = ?) + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?) + (SELECT count(*) FROM audit_events WHERE user_id = ? AND event_type IN ('founder_workspace_imported', 'founder_workspace_repaired'))) AS count, (SELECT count(*) FROM profile_facts WHERE user_id = ? AND invalidated_at IS NULL) AS preserved_profile_fact_count, ((SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ? AND is_current = 1) + (SELECT count(*) FROM career_paths WHERE user_id = ? AND state = 'active') + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?)) AS active_count",
     )
     .bind(
       founder.id,
@@ -1381,7 +1381,11 @@ export async function bootstrapFounderWorkspace(
       founder.id,
       founder.id,
     )
-    .first<{ count: number; active_count: number }>();
+    .first<{
+      count: number;
+      active_count: number;
+      preserved_profile_fact_count: number;
+    }>();
   const hasPriorWorkspaceState = (existingWorkspace?.count ?? 0) > 0;
   const canRepairEmptyWorkspace =
     hasPriorWorkspaceState && (existingWorkspace?.active_count ?? 0) === 0;
@@ -1634,6 +1638,9 @@ export async function bootstrapFounderWorkspace(
           mode: canRepairEmptyWorkspace
             ? "empty_workspace_repair"
             : "initial_import",
+          preservedProfileFacts: canRepairEmptyWorkspace
+            ? existingWorkspace?.preserved_profile_fact_count ?? 0
+            : 0,
           profileFacts: payload.profile.facts.length,
           careerPaths: payload.careerPaths.length,
           opportunities: payload.opportunities.length,

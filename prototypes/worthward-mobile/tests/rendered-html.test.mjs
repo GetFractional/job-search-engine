@@ -54,14 +54,15 @@ test("keeps legacy placeholder content out of the production bundle", async () =
   }
 });
 
-test("allows founder recovery only when every active workspace surface is empty", async () => {
+test("allows founder recovery only when every decision and pursuit surface is empty", async () => {
   const repository = await readFile(
     new URL("../app/workspace-repository.ts", import.meta.url),
     "utf8",
   );
 
   assert.match(repository, /active_count/);
-  assert.match(repository, /profile_facts WHERE user_id = \? AND invalidated_at IS NULL/);
+  assert.match(repository, /preserved_profile_fact_count/);
+  assert.match(repository, /preservedProfileFacts/);
   assert.match(repository, /job_standards WHERE user_id = \? AND is_current = 1/);
   assert.match(repository, /career_paths WHERE user_id = \? AND state = 'active'/);
   assert.match(repository, /hasPriorWorkspaceState && \(existingWorkspace\?\.active_count \?\? 0\) === 0/);
