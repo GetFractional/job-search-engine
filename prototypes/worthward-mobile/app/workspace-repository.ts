@@ -1351,18 +1351,41 @@ async function normalizeBootstrapOpportunity(
 export async function bootstrapFounderWorkspace(
   actor: FounderActor,
   payloadValue: unknown,
-): Promise<{ imported: true; counts: Record<string, number> }> {
+): Promise<{
+  imported: true;
+  mode: "initial_import" | "empty_workspace_repair";
+  counts: Record<string, number>;
+}> {
   assertBootstrapPayload(payloadValue);
   const payload = payloadValue;
   const founder = await ensureFounder(actor);
   const db = database();
   const existingWorkspace = await db
     .prepare(
-      "SELECT (SELECT count(*) FROM profile_facts WHERE user_id = ?) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ?) + (SELECT count(*) FROM career_paths WHERE user_id = ?) + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?) + (SELECT count(*) FROM audit_events WHERE user_id = ? AND event_type = 'founder_workspace_imported') AS count",
+      "SELECT ((SELECT count(*) FROM profile_facts WHERE user_id = ?) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ?) + (SELECT count(*) FROM career_paths WHERE user_id = ?) + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?) + (SELECT count(*) FROM audit_events WHERE user_id = ? AND event_type IN ('founder_workspace_imported', 'founder_workspace_repaired'))) AS count, ((SELECT count(*) FROM profile_facts WHERE user_id = ? AND invalidated_at IS NULL) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) + (SELECT count(*) FROM profile_skills WHERE user_id = ?) + (SELECT count(*) FROM job_standards WHERE user_id = ? AND is_current = 1) + (SELECT count(*) FROM career_paths WHERE user_id = ? AND state = 'active') + (SELECT count(*) FROM job_analyses WHERE user_id = ?) + (SELECT count(*) FROM pursuits WHERE user_id = ?)) AS active_count",
     )
-    .bind(founder.id, founder.id, founder.id, founder.id, founder.id, founder.id, founder.id, founder.id)
-    .first<{ count: number }>();
-  if ((existingWorkspace?.count ?? 0) > 0) {
+    .bind(
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+      founder.id,
+    )
+    .first<{ count: number; active_count: number }>();
+  const hasPriorWorkspaceState = (existingWorkspace?.count ?? 0) > 0;
+  const canRepairEmptyWorkspace =
+    hasPriorWorkspaceState && (existingWorkspace?.active_count ?? 0) === 0;
+  if (hasPriorWorkspaceState && !canRepairEmptyWorkspace) {
     throw new Error("The founder workspace is already initialized. Use versioned product workflows for corrections.");
   }
   const normalizedOpportunities = await Promise.all(payload.opportunities.map(normalizeBootstrapOpportunity));
@@ -1400,7 +1423,7 @@ export async function bootstrapFounderWorkspace(
     statements.push(
       db
         .prepare(
-          "INSERT INTO profile_facts (id, user_id, fact_type, value_json, source_span, extraction_method, extraction_policy_version, state, confidence, ownership) VALUES (?, ?, ?, ?, ?, 'manual_entry', 'founder-import-v1', ?, ?, ?) ON CONFLICT(id) DO UPDATE SET value_json = excluded.value_json, source_span = excluded.source_span, state = excluded.state, confidence = excluded.confidence, ownership = excluded.ownership, updated_at = unixepoch() * 1000 WHERE profile_facts.user_id = excluded.user_id",
+          "INSERT INTO profile_facts (id, user_id, fact_type, value_json, source_span, extraction_method, extraction_policy_version, state, confidence, ownership) VALUES (?, ?, ?, ?, ?, 'manual_entry', 'founder-import-v1', ?, ?, ?) ON CONFLICT(id) DO UPDATE SET value_json = excluded.value_json, source_span = excluded.source_span, state = excluded.state, confidence = excluded.confidence, ownership = excluded.ownership, invalidated_at = NULL, updated_at = unixepoch() * 1000 WHERE profile_facts.user_id = excluded.user_id",
         )
         .bind(
           fact.id,
@@ -1597,14 +1620,20 @@ export async function bootstrapFounderWorkspace(
   statements.push(
     db
       .prepare(
-        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'founder_workspace_imported', 'workspace', ?, ?)",
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, ?, 'workspace', ?, ?)",
       )
       .bind(
         crypto.randomUUID(),
         founder.id,
         `chatgpt:${founder.email}`,
+        canRepairEmptyWorkspace
+          ? "founder_workspace_repaired"
+          : "founder_workspace_imported",
         founder.id,
         json({
+          mode: canRepairEmptyWorkspace
+            ? "empty_workspace_repair"
+            : "initial_import",
           profileFacts: payload.profile.facts.length,
           careerPaths: payload.careerPaths.length,
           opportunities: payload.opportunities.length,
@@ -1615,6 +1644,9 @@ export async function bootstrapFounderWorkspace(
 
   return {
     imported: true,
+    mode: canRepairEmptyWorkspace
+      ? "empty_workspace_repair"
+      : "initial_import",
     counts: {
       profileFacts: payload.profile.facts.length,
       experiences: payload.profile.experiences.length,

@@ -54,6 +54,22 @@ test("keeps legacy placeholder content out of the production bundle", async () =
   }
 });
 
+test("allows founder recovery only when every active workspace surface is empty", async () => {
+  const repository = await readFile(
+    new URL("../app/workspace-repository.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(repository, /active_count/);
+  assert.match(repository, /profile_facts WHERE user_id = \? AND invalidated_at IS NULL/);
+  assert.match(repository, /job_standards WHERE user_id = \? AND is_current = 1/);
+  assert.match(repository, /career_paths WHERE user_id = \? AND state = 'active'/);
+  assert.match(repository, /hasPriorWorkspaceState && \(existingWorkspace\?\.active_count \?\? 0\) === 0/);
+  assert.match(repository, /founder_workspace_repaired/);
+  assert.match(repository, /empty_workspace_repair/);
+  assert.match(repository, /founder workspace is already initialized/i);
+});
+
 test("keeps founder files and local machine paths out of the production bundle", async () => {
   const bundle = await productionBundleText();
   for (const forbidden of [
