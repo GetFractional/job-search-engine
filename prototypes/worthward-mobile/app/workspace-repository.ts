@@ -1356,7 +1356,8 @@ export async function bootstrapFounderWorkspace(
   mode:
     | "initial_import"
     | "empty_workspace_repair"
-    | "matching_partial_workspace_repair";
+    | "matching_partial_workspace_repair"
+    | "profile_surface_repair";
   counts: Record<string, number>;
 }> {
   assertBootstrapPayload(payloadValue);
@@ -1420,15 +1421,25 @@ export async function bootstrapFounderWorkspace(
     (existingWorkspace?.active_count ?? 0) === existingMatchingRecordCount &&
     existingAnalyses.results.every((row) => payloadAnalysisIds.has(row.id)) &&
     existingPursuits.results.every((row) => payloadPursuitIds.has(row.id));
+  const canRepairProfileSurfacesOnly =
+    hasPriorWorkspaceState &&
+    existingMatchingRecordCount > 0 &&
+    (existingWorkspace?.active_count ?? 0) === existingMatchingRecordCount;
   const repairMode = canRepairEmptyWorkspace
     ? "empty_workspace_repair"
     : canRepairMatchingPartialWorkspace
       ? "matching_partial_workspace_repair"
+      : canRepairProfileSurfacesOnly
+        ? "profile_surface_repair"
       : null;
   if (hasPriorWorkspaceState && !repairMode) {
     throw new Error("The founder workspace is already initialized. Use versioned product workflows for corrections.");
   }
-  const normalizedOpportunities = await Promise.all(payload.opportunities.map(normalizeBootstrapOpportunity));
+  const opportunitiesForImport =
+    repairMode === "profile_surface_repair" ? [] : payload.opportunities;
+  const normalizedOpportunities = await Promise.all(
+    opportunitiesForImport.map(normalizeBootstrapOpportunity),
+  );
   const jobStandardId = `standard_${founder.id}_v1`;
   const statements: D1PreparedStatement[] = [
     db
@@ -1683,7 +1694,7 @@ export async function bootstrapFounderWorkspace(
             : 0,
           profileFacts: payload.profile.facts.length,
           careerPaths: payload.careerPaths.length,
-          opportunities: payload.opportunities.length,
+          opportunities: opportunitiesForImport.length,
         }),
       ),
   );
@@ -1697,7 +1708,7 @@ export async function bootstrapFounderWorkspace(
       experiences: payload.profile.experiences.length,
       skills: payload.profile.skills.length,
       careerPaths: payload.careerPaths.length,
-      opportunities: payload.opportunities.length,
+      opportunities: opportunitiesForImport.length,
     },
   };
 }
