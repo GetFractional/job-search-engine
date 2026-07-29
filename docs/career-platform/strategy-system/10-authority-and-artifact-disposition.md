@@ -35,7 +35,7 @@ Disposition states:
 | `brand-name-shortlist-2026-07-17.md` | **Superseded** | Worthward, ConsiderNext, and Nextworthy no longer govern naming |
 | `visual-direction-selection.md` and the three prior PNG concepts | **Superseded as selection; reference only as visual evidence** | Reuse helpful clarity and structure, but compare exactly three new mobile Home plus Integrity Preview directions with identical content after strategy acceptance |
 | `prototypes/worthward-mobile/` | **Current local implementation candidate** | Governs the synthetic working prototype only after source, build, and current-browser evidence agree; it is not a production beta, and stale screenshots cannot authorize review |
-| Matt's Canonical Profile, Metrics Ledger, Role Lane Glossary, Story Bank, and related approved job-search sources | **Controls Matt-specific truth** | Case-study facts and external claims; they do not validate the market or another user |
+| Matt's Canonical Profile, Metrics Ledger, Role Lane Glossary, Story Bank, and related approved job-search sources | **Controls Matt-specific truth** | Founder-dogfood facts and external claims; they govern the same member product for Matt but do not validate the market, another user, or efficacy |
 | Wealth Dynamics report | **Reference only, internal style** | Working-style context only; never external proof or product science |
 | OC Ramps strategy artifacts | **Reference only, structural model** | Evidence hierarchy, journey, control, measurement, and command-center patterns; not shared-market evidence |
 | Alen Sultanic and Alex Hormozi materials | **Reference only, internal lens** | Persuasion, value, offer, and conversion reasoning; never empirical product proof |
@@ -70,7 +70,7 @@ Disposition states:
 - moderated comprehension, accessibility, and mobile usability results,
 - whether the complete subscription earns recurring billing across active-search and monitoring periods.
 
-These unresolved items do not block research, concierge delivery, synthetic prototyping, or Matt's controlled case study. They do block a public product claim or production commitment that depends on them.
+These unresolved items do not block research, concierge delivery, synthetic prototyping, or Matt's controlled founder dogfooding through the same member product. They do block a public product claim, efficacy claim, or production commitment that depends on them.
 
 ## Supersession and cleanup rule
 

@@ -389,7 +389,7 @@ The public-alpha candidate is Board-reviewable only when:
 - Mobile, tablet, and desktop; Light and Dark; empty, loading, error, success, stale, conflict, deletion, and restart evidence exists.
 - Typecheck, build, lint, migrations, automated tests, and dependency audit pass.
 - Independent QA records pass/block findings.
-- ClickUp contains exactly two active initiatives with read-after-write proof.
+- ClickUp reflects only result-changing workstreams that satisfy the adaptive-WIP contract: one measurable outcome and DRI per workstream, one writer per overlapping surface, bounded dependencies/data/write scopes, acceptance evidence, available review capacity, cost and rollback boundaries, a stop condition, and read-after-write proof.
 - The Board packet states result, customer value, unresolved risk, economics, rollback, and exact approvals.
 
 ## Economics and stop rules

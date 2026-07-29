@@ -53,7 +53,7 @@ Not every function receives an active agent. The CEO activates only the minimum 
 
 ## Dynamic mission pods
 
-A mission pod exists to produce one measurable outcome. Each pod has one owner, one writer for overlapping artifacts, a fixed evidence set, a cost boundary, an acceptance test, and a dissolution condition.
+A mission pod exists to produce one measurable outcome. Each pod has one owner, one writer for overlapping artifacts, bounded dependencies, tenant data, authority, and write scope, a fixed evidence set, available review capacity, a cost and rollback boundary, an acceptance test, and a stop or dissolution condition.
 
 ### Initial operating graph
 
@@ -64,7 +64,7 @@ A mission pod exists to produce one measurable outcome. Each pod has one owner, 
 | 2 | **Trustworthy Opportunity Intelligence** | The first owned vertical slice parses inconsistent jobs and produces explainable decisions without fabricated certainty | Ontology, AI evaluation, source intelligence, privacy, engineering, adversarial QA | Approval before paid providers, sensitive production data, or source commitments | Seven adversarial fixtures and alpha trust gates pass or the scope is narrowed |
 | 3 | **Activation and Paid Validation** | Qualified users reach a trusted first decision and pay for continued value or clearly separated expert help | Customer research, product, growth, pricing, customer success, economics | Approval before recruiting external testers, billing, public claims, or acquisition spend | Demand, activation, refund, support, and contribution gates produce a scale, revise, or stop decision |
 
-At most **two company product missions** may be in active build state at once. Matt's career-outcome mission may run in parallel because delaying it would violate the case-study objective. Research can proceed concurrently when it has no overlapping writer or external mutation.
+Way Ahead uses adaptive, evidence-based work in progress rather than a permanent numeric mission cap. Activate a mission only when it can change the result and has one measurable outcome, one DRI, one writer per overlapping surface, bounded dependencies, tenant data, authority, and write scope, acceptance evidence, available review capacity, cost and rollback boundaries, and a stop condition. One CEO-integrator owns sequencing and synthesis. Parallel work may proceed when these conditions hold; otherwise queue, pause, combine, or dissolve the mission. Task count is observed portfolio state, not policy. Matt's founder-dogfooding pursuit uses the same member product and may proceed without becoming a separate customer type or efficacy claim.
 
 ## Shared operating state
 
@@ -187,7 +187,7 @@ The operating graph is working only when:
 1. every active mission has one outcome, owner, authority boundary, evidence set, cost ceiling, and stop condition,
 2. Matt receives one coherent recommendation and can trace the evidence and alternatives,
 3. corrections invalidate dependent work instead of being trapped in chat,
-4. WIP stays within the cap and duplicated work is rare,
+4. every active mission satisfies the adaptive-WIP entry contract and duplicated work is rare,
 5. routine work collapses into reusable tests or automation,
 6. critical defects stop the affected workstream and produce verified recovery,
 7. customer behavior and economics can change priorities and team structure,

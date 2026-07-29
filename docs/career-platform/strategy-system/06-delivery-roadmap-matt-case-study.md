@@ -1,4 +1,4 @@
-# 06 Delivery Roadmap and Matt Case Study
+# 06 Delivery Roadmap and Founder Dogfooding
 
 ## Delivery decision
 
@@ -288,20 +288,20 @@ The prototype host is not the production architecture. Sites is a private review
 
 Select vendors only after the beta reveals source volume, privacy class, concurrency, latency, cost, and operational burden. Favor portable schemas and provider-neutral interfaces.
 
-## Matt case-study zero
+## Matt founder dogfooding
 
-Matt is the first longitudinal user and the founder's highest-priority career outcome. He is not efficacy proof.
+Matt is the first longitudinal user and the founder's highest-priority career outcome. He uses the same multi-user member contract as every other member. His real search supplies personal outcome evidence, product defects, and generalized learning; it is not a separate product, customer type, privileged customer-facing flow, or efficacy proof.
 
-### Case-study portfolio
+### Founder-dogfood pursuit set
 
-| Case | Purpose | Current state |
+| Pursuit | Purpose | Current state |
 |---|---|---|
 | TextNow, Head of Lifecycle Marketing | Negative integrity control | Legacy application visibility did not overrule evidence the canonical opening was inactive |
 | Going, Director, Lifecycle Marketing | Conditional positive target | Official role and careers index were live-verified on 2026-07-18; starts at $175,000 plus equity; proof questions remain |
 | Tebra, Director, GTM Technology | High-compensation hard-gate challenger | Strong potential, but exact application gates and role interpretation require resolution |
 | Fourth materially different role | Generalization test | Select through a manual direct-source search now; do not wait for the future Radar |
 
-### Going is the immediate active case
+### Going is the immediate active founder-dogfood pursuit
 
 Current official evidence shows:
 
@@ -318,7 +318,7 @@ Freshness record:
 
 - official publication date: **Missing; the employer page does not display one**,
 - prior working record: **2026-07-10 was captured as an Ashby publication date in an earlier internal packet, but it has not been reverified in this strategy review and does not control**,
-- first observed and live-verified in this case-study record: **2026-07-18**,
+- first observed and live-verified in this founder-dogfood record: **2026-07-18**,
 - repost state: **Missing**,
 - last employer-source verification: **2026-07-18**,
 - duplicate and prior-application status: **Must be rechecked in the current tracker before asset work**.
@@ -357,7 +357,7 @@ Preserve after review:
 
 An independent recruiter or career strategist should review at least two cases without seeing the system recommendation first.
 
-### Safe case-study claims
+### Safe observed founder-dogfood claims
 
 - detected an invalid or filled role,
 - surfaced a decision-changing gap,

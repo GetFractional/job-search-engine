@@ -11,7 +11,7 @@
 **Authority:** Founder-authorized direction, version 1.6
 **Research current through:** 2026-07-23
 **Working brand status:** Matt selected Way Ahead for the alpha checkpoint and authorized temporary use of `wayahead.getfractional.co` after the corrected build passes. A prior knockout screen found high software, career-category, and branded-search collision risk, so the temporary subdomain is not master-brand lock or legal clearance. Legacy `my-way-ahead` paths and ClickUp labels remain stable internal identifiers pending a separately reviewed migration.
-**First case study:** Matt Dimock
+**Founder dogfooding:** Matt Dimock uses the same multi-user member contract as every other member; his personal outcome and generalized product learning are not a separate customer type or efficacy proof.
 **Build posture:** Build an owned, public-capable, multi-user, mobile-first SaaS. Preserve the selected visual synthesis, but organize the product around public understanding, resumable setup, a structured Career Profile, Job Standard, Job Paths, state-aware Home, current jobs, Pursuits, editable document studios, application-package approval, interview management, and outcome learning. Spend, paid or unqualified models, email, billing, indexing, public promotion, partnerships, legal commitments, and employer-facing actions retain separate gates.
 
 ## Start here
@@ -71,7 +71,7 @@ The journey is a loop, not a placement funnel. A new role becomes the next Caree
 | Ask for a complete career archive before value | Import the minimum useful evidence, show a credible first insight, and request deeper proof only when it can change a live decision. |
 | Treat ongoing alerts as the retention product | Retain through career memory, market movement, achievement capture, compensation and readiness signals, restrained Radar, and high-value expert moments. |
 | Position no automation as permanent | Use automation under explicit user control; never weaken truth, privacy, or exact-action approval to increase volume. |
-| Treat Matt as the target market | Use Matt as case-study zero, then validate the beachhead with paid and unpaid design partners before generalizing. |
+| Treat Matt as the target market | Have Matt founder-dogfood the same multi-user product, preserve his personal outcome and generalized product learning separately, and validate the beachhead independently before generalizing. |
 | Build a local prototype and hand over files | Create three comparable mobile Home plus Integrity Preview visual directions using identical content, select one, apply it across the responsive funnel, visually QA it, then publish one private phone-review checkpoint. |
 | Assume decision-first job scoring is a unique category opening | Treat RoleWorth as the closest current competitor and prove that career-baseline comparison, senior-market specialization, and expert-guided pursuit create additional willingness to pay. |
 | Avoid a capability because a competitor mentions it | Build every capability the target user materially needs, then benchmark whether it works more accurately, clearly, and easily on the same adverse cases. |
@@ -99,7 +99,7 @@ The Strategy Center and Career Strategy Brief can later become responsive produc
 | What is the full website and product journey, which screens exist, and what belongs on mobile versus desktop? | 03 Full-Funnel Product and Experience System |
 | How must job interpretation, scoring, AI, privacy, provenance, and human review work? | 04 Opportunity Intelligence, Trust, AI, and Data |
 | How do we validate demand, acquire customers, price and monetize, retain, and measure the business? | 05 Business Model, Validation, and Growth |
-| What should be built first, how will Matt become case-study zero, and what are the release gates? | 06 Delivery Roadmap and Matt Case Study |
+| What should be built first, how will Matt founder-dogfood the same member product, and what are the release gates? | 06 Delivery Roadmap and Founder Dogfooding |
 | Which external and internal sources support the recommendations? | 07 Evidence and Source Register |
 | How are outcomes, activation, demand, quality, cost, retention, and guardrails measured? | 08 Measurement and Learning System |
 | How will Matt control decisions, experiments, WIP, economics, incidents, and approvals? | 09 Founder Strategy Center and Delivery Control |
@@ -157,7 +157,7 @@ The CEO role is an operating delegation, not a statutory appointment or authorit
 - Keep the initial beachhead to experienced U.S. professionals with meaningful economic upside and decision complexity.
 - Separate Integrity Gates, Move Value, and Pursuit Readiness.
 - Use a provider-agnostic AI route with deterministic rules, golden-data evaluation, and graceful degradation.
-- Preserve explicit light, dark, and system themes with semantic parity.
+- Preserve explicit Light and Dark themes with semantic parity. Do not expose a separate System theme.
 - Keep Teal out of the customer architecture and Matt's operating workflow. It is competitor intelligence only and may not hold or mutate Way Ahead state.
 - Build and own the customer product, career data model, decision policy, evidence system, and learning loop; do not license another career platform as the core company.
 - Treat feature overlap as a benchmark requirement, not a reason to omit a capability that helps the target user.

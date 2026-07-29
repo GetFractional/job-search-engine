@@ -61,7 +61,7 @@ Matt's 2026-07-23 direction authorizes the non-indexed public alpha, self-servic
 - the feedback and stop route is visible; and
 - the corrected signed-out, new-user, returning-user, owner, and mobile journeys pass.
 
-Terry selects his own account and consents inside the product. Matt does not need to disclose Terry's email to create an allowlist.
+Terry selects his own account and explicitly consents inside the product. He is an independent early tester using a tenant-isolated member workspace for bounded tasks and usability and trust feedback. He is not staff, an operator, or efficacy proof, and his access does not authorize broader recruitment. Matt does not need to disclose Terry's email to create an allowlist.
 
 ## Multi-user platform contract
 
@@ -70,7 +70,7 @@ Terry selects his own account and consents inside the product. Matt does not nee
 | Stage | Surface | Purpose | Cash posture | Exit evidence |
 |---|---|---|---:|---|
 | Rollback baseline | Current saved Sites version | Preserve the owner-only checkpoint while the correction is tested locally | $0 incremental | Exact version and D1 backup/readback remain recoverable |
-| Public technical alpha | Corrected Sites version on `chatgpt.site`, then `wayahead.getfractional.co` | Prove signed-out marketing, ChatGPT SSO self-registration, personal workspaces, onboarding, multi-path Today, documents, export, and deletion | Target $0 incremental | Matt and one self-registered tester pass mobile, desktop, and isolation tests |
+| Public technical alpha | Corrected Sites version on `chatgpt.site`, then `wayahead.getfractional.co` | Prove signed-out marketing, ChatGPT SSO self-registration, personal workspaces, onboarding, multi-path Today, documents, export, and deletion | Target $0 incremental | Matt founder-dogfoods the same member product and Terry independently completes bounded mobile, desktop, consent, and isolation checks; neither result is efficacy proof |
 | Private product alpha | Same custom-domain Sites app, shared only by direct link and `noindex` | Prove fresh jobs, multiple paths, pursuits, feedback, and support with no more than five active testers | Target $0 to $5 monthly | Zero tenant leaks; usable first decisions; source and cost gates pass |
 | Public beta | Custom domain, reviewed auth, abuse, email, privacy, and source controls | Open customer signup and measure demand | Expected infrastructure floor about $5 monthly plus domain | Independent security and privacy pass; observed economics and support burden |
 
@@ -130,7 +130,7 @@ One source fetch serves every tenant. The system must not materialize a user-by-
 
 ### Alpha source boundary
 
-Start with 10 to 25 manually approved employer boards tied to Matt's and Terry's active paths. Add a board only when an active user watches the employer, a current path repeatedly points to it, or a user provides a canonical role.
+Start with 10 to 25 manually approved employer boards tied to Matt's and Terry's consented active paths. Add a board only when an active user watches the employer, a current path repeatedly points to it, or a user provides a canonical role.
 
 Greenhouse, Lever, and Ashby expose official job-board endpoints, but public technical access is not blanket authority to republish commercial job inventory. Maintain `rights_state`, permitted fields, attribution, polling ceiling, retention, and review date for each source family. Until broader rights are proven, use full descriptions only for private user-requested analysis and link to the canonical employer page.
 
@@ -266,18 +266,18 @@ At 70 percent of any free-tier hard limit for seven days, slow or queue nonurgen
 
 ## Organization and accountabilities
 
-Keep exactly two active parent initiatives.
+Use adaptive, evidence-based work in progress rather than a permanent numeric initiative cap. Activate a workstream only when it can change the result and has one measurable outcome, one DRI, one writer per overlapping surface, bounded dependencies, tenant data, and write scope, acceptance evidence, available review capacity, cost and rollback boundaries, and a stop condition. One integrator owns sequencing and synthesis; task count is observed portfolio state, not policy.
 
 | Initiative | DRI | Single writer | Activated specialists | Current deliverable |
 |---|---|---|---|---|
 | Private-Alpha Readiness | Head of Product | Founding Product Engineer | Identity and Security; Source Operations; Product Design; Lifecycle; Finance; Independent Quality | Multi-user architecture, hosted founder evidence, invited-alpha gate, fresh-job and asset vertical slice |
-| Matt Case Study Zero | Head of Career Intelligence | Pursuit and Application Strategist | Labor-Market Intelligence; Recruiter; Resume Architect; Claims QA; Independent Career QA | Multiple current roles across at least two paths, one next-best approval-ready pursuit, and product learning |
+| Founder dogfooding: Matt's real multi-path search | Head of Career Intelligence | Pursuit and Application Strategist | Labor-Market Intelligence; Recruiter; Resume Architect; Claims QA; Independent Career QA | The same member contract produces multiple current roles across at least two paths, one next-best approval-ready pursuit, and generalized product learning without an efficacy claim |
 
 Temporary mission pods dissolve after their acceptance evidence is captured. Independent Quality reviews and blocks; it does not rewrite maker work.
 
 ## Delivery critical path
 
-All child work remains `backlog` or `shipped`. Only the two parent initiatives stay active.
+Child work activates only when it satisfies the adaptive-WIP entry contract and has non-overlapping or explicitly sequenced dependencies, data, authority, write scope, and review capacity. Otherwise it remains `backlog`, queued, paused, or `shipped`; no task count is manufactured as policy.
 
 ### Gate A: close the founder foundation
 
@@ -294,7 +294,7 @@ All child work remains `backlog` or `shipped`. Only the two parent initiatives s
 - IDOR, session, export, deletion, and rollback tests;
 - independent security and tenant-isolation verdict.
 
-### Gate C: fresh jobs and multi-path Case Study Zero
+### Gate C: fresh jobs and multi-path founder dogfooding
 
 - approved source registry and source-rights state;
 - Greenhouse first, with other providers only after tests;

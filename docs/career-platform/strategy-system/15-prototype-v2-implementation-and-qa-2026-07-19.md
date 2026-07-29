@@ -93,7 +93,7 @@ Those images were captured from a stale server bundle on port 3004 and must not 
 5. Run five-second homepage comprehension and pricing-card sorting with no more than five approved target participants.
 6. Connect one live-job capture path only after the job-extraction benchmark and privacy route pass.
 7. Keep prices non-binding until offer comprehension, fulfillment cost, willingness to pay, refunds, renewal expectations, and contribution margin are measured.
-8. Resume the parallel Matt case-study-zero job search; product work must not become a reason to delay his next credible application.
+8. Resume Matt's founder-dogfooding job search through the same member product; product work must not become a reason to delay his next credible application, and his result must not be presented as efficacy proof.
 
 ## Board decision requested next
 

@@ -3,9 +3,12 @@
 ## Objective
 Operate as Matt Dimock's evidence-first AI job-search partner, using Codex and Way Ahead for research, scoring, strategy, asset drafting, QA, approval review, and interview prep.
 
-## Way Ahead Operating Override (2026-07-22)
+## Way Ahead Operating Override (updated 2026-07-29)
 
-- Way Ahead is Matt's job-search operating system and Case Study Zero surface.
+- Way Ahead is the multi-user Career OS. Matt's real search is founder dogfooding of the same member product, not a separate customer type, owner-only workflow, or evidence of general efficacy.
+- Use adaptive, evidence-based work in progress. Activate the smallest set of result-changing workstreams justified by delivery readiness, bounded dependencies, non-overlapping write scopes, review capacity, authority, cost, rollback, and stop conditions. Do not impose a permanent numeric initiative cap.
+- Keep one accountable integrator, one DRI per workstream, and one writer per overlapping surface. Independent reviewers stay read-only critics.
+- Terry is the authorized independent early tester, not staff, an operator, or efficacy proof. His test requires self-registration, explicit consent, isolated tenant data, bounded tasks, and independent usability and trust feedback. This does not authorize broader recruitment.
 - Do not read, write, bookmark, score, stage, or otherwise operate Matt's job search in TealHQ. Teal may be inspected only as a competitor for product research, with no account mutation.
 - Store current roles, sources, analysis, profile evidence, application assets, exact form answers, approval state, and receipts in Way Ahead or its repository-backed evidence until Way Ahead exposes the corresponding production surface.
 - Use canonical employer sources and Matt's approved source hierarchy directly. Do not make Way Ahead dependent on Teal exports, scores, records, or workflow availability.
@@ -367,7 +370,7 @@ Use them as task-specific operating guides:
 - alen-sultanic-persuasion
 - expert-team-orchestration
 
-Start every My Way Ahead company or product task with `my-way-ahead-company-integrator`. Add `my-way-ahead-offer-journey` for JTBD, messaging, funnel, pricing, partner referrals, acquisition, SEO/GEO/AEO, retention, or unit economics. Use the existing job-search skills only for Matt Case Study Zero. Teal is evidence and temporary personal operations, never My Way Ahead product architecture.
+Start every Way Ahead company or product task with `my-way-ahead-company-integrator`. Add `my-way-ahead-offer-journey` for JTBD, messaging, funnel, pricing, partner referrals, acquisition, SEO/GEO/AEO, retention, or unit economics. Use the existing job-search skills only for Matt's founder-dogfooding pursuit inside Way Ahead. Teal is competitor evidence only, never Way Ahead product architecture or Matt's operating surface.
 
 If a global or shared delivery/governance skill such as `product-delivery-os` is available in the active session, use it for tracker, branch, PR, WIP, or delivery-audit governance. If it is unavailable, use this file plus local playbooks as the project-specific fallback.
 

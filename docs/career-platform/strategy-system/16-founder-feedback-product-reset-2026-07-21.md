@@ -8,6 +8,8 @@
 
 > **Board amendment, 2026-07-22:** Matt authorized the reset to advance from a synthetic prototype into a zero-incremental-spend, owner-only production foundation with Sites authentication, tenant-bound D1 persistence, a live HTTPS URL, Matt's real career record, and a native Seso Case Study Zero. No customer-visible sample or demo content is permitted. Teal is competitor research only and is no longer an operating surface for Matt's job search. Public access, external users, billing, paid models or feeds, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, and legal commitments remain reserved Board gates.
 
+> **Board amendment, 2026-07-29:** The dated owner-only and Case Study Zero language above remains historical evidence. Current operations use adaptive, evidence-based work in progress rather than a permanent numeric initiative cap. Matt founder-dogfoods the same multi-user member contract; his result is personal outcome evidence and generalized product learning, not a separate customer type or efficacy proof. Terry is an independent early tester who self-registers, explicitly consents, uses an isolated member workspace, completes bounded tasks, and supplies independent usability and trust feedback. He is not staff or an operator, and his access does not authorize broader recruitment.
+
 ## Executive decision
 
 Way Ahead will not lead as a job-posting checker. It will become a user-controlled job-search operating system that understands the person once, finds and verifies worthwhile work, explains mutual fit, and prepares the strongest honest pursuit package for each selected opportunity.
@@ -310,7 +312,7 @@ Each page needs original utility, plain-language answers, inspectable evidence, 
 
 ## Delivery critical path
 
-Only Private-Alpha Readiness and Matt Case Study Zero may be active. The product initiative contains the milestones below; child work remains backlog until it becomes the single current slice.
+Use adaptive, evidence-based work in progress. Activate a workstream only when it can change the result and has one measurable outcome, one DRI, one writer per overlapping surface, bounded dependencies, tenant data, and write scope, acceptance evidence, available review capacity, cost and rollback boundaries, and a stop condition. One integrator owns sequencing and synthesis. The milestones below may activate when those conditions hold; otherwise they remain queued or backlog. Task count is observed state, not policy.
 
 ### M0: Trust and flow hardening
 
@@ -378,7 +380,7 @@ The next product checkpoint is ready only when:
 6. The current build is compared beside the selected reference at matching viewports, with visible gaps corrected.
 7. Typecheck, lint, build, database generation, truth tests, state tests, and leakage tests pass.
 8. Independent Quality records a pass or a specific block and does not rewrite maker work.
-9. ClickUp shows exactly two active initiatives and contains read-after-write proof.
+9. ClickUp reflects only evidence-justified workstreams that satisfy the adaptive-WIP contract and contains read-after-write proof.
 
 ## Reserved decisions
 

@@ -25,7 +25,7 @@ Every strategic conclusion should distinguish:
 
 | Source family | How it informed this strategy | Boundary |
 |---|---|---|
-| Matt's Canonical Profile, Metrics Ledger, Role Lane Glossary, and Story Bank | First-case-study truth, target lanes, claim safety, economics, and proof gaps | Governs Matt only; not market validation |
+| Matt's Canonical Profile, Metrics Ledger, Role Lane Glossary, and Story Bank | Founder-dogfood truth, target lanes, claim safety, economics, and proof gaps | Governs Matt only; not market validation or efficacy proof |
 | Wealth Dynamics report | Internal working-style context | Never an external proof or product-fit science claim |
 | Prior Teal workflow and live audit | Competitor behavior, tracker breadth, signed-in friction, and source-state failures | Dated observation; Teal changes frequently |
 | Career-platform working packets and prototype | Existing ontology, interaction semantics, screen system, model routing, beta plan, and QA fixtures | Strong planning work; not approved production behavior or efficacy proof |
@@ -134,9 +134,9 @@ The governing adaptation is simple choices, clear recurring value, genuine savin
 
 Search results and domain availability are knockout signals only. An RDAP 404 means no registration object was returned at the checked moment; it does not reserve the domain or establish registrar availability. None of these checks is formal trademark, common-law, company, app-store, social, or legal clearance.
 
-## Matt case-study sources
+## Matt founder-dogfood sources
 
-| Case or source | Evidence used | Boundary |
+| Pursuit or source | Evidence used | Boundary |
 |---|---|---|
 | [Going Director, Lifecycle Marketing](https://www.going.com/careers/director-lifecycle-marketing) | Current official role, mandate, salary floor, equity, location, and benefits | Live-verified 2026-07-18; the employer page did not display a publication date |
 | [Going careers](https://www.going.com/careers) | Current employer careers index and role presence | Refresh before any asset or application work |

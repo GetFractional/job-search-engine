@@ -1,17 +1,28 @@
 # Way Ahead Active Goal Contract
 
-Date: 2026-07-24
+Date: 2026-07-29
 Board and final authority: Matt Dimock
-Status: recommended `/goal edit` text; the current goal remains active
+Status: Board-governing supplement and canonical replacement text. The active
+goal already contains no numeric initiative cap; this correction makes
+adaptive WIP, founder dogfooding, and Terry's independent-test role explicit.
+The available goal tool does not expose objective-text edits while a goal is
+active, so Matt's current direction and this file govern until the objective
+can be replaced in the goal UI.
 
-## Exact goal text
+## Canonical replacement goal text
 
 > Operate as the accountable CEO of Way Ahead under Matt Dimock's Board
 > authority and deliver a trustworthy, multi-user Career OS that helps each
 > member find the best next job with the least wasted effort, build the
 > strongest truthful case for that job, and manage the search through
-> application, interview, offer, and learning. Keep exactly two active parent
-> initiatives: Private-Alpha Readiness and Matt Case Study Zero. Use the
+> application, interview, offer, and learning. Use adaptive, evidence-based
+> work in progress with one DRI per workstream, one writer per overlapping
+> surface, bounded dependencies and data boundaries, acceptance evidence,
+> review capacity, cost and rollback boundaries, and explicit stop conditions.
+> Matt's real search is founder dogfooding of the same multi-user product, not
+> a separate customer type or efficacy proof. Terry is an independent early
+> tester using self-registration, explicit consent, an isolated workspace, and
+> bounded tasks. Use the
 > governing company and product truth in
 > `docs/career-platform/company-os/my-way-ahead-company-operating-system-2026-07-20.md`
 > and
@@ -27,8 +38,13 @@ Status: recommended `/goal edit` text; the current goal remains active
 > ClickUp has read-after-write proof; Matt has one source-verified, claim-safe
 > next-job package ready for exact approval; and the Board receives one concise
 > packet with results, risks, economics, rollback, and next approvals. Preserve
-> provenance, corrections, unknowns, and failed gates. Do not connect a model,
-> spend, enable billing, index or broadly promote, recruit beyond an approved
+> provenance, corrections, unknowns, and failed gates. Integrate the best
+> zero-incremental-spend AI route behind provider-neutral, consented,
+> quota-capped, fail-closed controls and synthetic claim-safety fixtures so the
+> evidence can justify or reject a later paid model. Use GitHub branches,
+> coherent commits, review, and immutable deployment provenance so every code
+> change can be inspected or rolled back. Do not connect a paid model, spend,
+> enable billing, index or broadly promote, recruit beyond an approved
 > alpha, scrape LinkedIn, mutate Teal, populate or upload to an employer form,
 > send outreach, use references, submit an application, negotiate, restore
 > deleted production data, purchase a domain, or make a legal commitment
@@ -54,7 +70,8 @@ Official guidance:
 ## Stop condition
 
 Do not mark this goal complete when only the P0 public-alpha foundation is
-deployed. Completion requires the P1 first-user vertical slice and Matt Case
-Study Zero approval package described above. A blocked status is appropriate
+deployed. Completion requires the full first-user vertical slice, Matt's
+founder-dogfooding approval package, independent early-test evidence, and the
+verification described above. A blocked status is appropriate
 only after the same external or user-decision blocker has repeated for the
 required goal turns and no safe in-scope work remains.

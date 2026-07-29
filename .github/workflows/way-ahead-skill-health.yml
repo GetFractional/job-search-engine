@@ -1,0 +1,132 @@
+name: Way Ahead skill health
+
+on:
+  schedule:
+    - cron: "17 14 * * 1"
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Audit scope
+        required: true
+        default: focused
+        type: choice
+        options:
+          - focused
+          - full
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: way-ahead-skill-health
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select first-Monday scope
+        id: calendar
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_SCOPE: ${{ inputs.scope }}
+        run: |
+          day="$(date -u +%d)"
+          month="$(date -u +%m)"
+          should_run=true
+          scope="${REQUESTED_SCOPE:-focused}"
+
+          if [[ "$EVENT_NAME" == "schedule" && "$day" -gt 7 ]]; then
+            should_run=false
+          elif [[ "$EVENT_NAME" == "schedule" && "$month" =~ ^(01|04|07|10)$ ]]; then
+            scope=full
+          fi
+
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+          echo "scope=$scope" >> "$GITHUB_OUTPUT"
+          echo "period=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - name: Run deterministic audit
+        id: audit
+        if: steps.calendar.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          set +e
+          bash scripts/audit-way-ahead-skills.sh \
+            --scope "${{ steps.calendar.outputs.scope }}" \
+            --report "${RUNNER_TEMP}/way-ahead-skill-health.md"
+          result=$?
+          set -e
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve audit artifact
+        if: steps.calendar.outputs.should_run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: way-ahead-skill-health-${{ steps.calendar.outputs.period }}
+          path: ${{ runner.temp }}/way-ahead-skill-health.md
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Open or refresh the review issue
+        if: steps.calendar.outputs.should_run == 'true'
+        uses: actions/github-script@v7
+        env:
+          REPORT_PATH: ${{ runner.temp }}/way-ahead-skill-health.md
+          PERIOD: ${{ steps.calendar.outputs.period }}
+          SCOPE: ${{ steps.calendar.outputs.scope }}
+          RESULT: ${{ steps.audit.outputs.result }}
+        with:
+          script: |
+            const fs = require("fs");
+            const report = fs.readFileSync(process.env.REPORT_PATH, "utf8");
+            const title = `[Way Ahead skill health] ${process.env.PERIOD} ${process.env.SCOPE} review`;
+            const body = [
+              "The scheduled deterministic gate has run. This issue is the required human/Codex semantic and behavioral review; the automation never edits source or trackers.",
+              "",
+              report,
+              "",
+              "## Close only after",
+              "",
+              "- [ ] Re-verify every finding against current source.",
+              "- [ ] Run the authority fixture and scheduled regression fixture; run all fixtures for a full audit.",
+              "- [ ] Record a no-change receipt or link a separately reviewed corrective PR.",
+              "- [ ] Confirm mirrors after any approved skill change.",
+            ].join("\n");
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "all",
+              per_page: 100,
+            });
+            const existing = issues.find((issue) => issue.title === title && !issue.pull_request);
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                title,
+                body,
+                state: "open",
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+
+      - name: Enforce deterministic gate
+        if: steps.calendar.outputs.should_run == 'true' && steps.audit.outputs.result != '0'
+        run: exit 1
