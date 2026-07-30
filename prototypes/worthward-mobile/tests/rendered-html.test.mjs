@@ -130,7 +130,7 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.match(apiUtils, /maximumBytes/);
   assert.match(hosting, /"d1": "DB"/);
   assert.match(hosting, /"r2": null/);
-  assert.match(publicSite, /Nothing sent without[\s\S]*your approval/);
+  assert.match(publicSite, /No employer action is[\s\S]*enabled/);
   assert.match(app, /Way Ahead has no employer-form population, upload, outreach, or submission capability/);
   assert.match(app, /Maximum commute \(miles\)/);
   assert.match(app, /type ThemeChoice = "light" \| "dark"/);
@@ -147,10 +147,11 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.doesNotMatch(app, /\b(?:sample|demo|fixture|synthetic)\b|\bprototype\b(?!\.)/i);
 });
 
-test("makes package approval visibly exact and separate from submission", async () => {
-  const [app, css] = await Promise.all([
+test("keeps future package review exact while current alpha disables member approval", async () => {
+  const [app, css, approvalApi] = await Promise.all([
     readFile(new URL("../app/WayAheadApp.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/production.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/approvals/route.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(app, /Employer source receipt/);
@@ -165,6 +166,9 @@ test("makes package approval visibly exact and separate from submission", async 
   assert.match(app, /requiredFormAnswerGaps/);
   assert.match(app, /SHA256_PATTERN/);
   assert.match(app, /packageRecord\.jobPostingVersionId === sourceVersion\.id/);
+  assert.match(app, /sourceVersion\.captureState === "verified"/);
+  assert.match(app, /const approvalWorkflowEnabled = false/);
+  assert.match(app, /Package approval is not available in this alpha/);
   assert.match(app, /approve_application_package/);
   assert.match(app, /Approve exact package for form staging/);
   assert.match(app, /This is not submission authorization/);
@@ -177,6 +181,9 @@ test("makes package approval visibly exact and separate from submission", async 
   assert.doesNotMatch(app, /confirmation: "submit_application"/);
   assert.match(css, /\.wa-package-review-block/);
   assert.match(css, /\.wa-hash-code/);
+  assert.match(approvalApi, /Package approval is not enabled in this alpha/);
+  assert.match(approvalApi, /status:\s*409/);
+  assert.doesNotMatch(approvalApi, /approvePursuitPackage/);
 });
 
 test("derives package fingerprints server-side and versions employer content with its exact form", async () => {

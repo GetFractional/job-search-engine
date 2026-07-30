@@ -81,7 +81,7 @@ test("cover-letter starters disclose profile-only provenance and unresolved post
   assert.match(documents, /postingFactsUsed: false/);
   assert.match(
     app,
-    /Review the current posting and tailor every claim before approval/,
+    /Review the current posting and tailor every claim before claim-safe package review becomes available/,
   );
   assert.doesNotMatch(app, /One truthful story, tailored to this role/);
 });

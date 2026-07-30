@@ -44,8 +44,8 @@ const journey = [
     body: "Move a reviewed job into an active Pursuit only when the evidence supports the effort. The workspace keeps the source, next action, risks, and document work connected.",
   },
   {
-    title: "Edit the exact application package",
-    body: "Use Resume and Cover Letter Studio to create profile-based starters, edit content and design, and save versions. Review the current posting and tailor every claim before approving an exact package.",
+    title: "Draft and revise application materials",
+    body: "Use Resume and Cover Letter Studio to create profile-based starters, edit content and design, save versions, and export drafts. Member-facing claim-safe review, package construction, and approval are not live in this alpha.",
   },
 ] as const;
 
@@ -162,7 +162,7 @@ function HowItWorksPage({
       <section className={styles.section}>
         <div className={styles.sectionIntro}>
           <p className={styles.eyebrow}>The current member journey</p>
-          <h2>One connected path from first sign-in to exact approval.</h2>
+          <h2>One connected path from first sign-in to editable drafts.</h2>
           <p>
             Every stage preserves its source and open questions so a polished
             answer never outruns the evidence behind it.
@@ -190,9 +190,9 @@ function HowItWorksPage({
             Preliminary scores are shown only when tied to the current
             employer-source version. Requirement-level evidence comparison is
             not live and blocks a pursue recommendation. Imported experience
-            needs member confirmation. Document versions remain editable, and
-            an approval is bound to the exact source, answers, filenames, asset
-            versions, and package fingerprint being reviewed.
+            needs member confirmation. Document versions remain editable. The
+            current alpha stops before claim-safe package construction or
+            member approval.
           </p>
         </div>
       </section>
@@ -205,6 +205,7 @@ function HowItWorksPage({
         <ul>
           <li>No automated broad job discovery, monitoring feed, or email alerts.</li>
           <li>No live model-powered generation; current starters are profile-based.</li>
+          <li>No claim-safe package construction or member approval workflow.</li>
           <li>No billing, paid plan, partner referral, or public price is enabled.</li>
           <li>No outreach, employer-form population, file upload, or submission.</li>
           <li>No promise of an interview, offer, compensation, or other outcome.</li>
@@ -295,10 +296,9 @@ function ToolsPage({
             billing, and outcome analytics are not live in this alpha.
           </p>
           <p>
-            Way Ahead records the package you approve, but approval is not
-            submission authorization. External action remains outside the
-            product until a separately reviewed release makes that boundary
-            explicit.
+            The current release stops at editable draft versions. It does not
+            yet create a claim-safe package or record member approval. External
+            action remains outside the product.
           </p>
         </div>
       </section>

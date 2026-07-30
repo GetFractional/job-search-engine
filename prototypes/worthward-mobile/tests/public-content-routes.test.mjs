@@ -81,14 +81,15 @@ test("renders the real journey, bounded tools, and exact external-action boundar
     /Add a current employer job/,
     /Review preliminary structured-field alignment/,
     /Choose what becomes a Pursuit/,
-    /Edit the exact application package/,
+    /Draft and revise application materials/,
     /Greenhouse, Lever, and Ashby/,
     /Requirement-level evidence comparison is not live/,
     /blocks a pursue recommendation/,
     /No automated broad job discovery/,
     /No live model-powered generation/,
+    /No claim-safe package construction or member approval workflow/,
     /No outreach, employer-form population, file upload, or submission/,
-    /approval is not submission authorization/i,
+    /does not[\s\S]*record member approval/i,
   ]) {
     assert.match(rendered, required);
   }

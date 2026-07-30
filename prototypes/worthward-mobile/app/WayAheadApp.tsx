@@ -1601,7 +1601,7 @@ function PursuitView({
       && packageRecord.jobPostingVersionId === sourceVersion.id
       && SHA256_PATTERN.test(sourceVersion.checksum)
       && sourceVersion.checkedAt
-      && (sourceVersion.captureState === "verified" || sourceVersion.captureState === "conflict")
+      && sourceVersion.captureState === "verified"
       && packageRecord.destinationUrl === opportunity.canonicalUrl,
   );
   const packageFingerprintReviewable = Boolean(
@@ -1617,8 +1617,10 @@ function PursuitView({
     ...formAnswerGaps.map((label) => `Required answer missing: ${label}`),
     !manifestReviewable ? "The outbound resume and cover letter manifest is incomplete." : null,
   ].filter((value): value is string => Boolean(value));
+  const approvalWorkflowEnabled = false;
   const canApprove = Boolean(
-    packageRecord
+    approvalWorkflowEnabled
+      && packageRecord
       && packageRecord.readinessState === "ready_for_review"
       && blockers.length === 0
       && reviewGaps.length === 0
@@ -1780,7 +1782,7 @@ function PursuitView({
       </section>
 
       <section className="wa-section">
-        <div className="wa-section-heading"><div><p className="wa-eyebrow">Application assets</p><h2>Build a truthful story for this role.</h2><p>Profile-built starters use confirmed career evidence and the selected employer and title. Review the current posting and tailor every claim before approval.</p></div><span>{pursuit.assets.length} stored</span></div>
+        <div className="wa-section-heading"><div><p className="wa-eyebrow">Application assets</p><h2>Build a truthful story for this role.</h2><p>Profile-built starters use confirmed career evidence and the selected employer and title. Review the current posting and tailor every claim before claim-safe package review becomes available.</p></div><span>{pursuit.assets.length} stored</span></div>
         <div className="wa-asset-list">
           {pursuit.assets.length ? pursuit.assets.map((asset) => <AssetCard key={asset.id} asset={asset} />) : (
             <div className="wa-empty-inline"><FileText size={24} /><span>No role-specific asset has passed into this pursuit yet.</span></div>
@@ -1792,13 +1794,20 @@ function PursuitView({
         <div>
           <p className="wa-eyebrow">Exact action gate</p>
           <h2>
-            {!packageRecord
-              ? "Build and review the exact package before approval."
+            {!approvalWorkflowEnabled
+              ? "Package approval is not available in this alpha."
+              : !packageRecord
+                ? "Build and review the exact package before approval."
               : blockers.length || reviewGaps.length
                 ? "Approval stays locked until the package is internally consistent."
                 : "This exact package is ready for your decision."}
           </h2>
-          <p>Approval is bound to the employer destination, source version, answers, filenames, asset versions, and payload fingerprint shown here.</p>
+          <p>
+            The current release stops at editable drafts. A later reviewed
+            release must construct and display the exact employer destination,
+            verified source version, answers, filenames, asset versions, and
+            payload fingerprint before any approval can be recorded.
+          </p>
         </div>
         {packageRecord ? (
           <div className="wa-package-card">
@@ -1877,7 +1886,7 @@ function PursuitView({
             <small>Way Ahead has no employer-form population, upload, outreach, or submission capability in this release.</small>
           </div>
         ) : (
-          <div className="wa-empty-inline"><LockKey size={24} /><span>No fingerprinted application package exists yet.</span></div>
+          <div className="wa-empty-inline"><LockKey size={24} /><span>No claim-safe, fingerprinted application package can be created in this alpha.</span></div>
         )}
       </section>
     </div>

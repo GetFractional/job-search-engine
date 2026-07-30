@@ -1756,20 +1756,35 @@ test("rejects approval against a stale source version or mismatched employer for
   );
 });
 
-test("allows a preserved source conflict but rejects incomplete source capture", () => {
+test("rejects conflicted or incomplete source capture at approval insert and update", () => {
   const conflictSourceSql = productionPursuitSql.replace(
     "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'verified');",
     "'{\"questionSetChecksum\":\"form-hash\"}', '[\"salary conflict\"]', 'conflict');",
   );
   assert.notEqual(conflictSourceSql, productionPursuitSql);
-  expectSqlPass(
+  expectSqlReject(
     `
       ${conflictSourceSql}
       ${readyPackageSql()}
       ${packageApprovalSql()}
-      SELECT state FROM external_action_approvals WHERE id = 'approval-a';
     `,
-    "approved",
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
+  );
+
+  expectSqlReject(
+    `
+      ${conflictSourceSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'requested');
+      UPDATE external_action_approvals
+         SET state = 'approved', approved_at = 2
+       WHERE id = 'approval-a';
+    `,
+    /approval package, source version, form answers, or outbound assets are not exact and current/,
   );
 
   const partialSourceSql = productionPursuitSql.replace(

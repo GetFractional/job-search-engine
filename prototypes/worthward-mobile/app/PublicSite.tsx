@@ -40,7 +40,8 @@ export default function PublicSite({
             <p className={styles.lede}>
               Way Ahead helps you define what your next job must deliver, add
               current employer jobs, compare them against your standard, and
-              build truthful application materials you can tailor and approve.
+              build truthful draft application materials you can tailor,
+              version, and export.
             </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryButton} href={primaryHref}>
@@ -55,8 +56,8 @@ export default function PublicSite({
             </div>
             <p className={styles.trustLine}>
               <ShieldCheck size={20} weight="duotone" aria-hidden="true" />
-              Private by default. No invented experience. Nothing sent without
-              your approval.
+              Private by default. No invented experience. No employer action is
+              enabled.
             </p>
           </div>
 
@@ -119,8 +120,8 @@ export default function PublicSite({
               <FileText size={27} weight="duotone" />
               <h3>Application materials you control</h3>
               <p>
-                Build from verified career facts, edit the result, and approve
-                the exact version. Employer-facing action remains separate.
+                Build from verified career facts, edit and export draft
+                versions, and keep employer-facing action outside the product.
               </p>
             </article>
           </div>
