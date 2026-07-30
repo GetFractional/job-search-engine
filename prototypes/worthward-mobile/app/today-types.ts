@@ -59,6 +59,7 @@ export type TodayRecord = {
     label: string;
     detail: string;
     href: string;
+    ctaLabel: string;
   };
   system: {
     generatedAt: number;

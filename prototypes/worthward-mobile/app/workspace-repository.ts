@@ -1,4 +1,8 @@
 import { env } from "cloudflare:workers";
+import {
+  assessDeterministically,
+  CURRENT_DETERMINISTIC_ASSESSMENT_POLICY,
+} from "./deterministic-assessment";
 import type {
   AssetRecord,
   CareerPathRecord,
@@ -185,7 +189,12 @@ type RawExperience = {
   is_current: number;
   location: string | null;
   summary: string | null;
-  review_state: "draft" | "confirmed" | "conflict";
+  review_state: "draft" | "confirmed" | "conflict" | "removed";
+  updated_at?: number;
+  provenance_method?: string | null;
+  provenance_fact_state?: string | null;
+  provenance_source_import_type?: string | null;
+  provenance_policy_version?: string | null;
 };
 
 type RawStandard = {
@@ -244,7 +253,7 @@ export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecor
       .all<{ fact_type: string; value_json: string; state: string }>(),
     db
       .prepare(
-        "SELECT id, employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? ORDER BY is_current DESC, start_date DESC",
+        "SELECT er.id, er.employer, er.title, er.start_date, er.end_date, er.is_current, er.location, er.summary, er.review_state, er.updated_at, (SELECT pf.extraction_method FROM experience_role_facts erf JOIN profile_facts pf ON pf.id = erf.profile_fact_id AND pf.user_id = erf.user_id WHERE erf.user_id = er.user_id AND erf.experience_role_id = er.id AND pf.invalidated_at IS NULL ORDER BY pf.updated_at DESC, pf.created_at DESC LIMIT 1) AS provenance_method, (SELECT pf.state FROM experience_role_facts erf JOIN profile_facts pf ON pf.id = erf.profile_fact_id AND pf.user_id = erf.user_id WHERE erf.user_id = er.user_id AND erf.experience_role_id = er.id AND pf.invalidated_at IS NULL ORDER BY pf.updated_at DESC, pf.created_at DESC LIMIT 1) AS provenance_fact_state, (SELECT si.type FROM experience_role_facts erf JOIN profile_facts pf ON pf.id = erf.profile_fact_id AND pf.user_id = erf.user_id LEFT JOIN source_imports si ON si.id = pf.source_import_id AND si.user_id = pf.user_id WHERE erf.user_id = er.user_id AND erf.experience_role_id = er.id AND pf.invalidated_at IS NULL ORDER BY pf.updated_at DESC, pf.created_at DESC LIMIT 1) AS provenance_source_import_type, (SELECT pf.extraction_policy_version FROM experience_role_facts erf JOIN profile_facts pf ON pf.id = erf.profile_fact_id AND pf.user_id = erf.user_id WHERE erf.user_id = er.user_id AND erf.experience_role_id = er.id AND pf.invalidated_at IS NULL ORDER BY pf.updated_at DESC, pf.created_at DESC LIMIT 1) AS provenance_policy_version FROM experience_roles er WHERE er.user_id = ? ORDER BY CASE WHEN er.review_state = 'removed' THEN 1 ELSE 0 END, er.is_current DESC, er.start_date DESC, er.updated_at DESC",
       )
       .bind(founder.id)
       .all<RawExperience>(),
@@ -286,6 +295,66 @@ export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecor
   const facts = factRows.results;
   const headlineFact = facts.find((fact) => fact.fact_type === "headline");
   const summaryFact = facts.find((fact) => fact.fact_type === "professional_summary");
+  const experienceRecord = (
+    role: RawExperience,
+  ): WorkspaceRecord["profile"]["experiences"][number] => {
+    const method =
+      role.provenance_method === "manual_entry" ||
+      role.provenance_method === "client_side_file_extraction"
+        ? role.provenance_method
+        : role.provenance_source_import_type
+          ? "imported_text"
+          : role.provenance_method
+            ? "unknown"
+            : "manual_entry";
+    const label =
+      method === "client_side_file_extraction"
+        ? "Résumé file text, reviewed by you"
+        : method === "imported_text"
+          ? "Imported career text, reviewed by you"
+          : method === "manual_entry"
+            ? "Manual entry, confirmed by you"
+            : "Source needs review";
+    const factState = [
+      "user_confirmed",
+      "user_corrected",
+      "suggested",
+      "missing",
+    ].includes(role.provenance_fact_state ?? "")
+      ? (role.provenance_fact_state as
+          | "user_confirmed"
+          | "user_corrected"
+          | "suggested"
+          | "missing")
+      : role.review_state === "confirmed"
+        ? "user_confirmed"
+        : "unknown";
+    return {
+      id: role.id,
+      employer: role.employer,
+      title: role.title,
+      startDate: role.start_date,
+      endDate: role.end_date,
+      isCurrent: toBool(role.is_current),
+      location: role.location,
+      summary: role.summary,
+      reviewState: role.review_state,
+      provenance: {
+        method,
+        label,
+        factState,
+        sourceImportType: role.provenance_source_import_type ?? null,
+        policyVersion: role.provenance_policy_version ?? null,
+      },
+      updatedAt: role.updated_at ?? 0,
+    };
+  };
+  const activeExperiences = experienceRows.results.filter(
+    (role) => role.review_state !== "removed",
+  );
+  const removedExperiences = experienceRows.results.filter(
+    (role) => role.review_state === "removed",
+  );
 
   return {
     actor,
@@ -299,17 +368,8 @@ export async function readWorkspace(actor: FounderActor): Promise<WorkspaceRecor
       unresolvedFactCount: facts.filter((fact) =>
         fact.state === "missing" || fact.state === "suggested" || fact.state === "inferred",
       ).length,
-      experiences: experienceRows.results.map((role) => ({
-        id: role.id,
-        employer: role.employer,
-        title: role.title,
-        startDate: role.start_date,
-        endDate: role.end_date,
-        isCurrent: toBool(role.is_current),
-        location: role.location,
-        summary: role.summary,
-        reviewState: role.review_state,
-      })),
+      experiences: activeExperiences.map(experienceRecord),
+      removedExperiences: removedExperiences.map(experienceRecord),
       skills: skillRows.results.map((skill) => ({
         id: skill.id,
         name: skill.canonical_name,
@@ -375,6 +435,11 @@ type OwnerOpportunityAnalysisInput = {
   confirmation: unknown;
 };
 
+type MemberOpportunityAssessmentInput = {
+  jobPostingId: unknown;
+  careerPathId: unknown;
+};
+
 function optionalScore(value: unknown, label: string): number | null {
   if (value === null || value === undefined || value === "") return null;
   if (
@@ -401,6 +466,321 @@ function boundedOperatorText(
     throw new Error(`${label} must be ${maximum} characters or fewer.`);
   }
   return normalized;
+}
+
+export async function recordMemberOpportunityAssessment(
+  actor: FounderActor,
+  input: MemberOpportunityAssessmentInput,
+): Promise<{
+  analysisId: string;
+  jobPostingId: string;
+  recommendation: "pursue" | "watch" | "pass" | "needs_evidence";
+}> {
+  const user = await ensureUser(actor);
+  const jobPostingId = boundedOperatorText(
+    input.jobPostingId,
+    "Job",
+    120,
+    true,
+  );
+  const careerPathId = boundedOperatorText(
+    input.careerPathId,
+    "Job Path",
+    120,
+    true,
+  );
+  const db = database();
+  const [posting, sourceVersion, careerPath, standard, roles, factCount, skillCount] =
+    await Promise.all([
+      db
+        .prepare(
+          "SELECT jp.id, jp.employer, jp.title, jp.locations_json, jp.compensation_json, jp.freshness_state, jp.last_checked_at, js.rights_state FROM job_postings jp JOIN job_sources js ON js.id = jp.source_id WHERE jp.id = ? AND jp.removed_at IS NULL AND EXISTS (SELECT 1 FROM user_job_links ujl WHERE ujl.user_id = ? AND ujl.job_posting_id = jp.id AND ujl.state = 'active') LIMIT 1",
+        )
+        .bind(jobPostingId, user.id)
+        .first<{
+          id: string;
+          employer: string;
+          title: string;
+          locations_json: string | null;
+          compensation_json: string | null;
+          freshness_state: OpportunityRecord["freshnessState"];
+          last_checked_at: number;
+          rights_state: OpportunityRecord["sourceRightsState"];
+        }>(),
+      db
+        .prepare(
+          "SELECT id, source_checked_at, description_checksum, source_facts_json, source_conflicts_json, capture_state FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
+        )
+        .bind(jobPostingId)
+        .first<{
+          id: string;
+          source_checked_at: number;
+          description_checksum: string;
+          source_facts_json: string;
+          source_conflicts_json: string;
+          capture_state: "verified" | "partial" | "conflict" | "unavailable";
+        }>(),
+      db
+        .prepare(
+          "SELECT id, label, primary_lane, secondary_lanes_json FROM career_paths WHERE id = ? AND user_id = ? AND state = 'active' LIMIT 1",
+        )
+        .bind(careerPathId, user.id)
+        .first<{
+          id: string;
+          label: string;
+          primary_lane: string;
+          secondary_lanes_json: string;
+        }>(),
+      db
+        .prepare(
+          "SELECT id, version, minimum_pay_cents, target_pay_cents, currency, work_arrangements_json, travel_maximum_percent, benefits_json FROM job_standards WHERE user_id = ? AND is_current = 1 LIMIT 1",
+        )
+        .bind(user.id)
+        .first<{
+          id: string;
+          version: number;
+          minimum_pay_cents: number | null;
+          target_pay_cents: number | null;
+          currency: string;
+          work_arrangements_json: string;
+          travel_maximum_percent: number | null;
+          benefits_json: string;
+        }>(),
+      db
+        .prepare(
+          "SELECT id, title, start_date, end_date, is_current, summary FROM experience_roles WHERE user_id = ? AND review_state = 'confirmed' ORDER BY is_current DESC, start_date DESC",
+        )
+        .bind(user.id)
+        .all<{
+          id: string;
+          title: string;
+          start_date: string | null;
+          end_date: string | null;
+          is_current: number;
+          summary: string | null;
+        }>(),
+      db
+        .prepare(
+          "SELECT count(*) AS count FROM profile_facts WHERE user_id = ? AND state IN ('user_confirmed', 'user_corrected') AND invalidated_at IS NULL",
+        )
+        .bind(user.id)
+        .first<{ count: number }>(),
+      db
+        .prepare(
+          "SELECT count(*) AS count FROM profile_skills WHERE user_id = ? AND review_state = 'confirmed'",
+        )
+        .bind(user.id)
+        .first<{ count: number }>(),
+    ]);
+
+  if (!posting) {
+    throw new Error(
+      "Add this direct employer job to your workspace before assessing it.",
+    );
+  }
+  if (!sourceVersion) {
+    throw new Error("The employer source has no reviewable version.");
+  }
+  if (posting.rights_state !== "approved") {
+    throw new Error("This employer source is not approved for assessment.");
+  }
+  if (
+    sourceVersion.capture_state !== "verified" &&
+    sourceVersion.capture_state !== "partial"
+  ) {
+    throw new Error(
+      "Resolve the employer-source conflict before assessing this job.",
+    );
+  }
+  if (Date.now() - sourceVersion.source_checked_at > 24 * 60 * 60 * 1000) {
+    throw new Error(
+      "Refresh this employer job from its direct URL before assessing it.",
+    );
+  }
+  if (!careerPath) throw new Error("Choose one of your active Job Paths.");
+  if (!standard) throw new Error("Finish your Job Standard before assessment.");
+  if (!roles.results.length) {
+    throw new Error(
+      "Confirm at least one structured experience role before assessment.",
+    );
+  }
+
+  const sourceFacts = parseJson<JsonRecord>(
+    sourceVersion.source_facts_json,
+    {},
+  );
+  const assessment = assessDeterministically({
+    source: {
+      versionId: sourceVersion.id,
+      descriptionChecksum: sourceVersion.description_checksum,
+      captureState: sourceVersion.capture_state,
+      rightsState: posting.rights_state,
+      freshnessState: posting.freshness_state,
+      title: posting.title,
+      locations: parseJson(posting.locations_json, []),
+      compensation: parseJson<JsonRecord | null>(
+        posting.compensation_json,
+        null,
+      ),
+      facts: sourceFacts,
+    },
+    standard: {
+      minimumPayCents: standard.minimum_pay_cents,
+      targetPayCents: standard.target_pay_cents,
+      currency: standard.currency,
+      workArrangements: parseJson(standard.work_arrangements_json, []),
+      travelMaximumPercent: standard.travel_maximum_percent,
+      benefits: parseJson(standard.benefits_json, []),
+    },
+    path: {
+      id: careerPath.id,
+      label: careerPath.label,
+      primaryLane: careerPath.primary_lane,
+      secondaryLanes: parseJson(careerPath.secondary_lanes_json, []),
+    },
+    profile: {
+      confirmedFactCount: factCount?.count ?? 0,
+      confirmedSkillCount: skillCount?.count ?? 0,
+      confirmedRoles: roles.results.map((role) => ({
+        title: role.title,
+        startDate: role.start_date,
+        endDate: role.end_date,
+        isCurrent: toBool(role.is_current),
+        summary: role.summary,
+      })),
+    },
+  });
+  const profileEvidence = {
+    roles: roles.results.map((role) => ({
+      id: role.id,
+      title: role.title,
+      startDate: role.start_date,
+      endDate: role.end_date,
+      isCurrent: toBool(role.is_current),
+      summaryPresent: Boolean(role.summary?.trim()),
+    })),
+    confirmedFactCount: factCount?.count ?? 0,
+    confirmedSkillCount: skillCount?.count ?? 0,
+  };
+  const profileEvidenceVersion = `profile_${(
+    await sha256Hex(canonicalJson(profileEvidence))
+  ).slice(0, 24)}`;
+  const analysisCore = {
+    policyVersion: assessment.policyVersion,
+    userId: user.id,
+    jobPostingId,
+    jobVersionId: sourceVersion.id,
+    careerPathId,
+    jobStandardId: standard.id,
+    jobStandardVersion: standard.version,
+    profileEvidenceVersion,
+    fitScore: assessment.fitScore,
+    jobValueScore: assessment.jobValueScore,
+    pursuitReadinessScore: assessment.pursuitReadinessScore,
+    recommendation: assessment.recommendation,
+    unknowns: assessment.unknowns,
+  };
+  const analysisId = `analysis_${(
+    await sha256Hex(canonicalJson(analysisCore))
+  ).slice(0, 24)}`;
+  const nextAction =
+    assessment.recommendation === "pursue"
+      ? "Review the evidence below and start a pursuit if the remaining facts look right."
+      : assessment.recommendation === "pass"
+        ? "Resolve the recorded conflict before spending more pursuit effort."
+        : assessment.recommendation === "watch"
+          ? "Keep this job visible and strengthen the evidence that would change the decision."
+          : "Resolve the highest-impact open fact before treating this as a priority pursuit.";
+  const integrityGates = {
+    jobVersionId: sourceVersion.id,
+    jobDescriptionChecksum: sourceVersion.description_checksum,
+    sourceCheckedAt: sourceVersion.source_checked_at,
+    sourceCaptureState: sourceVersion.capture_state,
+    sourceRightsState: posting.rights_state,
+    jobStandardId: standard.id,
+    jobStandardVersion: standard.version,
+    careerPathId,
+    profileEvidenceVersion,
+    policyVersion: assessment.policyVersion,
+    verifiedCriterionCount: assessment.verifiedCriterionCount,
+    totalCriterionCount: assessment.totalCriterionCount,
+    blockingUnknownCount: assessment.unknowns.length,
+    hardConflictCount: assessment.hardConflicts.length,
+    deterministic: true,
+    modelUsed: false,
+    externalActionAuthorized: false,
+  };
+  const fit = {
+    fitScore: assessment.fitScore,
+    scoreKind: assessment.scoreKind,
+    criteria: assessment.criteria,
+    verifiedCriterionCount: assessment.verifiedCriterionCount,
+    totalCriterionCount: assessment.totalCriterionCount,
+    scoreMeaning: assessment.scoreMeaning,
+    recommendationReason: assessment.recommendationReason,
+    hardConflicts: assessment.hardConflicts,
+    nextAction,
+    careerPathLabel: careerPath.label,
+    scoringMethod: "deterministic structured criteria",
+  };
+
+  await db.batch([
+    db
+      .prepare(
+        "UPDATE job_analyses SET validation_state = 'invalidated', invalidated_at = unixepoch() * 1000 WHERE user_id = ? AND job_posting_id = ? AND id <> ? AND validation_state <> 'invalidated'",
+      )
+      .bind(user.id, jobPostingId, analysisId),
+    db
+      .prepare(
+        "INSERT INTO job_analyses (id, user_id, job_posting_id, career_path_id, job_standard_id, policy_version, evidence_version, integrity_gates_json, move_value_score, pursuit_readiness_score, fit_json, unknowns_json, recommendation, validation_state, invalidated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'trusted', NULL) ON CONFLICT(id) DO UPDATE SET career_path_id = excluded.career_path_id, job_standard_id = excluded.job_standard_id, policy_version = excluded.policy_version, evidence_version = excluded.evidence_version, integrity_gates_json = excluded.integrity_gates_json, move_value_score = excluded.move_value_score, pursuit_readiness_score = excluded.pursuit_readiness_score, fit_json = excluded.fit_json, unknowns_json = excluded.unknowns_json, recommendation = excluded.recommendation, validation_state = 'trusted', invalidated_at = NULL WHERE job_analyses.user_id = excluded.user_id",
+      )
+      .bind(
+        analysisId,
+        user.id,
+        jobPostingId,
+        careerPathId,
+        standard.id,
+        assessment.policyVersion,
+        profileEvidenceVersion,
+        json(integrityGates),
+        assessment.jobValueScore,
+        assessment.pursuitReadinessScore,
+        json(fit),
+        json(assessment.unknowns),
+        assessment.recommendation,
+      ),
+    db
+      .prepare(
+        "UPDATE pursuits SET current_analysis_id = ?, next_action = ?, updated_at = unixepoch() * 1000 WHERE user_id = ? AND job_posting_id = ?",
+      )
+      .bind(analysisId, nextAction, user.id, jobPostingId),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'member_deterministic_assessment_recorded', 'job_analysis', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        user.id,
+        `chatgpt:${user.email}`,
+        analysisId,
+        json({
+          jobPostingId,
+          jobVersionId: sourceVersion.id,
+          careerPathId,
+          jobStandardId: standard.id,
+          profileEvidenceVersion,
+          policyVersion: assessment.policyVersion,
+          recommendation: assessment.recommendation,
+          externalActionAuthorized: false,
+          modelUsed: false,
+        }),
+      ),
+  ]);
+  return {
+    analysisId,
+    jobPostingId,
+    recommendation: assessment.recommendation,
+  };
 }
 
 export async function recordOwnerOpportunityAnalysis(
@@ -632,7 +1012,7 @@ async function readOpportunity(
   const [version, analysis, pursuit] = await Promise.all([
     db
       .prepare(
-        "SELECT id, source_checked_at, description_checksum, source_facts_json, source_conflicts_json, capture_state FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC LIMIT 1",
+        "SELECT id, source_checked_at, description_checksum, source_facts_json, source_conflicts_json, capture_state FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
       )
       .bind(posting.id)
       .first<{
@@ -673,7 +1053,7 @@ async function readOpportunity(
 
   let pursuitRecord: OpportunityRecord["pursuit"] = null;
   if (pursuit) {
-    const [assetRows, packageRow] = await Promise.all([
+    const [assetRows, packageRow, resumeStarter, coverLetterStarter] = await Promise.all([
       db
         .prepare(
           "SELECT id, type, version, filename, content_sha256, page_count, review_state, content_json, invalidated_at, updated_at FROM generated_assets WHERE user_id = ? AND pursuit_id = ? ORDER BY type, version DESC",
@@ -709,12 +1089,50 @@ async function readOpportunity(
           answers_json: string;
           created_at: number;
         }>(),
+      db
+        .prepare(
+          "SELECT r.id, r.name, r.version, r.review_state FROM resumes r JOIN resume_assignments ra ON ra.resume_id = r.id AND ra.user_id = r.user_id WHERE r.user_id = ? AND ra.scope = 'job' AND ra.job_posting_id = ? AND r.review_state <> 'superseded' ORDER BY r.updated_at DESC, r.version DESC LIMIT 1",
+        )
+        .bind(userId, posting.id)
+        .first<{
+          id: string;
+          name: string;
+          version: number;
+          review_state: "draft" | "approved" | "superseded";
+        }>(),
+      db
+        .prepare(
+          "SELECT id, version, review_state FROM generated_assets WHERE user_id = ? AND pursuit_id = ? AND type = 'cover_letter' AND generation_policy_version <> 'client-render-receipt-v1' AND invalidated_at IS NULL ORDER BY updated_at DESC, version DESC LIMIT 1",
+        )
+        .bind(userId, pursuit.id)
+        .first<{
+          id: string;
+          version: number;
+          review_state: "draft" | "claim_safe" | "approved" | "superseded";
+        }>(),
     ]);
     pursuitRecord = {
       id: pursuit.id,
       state: pursuit.state,
       nextAction: pursuit.next_action,
       externalApprovalState: pursuit.external_approval_state,
+      starters: {
+        resume: resumeStarter
+          ? {
+              id: resumeStarter.id,
+              name: resumeStarter.name,
+              version: resumeStarter.version,
+              reviewState: resumeStarter.review_state,
+            }
+          : null,
+        coverLetter: coverLetterStarter
+          ? {
+              id: coverLetterStarter.id,
+              version: coverLetterStarter.version,
+              reviewState: coverLetterStarter.review_state,
+            }
+          : null,
+      },
       assets: assetRows.results.map((asset) => ({
         id: asset.id,
         type: asset.type,
@@ -826,6 +1244,29 @@ function onboardingAuditStatement(
     );
 }
 
+function hasStructuredRoleDates(
+  role: Pick<
+    RawExperience,
+    "employer" | "title" | "start_date" | "end_date" | "is_current"
+  > | null | undefined,
+): boolean {
+  if (!role?.employer.trim() || !role.title.trim()) return false;
+  if (!role.start_date || !/^\d{4}-\d{2}(?:-\d{2})?$/.test(role.start_date)) {
+    return false;
+  }
+  if (toBool(role.is_current)) return true;
+  if (!role.end_date || !/^\d{4}-\d{2}(?:-\d{2})?$/.test(role.end_date)) {
+    return false;
+  }
+  return role.end_date >= role.start_date;
+}
+
+function isActivationReadyExperience(
+  role: RawExperience | null | undefined,
+): boolean {
+  return hasStructuredRoleDates(role) && role?.review_state === "confirmed";
+}
+
 async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingState> {
   const db = database();
   const [completedStepsValue, goalFact, sourceFact, role, standard, pathRows] = await Promise.all([
@@ -844,7 +1285,7 @@ async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingStat
       .first<{ value_json: string }>(),
     db
       .prepare(
-        "SELECT employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1",
+        "SELECT id, employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? AND review_state <> 'removed' ORDER BY is_current DESC, coalesce(end_date, '9999-12') DESC, start_date DESC, updated_at DESC LIMIT 1",
       )
       .bind(user.id)
       .first<RawExperience>(),
@@ -862,19 +1303,25 @@ async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingStat
       .all<RawCareerPath>(),
   ]);
 
-  const minimumComplete =
-    Boolean(goalFact) &&
-    Boolean(sourceFact || role) &&
-    Boolean(standard) &&
-    pathRows.results.some((path) => path.state === "active");
+  const underlyingStepReady = [
+    Boolean(goalFact),
+    Boolean(sourceFact) || hasStructuredRoleDates(role),
+    isActivationReadyExperience(role),
+    Boolean(standard),
+    pathRows.results.some((path) => path.state === "active"),
+  ];
+  const completedSteps: OnboardingStep[] = [];
+  for (const [index, ready] of underlyingStepReady.entries()) {
+    if (!ready) break;
+    completedSteps.push((index + 1) as OnboardingStep);
+  }
+  const minimumComplete = completedSteps.length === 5;
   const legacyComplete =
     user.lifecycle_state === "founder_production" && minimumComplete;
   const explicitlyComplete =
     completedStepsValue.includes(6) && minimumComplete;
   const complete = legacyComplete || explicitlyComplete;
-  const completedSteps: OnboardingStep[] = complete
-    ? [1, 2, 3, 4, 5, 6]
-    : completedStepsValue;
+  if (complete) completedSteps.push(6);
   const currentStep = ([1, 2, 3, 4, 5, 6] as OnboardingStep[])
     .find((step) => !completedSteps.includes(step)) ?? 6;
 
@@ -907,7 +1354,10 @@ async function readOnboardingStateForUser(user: UserRow): Promise<OnboardingStat
             isCurrent: toBool(role.is_current),
             location: role.location,
             summary: role.summary,
-            reviewState: role.review_state,
+            reviewState:
+              role.review_state === "removed"
+                ? "draft"
+                : role.review_state,
           }
         : null,
     },
@@ -1108,6 +1558,21 @@ async function saveOnboardingCareerInput(
     return;
   }
 
+  if (
+    !payload.role.startDate ||
+    (!payload.role.isCurrent && !payload.role.endDate)
+  ) {
+    throw new Error(
+      "Add a start date and either an end date or current-role status.",
+    );
+  }
+  if (
+    payload.role.endDate &&
+    payload.role.endDate < payload.role.startDate
+  ) {
+    throw new Error("End date cannot be before start date.");
+  }
+
   const roleIdentity =
     context === "onboarding"
       ? `${user.id}:onboarding-primary-role`
@@ -1147,29 +1612,28 @@ async function confirmOnboardingProfile(
   context: "onboarding" | "profile_update" = "onboarding",
 ): Promise<void> {
   const db = database();
-  const sourceCount = await db
+  const role = await db
     .prepare(
-      "SELECT (SELECT count(*) FROM profile_facts WHERE user_id = ? AND fact_type = 'career_source_text' AND invalidated_at IS NULL) + (SELECT count(*) FROM experience_roles WHERE user_id = ?) AS count",
+      "SELECT id, employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? AND review_state <> 'removed' ORDER BY is_current DESC, coalesce(end_date, '9999-12') DESC, start_date DESC, updated_at DESC LIMIT 1",
     )
-    .bind(user.id, user.id)
-    .first<{ count: number }>();
-  if ((sourceCount?.count ?? 0) < 1) {
-    throw new Error("Add career information before confirming your profile.");
+    .bind(user.id)
+    .first<RawExperience>();
+  if (!hasStructuredRoleDates(role)) {
+    throw new Error(
+      "Add and save your current or most recent role with employer, title, start date, and either an end date or current-role status before confirming.",
+    );
   }
-  await db.batch([
+  const statements: D1PreparedStatement[] = [
     db
       .prepare(
-        "UPDATE profile_facts SET state = 'user_confirmed', updated_at = unixepoch() * 1000 WHERE user_id = ? AND invalidated_at IS NULL AND state IN ('extracted', 'inferred', 'suggested')",
+        "UPDATE experience_roles SET review_state = 'confirmed', updated_at = unixepoch() * 1000 WHERE user_id = ? AND id = ? AND review_state IN ('draft', 'confirmed')",
       )
-      .bind(user.id),
-    db
-      .prepare(
-        "UPDATE experience_roles SET review_state = 'confirmed', updated_at = unixepoch() * 1000 WHERE user_id = ? AND review_state = 'draft'",
-      )
-      .bind(user.id),
+      .bind(user.id, role!.id),
     context === "onboarding"
       ? onboardingAuditStatement(db, user, 3, {
           userConfirmed: true,
+          confirmedExperienceRoleId: role!.id,
+          sourceFactsPromoted: false,
           automaticExtraction: false,
         })
       : db
@@ -1184,10 +1648,37 @@ async function confirmOnboardingProfile(
             json({
               policyVersion: ONBOARDING_POLICY_VERSION,
               userConfirmed: true,
+              confirmedExperienceRoleId: role!.id,
+              sourceFactsPromoted: false,
               automaticExtraction: false,
             }),
           ),
-  ]);
+  ];
+  if (context === "profile_update") {
+    statements.push(
+      db
+        .prepare(
+          "UPDATE job_analyses SET validation_state = 'invalidated', invalidated_at = unixepoch() * 1000 WHERE user_id = ? AND validation_state <> 'invalidated'",
+        )
+        .bind(user.id),
+      db
+        .prepare(
+          "UPDATE pursuit_packages SET readiness_state = 'superseded', superseded_at = unixepoch() * 1000 WHERE user_id = ? AND readiness_state <> 'superseded'",
+        )
+        .bind(user.id),
+      db
+        .prepare(
+          "UPDATE generated_assets SET review_state = 'superseded', invalidated_at = unixepoch() * 1000, updated_at = unixepoch() * 1000 WHERE user_id = ? AND generation_policy_version = 'deterministic-approved-profile-v1' AND invalidated_at IS NULL",
+        )
+        .bind(user.id),
+      db
+        .prepare(
+          "UPDATE resumes SET review_state = 'superseded', updated_at = unixepoch() * 1000 WHERE user_id = ? AND json_valid(content_json) AND json_extract(content_json, '$.provenance.source') = 'approved_profile' AND review_state <> 'superseded'",
+        )
+        .bind(user.id),
+    );
+  }
+  await db.batch(statements);
 }
 
 async function saveOnboardingCareerPaths(
@@ -1276,6 +1767,17 @@ export async function saveOnboardingStep(
       throw new Error("Finish every setup step before activating your workspace.");
     }
     const db = database();
+    const activationRole = await db
+      .prepare(
+        "SELECT id, employer, title, start_date, end_date, is_current, location, summary, review_state FROM experience_roles WHERE user_id = ? AND review_state <> 'removed' ORDER BY is_current DESC, coalesce(end_date, '9999-12') DESC, start_date DESC, updated_at DESC LIMIT 1",
+      )
+      .bind(user.id)
+      .first<RawExperience>();
+    if (!isActivationReadyExperience(activationRole)) {
+      throw new Error(
+        "Confirm a structured current or most recent role with dates before activating your workspace.",
+      );
+    }
     await db.batch([
       db
         .prepare(
@@ -1833,10 +2335,45 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
   const founder = await ensureUser(actor);
   const db = database();
   const job = await db
-    .prepare("SELECT id FROM job_postings WHERE id = ? AND removed_at IS NULL LIMIT 1")
-    .bind(jobPostingId)
-    .first<{ id: string }>();
+    .prepare(
+      "SELECT jp.id, (SELECT jpv.id FROM job_posting_versions jpv WHERE jpv.job_posting_id = jp.id ORDER BY jpv.source_checked_at DESC, jpv.created_at DESC, jpv.id DESC LIMIT 1) AS latest_version_id FROM job_postings jp WHERE jp.id = ? AND jp.removed_at IS NULL AND EXISTS (SELECT 1 FROM user_job_links ujl WHERE ujl.user_id = ? AND ujl.job_posting_id = jp.id AND ujl.state = 'active') LIMIT 1",
+    )
+    .bind(jobPostingId, founder.id)
+    .first<{ id: string; latest_version_id: string | null }>();
   if (!job) throw new Error("That job is no longer available.");
+  const analysis = await db
+    .prepare(
+      "SELECT id, integrity_gates_json, validation_state FROM job_analyses WHERE user_id = ? AND job_posting_id = ? AND invalidated_at IS NULL ORDER BY created_at DESC LIMIT 1",
+    )
+    .bind(founder.id, jobPostingId)
+    .first<{
+      id: string;
+      integrity_gates_json: string;
+      validation_state: "pending" | "trusted" | "blocked" | "invalidated";
+    }>();
+  const analysisGates = parseJson<{
+    deterministic?: unknown;
+    jobVersionId?: unknown;
+    policyVersion?: unknown;
+  }>(
+    analysis?.integrity_gates_json,
+    {},
+  );
+  const boundVersionId = analysisGates.jobVersionId;
+  const deterministicPolicyIsCurrent =
+    analysisGates.deterministic !== true ||
+    analysisGates.policyVersion === CURRENT_DETERMINISTIC_ASSESSMENT_POLICY;
+  if (
+    !analysis ||
+    analysis.validation_state !== "trusted" ||
+    !job.latest_version_id ||
+    boundVersionId !== job.latest_version_id ||
+    !deterministicPolicyIsCurrent
+  ) {
+    throw new Error(
+      "Assess this exact employer-source version before starting a pursuit.",
+    );
+  }
   const existing = await db
     .prepare("SELECT id FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1")
     .bind(founder.id, jobPostingId)
@@ -1853,10 +2390,6 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
       .run();
     return existing.id;
   }
-  const analysis = await db
-    .prepare("SELECT id FROM job_analyses WHERE user_id = ? AND job_posting_id = ? ORDER BY created_at DESC LIMIT 1")
-    .bind(founder.id, jobPostingId)
-    .first<{ id: string }>();
   const id = `pursuit_${crypto.randomUUID()}`;
   await db.batch([
     db
@@ -1868,7 +2401,7 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
       .prepare(
         "INSERT INTO pursuits (id, user_id, job_posting_id, current_analysis_id, state, next_action, external_approval_state) VALUES (?, ?, ?, ?, 'researching', 'Complete evidence review before generating application assets.', 'not_requested')",
       )
-      .bind(id, founder.id, jobPostingId, analysis?.id ?? null),
+      .bind(id, founder.id, jobPostingId, analysis.id),
   ]);
   return id;
 }
@@ -1951,6 +2484,13 @@ export async function ingestGreenhouseJob(
   }
 
   const checkedAt = Date.now();
+  const parsedPublishedAt =
+    typeof job.first_published === "string"
+      ? Date.parse(job.first_published)
+      : Number.NaN;
+  const postedAt = Number.isFinite(parsedPublishedAt)
+    ? parsedPublishedAt
+    : null;
   const sourceId = `greenhouse_${(await sha256Hex(board)).slice(0, 20)}`;
   const postingId = `job_${(await sha256Hex(`${board}:${jobId}`)).slice(0, 24)}`;
   const questionSet = (questionJob.questions ?? []).map((question) => ({
@@ -1996,7 +2536,7 @@ export async function ingestGreenhouseJob(
       .bind(sourceId, `${employer} careers`),
     db
       .prepare(
-        "INSERT INTO job_postings (id, source_id, external_id, canonical_url, employer, title, locations_json, compensation_json, description_checksum, first_seen_at, last_checked_at, freshness_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unknown') ON CONFLICT(source_id, external_id) DO UPDATE SET canonical_url = excluded.canonical_url, employer = excluded.employer, title = excluded.title, locations_json = excluded.locations_json, compensation_json = excluded.compensation_json, description_checksum = excluded.description_checksum, last_checked_at = excluded.last_checked_at, removed_at = NULL, freshness_state = 'unknown'",
+        "INSERT INTO job_postings (id, source_id, external_id, canonical_url, employer, title, locations_json, compensation_json, description_checksum, first_seen_at, last_checked_at, posted_at, freshness_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(source_id, external_id) DO UPDATE SET canonical_url = excluded.canonical_url, employer = excluded.employer, title = excluded.title, locations_json = excluded.locations_json, compensation_json = excluded.compensation_json, description_checksum = excluded.description_checksum, last_checked_at = excluded.last_checked_at, posted_at = excluded.posted_at, removed_at = NULL, freshness_state = excluded.freshness_state",
       )
       .bind(
         postingId,
@@ -2010,6 +2550,8 @@ export async function ingestGreenhouseJob(
         descriptionChecksum,
         checkedAt,
         checkedAt,
+        postedAt,
+        freshnessFromPostedAt(postedAt, checkedAt),
       ),
     db
       .prepare(
@@ -2238,6 +2780,425 @@ async function ingestLeverJob(
   return { jobPostingId: postingId, title: job.text.trim(), employer };
 }
 
+type AshbyCompensation = {
+  compensationTierSummary?: string;
+  scrapeableCompensationSalarySummary?: string;
+  compensationTiers?: unknown[];
+  summaryComponents?: Array<{
+    compensationType?: string;
+    interval?: string;
+    currencyCode?: string | null;
+    minValue?: number | null;
+    maxValue?: number | null;
+  }>;
+};
+
+type AshbyJobResponse = {
+  id?: string;
+  title?: string;
+  location?: string;
+  secondaryLocations?: Array<{
+    location?: string;
+    address?: Record<string, unknown>;
+  }>;
+  department?: string;
+  team?: string;
+  isListed?: boolean;
+  isRemote?: boolean;
+  workplaceType?: string;
+  descriptionPlain?: string;
+  publishedAt?: string;
+  employmentType?: string;
+  address?: Record<string, unknown>;
+  jobUrl?: string;
+  applyUrl?: string;
+  compensation?: AshbyCompensation;
+  shouldDisplayCompensationOnJobPostings?: boolean;
+};
+
+type AshbyFeedResponse = {
+  apiVersion?: string;
+  jobs?: AshbyJobResponse[];
+};
+
+type AshbyUrlParts = {
+  board: string;
+  jobId: string;
+  kind: "job" | "application";
+};
+
+function parseAshbyUrl(input: string): AshbyUrlParts {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    throw new Error("Enter a complete Ashby employer job URL.");
+  }
+  if (
+    url.protocol !== "https:" ||
+    url.hostname.toLowerCase() !== "jobs.ashbyhq.com" ||
+    url.port ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash
+  ) {
+    throw new Error("Enter a canonical HTTPS jobs.ashbyhq.com employer URL.");
+  }
+  const rawSegments = url.pathname.split("/").filter(Boolean);
+  if (
+    (rawSegments.length !== 2 && rawSegments.length !== 3) ||
+    (rawSegments.length === 3 && rawSegments[2] !== "application")
+  ) {
+    throw new Error(
+      "The Ashby URL must identify one canonical employer job or its application page.",
+    );
+  }
+  let board: string;
+  try {
+    board = decodeURIComponent(rawSegments[0]);
+  } catch {
+    throw new Error("The Ashby employer board name is invalid.");
+  }
+  if (
+    !/^[\p{L}\p{N}][\p{L}\p{N} ._~&'()-]{0,99}$/u.test(board) ||
+    /[/\\]/.test(board)
+  ) {
+    throw new Error("The Ashby employer board name is invalid.");
+  }
+  const jobId = rawSegments[1]?.toLowerCase();
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+      jobId,
+    )
+  ) {
+    throw new Error(
+      "The Ashby URL must identify one canonical employer job or its application page.",
+    );
+  }
+  return {
+    board,
+    jobId,
+    kind: rawSegments.length === 3 ? "application" : "job",
+  };
+}
+
+async function readBoundedAshbyFeed(response: Response): Promise<AshbyFeedResponse> {
+  const maximumBytes = 2_000_000;
+  const contentLength = Number(response.headers.get("content-length") ?? 0);
+  if (Number.isFinite(contentLength) && contentLength > maximumBytes) {
+    throw new Error("The employer job board is larger than this alpha accepts.");
+  }
+  const body = await response.text();
+  if (new TextEncoder().encode(body).byteLength > maximumBytes) {
+    throw new Error("The employer job board is larger than this alpha accepts.");
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    throw new Error("The employer job source returned invalid data.");
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("The employer job source returned an unexpected board record.");
+  }
+  const feed = parsed as AshbyFeedResponse;
+  if (feed.apiVersion !== "1" || !Array.isArray(feed.jobs) || feed.jobs.length > 5_000) {
+    throw new Error("The employer job source returned an unsupported board record.");
+  }
+  return feed;
+}
+
+function selectListedAshbyJob(
+  feed: AshbyFeedResponse,
+  board: string,
+  jobId: string,
+): AshbyJobResponse {
+  const matches = (feed.jobs ?? []).filter((job) => job?.id === jobId);
+  if (matches.length === 0) {
+    throw new Error("The employer no longer lists this Ashby job.");
+  }
+  if (matches.length !== 1) {
+    throw new Error("The employer source returned duplicate records for this job.");
+  }
+  const job = matches[0];
+  if (job.isListed !== true) {
+    throw new Error("This Ashby job is unlisted and cannot be added.");
+  }
+  if (!job.title?.trim() || !job.descriptionPlain?.trim()) {
+    throw new Error("The employer source returned an incomplete job record.");
+  }
+  if (typeof job.jobUrl !== "string" || typeof job.applyUrl !== "string") {
+    throw new Error("The employer source omitted its canonical job links.");
+  }
+  const jobUrl = parseAshbyUrl(job.jobUrl);
+  const applyUrl = parseAshbyUrl(job.applyUrl);
+  if (
+    jobUrl.board !== board ||
+    jobUrl.jobId !== jobId ||
+    jobUrl.kind !== "job" ||
+    applyUrl.board !== board ||
+    applyUrl.jobId !== jobId ||
+    applyUrl.kind !== "application"
+  ) {
+    throw new Error(
+      "The employer source returned job links that do not match this Ashby board and requisition.",
+    );
+  }
+  return job;
+}
+
+async function fetchAshbyJob(
+  board: string,
+  jobId: string,
+  fetcher: typeof fetch = fetch,
+): Promise<{ feed: AshbyFeedResponse; job: AshbyJobResponse; endpoint: string }> {
+  const endpoint = `https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(board)}?includeCompensation=true`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+  let response: Response;
+  try {
+    response = await fetcher(endpoint, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "WayAhead/1.0",
+      },
+      redirect: "manual",
+      signal: controller.signal,
+    });
+  } catch {
+    throw new Error("The employer job source is temporarily unavailable.");
+  } finally {
+    clearTimeout(timeout);
+  }
+  if (response.status >= 300 && response.status < 400) {
+    throw new Error("The employer job source redirected unexpectedly.");
+  }
+  if (response.status === 404) {
+    throw new Error("The employer no longer returns this Ashby job board.");
+  }
+  if (!response.ok) {
+    throw new Error("The employer job source is temporarily unavailable.");
+  }
+  const feed = await readBoundedAshbyFeed(response);
+  return {
+    feed,
+    job: selectListedAshbyJob(feed, board, jobId),
+    endpoint,
+  };
+}
+
+function ashbyAnnualSalaryRanges(
+  compensation: AshbyCompensation | undefined,
+): Array<{
+  currency: string;
+  interval: "year";
+  min: number;
+  max: number;
+}> {
+  return (compensation?.summaryComponents ?? [])
+    .filter(
+      (component) =>
+        component.compensationType === "Salary" &&
+        component.interval === "1 YEAR" &&
+        typeof component.currencyCode === "string" &&
+        typeof component.minValue === "number" &&
+        Number.isFinite(component.minValue) &&
+        typeof component.maxValue === "number" &&
+        Number.isFinite(component.maxValue) &&
+        component.minValue >= 0 &&
+        component.maxValue >= component.minValue,
+    )
+    .map((component) => ({
+      currency: component.currencyCode as string,
+      interval: "year" as const,
+      min: component.minValue as number,
+      max: component.maxValue as number,
+    }));
+}
+
+function employerFromAshbyBoard(board: string): string {
+  return board
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b[a-z]/g, (letter) => letter.toUpperCase());
+}
+
+async function ingestAshbyJob(
+  actor: FounderActor,
+  sourceUrl: string,
+): Promise<{ jobPostingId: string; title: string; employer: string }> {
+  const user = await ensureUser(actor);
+  const { board, jobId } = parseAshbyUrl(sourceUrl.trim());
+  const { feed, job, endpoint } = await fetchAshbyJob(board, jobId);
+  const checkedAt = Date.now();
+  const parsedPublishedAt =
+    typeof job.publishedAt === "string"
+      ? Date.parse(job.publishedAt)
+      : Number.NaN;
+  if (job.publishedAt && !Number.isFinite(parsedPublishedAt)) {
+    throw new Error("The employer source returned an invalid publication date.");
+  }
+  const postedAt = Number.isFinite(parsedPublishedAt)
+    ? parsedPublishedAt
+    : null;
+  const locations = [
+    typeof job.location === "string" ? job.location.trim() : "",
+    ...(job.secondaryLocations ?? []).map((location) =>
+      typeof location.location === "string" ? location.location.trim() : "",
+    ),
+  ]
+    .filter(Boolean)
+    .filter((location, index, all) => all.indexOf(location) === index)
+    .slice(0, 50);
+  const sourceSnapshot = {
+    apiVersion: feed.apiVersion,
+    id: job.id,
+    title: job.title?.trim(),
+    location: job.location ?? null,
+    secondaryLocations: job.secondaryLocations ?? [],
+    department: job.department ?? null,
+    team: job.team ?? null,
+    isListed: true,
+    isRemote: job.isRemote ?? null,
+    workplaceType: job.workplaceType ?? null,
+    employmentType: job.employmentType ?? null,
+    publishedAt: job.publishedAt ?? null,
+    address: job.address ?? null,
+    jobUrl: job.jobUrl,
+    applyUrl: job.applyUrl,
+    descriptionPlain: job.descriptionPlain,
+    compensation: job.compensation ?? null,
+    shouldDisplayCompensationOnJobPostings:
+      job.shouldDisplayCompensationOnJobPostings ?? null,
+  };
+  const descriptionChecksum = await sha256Hex(canonicalJson(sourceSnapshot));
+  const sourceId = `ashby_${(await sha256Hex(board)).slice(0, 20)}`;
+  const postingId = `job_${(
+    await sha256Hex(`ashby:${board}:${jobId}`)
+  ).slice(0, 24)}`;
+  const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const linkId = `joblink_${(
+    await sha256Hex(`${user.id}:${postingId}`)
+  ).slice(0, 24)}`;
+  const employer = employerFromAshbyBoard(board);
+  const salaryRanges = ashbyAnnualSalaryRanges(job.compensation);
+  const questionSetCapture = {
+    state: "unknown",
+    reason: "not_exposed_by_ashby_public_job_postings_api",
+  };
+  const sourceReceipt = {
+    sourceFamily: "ashby_public_job_postings_api",
+    endpoint,
+    apiVersion: feed.apiVersion,
+    checkedAt,
+    board,
+    externalId: jobId,
+    rightsState: "approved_for_private_user_requested_analysis_only",
+    redistributionState: "not_authorized",
+    termsVersion: "ashby-public-job-postings-api-2026-07",
+  };
+  const sourceFacts: JsonRecord = {
+    employerNameReceipt: {
+      value: board,
+      state: "board_slug_fallback",
+      verifiedEmployerName: false,
+    },
+    title: job.title?.trim(),
+    locations,
+    location: job.location ?? null,
+    secondaryLocations: job.secondaryLocations ?? [],
+    isRemote: job.isRemote ?? null,
+    workplaceType: job.workplaceType ?? null,
+    employmentType: job.employmentType ?? null,
+    team: job.team ?? null,
+    department: job.department ?? null,
+    publishedAt: job.publishedAt ?? null,
+    jobUrl: job.jobUrl,
+    applyUrl: job.applyUrl,
+    salaryRange: salaryRanges[0] ?? null,
+    compensation: job.compensation ?? null,
+    descriptionPlain: job.descriptionPlain,
+    descriptionCharacterCount: job.descriptionPlain?.length ?? 0,
+    questionSetCapture,
+    sourceReceipt,
+    retrieval: "Ashby public Job Postings API",
+  };
+  const db = database();
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO job_sources (id, name, kind, rights_state, terms_version) VALUES (?, ?, 'employer_ats', 'approved', 'ashby-public-job-postings-api-2026-07') ON CONFLICT(id) DO UPDATE SET name = excluded.name, rights_state = excluded.rights_state, terms_version = excluded.terms_version",
+      )
+      .bind(sourceId, `${board} Ashby board (employer name unverified)`),
+    db
+      .prepare(
+        "INSERT INTO job_postings (id, source_id, external_id, canonical_url, employer, title, locations_json, compensation_json, description_checksum, first_seen_at, last_checked_at, posted_at, freshness_state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(source_id, external_id) DO UPDATE SET canonical_url = excluded.canonical_url, employer = excluded.employer, title = excluded.title, locations_json = excluded.locations_json, compensation_json = excluded.compensation_json, description_checksum = excluded.description_checksum, last_checked_at = excluded.last_checked_at, posted_at = excluded.posted_at, removed_at = NULL, freshness_state = excluded.freshness_state",
+      )
+      .bind(
+        postingId,
+        sourceId,
+        jobId,
+        job.jobUrl,
+        employer,
+        job.title?.trim(),
+        json(locations),
+        json({
+          sourceRange: salaryRanges[0] ?? null,
+          sourceRanges: salaryRanges,
+          sourceCompensation: job.compensation ?? null,
+          state: job.compensation ? "source_reported" : "unknown",
+        }),
+        descriptionChecksum,
+        checkedAt,
+        checkedAt,
+        postedAt,
+        freshnessFromPostedAt(postedAt, checkedAt),
+      ),
+    db
+      .prepare(
+        "INSERT INTO job_posting_versions (id, job_posting_id, source_checked_at, source_url, description_checksum, source_facts_json, source_conflicts_json, capture_state) VALUES (?, ?, ?, ?, ?, ?, '[]', 'verified') ON CONFLICT(job_posting_id, description_checksum) DO NOTHING",
+      )
+      .bind(
+        versionId,
+        postingId,
+        checkedAt,
+        job.jobUrl,
+        descriptionChecksum,
+        json(sourceFacts),
+      ),
+    db
+      .prepare(
+        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+      )
+      .bind(linkId, user.id, postingId),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'ashby_job_ingested', 'job_posting', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        user.id,
+        `chatgpt:${user.email}`,
+        postingId,
+        json({
+          board,
+          externalId: jobId,
+          descriptionChecksum,
+          employerNameState: "board_slug_fallback",
+          questionSetCapture,
+          rightsState: sourceReceipt.rightsState,
+        }),
+      ),
+  ]);
+  return {
+    jobPostingId: postingId,
+    title: job.title?.trim() ?? "",
+    employer,
+  };
+}
+
 export async function ingestEmployerJob(
   actor: FounderActor,
   sourceUrl: string,
@@ -2255,8 +3216,11 @@ export async function ingestEmployerJob(
   if (host === "jobs.lever.co") {
     return ingestLeverJob(actor, sourceUrl);
   }
+  if (host === "jobs.ashbyhq.com") {
+    return ingestAshbyJob(actor, sourceUrl);
+  }
   throw new Error(
-    "This alpha currently verifies direct Greenhouse and Lever employer URLs.",
+    "This alpha currently verifies direct Greenhouse, Lever, and Ashby employer URLs.",
   );
 }
 

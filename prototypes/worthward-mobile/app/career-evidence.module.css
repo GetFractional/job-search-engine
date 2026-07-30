@@ -1,0 +1,488 @@
+.manager {
+  display: grid;
+  gap: 20px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  padding: clamp(20px, 4vw, 32px);
+  box-shadow: var(--shadow-small);
+}
+
+.heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.heading > div {
+  max-width: 760px;
+}
+
+.heading h2,
+.heading p {
+  margin-bottom: 0;
+}
+
+.heading h2 {
+  margin-top: 4px;
+}
+
+.heading p:last-child {
+  margin-top: 10px;
+  color: var(--ink-secondary);
+  font-size: 13px;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton,
+.textButton,
+.dangerTextButton {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 12px;
+  padding: 0 15px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.primaryButton {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-on);
+}
+
+.secondaryButton {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--ink);
+}
+
+.textButton,
+.dangerTextButton {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-secondary);
+}
+
+.dangerTextButton {
+  color: var(--danger);
+}
+
+.dangerButton {
+  border: 1px solid color-mix(in srgb, var(--danger) 70%, var(--border));
+  background: var(--danger);
+  color: white;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.dangerButton:disabled,
+.textButton:disabled,
+.dangerTextButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--positive) 45%, var(--border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--positive) 8%, var(--surface));
+  padding: 13px 14px;
+  color: var(--positive);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.noticeError {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  color: var(--danger);
+}
+
+.editor {
+  display: grid;
+  gap: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: 18px;
+  background: var(--surface-muted);
+  padding: clamp(18px, 3vw, 26px);
+  outline: none;
+}
+
+.editor:focus {
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.editorHeading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.editorHeading span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.editorHeading h3 {
+  margin: 4px 0 0;
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 820;
+}
+
+.editor form {
+  display: grid;
+  gap: 20px;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field,
+.wideField {
+  display: grid;
+  gap: 7px;
+}
+
+.wideField {
+  grid-column: 1 / -1;
+}
+
+.field > span,
+.wideField > span {
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 780;
+}
+
+.field input,
+.wideField textarea {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 12px;
+}
+
+.wideField textarea {
+  min-height: 132px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.wideField small {
+  color: var(--ink-tertiary);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.currentCheck {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.currentCheck input,
+.confirmation input {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  accent-color: var(--accent);
+}
+
+.confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 14px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.confirmation strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.roleList {
+  display: grid;
+  gap: 12px;
+}
+
+.roleCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: var(--surface-muted);
+  padding: 18px;
+}
+
+.roleMain {
+  min-width: 0;
+}
+
+.roleDates {
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.roleCard h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 820;
+}
+
+.employer,
+.summary,
+.summaryOpen {
+  margin-bottom: 0;
+}
+
+.employer {
+  margin-top: 3px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.summary,
+.summaryOpen {
+  margin-top: 12px;
+  max-width: 760px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.summaryOpen {
+  color: var(--ink-tertiary);
+  font-style: italic;
+}
+
+.provenance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  color: var(--positive);
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.provenance small {
+  border-left: 1px solid var(--border);
+  color: var(--ink-tertiary);
+  padding-left: 7px;
+  text-transform: capitalize;
+}
+
+.roleActions {
+  display: flex;
+  min-width: 112px;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.removeConfirm {
+  width: min(300px, 46vw);
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--border));
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--danger) 6%, var(--surface));
+  padding: 12px;
+}
+
+.removeConfirm p {
+  margin: 0 0 10px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.removeConfirm > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 16px;
+  background: var(--surface-muted);
+  padding: 18px;
+  color: var(--ink-secondary);
+}
+
+.empty strong {
+  display: block;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.empty p {
+  margin: 4px 0 0;
+  font-size: 11px;
+}
+
+.removed {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.removed summary {
+  min-height: 44px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 780;
+  cursor: pointer;
+}
+
+.removed > div {
+  display: grid;
+  gap: 8px;
+}
+
+.removed article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-muted);
+  padding: 12px;
+}
+
+.removed article div {
+  display: grid;
+  gap: 2px;
+}
+
+.removed article strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.removed article span {
+  color: var(--ink-tertiary);
+  font-size: 10px;
+}
+
+@media (max-width: 760px) {
+  .heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .heading .primaryButton {
+    width: 100%;
+  }
+
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .wideField {
+    grid-column: auto;
+  }
+
+  .roleCard {
+    grid-template-columns: 1fr;
+  }
+
+  .roleActions {
+    min-width: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .roleActions > button {
+    flex: 1 1 120px;
+  }
+
+  .removeConfirm {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .formActions {
+    flex-direction: column;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .manager {
+    border-radius: 18px;
+    padding: 18px 14px;
+  }
+
+  .editor {
+    padding: 16px 13px;
+  }
+
+  .editorHeading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .editorHeading .textButton {
+    justify-content: flex-start;
+    padding-left: 0;
+  }
+
+  .removed article {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

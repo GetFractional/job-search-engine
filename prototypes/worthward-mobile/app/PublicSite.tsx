@@ -5,12 +5,9 @@ import {
   Briefcase,
   FileText,
   ListChecks,
-  List,
   ShieldCheck,
-  X,
 } from "@phosphor-icons/react";
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import PublicNavigation from "./PublicNavigation";
 import styles from "./public-site.module.css";
 
 type PublicSiteProps = {
@@ -26,85 +23,14 @@ export default function PublicSite({
   signInHref,
   signedIn,
 }: PublicSiteProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setMenuOpen(false);
-      menuButtonRef.current?.focus();
-    };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [menuOpen]);
-
-  const closeMenu = () => setMenuOpen(false);
-
   return (
     <div className={styles.site}>
-      <a className={styles.skipLink} href="#public-main">
-        Skip to main content
-      </a>
-      <header className={styles.header}>
-        <Link className={styles.brand} href="/" aria-label="Way Ahead home">
-          <span className={styles.brandMark} aria-hidden="true">
-            <Briefcase size={20} weight="duotone" />
-          </span>
-          Way Ahead
-        </Link>
-
-        <nav className={styles.desktopNav} aria-label="Public navigation">
-          <a href="#how-it-works">How it works</a>
-          <a href="#career-tools">Career tools</a>
-          <a href="#trust">Your control</a>
-        </nav>
-
-        <div className={styles.headerActions}>
-          <a className={styles.signInLink} href={signInHref}>
-            {signedIn ? "Workspace" : "Sign in"}
-          </a>
-          <a className={styles.headerCta} href={primaryHref}>
-            {primaryLabel}
-          </a>
-          <button
-            ref={menuButtonRef}
-            className={styles.menuButton}
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="public-mobile-menu"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={24} /> : <List size={24} />}
-          </button>
-        </div>
-
-        <nav
-          id="public-mobile-menu"
-          className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}
-          aria-label="Mobile navigation"
-          hidden={!menuOpen}
-        >
-          <a href="#how-it-works" onClick={closeMenu}>
-            How it works
-          </a>
-          <a href="#career-tools" onClick={closeMenu}>
-            Career tools
-          </a>
-          <a href="#trust" onClick={closeMenu}>
-            Your control
-          </a>
-          <a href={signInHref} onClick={closeMenu}>
-            {signedIn ? "Workspace" : "Sign in"}
-          </a>
-          <a className={styles.mobileCta} href={primaryHref} onClick={closeMenu}>
-            {primaryLabel}
-            <ArrowRight size={18} />
-          </a>
-        </nav>
-      </header>
+      <PublicNavigation
+        primaryHref={primaryHref}
+        primaryLabel={primaryLabel}
+        signInHref={signInHref}
+        signedIn={signedIn}
+      />
 
       <main id="public-main" tabIndex={-1}>
         <section className={styles.hero}>
@@ -112,18 +38,18 @@ export default function PublicSite({
             <p className={styles.eyebrow}>Career search, built around you</p>
             <h1>Stop wasting your best effort on jobs that are not worth it.</h1>
             <p className={styles.lede}>
-              Way Ahead learns what you are good at and what your next job must
-              deliver, finds current jobs worth pursuing, and helps you build
-              the strongest truthful application for each one.
+              Way Ahead helps you define what your next job must deliver, add
+              current employer jobs, compare them against your standard, and
+              build truthful application materials you can tailor and approve.
             </p>
             <div className={styles.heroActions}>
               <a className={styles.primaryButton} href={primaryHref}>
                 {primaryLabel === "Open workspace"
                   ? primaryLabel
-                  : "Find jobs worth pursuing"}
+                  : "Build my job-search workspace"}
                 <ArrowRight size={19} weight="bold" />
               </a>
-              <a className={styles.textLink} href="#how-it-works">
+              <a className={styles.textLink} href="/how-it-works">
                 See how it works
               </a>
             </div>
@@ -147,16 +73,16 @@ export default function PublicSite({
               <span>2</span>
               <p>
                 <strong>See what deserves effort.</strong>
-                Compare current jobs by role family, evidence, and how well
-                each one meets your standard.
+                Compare the current jobs you add by role family, evidence, and
+                how well each one meets your standard.
               </p>
             </div>
             <div>
               <span>3</span>
               <p>
                 <strong>Build the honest case.</strong>
-                Prepare job-specific materials you can review and edit before
-                anything leaves the workspace.
+                Prepare materials for a selected job, then review and edit them
+                against the posting before anything leaves the workspace.
               </p>
             </div>
           </aside>
@@ -198,6 +124,12 @@ export default function PublicSite({
               </p>
             </article>
           </div>
+          <a
+            className={`${styles.textLink} ${styles.sectionLink}`}
+            href="/how-it-works"
+          >
+            Follow the full journey
+          </a>
         </section>
 
         <section className={styles.splitSection} id="career-tools">
@@ -212,13 +144,20 @@ export default function PublicSite({
             </p>
             <p>
               <strong>Opportunity Scoreboards</strong>
-              Current jobs organized by the Job Paths you actually want.
+              Current employer jobs you add, organized by the Job Paths you
+              actually want.
             </p>
             <p>
               <strong>Resume and Cover Letter Studios</strong>
-              Master, Job Path, and job-specific materials with user editing
-              and version control.
+              Master, Job Path, and job-assigned materials with user editing,
+              version control, and explicit tailoring still in your hands.
             </p>
+            <a
+              className={`${styles.textLink} ${styles.sectionLink}`}
+              href="/tools"
+            >
+              Explore the current tools
+            </a>
           </div>
         </section>
 
@@ -239,7 +178,7 @@ export default function PublicSite({
         <section className={styles.finalCta}>
           <div>
             <p className={styles.eyebrow}>Make the next effort count</p>
-            <h2>Find the next job you actually want.</h2>
+            <h2>Judge the next job before you give it your time.</h2>
           </div>
           <a className={styles.primaryButton} href={primaryHref}>
             {primaryLabel}

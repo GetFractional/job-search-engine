@@ -30,7 +30,7 @@ export function DeletedAccountRestart({
       if (!response.ok || result.restarted !== true) {
         throw new Error(result.error ?? "A new account could not be started.");
       }
-      window.location.assign("/app");
+      window.location.assign("/app/home");
     } catch (restartError) {
       setError(
         restartError instanceof Error

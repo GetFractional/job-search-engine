@@ -7,27 +7,32 @@ const read = (path) =>
 
 const publicPage = read("app/page.tsx");
 const publicSite = read("app/PublicSite.tsx");
+const publicNavigation = read("app/PublicNavigation.tsx");
 const productPage = read("app/app/page.tsx");
+const productRoute = read("app/app/ProductRoutePage.tsx");
 const onboardingPage = read("app/app/onboarding/page.tsx");
 const experiencePage = read("app/app/onboarding/experience/page.tsx");
 const onboarding = read("app/OnboardingFlow.tsx");
+const onboardingCss = read("app/onboarding.module.css");
 const resumeImport = read("app/resume-import.ts");
 const onboardingApi = read("app/api/onboarding/route.ts");
 const repository = read("app/workspace-repository.ts");
+const today = read("app/today-repository.ts");
 const auth = read("app/server-auth.ts");
 
 test("keeps the website public and protects only product routes", () => {
   assert.match(publicPage, /getChatGPTUser/);
   assert.doesNotMatch(publicPage, /requireUserPage|requireFounderPage/);
   assert.match(publicSite, /Stop wasting your best effort/);
-  assert.match(publicSite, /aria-expanded=\{menuOpen\}/);
-  assert.match(publicSite, /id="public-mobile-menu"/);
-  assert.match(productPage, /requireUserPage\("\/app"\)/);
-  assert.match(productPage, /redirect\(`\/app\/onboarding\?step=/);
-  assert.match(productPage, /deletedAccountNeedsRestart/);
+  assert.match(publicNavigation, /aria-expanded=\{menuOpen\}/);
+  assert.match(publicNavigation, /id="public-mobile-menu"/);
+  assert.match(productPage, /redirect\("\/app\/home"\)/);
+  assert.match(productRoute, /requireUserPage\(returnPath\)/);
+  assert.match(productRoute, /redirect\(`\/app\/onboarding\?step=/);
+  assert.match(productRoute, /deletedAccountNeedsRestart/);
   assert.match(onboardingPage, /requireUserPage\("\/app\/onboarding"\)/);
   assert.match(onboardingPage, /deletedAccountNeedsRestart/);
-  assert.match(onboardingPage, /if \(state\.complete\) redirect\("\/app"\)/);
+  assert.match(onboardingPage, /if \(state\.complete\) redirect\("\/app\/home"\)/);
   assert.match(
     experiencePage,
     /requireUserPage\("\/app\/onboarding\/experience"\)/,
@@ -81,6 +86,17 @@ test("persists a resumable six-step setup with user-scoped records", () => {
   );
   assert.match(repository, /automaticExtraction:\s*false/);
   assert.match(repository, /automaticScoring:\s*false/);
+  assert.match(repository, /isActivationReadyExperience\(role\)/);
+  assert.match(
+    onboarding,
+    /Imported source text · not confirmed career facts/,
+  );
+  assert.match(onboarding, /Save structured role/);
+  assert.match(
+    onboarding,
+    /I confirm this one structured role as accurate career evidence/,
+  );
+  assert.match(onboarding, /required=\{!role\.isCurrent\}/);
   assert.match(onboardingApi, /requireUserRequest/);
   assert.match(onboardingApi, /requireSameOrigin/);
   assert.match(onboardingApi, /readBoundedJson\(request, 100_000\)/);
@@ -88,6 +104,20 @@ test("persists a resumable six-step setup with user-scoped records", () => {
   assert.match(onboardingApi, /processingAccepted/);
   assert.match(onboarding, /Alpha Data Notice/);
   assert.match(onboarding, /Data &amp; privacy/);
+});
+
+test("qualifies discovery and monitoring copy until automated job supply exists", () => {
+  assert.match(publicSite, /current employer jobs you add/i);
+  assert.match(publicSite, /Build my job-search workspace/);
+  assert.doesNotMatch(
+    publicSite,
+    /finds current jobs|automatically finds|automatically monitors/i,
+  );
+  assert.doesNotMatch(onboarding, /directions you want to monitor/i);
+  assert.doesNotMatch(
+    today,
+    /active paths continue to be checked/i,
+  );
 });
 
 test("parses bounded resume files locally and saves only reviewable extracted text", () => {
@@ -118,4 +148,6 @@ test("keeps authenticated setup navigation stable on mobile", () => {
   assert.match(onboarding, /href="\/app\/onboarding"/);
   assert.match(onboarding, /signOutHref/);
   assert.match(onboarding, /aria-current="page"/);
+  assert.match(onboardingCss, /grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
+  assert.doesNotMatch(onboardingCss, /min-width:\s*510px/);
 });

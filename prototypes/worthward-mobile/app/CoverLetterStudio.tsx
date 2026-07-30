@@ -252,7 +252,7 @@ export function CoverLetterStudio() {
   }
 
   const hasContent = content.paragraphs.some((paragraph) => paragraph.trim());
-  const showEmpty = !loading && letters.length === 0 && !hasContent;
+  const showEmpty = !loading && !selected && !hasContent;
 
   return (
     <section
@@ -266,8 +266,9 @@ export function CoverLetterStudio() {
             Make the case for this job without stretching the truth.
           </h1>
           <p>
-            Build from the current posting and your approved career record,
-            then edit every word and preserve version history.
+            Start with your confirmed career record plus the selected employer
+            and title, then tailor every word to the current posting and
+            preserve version history.
           </p>
           <span className={styles.trustLine}>
             <ShieldCheck aria-hidden="true" /> Nothing is uploaded or submitted

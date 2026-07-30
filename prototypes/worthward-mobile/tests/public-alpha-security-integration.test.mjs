@@ -273,38 +273,48 @@ test("public files and production source contain no founder payload or local mac
   }
 });
 
-test("the product shell is query-driven and exposes no parallel /app section routes", () => {
+test("the product shell exposes stable, refresh-safe section routes", () => {
   const appRouteFiles = walkFiles(path.join(appRoot, "app", "app"))
     .map((file) => path.relative(path.join(appRoot, "app", "app"), file))
     .sort();
-  assert.deepEqual(appRouteFiles, [
+  for (const route of [
+    "ProductRoutePage.tsx",
+    "documents/cover-letters/page.tsx",
+    "documents/resumes/page.tsx",
+    "home/page.tsx",
+    "jobs/[jobId]/page.tsx",
+    "jobs/page.tsx",
     "onboarding/experience/page.tsx",
     "onboarding/page.tsx",
     "page.tsx",
-  ]);
+    "plan/page.tsx",
+    "profile/page.tsx",
+    "pursuits/[jobId]/page.tsx",
+    "pursuits/page.tsx",
+    "settings/privacy/page.tsx",
+  ]) {
+    assert.ok(appRouteFiles.includes(route), `missing stable product route: ${route}`);
+  }
 
   const productSource = walkFiles(path.join(appRoot, "app"))
     .filter((file) => /\.(?:ts|tsx)$/.test(file))
     .map((file) => readFileSync(file, "utf8"))
     .join("\n");
-  assert.doesNotMatch(
-    productSource,
-    /\/app\/(?:jobs|pursuits|studio|plan|profile|resumes|cover-letters)(?:[/?#"'`]|$)/,
-  );
-  const { ast, node: navigate } = findFunction(
-    "app/WayAheadApp.tsx",
-    "navigate",
-  );
-  const navigateText = navigate.getText(ast);
-  assert.match(navigateText, /searchParams\.set\("view", nextView\)/);
-  assert.match(navigateText, /history\.pushState\(\{\}, "", url\)/);
-  assert.match(read("app/today-repository.ts"), /href: `\/app\?view=jobs&job=/);
+  assert.match(productSource, /\/app\/home/);
+  assert.match(productSource, /\/app\/jobs\/\$\{encodeURIComponent\(jobId\)\}/);
+  assert.match(productSource, /\/app\/pursuits\/\$\{encodeURIComponent\(jobId\)\}/);
+  assert.match(productSource, /\/app\/documents\/resumes/);
+  assert.match(productSource, /\/app\/documents\/cover-letters/);
+  assert.match(productSource, /\/app\/settings\/privacy/);
+  assert.match(read("app/WayAheadApp.tsx"), /history\.pushState\(\{\}, "", viewPath\(/);
+  assert.match(read("app/today-repository.ts"), /href: `\/app\/jobs\/\$\{encodeURIComponent/);
+  assert.doesNotMatch(productSource, /href=["'`]\/app\?view=/);
 });
 
 test("Today evaluates exact latest job-version binding and executes only active-path rows", () => {
-  const { isAnalysisCurrent } = evaluateFunctions(
+  const { isAnalysisCurrent, scoresAreVisible } = evaluateFunctions(
     "app/today-repository.ts",
-    ["isAnalysisCurrent"],
+    ["isAnalysisCurrent", "scoresAreVisible"],
     ["parseJson"],
     [
       (value, fallback) => {
@@ -341,6 +351,26 @@ test("Today evaluates exact latest job-version binding and executes only active-
       integrity_gates_json: '{"jobVersionId":"version-previous"}',
     }),
     false,
+  );
+  assert.equal(
+    scoresAreVisible({ validation_state: "trusted" }, true),
+    true,
+  );
+  assert.equal(
+    scoresAreVisible({ validation_state: "pending" }, true),
+    false,
+  );
+  assert.equal(
+    scoresAreVisible({ validation_state: "trusted" }, false),
+    false,
+  );
+  assert.match(
+    read("app/today-repository.ts"),
+    /fitScore: showScores \? fitScore : null/,
+  );
+  assert.match(
+    read("app/today-repository.ts"),
+    /moveValue: showScores \? row\.move_value_score : null/,
   );
 
   const todayQuery = extractedString(
@@ -403,6 +433,109 @@ test("Today evaluates exact latest job-version binding and executes only active-
     `,
     "job-active:path-active",
   );
+});
+
+test("Jobs exposes scores only for trusted analysis bound to the latest source version", () => {
+  const { currentTrustedAnalysis } = evaluateFunctions(
+    "app/WayAheadApp.tsx",
+    ["currentTrustedAnalysis"],
+    [],
+    [],
+  );
+  const analysis = {
+    validationState: "trusted",
+    integrityGates: { jobVersionId: "version-current" },
+    moveValueScore: 84,
+  };
+  assert.equal(
+    currentTrustedAnalysis({
+      analysis,
+      sourceVersion: { id: "version-current" },
+    }),
+    analysis,
+  );
+  assert.equal(
+    currentTrustedAnalysis({
+      analysis,
+      sourceVersion: { id: "version-new" },
+    }),
+    null,
+  );
+  assert.equal(
+    currentTrustedAnalysis({
+      analysis: { ...analysis, validationState: "pending" },
+      sourceVersion: { id: "version-current" },
+    }),
+    null,
+  );
+  const app = read("app/WayAheadApp.tsx");
+  const workspaceRepository = read("app/workspace-repository.ts");
+  assert.match(app, /const visibleAnalysis = currentTrustedAnalysis\(job\)/);
+  assert.match(app, /visibleAnalysis\?\.moveValueScore/);
+  assert.match(
+    workspaceRepository,
+    /ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1/,
+  );
+  assert.doesNotMatch(
+    findFunction("app/WayAheadApp.tsx", "JobsView").node.getText(
+      findFunction("app/WayAheadApp.tsx", "JobsView").ast,
+    ),
+    /job\.analysis\.moveValueScore/,
+  );
+});
+
+test("activation requires one exact confirmed structured role and never bulk-promotes source facts", () => {
+  const {
+    toBool,
+    hasStructuredRoleDates,
+    isActivationReadyExperience,
+  } = evaluateFunctions(
+    "app/workspace-repository.ts",
+    ["toBool", "hasStructuredRoleDates", "isActivationReadyExperience"],
+    [],
+    [],
+  );
+  const currentRole = {
+    employer: "Current Employer",
+    title: "Director",
+    start_date: "2024-02",
+    end_date: null,
+    is_current: 1,
+    review_state: "confirmed",
+  };
+  assert.equal(toBool(currentRole.is_current), true);
+  assert.equal(hasStructuredRoleDates(currentRole), true);
+  assert.equal(isActivationReadyExperience(currentRole), true);
+  assert.equal(
+    isActivationReadyExperience({
+      ...currentRole,
+      review_state: "draft",
+    }),
+    false,
+  );
+  assert.equal(
+    hasStructuredRoleDates({ ...currentRole, start_date: null }),
+    false,
+  );
+  assert.equal(
+    hasStructuredRoleDates({
+      ...currentRole,
+      is_current: 0,
+      start_date: "2024-02",
+      end_date: "2023-12",
+    }),
+    false,
+  );
+  const repository = read("app/workspace-repository.ts");
+  assert.doesNotMatch(
+    repository,
+    /UPDATE profile_facts SET state = 'user_confirmed'[\s\S]*state IN \('extracted', 'inferred', 'suggested'\)/,
+  );
+  assert.match(
+    repository,
+    /UPDATE experience_roles SET review_state = 'confirmed'[\s\S]*WHERE user_id = \? AND id = \?/,
+  );
+  assert.match(repository, /sourceFactsPromoted: false/);
 });
 
 test("client-authored document provenance cannot self-promote to approved profile evidence", () => {
@@ -816,8 +949,219 @@ test("Lever intake accepts only canonical employer URLs and records freshness wi
 
   const app = read("app/WayAheadApp.tsx");
   assert.match(app, /fetch\("\/api\/jobs\/intake"/);
-  assert.match(app, /direct Greenhouse or Lever job URL/);
+  assert.match(app, /direct Greenhouse, Lever, or Ashby job URL/);
   assert.doesNotMatch(app, /fetch\("\/api\/jobs\/greenhouse"/);
+});
+
+test("Ashby intake verifies one listed canonical requisition from a bounded mocked board feed", async () => {
+  const {
+    parseAshbyUrl,
+    readBoundedAshbyFeed,
+    fetchAshbyJob,
+    employerFromAshbyBoard,
+  } = evaluateFunctions(
+    "app/workspace-repository.ts",
+    [
+      "parseAshbyUrl",
+      "readBoundedAshbyFeed",
+      "selectListedAshbyJob",
+      "fetchAshbyJob",
+      "employerFromAshbyBoard",
+    ],
+    [],
+    [],
+  );
+  const jobId = "0095e055-2b79-4dab-878b-4b723b873b8f";
+  const canonicalJobUrl = `https://jobs.ashbyhq.com/going/${jobId}`;
+  const canonicalApplyUrl = `${canonicalJobUrl}/application`;
+  const listedJob = {
+    id: jobId,
+    title: "Director, Lifecycle Marketing",
+    location: "Remote",
+    secondaryLocations: [],
+    department: "Marketing",
+    team: "Marketing",
+    isListed: true,
+    isRemote: true,
+    workplaceType: "Remote",
+    descriptionPlain: "Own lifecycle strategy and execution.",
+    publishedAt: "2026-07-10T19:03:55.757+00:00",
+    employmentType: "FullTime",
+    jobUrl: canonicalJobUrl,
+    applyUrl: canonicalApplyUrl,
+    compensation: {
+      summaryComponents: [
+        {
+          compensationType: "Salary",
+          interval: "1 YEAR",
+          currencyCode: "USD",
+          minValue: 175000,
+          maxValue: 190000,
+        },
+      ],
+    },
+  };
+  const responseFor = (jobs, status = 200, headers = {}) =>
+    new Response(JSON.stringify({ apiVersion: "1", jobs }), {
+      status,
+      headers: { "content-type": "application/json", ...headers },
+    });
+
+  assert.deepEqual(parseAshbyUrl(canonicalJobUrl), {
+    board: "going",
+    jobId,
+    kind: "job",
+  });
+  assert.deepEqual(parseAshbyUrl(canonicalApplyUrl), {
+    board: "going",
+    jobId,
+    kind: "application",
+  });
+  assert.deepEqual(
+    parseAshbyUrl(
+      `https://jobs.ashbyhq.com/Jasper%20AI/${jobId.toUpperCase()}`,
+    ),
+    {
+      board: "Jasper AI",
+      jobId,
+      kind: "job",
+    },
+  );
+  assert.equal(employerFromAshbyBoard("going"), "Going");
+  assert.equal(employerFromAshbyBoard("jasper-ai"), "Jasper Ai");
+  assert.throws(
+    () => parseAshbyUrl(`http://jobs.ashbyhq.com/going/${jobId}`),
+    /canonical HTTPS jobs\.ashbyhq\.com/,
+  );
+  assert.throws(
+    () => parseAshbyUrl(`${canonicalJobUrl}?utm_source=wrapper`),
+    /canonical HTTPS jobs\.ashbyhq\.com/,
+  );
+  assert.throws(
+    () => parseAshbyUrl(`https://example.test/going/${jobId}`),
+    /canonical HTTPS jobs\.ashbyhq\.com/,
+  );
+
+  const requests = [];
+  const result = await fetchAshbyJob("going", jobId, async (url, init) => {
+    requests.push({ url, init });
+    return responseFor([listedJob]);
+  });
+  assert.equal(
+    requests[0].url,
+    "https://api.ashbyhq.com/posting-api/job-board/going?includeCompensation=true",
+  );
+  assert.equal(requests[0].init.redirect, "manual");
+  assert.equal(requests[0].init.signal instanceof AbortSignal, true);
+  assert.equal(result.job.id, jobId);
+  assert.equal(result.job.title, "Director, Lifecycle Marketing");
+  assert.equal(result.job.isListed, true);
+
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () =>
+      new Response(null, {
+        status: 302,
+        headers: { location: "https://example.test/untrusted-wrapper" },
+      })),
+    /redirected unexpectedly/,
+  );
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () => responseFor([])),
+    /no longer lists this Ashby job/,
+  );
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () =>
+      responseFor([{ ...listedJob, isListed: false }]),
+    ),
+    /unlisted and cannot be added/,
+  );
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () =>
+      responseFor([
+        {
+          ...listedJob,
+          id: "11111111-2222-4333-8444-555555555555",
+        },
+      ]),
+    ),
+    /no longer lists this Ashby job/,
+  );
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () =>
+      responseFor([
+        {
+          ...listedJob,
+          jobUrl: `https://jobs.ashbyhq.com/wrong-board/${jobId}`,
+          applyUrl: `https://jobs.ashbyhq.com/wrong-board/${jobId}/application`,
+        },
+      ]),
+    ),
+    /do not match this Ashby board and requisition/,
+  );
+  await assert.rejects(
+    fetchAshbyJob("going", jobId, async () =>
+      responseFor([{ ...listedJob, title: " " }]),
+    ),
+    /incomplete job record/,
+  );
+  await assert.rejects(
+    readBoundedAshbyFeed(
+      responseFor([listedJob], 200, { "content-length": "2000001" }),
+    ),
+    /larger than this alpha accepts/,
+  );
+
+  const repository = read("app/workspace-repository.ts");
+  assert.match(
+    repository,
+    /https:\/\/api\.ashbyhq\.com\/posting-api\/job-board\/\$\{encodeURIComponent\(board\)\}\?includeCompensation=true/,
+  );
+  assert.match(repository, /descriptionPlain: job\.descriptionPlain/);
+  assert.match(repository, /board_slug_fallback/);
+  assert.match(repository, /verifiedEmployerName: false/);
+  assert.match(repository, /not_exposed_by_ashby_public_job_postings_api/);
+  assert.match(repository, /approved_for_private_user_requested_analysis_only/);
+  assert.match(repository, /'ashby_job_ingested'/);
+  assert.match(repository, /const user = await ensureUser\(actor\)/);
+  assert.match(
+    repository,
+    /sha256Hex\(`\$\{user\.id\}:\$\{postingId\}`\)/,
+  );
+
+  expectSqlPass(
+    `
+      ${tenantUsersSql}
+      INSERT INTO job_sources
+        (id, name, kind, rights_state, terms_version)
+      VALUES
+        ('ashby-going', 'going Ashby board (employer name unverified)', 'employer_ats', 'approved', 'ashby-public-job-postings-api-2026-07');
+      INSERT INTO job_postings
+        (id, source_id, external_id, canonical_url, employer, title, description_checksum)
+      VALUES
+        ('going-role', 'ashby-going', '${jobId}', '${canonicalJobUrl}', 'going', 'Director, Lifecycle Marketing', 'checksum');
+      INSERT INTO user_job_links
+        (id, user_id, job_posting_id, source, state)
+      VALUES
+        ('link-a', 'user-a', 'going-role', 'user_added', 'active');
+      SELECT
+        (SELECT count(*) FROM job_postings jp
+          WHERE EXISTS (
+            SELECT 1 FROM user_job_links ujl
+            WHERE ujl.user_id = 'user-a'
+              AND ujl.job_posting_id = jp.id
+              AND ujl.state = 'active'
+          ))
+        || '|'
+        || (SELECT count(*) FROM job_postings jp
+          WHERE EXISTS (
+            SELECT 1 FROM user_job_links ujl
+            WHERE ujl.user_id = 'user-b'
+              AND ujl.job_posting_id = jp.id
+              AND ujl.state = 'active'
+          ));
+    `,
+    "1|0",
+  );
 });
 
 test("operator analysis is exact-version bound, deliberate, auditable, and absent from customer job screens", () => {

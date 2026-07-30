@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const actor = await requireUserPage("/app/onboarding");
-  if (await deletedAccountNeedsRestart(actor)) redirect("/app");
+  if (await deletedAccountNeedsRestart(actor)) redirect("/app/home");
   const state = await readOnboardingState(actor);
-  if (state.complete) redirect("/app");
+  if (state.complete) redirect("/app/home");
   return (
     <OnboardingFlow
       initialState={state}

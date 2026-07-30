@@ -576,23 +576,22 @@ export async function createBlankResume(
   });
 }
 
-export async function createResumeFromProfile(
-  actor: FounderActor,
-): Promise<ResumeStudioRecord> {
-  const user = await ensureUser(actor);
-  const db = database();
+async function resumeContentFromConfirmedProfile(
+  db: D1Database,
+  userId: string,
+): Promise<ResumeContent> {
   const [facts, roles, bullets, profileSkills] = await Promise.all([
     db
       .prepare(
         "SELECT fact_type, value_json FROM profile_facts WHERE user_id = ? AND state IN ('user_confirmed', 'user_corrected') AND invalidated_at IS NULL",
       )
-      .bind(user.id)
+      .bind(userId)
       .all<{ fact_type: string; value_json: string }>(),
     db
       .prepare(
         "SELECT id, employer, title, start_date, end_date, location, summary FROM experience_roles WHERE user_id = ? AND review_state = 'confirmed' ORDER BY is_current DESC, start_date DESC",
       )
-      .bind(user.id)
+      .bind(userId)
       .all<{
         id: string;
         employer: string;
@@ -606,13 +605,13 @@ export async function createResumeFromProfile(
       .prepare(
         "SELECT experience_role_id, text FROM achievement_bullets WHERE user_id = ? AND approval_state = 'approved' AND metrics_state <> 'do_not_use' ORDER BY created_at",
       )
-      .bind(user.id)
+      .bind(userId)
       .all<{ experience_role_id: string | null; text: string }>(),
     db
       .prepare(
         "SELECT s.canonical_name, s.category FROM profile_skills ps JOIN skills s ON s.id = ps.skill_id WHERE ps.user_id = ? AND ps.review_state = 'confirmed' ORDER BY s.category, s.canonical_name",
       )
-      .bind(user.id)
+      .bind(userId)
       .all<{ canonical_name: string; category: string }>(),
   ]);
   if (!roles.results.length) {
@@ -631,7 +630,7 @@ export async function createResumeFromProfile(
     group.push(skill.canonical_name);
     groupedSkills.set(skill.category, group);
   }
-  const content: ResumeContent = {
+  return {
     ...emptyResumeContent(),
     targetTitle: factValue("headline"),
     summary: factValue("professional_summary"),
@@ -655,6 +654,13 @@ export async function createResumeFromProfile(
     })),
     provenance: { source: "approved_profile", unresolvedItems: [] },
   };
+}
+
+export async function createResumeFromProfile(
+  actor: FounderActor,
+): Promise<ResumeStudioRecord> {
+  const user = await ensureUser(actor);
+  const content = await resumeContentFromConfirmedProfile(database(), user.id);
   return saveResumeVersion(actor, {
     sourceResumeId: null,
     name: "Master Resume",
@@ -662,6 +668,59 @@ export async function createResumeFromProfile(
     content,
     assignment: { scope: "default" },
     trustedStarterSource: "approved_profile",
+  });
+}
+
+export async function createJobResumeFromProfile(
+  actor: FounderActor,
+  jobPostingId: string,
+): Promise<ResumeStudioRecord> {
+  const user = await ensureUser(actor);
+  const db = database();
+  const pursuit = await db
+    .prepare(
+      "SELECT p.id, jp.id AS job_posting_id, jp.employer, jp.title FROM pursuits p JOIN job_postings jp ON jp.id = p.job_posting_id WHERE p.user_id = ? AND p.job_posting_id = ? AND p.state <> 'closed' AND jp.removed_at IS NULL LIMIT 1",
+    )
+    .bind(user.id, jobPostingId)
+    .first<{
+      id: string;
+      job_posting_id: string;
+      employer: string;
+      title: string;
+    }>();
+  if (!pursuit) throw new Error("Choose an active pursuit.");
+  const existing = await db
+    .prepare(
+      "SELECT r.id FROM resumes r JOIN resume_assignments ra ON ra.resume_id = r.id AND ra.user_id = r.user_id WHERE r.user_id = ? AND ra.scope = 'job' AND ra.job_posting_id = ? AND r.review_state <> 'superseded' ORDER BY r.updated_at DESC, r.version DESC LIMIT 1",
+    )
+    .bind(user.id, pursuit.job_posting_id)
+    .first<{ id: string }>();
+  if (existing) {
+    const studio = await listResumeStudio(actor);
+    const record = studio.resumes.find((resume) => resume.id === existing.id);
+    if (record) return record;
+  }
+
+  const content = await resumeContentFromConfirmedProfile(db, user.id);
+  content.targetTitle = pursuit.title;
+  const unresolvedItems = [
+    "The target title comes from the current employer posting. Posting requirements have not been used to rewrite, select, or add career evidence.",
+  ];
+  content.provenance = {
+    source: "approved_profile",
+    unresolvedItems,
+  };
+  return saveResumeVersion(actor, {
+    sourceResumeId: null,
+    name: `${pursuit.employer} - ${pursuit.title} Resume`,
+    kind: "job",
+    content,
+    assignment: {
+      scope: "job",
+      jobPostingId: pursuit.job_posting_id,
+    },
+    trustedStarterSource: "approved_profile",
+    trustedStarterUnresolvedItems: unresolvedItems,
   });
 }
 
@@ -674,6 +733,7 @@ export async function saveResumeVersion(
     content: unknown;
     assignment: AssignmentInput;
     trustedStarterSource?: "approved_profile";
+    trustedStarterUnresolvedItems?: string[];
   },
 ): Promise<ResumeStudioRecord> {
   const user = await ensureUser(actor);
@@ -686,7 +746,10 @@ export async function saveResumeVersion(
   if (input.trustedStarterSource === "approved_profile") {
     content.provenance = {
       source: "approved_profile",
-      unresolvedItems: [],
+      unresolvedItems: (input.trustedStarterUnresolvedItems ?? [])
+        .filter((item) => typeof item === "string" && item.trim())
+        .map((item) => item.trim())
+        .slice(0, 20),
     };
   }
   await validateAssignment(db, user.id, input.assignment);
@@ -866,19 +929,19 @@ export async function createCoverLetterFromProfile(
   );
   const summary =
     typeof parsedSummary.value === "string" ? parsedSummary.value.trim() : "";
-  if (!summary && !role?.summary) {
+  if (!role) {
     throw new Error(
-      "Confirm a professional summary or one experience role before building a cover letter.",
+      "Confirm at least one experience role before building a cover letter.",
     );
   }
   const paragraphs = [
-    `I am interested in the ${pursuit.title} role at ${pursuit.employer}. ${summary || role?.summary || ""}`.trim(),
+    summary
+      ? `I am interested in the ${pursuit.title} role at ${pursuit.employer}. ${summary}`
+      : `I am interested in the ${pursuit.title} role at ${pursuit.employer}.`,
   ];
-  if (role?.summary && role.summary.trim() !== summary) {
-    paragraphs.push(
-      `In my work as ${role.title} at ${role.employer}, ${role.summary.trim()}`,
-    );
-  }
+  paragraphs.push(
+    `My confirmed profile includes work as ${role.title} at ${role.employer}. I would tailor the relevant responsibilities and results to this role only after comparing the current posting with my verified evidence.`,
+  );
   paragraphs.push(
     "I would welcome the opportunity to discuss how this experience could support the role’s current priorities.",
   );
@@ -888,8 +951,10 @@ export async function createCoverLetterFromProfile(
     roleTitle: pursuit.title,
     paragraphs,
     provenance: {
-      source: "approved_profile_and_posting",
-      unresolvedItems: [],
+      source: "approved_profile",
+      unresolvedItems: [
+        "Only the selected employer and role title were used. The current posting requirements have not been used to tailor this outline.",
+      ],
     },
   };
   return saveCoverLetterVersion(actor, {
@@ -898,6 +963,58 @@ export async function createCoverLetterFromProfile(
     content,
     trustedStarterSource: "approved_profile",
   });
+}
+
+export async function ensurePursuitDocumentStarters(
+  actor: FounderActor,
+  input: {
+    pursuitId: string;
+    jobPostingId: string;
+  },
+): Promise<{
+  resumeId: string;
+  coverLetterId: string;
+}> {
+  const user = await ensureUser(actor);
+  const db = database();
+  const pursuit = await db
+    .prepare(
+      "SELECT id, job_posting_id FROM pursuits WHERE id = ? AND user_id = ? AND state <> 'closed' LIMIT 1",
+    )
+    .bind(input.pursuitId, user.id)
+    .first<{ id: string; job_posting_id: string }>();
+  if (!pursuit || pursuit.job_posting_id !== input.jobPostingId) {
+    throw new Error("That pursuit is not available in your workspace.");
+  }
+
+  const [existingResume, existingLetter] = await Promise.all([
+    db
+      .prepare(
+        "SELECT r.id FROM resumes r JOIN resume_assignments ra ON ra.resume_id = r.id AND ra.user_id = r.user_id WHERE r.user_id = ? AND ra.scope = 'job' AND ra.job_posting_id = ? AND r.review_state <> 'superseded' ORDER BY r.updated_at DESC, r.version DESC LIMIT 1",
+      )
+      .bind(user.id, input.jobPostingId)
+      .first<{ id: string }>(),
+    db
+      .prepare(
+        "SELECT id FROM generated_assets WHERE user_id = ? AND pursuit_id = ? AND type = 'cover_letter' AND generation_policy_version <> 'client-render-receipt-v1' AND invalidated_at IS NULL AND review_state <> 'superseded' ORDER BY updated_at DESC, version DESC LIMIT 1",
+      )
+      .bind(user.id, input.pursuitId)
+      .first<{ id: string }>(),
+  ]);
+  const resume = existingResume
+    ? (await listResumeStudio(actor)).resumes.find(
+        (record) => record.id === existingResume.id,
+      ) ?? (await createJobResumeFromProfile(actor, input.jobPostingId))
+    : await createJobResumeFromProfile(actor, input.jobPostingId);
+  const letter = existingLetter
+    ? (await listCoverLetterStudio(actor)).letters.find(
+        (record) => record.id === existingLetter.id,
+      ) ?? (await createCoverLetterFromProfile(actor, input.pursuitId))
+    : await createCoverLetterFromProfile(actor, input.pursuitId);
+  return {
+    resumeId: resume.id,
+    coverLetterId: letter.id,
+  };
 }
 
 export async function saveCoverLetterVersion(
@@ -962,6 +1079,7 @@ export async function saveCoverLetterVersion(
         JSON.stringify({
           jobPostingId: pursuit.job_posting_id,
           profileState: content.provenance.source,
+          postingFactsUsed: false,
         }),
         version,
         contentJson,

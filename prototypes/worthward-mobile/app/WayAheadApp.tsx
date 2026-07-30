@@ -19,8 +19,17 @@ import {
   UserCircle,
   WarningCircle,
 } from "@phosphor-icons/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { CareerEvidenceManager } from "./CareerEvidenceManager";
 import { CoverLetterStudio } from "./CoverLetterStudio";
+import { CURRENT_DETERMINISTIC_ASSESSMENT_POLICY } from "./deterministic-assessment";
 import { PrivacyCenter } from "./PrivacyCenter";
 import { ResumeStudio } from "./ResumeStudio";
 import { TodayDashboard } from "./TodayDashboard";
@@ -33,7 +42,7 @@ import type {
   WorkspaceRecord,
 } from "./production-types";
 
-type ViewKey =
+export type ViewKey =
   | "today"
   | "jobs"
   | "pursuit"
@@ -41,7 +50,7 @@ type ViewKey =
   | "direction"
   | "profile"
   | "account";
-type StudioKey = "resume" | "cover";
+export type StudioKey = "resume" | "cover";
 type ThemeChoice = "light" | "dark";
 type FormMessage = { text: string; kind: "success" | "error" };
 
@@ -74,12 +83,23 @@ const THEMES: Array<{ value: ThemeChoice; label: string; icon: typeof Sun }> = [
 
 function currentView(): ViewKey {
   if (typeof window === "undefined") return "today";
+  const pathname = window.location.pathname.replace(/\/+$/, "");
+  if (pathname === "/app/home") return "today";
+  if (pathname === "/app/jobs" || pathname.startsWith("/app/jobs/")) return "jobs";
+  if (pathname === "/app/pursuits" || pathname.startsWith("/app/pursuits/")) return "pursuit";
+  if (pathname.startsWith("/app/documents/")) return "studio";
+  if (pathname === "/app/plan") return "direction";
+  if (pathname === "/app/profile") return "profile";
+  if (pathname === "/app/settings/privacy") return "account";
   const view = new URLSearchParams(window.location.search).get("view");
   return VIEW_KEYS.has(view as ViewKey) ? (view as ViewKey) : "today";
 }
 
 function currentStudio(): StudioKey {
   if (typeof window === "undefined") return "resume";
+  if (window.location.pathname.startsWith("/app/documents/cover-letters")) {
+    return "cover";
+  }
   return new URLSearchParams(window.location.search).get("asset") === "cover"
     ? "cover"
     : "resume";
@@ -87,7 +107,43 @@ function currentStudio(): StudioKey {
 
 function currentJobId(): string | null {
   if (typeof window === "undefined") return null;
+  const pathMatch = window.location.pathname.match(
+    /^\/app\/(?:jobs|pursuits)\/([^/]+)\/?$/,
+  );
+  if (pathMatch?.[1]) {
+    try {
+      return decodeURIComponent(pathMatch[1]);
+    } catch {
+      return pathMatch[1];
+    }
+  }
   return new URLSearchParams(window.location.search).get("job");
+}
+
+export function viewPath(
+  view: ViewKey,
+  jobId?: string | null,
+  studio: StudioKey = "resume",
+): string {
+  if (view === "today") return "/app/home";
+  if (view === "jobs") {
+    return jobId
+      ? `/app/jobs/${encodeURIComponent(jobId)}`
+      : "/app/jobs";
+  }
+  if (view === "pursuit") {
+    return jobId
+      ? `/app/pursuits/${encodeURIComponent(jobId)}`
+      : "/app/pursuits";
+  }
+  if (view === "studio") {
+    return studio === "cover"
+      ? "/app/documents/cover-letters"
+      : "/app/documents/resumes";
+  }
+  if (view === "direction") return "/app/plan";
+  if (view === "profile") return "/app/profile";
+  return "/app/settings/privacy";
 }
 
 function applyTheme(choice: ThemeChoice) {
@@ -106,6 +162,25 @@ function money(cents: number | null, currency = "USD"): string {
 
 function scoreLabel(score: number | null): string {
   return score === null ? "Open" : `${score}%`;
+}
+
+function currentTrustedAnalysis(job: OpportunityRecord) {
+  const analysis = job.analysis;
+  const currentVersionId = job.sourceVersion?.id;
+  const boundVersionId =
+    typeof analysis?.integrityGates.jobVersionId === "string"
+      ? analysis.integrityGates.jobVersionId
+      : null;
+  const deterministicPolicyIsCurrent =
+    analysis?.integrityGates.deterministic !== true ||
+    analysis.integrityGates.policyVersion ===
+      CURRENT_DETERMINISTIC_ASSESSMENT_POLICY;
+  return analysis?.validationState === "trusted" &&
+    Boolean(currentVersionId) &&
+    boundVersionId === currentVersionId &&
+    deterministicPolicyIsCurrent
+    ? analysis
+    : null;
 }
 
 function titleCase(value: string): string {
@@ -251,15 +326,25 @@ function requiredFormAnswerGaps(
   });
 }
 
-export default function WayAheadApp({ actor }: { actor: FounderActor }) {
-  const [view, setView] = useState<ViewKey>("today");
+export default function WayAheadApp({
+  actor,
+  initialView = "today",
+  initialJobId = null,
+  initialStudio = "resume",
+}: {
+  actor: FounderActor;
+  initialView?: ViewKey;
+  initialJobId?: string | null;
+  initialStudio?: StudioKey;
+}) {
+  const [view, setView] = useState<ViewKey>(initialView);
   const [workspace, setWorkspace] = useState<WorkspaceRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeChoice>("light");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [selectedPursuitJobId, setSelectedPursuitJobId] = useState<string | null>(null);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(initialJobId);
+  const [selectedPursuitJobId, setSelectedPursuitJobId] = useState<string | null>(initialJobId);
   const accountRootRef = useRef<HTMLDivElement>(null);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
@@ -269,10 +354,8 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
     const syncLocation = () => {
       setView(currentView());
       const jobId = currentJobId();
-      if (jobId) {
-        setSelectedJobId(jobId);
-        setSelectedPursuitJobId(jobId);
-      }
+      setSelectedJobId(jobId);
+      setSelectedPursuitJobId(jobId);
     };
     const frame = window.requestAnimationFrame(() => {
       syncLocation();
@@ -341,20 +424,42 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
     return () => window.clearTimeout(timer);
   }, [refresh]);
 
-  const navigate = (nextView: ViewKey, jobId?: string) => {
+  const navigate = (
+    nextView: ViewKey,
+    jobId?: string,
+    studio: StudioKey = "resume",
+  ) => {
     const main = document.querySelector<HTMLElement>("#main-content");
     if (main) main.scrollTop = 0;
     setView(nextView);
+    if (nextView === "jobs") setSelectedJobId(jobId ?? null);
+    if (nextView === "pursuit") setSelectedPursuitJobId(jobId ?? null);
     setSettingsOpen(false);
-    const url = new URL(window.location.href);
-    url.searchParams.set("view", nextView);
-    if (jobId) url.searchParams.set("job", jobId);
-    if (nextView !== "studio") url.searchParams.delete("asset");
-    window.history.pushState({}, "", url);
+    window.history.pushState({}, "", viewPath(nextView, jobId, studio));
     window.requestAnimationFrame(() => {
       if (main) main.scrollTop = 0;
       main?.focus();
     });
+  };
+
+  const followRoute = (
+    event: ReactMouseEvent<HTMLAnchorElement>,
+    nextView: ViewKey,
+    jobId?: string,
+    studio: StudioKey = "resume",
+  ) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    event.preventDefault();
+    navigate(nextView, jobId, studio);
   };
 
   const chooseTheme = (choice: ThemeChoice) => {
@@ -365,7 +470,9 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
 
   const selectedJob = workspace?.opportunities.find((job) => job.id === selectedJobId) ?? null;
   const pursuedJobs = workspace?.opportunities.filter((job) => job.pursuit) ?? [];
-  const pursuedJob = pursuedJobs.find((job) => job.id === selectedPursuitJobId) ?? pursuedJobs[0] ?? null;
+  const pursuedJob = selectedPursuitJobId
+    ? pursuedJobs.find((job) => job.id === selectedPursuitJobId) ?? null
+    : pursuedJobs[0] ?? null;
   const activeLabel =
     NAVIGATION.find((item) => item.key === view)?.label ??
     (view === "profile"
@@ -381,32 +488,33 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
 
   const selectJob = (jobId: string | null) => {
     setSelectedJobId(jobId);
-    const url = new URL(window.location.href);
-    url.searchParams.set("view", "jobs");
-    if (jobId) url.searchParams.set("job", jobId);
-    else url.searchParams.delete("job");
-    window.history.replaceState({}, "", url);
+    window.history.pushState({}, "", viewPath("jobs", jobId));
   };
 
   return (
     <div className="wa-shell">
       <a className="wa-skip-link" href="#main-content">Skip to main content</a>
       <header className="wa-header">
-        <button className="wa-brand" type="button" onClick={() => navigate("today")} aria-label="Way Ahead home">
+        <a
+          className="wa-brand"
+          href={viewPath("today")}
+          onClick={(event) => followRoute(event, "today")}
+          aria-label="Way Ahead home"
+        >
           <span className="wa-brand-mark" aria-hidden="true"><RoadHorizon size={24} weight="bold" /></span>
           <span>Way Ahead</span>
-        </button>
+        </a>
         <nav className="wa-desktop-nav" aria-label="Primary navigation">
           {NAVIGATION.map((item) => (
-            <button
+            <a
               className={view === item.key ? "is-active" : ""}
-              type="button"
               key={item.key}
-              onClick={() => navigate(item.key)}
+              href={viewPath(item.key)}
+              onClick={(event) => followRoute(event, item.key)}
               aria-current={view === item.key ? "page" : undefined}
             >
               {item.label}
-            </button>
+            </a>
           ))}
         </nav>
         <div className="wa-account" ref={accountRootRef}>
@@ -436,33 +544,33 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
                 <span>{actor.email}</span>
               </div>
               <nav className="wa-account-links" aria-label="Account navigation">
-                <button
-                  type="button"
+                <a
                   className={view === "profile" ? "is-active" : ""}
-                  onClick={() => navigate("profile")}
+                  href={viewPath("profile")}
+                  onClick={(event) => followRoute(event, "profile")}
                   aria-current={view === "profile" ? "page" : undefined}
                 >
                   <UserCircle size={18} aria-hidden="true" />
                   Career profile
-                </button>
-                <button
-                  type="button"
+                </a>
+                <a
                   className={view === "direction" ? "is-active" : ""}
-                  onClick={() => navigate("direction")}
+                  href={viewPath("direction")}
+                  onClick={(event) => followRoute(event, "direction")}
                   aria-current={view === "direction" ? "page" : undefined}
                 >
                   <RoadHorizon size={18} aria-hidden="true" />
                   Search plan
-                </button>
-                <button
-                  type="button"
+                </a>
+                <a
                   className={view === "account" ? "is-active" : ""}
-                  onClick={() => navigate("account")}
+                  href={viewPath("account")}
+                  onClick={(event) => followRoute(event, "account")}
                   aria-current={view === "account" ? "page" : undefined}
                 >
                   <LockKey size={18} aria-hidden="true" />
                   Data &amp; privacy
-                </button>
+                </a>
               </nav>
               <fieldset className="wa-theme-fieldset">
                 <legend>Appearance</legend>
@@ -506,7 +614,9 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
             ) : null}
             {view === "jobs" ? (
               <JobsView
+                careerPaths={workspace.careerPaths}
                 opportunities={workspace.opportunities}
+                requestedJobId={selectedJobId}
                 selectedJob={selectedJob}
                 onSelect={selectJob}
                 onRefresh={refresh}
@@ -518,14 +628,19 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
                 key={`${pursuedJob?.id ?? "none"}:${pursuedJob?.sourceVersion?.id ?? "none"}:${pursuedJob?.pursuit?.package?.id ?? "none"}:${pursuedJob?.pursuit?.package?.payloadSha256 ?? "none"}`}
                 opportunity={pursuedJob}
                 pursuedJobs={pursuedJobs}
-                onSelectOpportunity={setSelectedPursuitJobId}
+                requestedJobId={selectedPursuitJobId}
+                onSelectOpportunity={openPursuit}
                 navigate={navigate}
                 onRefresh={refresh}
               />
             ) : null}
-            {view === "studio" ? <DocumentStudioView /> : null}
+            {view === "studio" ? (
+              <DocumentStudioView initialStudio={initialStudio} />
+            ) : null}
             {view === "direction" ? <DirectionView workspace={workspace} onRefresh={refresh} /> : null}
-            {view === "profile" ? <ProfileView workspace={workspace} /> : null}
+            {view === "profile" ? (
+              <ProfileView workspace={workspace} onRefresh={refresh} />
+            ) : null}
             {view === "account" ? (
               <div className="wa-page wa-account-privacy">
                 <PrivacyCenter
@@ -546,16 +661,16 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
         {NAVIGATION.map((item) => {
           const Icon = item.icon;
           return (
-            <button
+            <a
               key={item.key}
-              type="button"
               className={view === item.key ? "is-active" : ""}
-              onClick={() => navigate(item.key)}
+              href={viewPath(item.key)}
+              onClick={(event) => followRoute(event, item.key)}
               aria-current={view === item.key ? "page" : undefined}
             >
               <Icon size={23} weight={view === item.key ? "fill" : "regular"} aria-hidden="true" />
               <span>{item.label}</span>
-            </button>
+            </a>
           );
         })}
       </nav>
@@ -563,16 +678,38 @@ export default function WayAheadApp({ actor }: { actor: FounderActor }) {
   );
 }
 
-function DocumentStudioView() {
-  const [studio, setStudio] = useState<StudioKey>(currentStudio);
+function DocumentStudioView({
+  initialStudio,
+}: {
+  initialStudio: StudioKey;
+}) {
+  const [studio, setStudio] = useState<StudioKey>(initialStudio);
 
-  const chooseStudio = (nextStudio: StudioKey) => {
+  useEffect(() => {
+    const syncStudio = () => setStudio(currentStudio());
+    syncStudio();
+    window.addEventListener("popstate", syncStudio);
+    return () => window.removeEventListener("popstate", syncStudio);
+  }, []);
+
+  const chooseStudio = (
+    event: ReactMouseEvent<HTMLAnchorElement>,
+    nextStudio: StudioKey,
+  ) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    event.preventDefault();
     const main = document.querySelector<HTMLElement>("#main-content");
     setStudio(nextStudio);
-    const url = new URL(window.location.href);
-    url.searchParams.set("view", "studio");
-    url.searchParams.set("asset", nextStudio);
-    window.history.replaceState({}, "", url);
+    window.history.pushState({}, "", viewPath("studio", null, nextStudio));
     if (main) main.scrollTop = 0;
     window.requestAnimationFrame(() => main?.focus());
   };
@@ -580,24 +717,24 @@ function DocumentStudioView() {
   return (
     <div className="wa-page wa-document-studio">
       <div className="wa-studio-switcher" aria-label="Application document">
-        <button
-          type="button"
+        <a
           className={studio === "resume" ? "is-active" : ""}
-          onClick={() => chooseStudio("resume")}
-          aria-pressed={studio === "resume"}
+          href={viewPath("studio", null, "resume")}
+          onClick={(event) => chooseStudio(event, "resume")}
+          aria-current={studio === "resume" ? "page" : undefined}
         >
           <FileText size={18} aria-hidden="true" />
           Resumes
-        </button>
-        <button
-          type="button"
+        </a>
+        <a
           className={studio === "cover" ? "is-active" : ""}
-          onClick={() => chooseStudio("cover")}
-          aria-pressed={studio === "cover"}
+          href={viewPath("studio", null, "cover")}
+          onClick={(event) => chooseStudio(event, "cover")}
+          aria-current={studio === "cover" ? "page" : undefined}
         >
           <FileText size={18} aria-hidden="true" />
           Cover letters
-        </button>
+        </a>
       </div>
       <section id="document-studio-content" tabIndex={-1}>
         {studio === "resume" ? <ResumeStudio /> : <CoverLetterStudio />}
@@ -638,7 +775,10 @@ export function OwnerAnalysisPanel({
   careerPaths: CareerPathRecord[];
   onRefresh: () => Promise<void>;
 }) {
-  const activePaths = careerPaths.filter((path) => path.state === "active");
+  const activePaths = useMemo(
+    () => careerPaths.filter((path) => path.state === "active"),
+    [careerPaths],
+  );
   const existingPath =
     typeof job.analysis?.integrityGates.careerPathId === "string"
       ? job.analysis.integrityGates.careerPathId
@@ -888,14 +1028,59 @@ export function OwnerAnalysisPanel({
   );
 }
 
+type DisplayCriterion = {
+  id: string;
+  label: string;
+  category: string;
+  state: "met" | "conflict" | "unknown";
+  explanation: string;
+  evidence: string;
+};
+
+function displayCriteria(
+  analysis: NonNullable<OpportunityRecord["analysis"]> | null,
+): DisplayCriterion[] {
+  if (!Array.isArray(analysis?.fit.criteria)) return [];
+  return analysis.fit.criteria.flatMap((value) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+    const record = value as Record<string, unknown>;
+    if (
+      typeof record.id !== "string" ||
+      typeof record.label !== "string" ||
+      typeof record.category !== "string" ||
+      (record.state !== "met" &&
+        record.state !== "conflict" &&
+        record.state !== "unknown") ||
+      typeof record.explanation !== "string" ||
+      typeof record.evidence !== "string"
+    ) {
+      return [];
+    }
+    return [
+      {
+        id: record.id,
+        label: record.label,
+        category: record.category,
+        state: record.state,
+        explanation: record.explanation,
+        evidence: record.evidence,
+      },
+    ];
+  });
+}
+
 function JobsView({
+  careerPaths,
   opportunities,
+  requestedJobId,
   selectedJob,
   onSelect,
   onRefresh,
   onOpenPursuit,
 }: {
+  careerPaths: CareerPathRecord[];
   opportunities: OpportunityRecord[];
+  requestedJobId: string | null;
   selectedJob: OpportunityRecord | null;
   onSelect: (id: string | null) => void;
   onRefresh: () => Promise<void>;
@@ -904,6 +1089,28 @@ function JobsView({
   const [url, setUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<FormMessage | null>(null);
+  const activePaths = useMemo(
+    () => careerPaths.filter((path) => path.state === "active"),
+    [careerPaths],
+  );
+  const [assessmentSelection, setAssessmentSelection] = useState<{
+    jobId: string | null;
+    pathId: string;
+  }>({ jobId: null, pathId: "" });
+  const analysisPathId =
+    typeof selectedJob?.analysis?.integrityGates.careerPathId === "string"
+      ? selectedJob.analysis.integrityGates.careerPathId
+      : null;
+  const defaultAssessmentPathId =
+    activePaths.find((path) => path.id === analysisPathId)?.id ??
+    activePaths.find((path) => path.isPrimary)?.id ??
+    activePaths[0]?.id ??
+    "";
+  const assessmentPathId =
+    assessmentSelection.jobId === selectedJob?.id &&
+    activePaths.some((path) => path.id === assessmentSelection.pathId)
+      ? assessmentSelection.pathId
+      : defaultAssessmentPathId;
 
   const addJob = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -948,13 +1155,89 @@ function JobsView({
     }
   };
 
+  const assessJob = async (job: OpportunityRecord) => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/jobs/assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobPostingId: job.id,
+          careerPathId: assessmentPathId,
+        }),
+      });
+      const result = (await response.json()) as {
+        error?: string;
+        recommendation?: string;
+      };
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "The source-bound assessment could not be recorded.",
+        );
+      }
+      setMessage({
+        text: `Assessment recorded against this employer-source version${
+          result.recommendation
+            ? `: ${titleCase(result.recommendation)}`
+            : ""
+        }.`,
+        kind: "success",
+      });
+      await onRefresh();
+    } catch (assessmentError) {
+      setMessage({
+        text:
+          assessmentError instanceof Error
+            ? assessmentError.message
+            : "The source-bound assessment could not be recorded.",
+        kind: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (requestedJobId && !selectedJob) {
+    return (
+      <div className="wa-page">
+        <section className="wa-state-panel wa-state-error" role="alert">
+          <WarningCircle size={30} weight="fill" aria-hidden="true" />
+          <p className="wa-eyebrow">Job unavailable</p>
+          <h1>This job is not in your workspace.</h1>
+          <p>
+            The link may be stale, or the job may belong to another private
+            workspace. No other job was substituted.
+          </p>
+          <button
+            className="wa-primary-button"
+            type="button"
+            onClick={() => onSelect(null)}
+          >
+            Return to Jobs
+          </button>
+        </section>
+      </div>
+    );
+  }
+
   if (selectedJob) {
-    const currentAnalysis =
-      selectedJob.analysis?.validationState === "trusted"
-        ? selectedJob.analysis
-        : null;
+    const currentAnalysis = currentTrustedAnalysis(selectedJob);
     const analysisNeedsRefresh =
       Boolean(selectedJob.analysis) && !currentAnalysis;
+    const criteria = displayCriteria(currentAnalysis);
+    const scoreMeaning =
+      typeof currentAnalysis?.fit.scoreMeaning === "string"
+        ? currentAnalysis.fit.scoreMeaning
+        : "Alignment with verified criteria. It is not hiring probability or a prediction of an interview or offer.";
+    const recommendationReason =
+      typeof currentAnalysis?.fit.recommendationReason === "string"
+        ? currentAnalysis.fit.recommendationReason
+        : null;
+    const verifiedCriterionCount =
+      typeof currentAnalysis?.fit.verifiedCriterionCount === "number"
+        ? currentAnalysis.fit.verifiedCriterionCount
+        : criteria.filter((criterion) => criterion.state !== "unknown").length;
 
     return (
       <div className="wa-page">
@@ -967,6 +1250,34 @@ function JobsView({
           </div>
           <a className="wa-secondary-button" href={selectedJob.canonicalUrl} target="_blank" rel="noreferrer">Employer source <ArrowSquareOut size={18} /></a>
         </section>
+        <div className="wa-source-receipt" aria-label="Employer source status">
+          <div>
+            <span>Source</span>
+            <strong>{selectedJob.sourceName}</strong>
+          </div>
+          <div>
+            <span>Capture</span>
+            <strong>
+              {titleCase(
+                selectedJob.sourceVersion?.captureState ?? "unavailable",
+              )}
+            </strong>
+          </div>
+          <div>
+            <span>Freshness</span>
+            <strong>{titleCase(selectedJob.freshnessState)}</strong>
+          </div>
+          <div>
+            <span>Checked</span>
+            <strong>
+              {selectedJob.sourceVersion?.checkedAt
+                ? new Date(
+                    selectedJob.sourceVersion.checkedAt,
+                  ).toLocaleString()
+                : "Not checked"}
+            </strong>
+          </div>
+        </div>
         {selectedJob.sourceVersion?.conflicts.length ? (
           <div className="wa-alert wa-alert-warning" role="status">
             <WarningCircle size={23} weight="fill" />
@@ -986,16 +1297,75 @@ function JobsView({
             </div>
           </div>
         ) : null}
+        <section className="wa-section wa-assessment-control">
+          <div>
+            <p className="wa-eyebrow">Source-bound assessment</p>
+            <h2>
+              {currentAnalysis
+                ? "Recheck this job when the source or your priorities change."
+                : "Compare this exact job with one Job Path and your Job Standard."}
+            </h2>
+            <p>
+              Way Ahead uses deterministic structured criteria only. No model
+              call, employer action, or invented qualification is involved.
+            </p>
+          </div>
+          <div className="wa-assessment-actions">
+            <label>
+              <span>Job Path</span>
+              <select
+                value={assessmentPathId}
+                onChange={(event) =>
+                  setAssessmentSelection({
+                    jobId: selectedJob.id,
+                    pathId: event.target.value,
+                  })
+                }
+                disabled={saving}
+              >
+                <option value="">Choose an active Job Path</option>
+                {activePaths.map((path) => (
+                  <option key={path.id} value={path.id}>
+                    {path.label}
+                    {path.isPrimary ? " · Primary" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              className="wa-primary-button"
+              type="button"
+              disabled={saving || !assessmentPathId}
+              onClick={() => assessJob(selectedJob)}
+            >
+              {saving
+                ? "Assessing…"
+                : currentAnalysis
+                  ? "Reassess this version"
+                  : "Assess this job"}
+            </button>
+          </div>
+        </section>
         <section className="wa-decision-grid">
-          <article className="wa-score-card"><span>Fit</span><strong>{scoreLabel(typeof currentAnalysis?.fit.fitScore === "number" ? currentAnalysis.fit.fitScore : typeof currentAnalysis?.fit.score === "number" ? currentAnalysis.fit.score : null)}</strong><p>How closely the job matches this Job Path.</p></article>
+          <article className="wa-score-card"><span>Preliminary alignment</span><strong>{scoreLabel(typeof currentAnalysis?.fit.fitScore === "number" ? currentAnalysis.fit.fitScore : typeof currentAnalysis?.fit.score === "number" ? currentAnalysis.fit.score : null)}</strong><p>Structured fields only. Role requirements remain an explicit open gate.</p></article>
           <article className="wa-score-card wa-score-card-strong"><span>Job value</span><strong>{scoreLabel(currentAnalysis?.moveValueScore ?? null)}</strong><p>Compared with your job standard.</p></article>
           <article className="wa-score-card"><span>Pursuit readiness</span><strong>{scoreLabel(currentAnalysis?.pursuitReadinessScore ?? null)}</strong><p>Grounded in confirmed profile evidence.</p></article>
           <article className="wa-score-card"><span>Recommendation</span><strong className="wa-word-score">{analysisNeedsRefresh ? "Recheck needed" : titleCase(currentAnalysis?.recommendation ?? "needs_evidence")}</strong><p>{analysisNeedsRefresh ? "Previous analysis preserved as history." : currentAnalysis ? "Current analysis stored in your account." : "A verified source needs analysis."}</p></article>
         </section>
         <p className="wa-muted">
-          These percentages describe alignment with verified criteria. They do
-          not predict whether an employer will hire you.
+          {scoreMeaning}
+          {currentAnalysis
+            ? ` Based on ${verifiedCriterionCount} verified ${
+                verifiedCriterionCount === 1 ? "criterion" : "criteria"
+              }.`
+            : ""}
         </p>
+        {recommendationReason ? (
+          <div className="wa-decision-reason">
+            <strong>Why this recommendation</strong>
+            <span>{recommendationReason}</span>
+          </div>
+        ) : null}
         <section className="wa-section wa-detail-grid">
           <div>
             <p className="wa-eyebrow">Decision evidence</p>
@@ -1013,7 +1383,60 @@ function JobsView({
             ) : <p className="wa-muted">No current analysis unknowns are stored yet.</p>}
           </div>
         </section>
-        {!selectedJob.pursuit ? <button className="wa-primary-button" type="button" disabled={saving} onClick={() => startPursuit(selectedJob)}>Start this pursuit <ArrowRight size={19} /></button> : <button className="wa-primary-button" type="button" onClick={() => onOpenPursuit(selectedJob.id)}>Open pursuit <ArrowRight size={19} /></button>}
+        {criteria.length ? (
+          <section className="wa-section">
+            <div className="wa-section-heading">
+              <div>
+                <p className="wa-eyebrow">Why these scores</p>
+                <h2>Inspect every criterion and its evidence.</h2>
+              </div>
+              <span>
+                {verifiedCriterionCount} of {criteria.length} verified
+              </span>
+            </div>
+            <div className="wa-criteria-list">
+              {criteria.map((criterion) => (
+                <article
+                  className="wa-criterion"
+                  data-state={criterion.state}
+                  key={criterion.id}
+                >
+                  <div>
+                    <strong>{criterion.label}</strong>
+                    <span>{titleCase(criterion.category)}</span>
+                  </div>
+                  <p>{criterion.explanation}</p>
+                  <small>{criterion.evidence}</small>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+        {!selectedJob.pursuit ? (
+          <div className="wa-pursuit-start">
+            <button
+              className="wa-primary-button"
+              type="button"
+              disabled={saving || !currentAnalysis}
+              onClick={() => startPursuit(selectedJob)}
+            >
+              Start this pursuit <ArrowRight size={19} />
+            </button>
+            <small>
+              {currentAnalysis
+                ? "This creates private, editable job-specific document starters. It does not populate an employer form, upload a file, or submit an application."
+                : "Assess this exact source version before starting a pursuit."}
+            </small>
+          </div>
+        ) : (
+          <button
+            className="wa-primary-button"
+            type="button"
+            onClick={() => onOpenPursuit(selectedJob.id)}
+          >
+            Open pursuit <ArrowRight size={19} />
+          </button>
+        )}
         <FormFeedback message={message} />
       </div>
     );
@@ -1033,36 +1456,39 @@ function JobsView({
             type="url"
             value={url}
             onChange={(event) => setUrl(event.target.value)}
-            placeholder="Paste a direct Greenhouse or Lever job URL"
+            placeholder="Paste a direct Greenhouse, Lever, or Ashby job URL"
             required
             aria-invalid={message?.kind === "error" ? true : undefined}
             aria-describedby="employer-job-url-help employer-job-url-feedback"
           />
           <button type="submit" className="wa-primary-button" disabled={saving}>{saving ? "Verifying…" : <><Plus size={18} /> Add job</>}</button>
         </div>
-        <small id="employer-job-url-help">Current live intake verifies canonical Greenhouse and Lever employer URLs. It never submits an application.</small>
+        <small id="employer-job-url-help">Current live intake verifies canonical Greenhouse, Lever, and Ashby employer URLs. It never submits an application.</small>
         <FormFeedback message={message} id="employer-job-url-feedback" />
       </form>
       <div className="wa-job-list">
-        {opportunities.length ? opportunities.map((job) => (
-          <button className="wa-job-card" type="button" key={job.id} onClick={() => onSelect(job.id)}>
-            <span className="wa-job-company">{job.employer}</span>
-            <strong>{job.title}</strong>
-            <span>{job.locations.join(" · ") || "Location not reported"}</span>
-            <div className="wa-job-meta">
-              <span className={`wa-status wa-status-${job.sourceVersion?.captureState ?? "unavailable"}`}>{titleCase(job.sourceVersion?.captureState ?? "unavailable")}</span>
-              <span>
-                {job.analysis?.moveValueScore === null ||
-                job.analysis?.moveValueScore === undefined
-                  ? "Open"
-                  : `${job.analysis.moveValueScore}%`}{" "}
-                job value
-              </span>
-              <span>{job.pursuit ? titleCase(job.pursuit.state) : "Not pursued"}</span>
-            </div>
-            <ArrowRight className="wa-job-arrow" size={21} aria-hidden="true" />
-          </button>
-        )) : (
+        {opportunities.length ? opportunities.map((job) => {
+          const visibleAnalysis = currentTrustedAnalysis(job);
+          return (
+            <button className="wa-job-card" type="button" key={job.id} onClick={() => onSelect(job.id)}>
+              <span className="wa-job-company">{job.employer}</span>
+              <strong>{job.title}</strong>
+              <span>{job.locations.join(" · ") || "Location not reported"}</span>
+              <div className="wa-job-meta">
+                <span className={`wa-status wa-status-${job.sourceVersion?.captureState ?? "unavailable"}`}>{titleCase(job.sourceVersion?.captureState ?? "unavailable")}</span>
+                <span>
+                  {visibleAnalysis?.moveValueScore === null ||
+                  visibleAnalysis?.moveValueScore === undefined
+                    ? "Open"
+                    : `${visibleAnalysis.moveValueScore}%`}{" "}
+                  job value
+                </span>
+                <span>{job.pursuit ? titleCase(job.pursuit.state) : "Not pursued"}</span>
+              </div>
+              <ArrowRight className="wa-job-arrow" size={21} aria-hidden="true" />
+            </button>
+          );
+        }) : (
           <div className="wa-empty-card">
             <Briefcase size={28} weight="duotone" />
             <h2>No job has cleared source verification yet.</h2>
@@ -1077,19 +1503,49 @@ function JobsView({
 function PursuitView({
   opportunity,
   pursuedJobs,
+  requestedJobId,
   onSelectOpportunity,
   navigate,
   onRefresh,
 }: {
   opportunity: OpportunityRecord | null;
   pursuedJobs: OpportunityRecord[];
+  requestedJobId: string | null;
   onSelectOpportunity: (jobId: string) => void;
-  navigate: (view: ViewKey) => void;
+  navigate: (
+    view: ViewKey,
+    jobId?: string,
+    studio?: StudioKey,
+  ) => void;
   onRefresh: () => Promise<void>;
 }) {
   const [approvalChecked, setApprovalChecked] = useState(false);
   const [approvalBusy, setApprovalBusy] = useState(false);
   const [approvalMessage, setApprovalMessage] = useState<FormMessage | null>(null);
+  const [starterBusy, setStarterBusy] = useState(false);
+  const [starterMessage, setStarterMessage] = useState<FormMessage | null>(null);
+  if (requestedJobId && !opportunity) {
+    return (
+      <div className="wa-page">
+        <section className="wa-state-panel wa-state-error" role="alert">
+          <WarningCircle size={30} weight="fill" aria-hidden="true" />
+          <p className="wa-eyebrow">Pursuit unavailable</p>
+          <h1>This pursuit is not in your workspace.</h1>
+          <p>
+            The link may be stale, or it may belong to another private
+            workspace. No different pursuit was substituted.
+          </p>
+          <button
+            className="wa-primary-button"
+            type="button"
+            onClick={() => navigate("pursuit")}
+          >
+            Return to Pursuits
+          </button>
+        </section>
+      </div>
+    );
+  }
   if (!opportunity?.pursuit) {
     return (
       <div className="wa-page"><div className="wa-empty-card"><Target size={30} weight="duotone" /><h1>No pursuit is active.</h1><p>Review verified jobs and start only the one that is worth the effort.</p><button className="wa-primary-button" type="button" onClick={() => navigate("jobs")}>Review jobs <ArrowRight size={19} /></button></div></div>
@@ -1169,6 +1625,39 @@ function PursuitView({
       && packageRecord.approvalState !== "approved",
   );
 
+  const ensureStarters = async () => {
+    setStarterBusy(true);
+    setStarterMessage(null);
+    try {
+      const response = await fetch("/api/pursuits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jobPostingId: opportunity.id }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "The editable document starters could not be built.",
+        );
+      }
+      await onRefresh();
+      setStarterMessage({
+        text: "Job-specific resume and cover-letter starters are ready to edit.",
+        kind: "success",
+      });
+    } catch (starterError) {
+      setStarterMessage({
+        text:
+          starterError instanceof Error
+            ? starterError.message
+            : "The editable document starters could not be built.",
+        kind: "error",
+      });
+    } finally {
+      setStarterBusy(false);
+    }
+  };
+
   const recordApproval = async () => {
     if (!packageRecord || !approvalChecked) return;
     setApprovalBusy(true);
@@ -1213,7 +1702,85 @@ function PursuitView({
       </div>
 
       <section className="wa-section">
-        <div className="wa-section-heading"><div><p className="wa-eyebrow">Application assets</p><h2>One truthful story, tailored to this role.</h2></div><span>{pursuit.assets.length} stored</span></div>
+        <div className="wa-section-heading">
+          <div>
+            <p className="wa-eyebrow">Editable starters</p>
+            <h2>Prepare the strongest truthful case for this job.</h2>
+            <p>
+              Starters are bound to this pursuit and your confirmed profile.
+              Employer requirements have not been used unless their exact
+              provenance is shown.
+            </p>
+          </div>
+        </div>
+        {pursuit.starters.resume && pursuit.starters.coverLetter ? (
+          <div className="wa-starter-grid">
+            <article>
+              <FileText size={23} weight="duotone" aria-hidden="true" />
+              <div>
+                <strong>Job-specific resume</strong>
+                <span>
+                  {pursuit.starters.resume.name} · Version{" "}
+                  {pursuit.starters.resume.version}
+                </span>
+                <small>
+                  {titleCase(pursuit.starters.resume.reviewState)}
+                </small>
+              </div>
+              <button
+                className="wa-secondary-button"
+                type="button"
+                onClick={() => navigate("studio", undefined, "resume")}
+              >
+                Edit resume
+              </button>
+            </article>
+            <article>
+              <FileText size={23} weight="duotone" aria-hidden="true" />
+              <div>
+                <strong>Cover-letter outline</strong>
+                <span>
+                  Bound to {opportunity.employer} · Version{" "}
+                  {pursuit.starters.coverLetter.version}
+                </span>
+                <small>
+                  {titleCase(pursuit.starters.coverLetter.reviewState)}
+                </small>
+              </div>
+              <button
+                className="wa-secondary-button"
+                type="button"
+                onClick={() => navigate("studio", undefined, "cover")}
+              >
+                Edit cover letter
+              </button>
+            </article>
+          </div>
+        ) : (
+          <div className="wa-starter-recovery">
+            <p>
+              One or more editable starters are missing. Build them from the
+              current source-bound pursuit and confirmed profile.
+            </p>
+            <button
+              className="wa-primary-button"
+              type="button"
+              disabled={starterBusy}
+              onClick={ensureStarters}
+            >
+              {starterBusy ? "Building…" : "Build editable starters"}
+            </button>
+          </div>
+        )}
+        <FormFeedback message={starterMessage} />
+        <small className="wa-muted">
+          Nothing here populates an employer form, uploads a file, or submits
+          an application.
+        </small>
+      </section>
+
+      <section className="wa-section">
+        <div className="wa-section-heading"><div><p className="wa-eyebrow">Application assets</p><h2>Build a truthful story for this role.</h2><p>Profile-built starters use confirmed career evidence and the selected employer and title. Review the current posting and tailor every claim before approval.</p></div><span>{pursuit.assets.length} stored</span></div>
         <div className="wa-asset-list">
           {pursuit.assets.length ? pursuit.assets.map((asset) => <AssetCard key={asset.id} asset={asset} />) : (
             <div className="wa-empty-inline"><FileText size={24} /><span>No role-specific asset has passed into this pursuit yet.</span></div>
@@ -1224,7 +1791,13 @@ function PursuitView({
       <section className="wa-section wa-approval-section">
         <div>
           <p className="wa-eyebrow">Exact action gate</p>
-          <h2>{blockers.length ? "Approval stays locked until the package is internally consistent." : "This exact package is ready for your decision."}</h2>
+          <h2>
+            {!packageRecord
+              ? "Build and review the exact package before approval."
+              : blockers.length || reviewGaps.length
+                ? "Approval stays locked until the package is internally consistent."
+                : "This exact package is ready for your decision."}
+          </h2>
           <p>Approval is bound to the employer destination, source version, answers, filenames, asset versions, and payload fingerprint shown here.</p>
         </div>
         {packageRecord ? (
@@ -1313,15 +1886,25 @@ function PursuitView({
 
 function AssetCard({ asset }: { asset: AssetRecord }) {
   const lines = getAssetText(asset);
+  const current = asset.invalidatedAt === null;
+  const statusVerified =
+    current &&
+    (asset.reviewState === "claim_safe" || asset.reviewState === "approved");
   return (
     <details className="wa-asset-card">
       <summary>
         <span className="wa-asset-icon"><FileText size={21} weight="duotone" /></span>
         <span><strong>{assetLabel(asset.type)}</strong><small>{asset.filename ?? `Version ${asset.version}`}</small></span>
-        <span className={`wa-status wa-status-${asset.reviewState === "claim_safe" || asset.reviewState === "approved" ? "verified" : "partial"}`}>{titleCase(asset.reviewState)}</span>
+        <span className={`wa-status wa-status-${statusVerified ? "verified" : "partial"}`}>{current ? titleCase(asset.reviewState) : "Needs rebuild"}</span>
         <CaretDown className="wa-asset-caret" size={18} weight="bold" aria-hidden="true" />
       </summary>
       <div className="wa-asset-content">
+        {!current ? (
+          <p className="wa-muted">
+            Confirmed career evidence changed after this version. Rebuild and
+            review it before relying on this asset.
+          </p>
+        ) : null}
         <div className="wa-asset-receipt"><span>Version {asset.version}</span><span>{asset.pageCount ? `${asset.pageCount} page${asset.pageCount === 1 ? "" : "s"}` : "Page count open"}</span><span>{asset.contentSha256 ? `${asset.contentSha256.slice(0, 12)}…` : "Fingerprint open"}</span></div>
         {asset.filename ? (
           <p className="wa-muted">
@@ -1472,7 +2055,13 @@ function FormFeedback({ message, id }: { message: FormMessage | null; id?: strin
   );
 }
 
-function ProfileView({ workspace }: { workspace: WorkspaceRecord }) {
+function ProfileView({
+  workspace,
+  onRefresh,
+}: {
+  workspace: WorkspaceRecord;
+  onRefresh: () => Promise<void>;
+}) {
   const currentConflicts = workspace.profile.experiences.filter((role) => role.isCurrent && role.reviewState === "conflict");
   return (
     <div className="wa-page">
@@ -1494,27 +2083,21 @@ function ProfileView({ workspace }: { workspace: WorkspaceRecord }) {
             className="wa-secondary-button"
             href="/app/onboarding/experience"
           >
-            Add or update experience
+            Import or paste a source
           </a>
         </div>
         <p className="wa-muted">
-          Upload a PDF or DOCX, paste your career history, or enter a role. Way
-          Ahead reads files locally and saves only the text you review and
-          confirm.
+          Upload a PDF or DOCX, paste your career history, or enter a role.
+          Files are read on this device. Imported text remains source material
+          until you structure and confirm the role facts Way Ahead may rely on.
         </p>
       </section>
       <section className="wa-section wa-profile-summary"><p className="wa-eyebrow">Positioning</p><h2>{workspace.profile.summary ?? "Your confirmed professional summary has not been stored yet."}</h2></section>
-      <section className="wa-section">
-        <div className="wa-section-heading"><div><p className="wa-eyebrow">Experience</p><h2>The record behind every claim.</h2></div><span>{workspace.profile.experiences.length} roles</span></div>
-        <div className="wa-experience-list">
-          {workspace.profile.experiences.map((role) => (
-            <article key={role.id} className="wa-experience-card">
-              <div><span>{role.startDate ?? "Start open"} – {role.isCurrent ? "Present" : role.endDate ?? "End open"}</span><strong>{role.title}</strong><p>{role.employer}{role.location ? ` · ${role.location}` : ""}</p></div>
-              <span className={`wa-status wa-status-${role.reviewState === "confirmed" ? "verified" : role.reviewState === "conflict" ? "conflict" : "partial"}`}>{titleCase(role.reviewState)}</span>
-            </article>
-          ))}
-        </div>
-      </section>
+      <CareerEvidenceManager
+        roles={workspace.profile.experiences}
+        removedRoles={workspace.profile.removedExperiences}
+        onRefresh={onRefresh}
+      />
       <section className="wa-section">
         <div className="wa-section-heading"><div><p className="wa-eyebrow">Skills evidence</p><h2>What the record can credibly support.</h2></div><span>{workspace.profile.skills.length} tracked</span></div>
         <div className="wa-skill-cloud">{workspace.profile.skills.map((skill) => <span key={skill.id}>{skill.name}<small>{skill.level ?? skill.reviewState}</small></span>)}</div>

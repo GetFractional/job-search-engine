@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { CURRENT_DETERMINISTIC_ASSESSMENT_POLICY } from "./deterministic-assessment";
 import type { FounderActor } from "./production-types";
 import type {
   TodayCareerPath,
@@ -45,6 +46,11 @@ type AssetRow = {
   pursuit_id: string;
   type: "resume" | "cover_letter";
   review_state: "draft" | "claim_safe" | "approved" | "superseded";
+};
+
+type SemanticResumeRow = {
+  pursuit_id: string;
+  review_state: AssetRow["review_state"];
 };
 
 function database(): D1Database {
@@ -172,7 +178,20 @@ function isAnalysisCurrent(row: AnalysisRow): boolean {
   const gates = parseJson<Record<string, unknown>>(row.integrity_gates_json, {});
   const boundVersion =
     typeof gates.jobVersionId === "string" ? gates.jobVersionId : null;
-  return boundVersion === row.job_posting_version_id;
+  const deterministicPolicyIsCurrent =
+    gates.deterministic !== true ||
+    gates.policyVersion === CURRENT_DETERMINISTIC_ASSESSMENT_POLICY;
+  return (
+    boundVersion === row.job_posting_version_id &&
+    deterministicPolicyIsCurrent
+  );
+}
+
+function scoresAreVisible(
+  row: Pick<AnalysisRow, "validation_state">,
+  analysisCurrent: boolean,
+): boolean {
+  return analysisCurrent && row.validation_state === "trusted";
 }
 
 function documentState(
@@ -189,7 +208,8 @@ function documentState(
 export async function readToday(actor: FounderActor): Promise<TodayRecord> {
   const user = await ensureUser(actor);
   const db = database();
-  const [pathResult, analysisResult, assetResult] = await Promise.all([
+  const [pathResult, analysisResult, assetResult, semanticResumeResult] =
+    await Promise.all([
     db
       .prepare(
         "SELECT id, label, state, is_primary FROM career_paths WHERE user_id = ? AND state <> 'rejected' ORDER BY is_primary DESC, label",
@@ -208,12 +228,28 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
       )
       .bind(user.id)
       .all<AssetRow>(),
-  ]);
+    db
+      .prepare(
+        "SELECT p.id AS pursuit_id, r.review_state FROM pursuits p JOIN resume_assignments ra ON ra.user_id = p.user_id AND ra.scope = 'job' AND ra.job_posting_id = p.job_posting_id JOIN resumes r ON r.user_id = ra.user_id AND r.id = ra.resume_id WHERE p.user_id = ? AND p.state <> 'closed' ORDER BY r.updated_at DESC, r.version DESC",
+      )
+      .bind(user.id)
+      .all<SemanticResumeRow>(),
+    ]);
 
   const latestAssets = new Map<string, AssetRow>();
   for (const asset of assetResult.results) {
     const key = `${asset.pursuit_id}:${asset.type}`;
     if (!latestAssets.has(key)) latestAssets.set(key, asset);
+  }
+  for (const resume of semanticResumeResult.results) {
+    const key = `${resume.pursuit_id}:resume`;
+    if (!latestAssets.has(key)) {
+      latestAssets.set(key, {
+        pursuit_id: resume.pursuit_id,
+        type: "resume",
+        review_state: resume.review_state,
+      });
+    }
   }
 
   const now = Date.now();
@@ -238,6 +274,7 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
           ? fit.nextAction.trim()
           : null;
       const analysisCurrent = isAnalysisCurrent(row);
+      const showScores = scoresAreVisible(row, analysisCurrent);
       const verificationCurrent = isVerificationCurrent(row, now);
       const unknowns = [
         ...parseJson<string[]>(row.unknowns_json, []),
@@ -285,9 +322,9 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
         pursuitPriority: priority(row, analysisCurrent, verificationCurrent),
         priorityFormula:
           "55% Job Value + 45% Pursuit Readiness after source and validation gates",
-        fitScore,
-        moveValue: row.move_value_score,
-        pursuitReadiness: row.pursuit_readiness_score,
+        fitScore: showScores ? fitScore : null,
+        moveValue: showScores ? row.move_value_score : null,
+        pursuitReadiness: showScores ? row.pursuit_readiness_score : null,
         evidenceStrength: evidenceStrength(
           row,
           unknowns,
@@ -339,9 +376,7 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
       state: path.state,
       jobsReviewed: jobs.length,
       jobsClearingStandard: jobs.filter(
-        (job) =>
-          job.recommendation === "Pursue now" ||
-          job.recommendation === "Review next",
+        (job) => job.recommendation === "Pursue now",
       ).length,
       verifiedLast24Hours: jobs.filter(
         (job) =>
@@ -369,20 +404,23 @@ export async function readToday(actor: FounderActor): Promise<TodayRecord> {
               ? `Resolve what is missing for ${leading.title}`
               : "Review your highest-ranked current job",
         detail: leading.nextMove,
-        href: `/app?view=jobs&job=${encodeURIComponent(leading.jobPostingId)}`,
+        href: `/app/jobs/${encodeURIComponent(leading.jobPostingId)}`,
+        ctaLabel: "Review job",
       }
     : paths.some((path) => path.state === "active")
       ? {
-          label: "No current job clears your standard",
+          label: "Add and assess a current job",
           detail:
-            "That is a useful result. Keep the standard intact while the active paths continue to be checked.",
-          href: "/app?view=jobs",
+            "No job has been evaluated for your active Job Paths yet. Add a direct employer job to create the first source-bound decision.",
+          href: "/app/jobs",
+          ctaLabel: "Continue to Jobs",
         }
       : {
           label: "Finish choosing your Job Paths",
           detail:
             "Home can rank work only after you define at least one active Job Path.",
-          href: "/app?view=direction",
+          href: "/app/plan",
+          ctaLabel: "Continue to Plan",
         };
 
   return {

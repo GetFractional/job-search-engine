@@ -8,6 +8,7 @@ const read = (path) =>
 const resumeStudio = read("app/ResumeStudio.tsx");
 const coverLetterStudio = read("app/CoverLetterStudio.tsx");
 const documents = read("app/document-repository.ts");
+const app = read("app/WayAheadApp.tsx");
 const today = read("app/today-repository.ts");
 const todayUi = read("app/TodayDashboard.tsx");
 const resumeApi = read("app/api/resumes/route.ts");
@@ -26,6 +27,11 @@ test("document studios expose editable content, design, preview, and immutable s
   assert.match(resumeStudio, /Each item stays separate/);
   assert.match(coverLetterStudio, /Save new version/);
   assert.match(coverLetterStudio, /Add paragraph/);
+  assert.match(
+    coverLetterStudio,
+    /const showEmpty = !loading && !selected && !hasContent/,
+  );
+  assert.match(coverLetterStudio, /Build evidence-grounded outline/);
   assert.match(coverLetterStudio, /Nothing is uploaded or submitted/);
   assert.doesNotMatch(
     `${resumeStudio}\n${coverLetterStudio}`,
@@ -60,6 +66,26 @@ test("claim-safe starters use confirmed profile state and do not claim AI", () =
   assert.match(resumeStudio, /No invented experience is added/);
 });
 
+test("cover-letter starters disclose profile-only provenance and unresolved posting tailoring", () => {
+  const starter = documents.slice(
+    documents.indexOf("export async function createCoverLetterFromProfile"),
+    documents.indexOf("export async function saveCoverLetterVersion"),
+  );
+  assert.match(starter, /source: "approved_profile"/);
+  assert.doesNotMatch(starter, /source: "approved_profile_and_posting"/);
+  assert.match(starter, /posting requirements have not been used to tailor/i);
+  assert.match(starter, /My confirmed profile includes work as/);
+  assert.match(starter, /comparing the current posting with my verified evidence/);
+  assert.doesNotMatch(starter, /summary \|\|[\s\S]*role\.summary/);
+  assert.doesNotMatch(starter, /role\.summary\.trim\(\)/);
+  assert.match(documents, /postingFactsUsed: false/);
+  assert.match(
+    app,
+    /Review the current posting and tailor every claim before approval/,
+  );
+  assert.doesNotMatch(app, /One truthful story, tailored to this role/);
+});
+
 test("Home is path-segmented, state-aware, and keeps priority distinct from outcome probability", () => {
   assert.match(todayApi, /requireUserRequest/);
   assert.match(today, /career_path_id/);
@@ -67,6 +93,7 @@ test("Home is path-segmented, state-aware, and keeps priority distinct from outc
   assert.match(today, /0\.45/);
   assert.match(today, /source_checked_at/);
   assert.match(today, /validation_state/);
+  assert.match(today, /JOIN resume_assignments/);
   assert.match(todayUi, /All paths/);
   assert.match(todayUi, /Opportunity scoreboard/);
   assert.match(todayUi, /Your job search, prioritized/);
@@ -78,4 +105,6 @@ test("Home is path-segmented, state-aware, and keeps priority distinct from outc
   );
   assert.match(todayUi, /Pursuits needing you/);
   assert.match(todayUi, /Documents to strengthen/);
+  assert.match(todayUi, /claim_safe/);
+  assert.doesNotMatch(app, /criteriona/);
 });

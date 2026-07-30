@@ -7,6 +7,7 @@ import {
   Info,
   WarningCircle,
 } from "@phosphor-icons/react";
+import Link from "next/link";
 import type { TodayRecord, TodayScoreboardItem } from "./today-types";
 import styles from "./today-dashboard.module.css";
 
@@ -96,8 +97,8 @@ export function TodayDashboard() {
   const activePursuits = record.scoreboard.filter((job) => job.pursuitId);
   const documentGaps = activePursuits.filter(
     (job) =>
-      job.documentStatus.resume === "missing" ||
-      job.documentStatus.coverLetter === "missing",
+      !["claim_safe", "approved"].includes(job.documentStatus.resume) ||
+      !["claim_safe", "approved"].includes(job.documentStatus.coverLetter),
   );
   const verifiedToday = jobs.filter(
     (job) =>
@@ -148,7 +149,7 @@ export function TodayDashboard() {
           <p>{record.nextAction.detail}</p>
         </div>
         <a className={styles.primaryLink} href={record.nextAction.href}>
-          Continue <ArrowRight aria-hidden="true" />
+          {record.nextAction.ctaLabel} <ArrowRight aria-hidden="true" />
         </a>
       </article>
 
@@ -159,9 +160,9 @@ export function TodayDashboard() {
             <h2 id="scoreboard-title">Jobs worth your attention</h2>
           </div>
           <p>
-            Fit shows role alignment. Priority appears only when both Job
-            Value and Pursuit Readiness are defensible. These percentages are
-            not predictions of being hired.
+            Alignment shows what the verified fields support. Open role
+            requirements remain visible and block a pursue recommendation.
+            These percentages are not predictions of being hired.
           </p>
         </div>
 
@@ -173,7 +174,7 @@ export function TodayDashboard() {
                   <tr>
                     <th>Rank</th>
                     <th>Role</th>
-                    <th>Fit</th>
+                    <th>Alignment</th>
                     <th>Priority</th>
                     <th>Job value</th>
                     <th>Readiness</th>
@@ -230,7 +231,7 @@ export function TodayDashboard() {
                           </span>
                           <span>{job.nextMove}</span>
                           <a
-                            href={`/app?view=jobs&job=${encodeURIComponent(
+                            href={`/app/jobs/${encodeURIComponent(
                               job.jobPostingId,
                             )}`}
                           >
@@ -263,7 +264,7 @@ export function TodayDashboard() {
                   <div className={styles.mobileJobScores}>
                     <div className={styles.metric}>
                       <strong>{score(job.fitScore)}</strong>
-                      <span>Fit</span>
+                      <span>Alignment</span>
                     </div>
                     <div className={styles.metric}>
                       <strong>{score(job.pursuitPriority)}</strong>
@@ -297,14 +298,14 @@ export function TodayDashboard() {
                     {formatTime(job.lastVerifiedAt)}
                   </p>
                   <p>{job.nextMove}</p>
-                  <a
+                  <Link
                     className={styles.secondaryLink}
-                    href={`/app?view=jobs&job=${encodeURIComponent(
+                    href={`/app/jobs/${encodeURIComponent(
                       job.jobPostingId,
                     )}`}
                   >
                     Review job <ArrowRight aria-hidden="true" />
-                  </a>
+                  </Link>
                 </article>
               ))}
             </div>
@@ -312,11 +313,15 @@ export function TodayDashboard() {
         ) : (
           <div className={styles.empty}>
             <div>
-              <h3>Nothing clears your standard right now.</h3>
+              <h3>No jobs have been assessed in this view yet.</h3>
               <p>
-                That is a useful result. We will keep your active paths intact
-                and show a job only when it earns your attention.
+                Add a current direct employer job in Jobs. Way Ahead will show
+                a ranking only after source verification and an explainable
+                assessment.
               </p>
+              <Link className={styles.secondaryLink} href="/app/jobs">
+                Go to Jobs <ArrowRight aria-hidden="true" />
+              </Link>
             </div>
           </div>
         )}
@@ -442,7 +447,7 @@ export function TodayDashboard() {
                 </div>
                 <a
                   className={styles.secondaryLink}
-                  href={`/app?view=pursuit&job=${encodeURIComponent(
+                  href={`/app/pursuits/${encodeURIComponent(
                     job.jobPostingId,
                   )}`}
                 >
@@ -493,7 +498,7 @@ export function TodayDashboard() {
                 </div>
                 <a
                   className={styles.secondaryLink}
-                  href="/app?view=studio&asset=resume"
+                  href="/app/documents/resumes"
                 >
                   Open Studio
                 </a>

@@ -22,9 +22,9 @@ export default async function Home() {
   const signedIn = Boolean(user);
   return (
     <PublicSite
-      primaryHref={signedIn ? "/app" : chatGPTSignInPath("/app")}
+      primaryHref={signedIn ? "/app/home" : chatGPTSignInPath("/app/home")}
       primaryLabel={signedIn ? "Open workspace" : "Get started"}
-      signInHref={signedIn ? "/app" : chatGPTSignInPath("/app")}
+      signInHref={signedIn ? "/app/home" : chatGPTSignInPath("/app/home")}
       signedIn={signedIn}
     />
   );

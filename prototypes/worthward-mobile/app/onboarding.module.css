@@ -913,13 +913,34 @@
   .progress {
     margin-right: -14px;
     margin-left: -14px;
+    overflow: visible;
     border-right: 0;
     border-left: 0;
     border-radius: 0;
   }
 
   .progress ol {
-    min-width: 510px;
+    min-width: 0;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .progress li {
+    position: relative;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 0;
+    min-width: 0;
+    padding: 6px 2px;
+  }
+
+  .progress li > div {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .stepPanel h1 {

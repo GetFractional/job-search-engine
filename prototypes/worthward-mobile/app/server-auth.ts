@@ -77,7 +77,7 @@ export function requireUserRequest(request: Request): ChatGPTUser {
   );
 }
 
-export async function requireUserPage(returnTo = "/app"): Promise<ChatGPTUser> {
+export async function requireUserPage(returnTo = "/app/home"): Promise<ChatGPTUser> {
   const requestHeaders = await headers();
   const user = fromRequestHeaders(requestHeaders) ?? developmentActor(requestHeaders);
   if (!user) redirect(chatGPTSignInPath(returnTo));

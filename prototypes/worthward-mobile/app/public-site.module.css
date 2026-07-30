@@ -90,6 +90,14 @@
   color: var(--ink);
 }
 
+.desktopNav a[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+
 .headerActions {
   display: flex;
   justify-self: end;
@@ -193,6 +201,11 @@
   color: var(--accent);
   font-size: 13px;
   font-weight: 760;
+}
+
+.sectionLink {
+  width: fit-content;
+  margin-top: 26px;
 }
 
 .trustLine {
@@ -418,6 +431,185 @@
   text-align: right;
 }
 
+.contentHero {
+  min-height: min(780px, calc(100dvh - 74px));
+}
+
+.truthCard {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  padding: 25px;
+  box-shadow: var(--shadow);
+}
+
+.truthCard > svg {
+  margin-bottom: 24px;
+  color: var(--accent);
+}
+
+.truthCard .cardLabel {
+  margin: 0 0 14px;
+  background: transparent;
+  padding: 0;
+}
+
+.truthCard h2 {
+  margin-bottom: 15px;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.04em;
+}
+
+.truthCard > p:last-child {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.journeyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journeyGrid li {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 15px;
+  min-height: 190px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--surface);
+  padding: 24px;
+  box-shadow: var(--shadow-small);
+}
+
+.journeyGrid li:last-child {
+  grid-column: 1 / -1;
+}
+
+.journeyGrid li > span {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.journeyGrid h3,
+.toolCardGrid h3 {
+  margin: 2px 0 10px;
+  font-family: "Plus Jakarta Sans Variable", sans-serif;
+  font-size: 16px;
+  font-weight: 780;
+}
+
+.journeyGrid p,
+.toolCardGrid p,
+.limitSection p,
+.limitSection li {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.limitSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(40px, 8vw, 110px);
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+  padding: 92px 0;
+}
+
+.limitSection h2 {
+  margin: 0;
+  font-size: clamp(34px, 4.8vw, 60px);
+  font-weight: 530;
+  letter-spacing: -0.045em;
+}
+
+.limitSection ul {
+  display: grid;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limitSection li {
+  position: relative;
+  border-top: 1px solid var(--border);
+  padding: 16px 0 0 26px;
+}
+
+.limitSection li::before {
+  position: absolute;
+  top: 23px;
+  left: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  content: "";
+}
+
+.limitSection > div:last-child {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+}
+
+.toolCardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.toolCardGrid article {
+  min-height: 215px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--surface);
+  padding: 25px;
+  box-shadow: var(--shadow-small);
+}
+
+.toolCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.toolCardHeader svg {
+  color: var(--accent);
+}
+
+.toolCardHeader span {
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--border));
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 780;
+  line-height: 1.35;
+  text-align: right;
+}
+
 @media (max-width: 900px) {
   .header {
     grid-template-columns: 1fr auto;
@@ -463,6 +655,11 @@
     color: var(--ink);
   }
 
+  .mobileMenu a[aria-current="page"] {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
   .mobileMenu .mobileCta {
     justify-content: space-between;
     margin-top: 7px;
@@ -483,6 +680,15 @@
   .featureGrid {
     grid-template-columns: 1fr;
   }
+
+  .contentHero {
+    min-height: auto;
+  }
+
+  .limitSection {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }
 
 @media (max-width: 680px) {
@@ -500,6 +706,7 @@
   .section,
   .splitSection,
   .controlSection,
+  .limitSection,
   .finalCta,
   .footer {
     width: min(100% - 32px, 1180px);
@@ -533,13 +740,15 @@
 
   .section,
   .splitSection,
-  .controlSection {
+  .controlSection,
+  .limitSection {
     padding: 64px 0;
   }
 
   .section h2,
   .splitSection h2,
   .controlSection h2,
+  .limitSection h2,
   .finalCta h2 {
     font-size: clamp(33px, 9.6vw, 45px);
   }
@@ -558,6 +767,21 @@
 
   .footer p {
     text-align: left;
+  }
+
+  .journeyGrid,
+  .toolCardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .journeyGrid li,
+  .journeyGrid li:last-child {
+    grid-column: auto;
+    min-height: 0;
+  }
+
+  .toolCardGrid article {
+    min-height: 0;
   }
 }
 

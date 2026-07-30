@@ -23,7 +23,7 @@ export default async function OwnerBootstrapPage() {
     <div className={styles.shell}>
       <a className={styles.skipLink} href="#main-content">Skip to main content</a>
       <header className={styles.header}>
-        <Link className={styles.brand} href="/app">
+        <Link className={styles.brand} href="/app/home">
           <span className={styles.brandMark} aria-hidden="true">W</span>
           Way Ahead
         </Link>

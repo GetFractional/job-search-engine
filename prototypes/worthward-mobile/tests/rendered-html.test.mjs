@@ -17,24 +17,27 @@ async function productionBundleText() {
 }
 
 test("compiles the public website and account-level sign-in boundary", async () => {
-  const [bundle, page, appPage, auth, layout] = await Promise.all([
+  const [bundle, page, appPage, productRoute, auth, layout] = await Promise.all([
     productionBundleText(),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/app/ProductRoutePage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/server-auth.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(page, /getChatGPTUser/);
   assert.doesNotMatch(page, /requireFounderPage|redirect\(/);
-  assert.match(appPage, /requireUserPage\("\/app"\)/);
-  assert.match(appPage, /readOnboardingState/);
+  assert.match(appPage, /redirect\("\/app\/home"\)/);
+  assert.match(productRoute, /requireUserPage\(returnPath\)/);
+  assert.match(productRoute, /readOnboardingState/);
   assert.match(auth, /redirect\(chatGPTSignInPath\(returnTo\)\)/);
   assert.match(auth, /export function requireUserRequest/);
   assert.doesNotMatch(auth, /not shared with this account/);
   assert.match(layout, /Way Ahead \| Your next job, pursued with evidence/);
   assert.match(bundle, /Loading the evidence behind your next job/);
   assert.match(bundle, /Stop wasting your best effort on jobs that are not worth it/);
-  assert.match(bundle, /finds current jobs worth pursuing/);
+  assert.match(bundle, /add current employer jobs/);
+  assert.doesNotMatch(bundle, /finds current jobs worth pursuing/);
   assert.doesNotMatch(bundle, /Your next move|better move|real move value/);
   assert.doesNotMatch(bundle, /Worthward|Cedarfield|Tebra|THNKS|Lumeris|Babylist|TextNow|Finite State/i);
 });
@@ -111,7 +114,10 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.match(repository, /role:\s*UserRow\["role"\]\s*=\s*configuredOwnerEmail\(\) === email \? "owner" : "member"/);
   assert.match(repository, /WHERE user_id = \?/);
   assert.match(repository, /validation_state = 'invalidated'/);
-  assert.match(app, /selectedJob\.analysis\?\.validationState === "trusted"/);
+  assert.match(app, /function currentTrustedAnalysis/);
+  assert.match(app, /analysis\?\.validationState === "trusted"/);
+  assert.match(app, /boundVersionId === currentVersionId/);
+  assert.match(app, /const visibleAnalysis = currentTrustedAnalysis\(job\)/);
   assert.match(app, /Recheck this job/);
   assert.match(app, /analysis is preserved as history/i);
   assert.match(app, /Recheck needed/);

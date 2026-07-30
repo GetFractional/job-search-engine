@@ -14,7 +14,24 @@ export type ExperienceRecord = {
   isCurrent: boolean;
   location: string | null;
   summary: string | null;
-  reviewState: "draft" | "confirmed" | "conflict";
+  reviewState: "draft" | "confirmed" | "conflict" | "removed";
+  provenance: {
+    method:
+      | "manual_entry"
+      | "client_side_file_extraction"
+      | "imported_text"
+      | "unknown";
+    label: string;
+    factState:
+      | "user_confirmed"
+      | "user_corrected"
+      | "suggested"
+      | "missing"
+      | "unknown";
+    sourceImportType: string | null;
+    policyVersion: string | null;
+  };
+  updatedAt: number;
 };
 
 export type JobStandardRecord = {
@@ -114,6 +131,19 @@ export type OpportunityRecord = {
       | "approved"
       | "revoked"
       | "completed";
+    starters: {
+      resume: {
+        id: string;
+        name: string;
+        version: number;
+        reviewState: "draft" | "approved" | "superseded";
+      } | null;
+      coverLetter: {
+        id: string;
+        version: number;
+        reviewState: "draft" | "claim_safe" | "approved" | "superseded";
+      } | null;
+    };
     assets: AssetRecord[];
     package: {
       id: string;
@@ -140,6 +170,7 @@ export type WorkspaceRecord = {
     confirmedFactCount: number;
     unresolvedFactCount: number;
     experiences: ExperienceRecord[];
+    removedExperiences: ExperienceRecord[];
     skills: Array<{
       id: string;
       name: string;

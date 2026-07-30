@@ -86,7 +86,7 @@ export default function OnboardingFlow({
       const nextState = await postStep(payload);
       setState(nextState);
       if (nextState.complete) {
-        window.location.assign("/app");
+        window.location.assign(editMode ? "/app/profile" : "/app/home");
         return;
       }
       document.querySelector<HTMLElement>("#onboarding-main")?.focus();
@@ -564,7 +564,10 @@ function ExperienceStep({
               onChange={() => setMethod("manual")}
             />
             <strong>Add a role manually</strong>
-            <span>Start with one job and add more from Career Profile later.</span>
+            <span>
+              Start with your current or most recent job. One structured role
+              with dates is required before activation.
+            </span>
           </label>
         </div>
       </fieldset>
@@ -580,9 +583,9 @@ function ExperienceStep({
             placeholder="Paste your résumé text or career history here."
           />
           <small>
-            Saved as user-reviewed source text. File parsing happens locally;
-            no AI skill or achievement inference occurs until a later,
-            separately reviewed step.
+            Saved as source text, not confirmed career facts. File parsing
+            happens locally; the next step asks you to structure and confirm
+            your current or most recent role separately.
           </small>
         </label>
       ) : (
@@ -592,6 +595,7 @@ function ExperienceStep({
             <input
               value={role.employer}
               maxLength={160}
+              required
               onChange={(event) =>
                 setRole((current) => ({ ...current, employer: event.target.value }))
               }
@@ -602,6 +606,7 @@ function ExperienceStep({
             <input
               value={role.title}
               maxLength={160}
+              required
               onChange={(event) =>
                 setRole((current) => ({ ...current, title: event.target.value }))
               }
@@ -612,6 +617,7 @@ function ExperienceStep({
             <input
               type="month"
               value={role.startDate}
+              required
               onChange={(event) =>
                 setRole((current) => ({ ...current, startDate: event.target.value }))
               }
@@ -623,6 +629,8 @@ function ExperienceStep({
               type="month"
               value={role.endDate}
               disabled={role.isCurrent}
+              required={!role.isCurrent}
+              min={role.startDate || undefined}
               onChange={(event) =>
                 setRole((current) => ({ ...current, endDate: event.target.value }))
               }
@@ -671,8 +679,61 @@ function ExperienceStep({
 
 function ProfileReviewStep({ state, busy, save }: StepProps) {
   const [confirmed, setConfirmed] = useState(false);
+  const savedRole = state.careerInput.role;
+  const [role, setRole] = useState({
+    employer: savedRole?.employer ?? "",
+    title: savedRole?.title ?? "",
+    startDate: savedRole?.startDate ?? "",
+    endDate: savedRole?.endDate ?? "",
+    isCurrent: savedRole?.isCurrent ?? false,
+    location: savedRole?.location ?? "",
+    summary: savedRole?.summary ?? "",
+  });
+  const savedRoleReady = Boolean(
+    savedRole?.employer.trim() &&
+      savedRole.title.trim() &&
+      savedRole.startDate &&
+      (savedRole.isCurrent ||
+        (savedRole.endDate && savedRole.endDate >= savedRole.startDate)),
+  );
+  const roleChanged = Boolean(
+    role.employer.trim() !== (savedRole?.employer ?? "").trim() ||
+      role.title.trim() !== (savedRole?.title ?? "").trim() ||
+      role.startDate !== (savedRole?.startDate ?? "") ||
+      role.endDate !== (savedRole?.endDate ?? "") ||
+      role.isCurrent !== (savedRole?.isCurrent ?? false) ||
+      role.location.trim() !== (savedRole?.location ?? "").trim() ||
+      role.summary.trim() !== (savedRole?.summary ?? "").trim(),
+  );
+  const roleReady = Boolean(
+    role.employer.trim() &&
+      role.title.trim() &&
+      role.startDate &&
+      (role.isCurrent || (role.endDate && role.endDate >= role.startDate)),
+  );
+
+  const saveStructuredRole = () => {
+    setConfirmed(false);
+    void save({
+      step: 2,
+      data: {
+        method: "manual",
+        role: {
+          employer: role.employer,
+          title: role.title,
+          startDate: role.startDate || null,
+          endDate: role.isCurrent ? null : role.endDate || null,
+          isCurrent: role.isCurrent,
+          location: role.location || null,
+          summary: role.summary || null,
+        },
+      },
+    });
+  };
+
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (!savedRoleReady || roleChanged) return;
     void save({ step: 3, data: { confirmed } });
   };
   return (
@@ -680,39 +741,168 @@ function ProfileReviewStep({ state, busy, save }: StepProps) {
       <p className={styles.eyebrow}>You are the source of truth</p>
       <h1>Make your profile accurate</h1>
       <p className={styles.intro}>
-        Review what Way Ahead actually saved. There are no generated
-        qualifications, hidden inferences, or invented results in this record.
+        Review the exact structured role that can become confirmed evidence.
+        Imported text stays source material and is never promoted in bulk.
       </p>
       <div className={styles.reviewCard}>
         {state.careerInput.sourceText ? (
           <>
-            <span>User-provided career text</span>
+            <span>Imported source text · not confirmed career facts</span>
             <pre>{state.careerInput.sourceText}</pre>
           </>
         ) : null}
-        {state.careerInput.role ? (
-          <article>
-            <span>Manually entered role</span>
-            <h2>{state.careerInput.role.title}</h2>
-            <strong>{state.careerInput.role.employer}</strong>
-            {state.careerInput.role.summary ? (
-              <p>{state.careerInput.role.summary}</p>
-            ) : null}
-          </article>
-        ) : null}
       </div>
+      <section
+        className={styles.reviewCard}
+        aria-labelledby="structured-role-heading"
+      >
+        <h2 id="structured-role-heading">Current or most recent role</h2>
+        <p>
+          Save one structured role before confirming it. You can add the rest
+          of your history from Career Profile after setup.
+        </p>
+        <div className={styles.formGrid}>
+          <label className={styles.field}>
+            <span>Employer</span>
+            <input
+              value={role.employer}
+              maxLength={160}
+              required
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  employer: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className={styles.field}>
+            <span>Job title</span>
+            <input
+              value={role.title}
+              maxLength={160}
+              required
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  title: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className={styles.field}>
+            <span>Start date</span>
+            <input
+              type="month"
+              value={role.startDate}
+              required
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  startDate: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className={styles.field}>
+            <span>End date</span>
+            <input
+              type="month"
+              value={role.endDate}
+              disabled={role.isCurrent}
+              required={!role.isCurrent}
+              min={role.startDate || undefined}
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  endDate: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className={styles.inlineCheck}>
+            <input
+              type="checkbox"
+              checked={role.isCurrent}
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  isCurrent: event.target.checked,
+                  endDate: event.target.checked ? "" : current.endDate,
+                }))
+              }
+            />
+            I currently work here
+          </label>
+          <label className={styles.field}>
+            <span>Location</span>
+            <input
+              value={role.location}
+              maxLength={160}
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  location: event.target.value,
+                }))
+              }
+            />
+          </label>
+          <label className={`${styles.field} ${styles.fullField}`}>
+            <span>What did you own and accomplish?</span>
+            <textarea
+              value={role.summary}
+              maxLength={4_000}
+              rows={5}
+              onChange={(event) =>
+                setRole((current) => ({
+                  ...current,
+                  summary: event.target.value,
+                }))
+              }
+            />
+          </label>
+        </div>
+        <button
+          className={styles.secondaryButton}
+          type="button"
+          disabled={busy || !roleReady || !roleChanged}
+          onClick={saveStructuredRole}
+        >
+          {savedRole ? "Save role changes" : "Save structured role"}
+        </button>
+        {savedRoleReady && !roleChanged ? (
+          <p role="status">
+            Saved for confirmation: {savedRole?.title} at{" "}
+            {savedRole?.employer}.
+          </p>
+        ) : (
+          <p>
+            This role is not confirmation-ready until the required fields and
+            dates are saved.
+          </p>
+        )}
+      </section>
       <label className={styles.consent}>
         <input
           type="checkbox"
           checked={confirmed}
+          disabled={!savedRoleReady || roleChanged}
           onChange={(event) => setConfirmed(event.target.checked)}
         />
         <span>
-          <strong>This information is accurate enough to build my search plan.</strong>
-          I can correct and expand it later from Career Profile.
+          <strong>
+            I confirm this one structured role as accurate career evidence.
+          </strong>
+          Imported source text remains unconfirmed. I can review and add other
+          roles later from Career Profile.
         </span>
       </label>
-      <StepSubmit busy={busy}>Confirm and define a better job</StepSubmit>
+      <StepSubmit
+        busy={busy}
+        disabled={!savedRoleReady || roleChanged || !confirmed}
+      >
+        Confirm this role and define a better job
+      </StepSubmit>
     </form>
   );
 }
@@ -942,9 +1132,9 @@ function CareerPathsStep({ state, busy, save }: StepProps) {
       <p className={styles.eyebrow}>Search without flattening your options</p>
       <h1>Choose the paths worth exploring</h1>
       <p className={styles.intro}>
-        Add the career directions you want to monitor. Choose one primary focus
-        for Home, while keeping the others visible as separate scoreboards.
-        Way Ahead has not scored these paths yet.
+        Add the career directions you want to organize. Choose one primary
+        focus for Home, while keeping the others visible as separate
+        scoreboards. Way Ahead has not scored these paths yet.
       </p>
       <fieldset className={styles.pathFieldset}>
         <legend>Job Paths</legend>
@@ -1070,14 +1260,20 @@ function PlanReviewStep({ state, busy, save }: StepProps) {
 
 function StepSubmit({
   busy,
+  disabled = false,
   children,
 }: {
   busy: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div className={styles.actions}>
-      <button className={styles.primaryButton} type="submit" disabled={busy}>
+      <button
+        className={styles.primaryButton}
+        type="submit"
+        disabled={busy || disabled}
+      >
         {busy ? "Saving…" : children}
         {!busy ? <ArrowRight size={19} weight="bold" /> : null}
       </button>

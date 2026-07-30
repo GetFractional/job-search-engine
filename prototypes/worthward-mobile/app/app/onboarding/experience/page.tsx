@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function ExperienceProfilePage() {
   const actor = await requireUserPage("/app/onboarding/experience");
-  if (await deletedAccountNeedsRestart(actor)) redirect("/app");
+  if (await deletedAccountNeedsRestart(actor)) redirect("/app/home");
   const state = await readOnboardingState(actor);
   return (
     <OnboardingFlow
