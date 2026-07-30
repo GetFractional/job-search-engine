@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the My Way Ahead Company Operating System DOCX from canonical sources."""
+"""Build the current Way Ahead Company Operating System DOCX from canonical sources."""
 
 from __future__ import annotations
 
@@ -18,10 +18,10 @@ from docx.shared import Inches, Pt, RGBColor
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "docs/career-platform/company-os/my-way-ahead-company-operating-system-2026-07-20.md"
-PROMPT = ROOT / "docs/career-platform/company-os/new-task-activation-prompt-2026-07-20.txt"
+PROMPT = ROOT / "docs/career-platform/company-os/new-task-activation-prompt-2026-07-29.txt"
 ORG_IMAGE = ROOT / "output/visuals/my-way-ahead/my-way-ahead-company-org-chart-2026-07-19.png"
 VISUAL_IMAGE = ROOT / "output/visuals/my-way-ahead/selected-executive-evidence-timeline.png"
-OUTPUT = ROOT / "output/doc/My_Way_Ahead_Company_Operating_System_and_Transfer_Package_2026-07-20.docx"
+OUTPUT = ROOT / "output/doc/Way_Ahead_Company_Operating_System_and_Transfer_Package_2026-07-29.docx"
 
 NAVY = "10212D"
 INK = "1E303A"
@@ -189,7 +189,7 @@ def configure_document(document: Document) -> None:
 
     header = section.header
     p = header.paragraphs[0]
-    p.text = "MY WAY AHEAD   |   COMPANY OPERATING SYSTEM"
+    p.text = "WAY AHEAD   |   COMPANY OPERATING SYSTEM"
     p.alignment = WD_ALIGN_PARAGRAPH.LEFT
     p.paragraph_format.space_after = Pt(2)
     for run in p.runs:
@@ -208,7 +208,7 @@ def configure_document(document: Document) -> None:
 
     footer = section.footer
     fp = footer.paragraphs[0]
-    fp.add_run("BOARD PACKET  |  VERSION 1.0  |  2026-07-20")
+    fp.add_run("BOARD PACKET  |  VERSION 1.4  |  2026-07-29")
     for run in fp.runs:
         run.font.name = "Aptos"
         run.font.size = Pt(7.3)
@@ -227,7 +227,7 @@ def add_cover(document: Document) -> None:
     run.font.color.rgb = RGBColor.from_string("168A73")
 
     title = document.add_paragraph(style="Title")
-    title.add_run("My Way Ahead\nCompany Operating System")
+    title.add_run("Way Ahead\nCompany Operating System")
     title.paragraph_format.space_before = Pt(8)
 
     subtitle = document.add_paragraph()
@@ -244,8 +244,8 @@ def add_cover(document: Document) -> None:
     labels = [
         ("BOARD AND OWNER", "Matt Dimock"),
         ("ACCOUNTABLE CEO", "Codex root, within delegated authority"),
-        ("CURRENT STAGE", "Founder candidate, before private external alpha"),
-        ("OPERATING NORTH STAR", "Trusted career decisions that change, confirm, or prevent a consequential action"),
+        ("CURRENT STAGE", "Public multi-user alpha rebuild"),
+        ("OPERATING NORTH STAR", "Better-fit jobs found and pursued with less wasted effort and stronger honest proof"),
     ]
     for row, (key, value) in zip(table.rows, labels):
         row.cells[0].width = Inches(1.8)
@@ -263,7 +263,7 @@ def add_cover(document: Document) -> None:
     run.font.size = Pt(8)
     run.bold = True
     run.font.color.rgb = RGBColor.from_string("168A73")
-    p.add_run("\nMy Way Ahead is not legally cleared, purchased, reserved, or authorized for public launch.")
+    p.add_run("\nWay Ahead is a provisional working name. Availability, domain control, and legal clearance are not proven.")
 
     p = document.add_paragraph()
     p.paragraph_format.space_before = Pt(16)
@@ -272,9 +272,10 @@ def add_cover(document: Document) -> None:
     run.bold = True
     run.font.color.rgb = RGBColor.from_string("168A73")
     text = (
-        "\nBuild the owned product in thin, trustworthy slices. Keep only two active initiatives: "
-        "private-alpha readiness and Matt's next-best-job case. Earn external testing, payment, "
-        "recurring billing, and scale through evidence rather than feature volume."
+        "\nBuild the owned multi-user product through adaptive, evidence-based work in progress. "
+        "Activate only bounded workstreams with accountable owners, acceptance evidence, review capacity, "
+        "cost and rollback limits, and stop conditions. Matt founder-dogfoods the same member journey; "
+        "Terry is one independent early tester, not staff, an operator, or efficacy proof."
     )
     p.add_run(text)
     document.add_page_break()
@@ -455,9 +456,9 @@ def main() -> None:
         4.05,
     )
     add_prompt_appendix(document, PROMPT.read_text(encoding="utf-8"))
-    document.core_properties.title = "My Way Ahead Company Operating System and Transfer Package"
+    document.core_properties.title = "Way Ahead Company Operating System and Transfer Package"
     document.core_properties.subject = "Board operating packet"
-    document.core_properties.author = "My Way Ahead CEO Office"
+    document.core_properties.author = "Way Ahead CEO Office"
     document.core_properties.comments = "Generated from canonical local sources."
     document.save(OUTPUT)
     print(OUTPUT)

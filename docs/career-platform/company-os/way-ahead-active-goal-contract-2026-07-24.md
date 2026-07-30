@@ -22,7 +22,7 @@ can be replaced in the goal UI.
 > Matt's real search is founder dogfooding of the same multi-user product, not
 > a separate customer type or efficacy proof. Terry is an independent early
 > tester using self-registration, explicit consent, an isolated workspace, and
-> bounded tasks. Use the
+> bounded tasks. He is not staff, an operator, or efficacy proof. Use the
 > governing company and product truth in
 > `docs/career-platform/company-os/my-way-ahead-company-operating-system-2026-07-20.md`
 > and

@@ -1,5 +1,7 @@
 # Phase 2 Career Opportunity Platform Authority Packet
 
+> **Current authority amendment, 2026-07-29:** This unpromoted packet remains useful design history but does not control the current portfolio. The [Way Ahead company operating system](../company-os/my-way-ahead-company-operating-system-2026-07-20.md) and Strategy Chapters 16 through 19 now govern. Way Ahead is an owned multi-user SaaS, Matt founder-dogfoods the same member contract rather than a separate `Case Study Zero`, Terry is one consented independent early tester, and work in progress is adaptive and evidence-based rather than permanently capped. Current truth, tests, source-bound product state, and reserved Board gates supersede the historical prototype and concierge assumptions below.
+
 Status: decision-complete staging packet, not yet merged authority
 Date: 2026-07-16
 Canonical base: `origin/main@2a1b2b4f5ee808cb17def805a02516b29271d868`

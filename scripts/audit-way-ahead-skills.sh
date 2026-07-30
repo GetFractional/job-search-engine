@@ -95,8 +95,12 @@ for skill_name in "${skills[@]}"; do
   [[ -n "$metadata_end" ]] || failures+=("$skill_name: missing closing metadata delimiter")
   [[ "$metadata_name" == "$skill_name" ]] || failures+=("$skill_name: metadata name does not match directory")
   [[ -n "$metadata_description" ]] || failures+=("$skill_name: description is empty")
+
+  if grep -Fiq "Keep Teal as the operating system" "$skill_file"; then
+    failures+=("$skill_name: retired Teal operating-system instruction remains")
+  fi
 done
-checks+=("Validated metadata and entrypoints for ${#skills[@]} skill(s)")
+checks+=("Validated metadata, entrypoints, and retired-Teal drift for ${#skills[@]} skill(s)")
 
 required_markers=(
   "AGENTS.md|adaptive, evidence-based work in progress"
@@ -105,6 +109,9 @@ required_markers=(
   ".agents/skills/my-way-ahead-company-integrator/SKILL.md|independent early tester"
   "docs/career-platform/company-os/my-way-ahead-company-operating-system-2026-07-20.md|adaptive, evidence-based work in progress"
   "docs/career-platform/strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md|adaptive-WIP contract"
+  "docs/career-platform/README.md|There is no permanent numeric initiative cap"
+  "scripts/build_my_way_ahead_company_os.py|new-task-activation-prompt-2026-07-29.txt"
+  "scripts/build_career_platform_strategy_pdfs.py|06-delivery-roadmap-founder-dogfooding.md"
 )
 
 for marker in "${required_markers[@]}"; do
@@ -127,15 +134,41 @@ governing_files=(
   "docs/career-platform/strategy-system/11-board-ceo-dynamic-expert-operating-graph.md"
   "docs/career-platform/strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md"
   "docs/career-platform/strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md"
+  "docs/career-platform/README.md"
+  "scripts/build_my_way_ahead_company_os.py"
+  "scripts/build_career_platform_strategy_pdfs.py"
 )
 
-retired_pattern='exactly two active (initiatives|parent initiatives|parent tasks|parents)|keep exactly two active|two-item WIP cap|work in progress is capped at two|only Private-Alpha Readiness and Matt Case Study Zero may be active'
+retired_pattern='exactly two active (initiatives|parent initiatives|parent tasks|parents)|keep (exactly|only|no more than) two active|two-item WIP cap|work in progress is capped at two|only Private-Alpha Readiness and Matt Case Study Zero may be active'
 for relative_path in "${governing_files[@]}"; do
   if grep -Ein "$retired_pattern" "$repo_root/$relative_path" >/dev/null; then
     failures+=("Retired fixed-WIP policy remains in governing file $relative_path")
   fi
 done
 checks+=("Scanned current governing surfaces for retired fixed-WIP policy")
+
+required_current_files=(
+  "docs/career-platform/company-os/new-task-activation-prompt-2026-07-29.txt"
+  "docs/career-platform/strategy-system/06-delivery-roadmap-founder-dogfooding.md"
+  "docs/career-platform/strategy-system/16-founder-feedback-product-reset-2026-07-21.md"
+  "docs/career-platform/strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md"
+  "docs/career-platform/strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md"
+  "docs/career-platform/strategy-system/19-free-ai-foundation-and-provider-gate-2026-07-29.md"
+)
+for relative_path in "${required_current_files[@]}"; do
+  [[ -f "$repo_root/$relative_path" ]] || failures+=("Missing current canonical source $relative_path")
+done
+checks+=("Verified current generator source references exist")
+
+for relative_path in \
+  "docs/career-platform/README.md" \
+  "scripts/build_my_way_ahead_company_os.py" \
+  "scripts/build_career_platform_strategy_pdfs.py"; do
+  if grep -Ein 'case study zero|Matt.s (first|next-best-job) case' "$repo_root/$relative_path" >/dev/null; then
+    failures+=("Retired separate-case framing remains in current operator surface $relative_path")
+  fi
+done
+checks+=("Rejected separate Case Study Zero framing in current operator and generator surfaces")
 
 validator="${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_validate.py"
 if [[ -f "$validator" ]] && command -v python3 >/dev/null 2>&1; then

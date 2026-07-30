@@ -7,9 +7,12 @@ description: Route Matt's recurring job-search work through canonical employer s
 
 ## Controlling operating surface
 
-Way Ahead is Matt's job-search operating system and Case Study Zero surface.
+Way Ahead is Matt's job-search operating system and founder-dogfooding surface.
+Matt uses the same member contract as every other user; his result is personal
+outcome evidence and generalized product learning, not a separate customer type
+or efficacy proof.
 
-- Teal is competitor research only. Do not read, write, score, stage, export, or track Matt's applications in Teal.
+- Teal is competitor research only. Do not read or use it as part of Matt's member workflow, and never write, score, stage, export, or track his applications there. A bounded read-only observation is allowed only when Matt explicitly asks for competitor research and `tealhq-workflow` governs it.
 - Use canonical employer sources and Matt's source hierarchy directly.
 - Store profile evidence, job snapshots, analyses, pursuits, assets, form versions, package approvals, and receipts in Way Ahead.
 - Keep package approval, form population, file upload, and application submission as separate actions.

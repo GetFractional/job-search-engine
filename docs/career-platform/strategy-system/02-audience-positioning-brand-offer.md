@@ -1,5 +1,18 @@
 # 02 Audience, Positioning, Brand, and Offer
 
+> **Current brand correction, 2026-07-29:** Matt's current preferred provisional
+> product name is **Way Ahead**, reflecting both a clearer path forward and the
+> ability to become better prepared for what comes next. Use **Way Ahead**
+> consistently in the bounded alpha so the product can be evaluated without
+> mixed naming. The older **My Way Ahead** decision below remains naming-history
+> evidence, not the current label. Bare **Way Ahead** still has material
+> collision, search-retrieval, domain, and legal-clearance risk; this correction
+> does not authorize a standalone domain purchase, trademark filing, company
+> name change, indexed launch, or legal conclusion. Keep
+> `wayahead.getfractional.co` as the authorized temporary address until the
+> Board approves a final brand after availability, confusion, category,
+> memorability, and formal clearance review.
+
 > **Current authority, 2026-07-21:** Audience and positioning reasoning remains useful. The customer promise, path-first journey, current private offer catalog, paused human services, and economics are governed by [16 Founder Feedback Product Reset](16-founder-feedback-product-reset-2026-07-21.md) and the [Unit Economics Ledger](../company-os/my-way-ahead-unit-economics-ledger-2026-07-21.md). Older Pro, Expert Review, Guided, and Radar price references below are preserved as decision history only.
 
 ## Audience decision

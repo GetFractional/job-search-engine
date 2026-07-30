@@ -83,7 +83,7 @@ The company should maintain four connected control layers:
 
 | Surface | Job | Primary user | Governing content |
 |---|---|---|---|
-| **Canonical Strategy Library** | Preserve current evidence, decisions, assumptions, policies, and supersession history | CEO and specialists | The seventeen chapters in this strategy system |
+| **Canonical Strategy Library** | Preserve current evidence, decisions, assumptions, policies, and supersession history | CEO and specialists | The nineteen chapters in this strategy system |
 | **Founder Strategy Center** | Show the current decision, evidence, risks, metrics, WIP, owners, and next approvals without file hunting | Matt | Start Here, decision register, experiment portfolio, economics, control cadence |
 | **Executive Operating Graph** | Turn the Board mandate into bounded missions, expert routing, independent review, shared state, and explicit escalation | CEO, mission owners, and reviewers | Board and CEO contract, mission packets, shared-state records, graph rewrite rules, Board briefs |
 | **Customer Career Strategy Brief** | Explain what career strategy currently governs the user's Radar and Pursuits, why, and what changed | End user | Desired outcome, supported lanes, market thesis, baseline, proof capital, Radar rules, active bets, learning, one next action |
@@ -112,6 +112,7 @@ The Strategy Center and Career Strategy Brief can later become responsive produc
 | What product, journey, schema, architecture, offer, acquisition, and delivery corrections govern after Matt's founder review? | 16 Founder Feedback Product Reset |
 | How will the public multi-user alpha, job-supply graph, multi-path scoreboards, document system, notification cadence, and low-cash growth path work? | 17 Public Multi-User Alpha, Job Supply, and Growth Architecture |
 | What literal customer journey, account lifecycle, routes, states, profile model, Home architecture, and critical path now govern the Career OS? | 18 Career OS Customer Journey, Screen-State Architecture, and Critical Path |
+| What free-AI safety foundation exists, which providers are candidates, and what exact gate controls any live connection? | 19 Free AI Foundation and Provider Gate |
 
 ## Expert council and decision rights
 

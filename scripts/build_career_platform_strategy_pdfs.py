@@ -33,9 +33,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "docs" / "career-platform" / "strategy-system"
 OUTPUT_DIR = ROOT / "output" / "pdf"
 
-FULL_OUTPUT = OUTPUT_DIR / "My_Way_Ahead_Strategy_System_2026-07-20.pdf"
-START_OUTPUT = OUTPUT_DIR / "My_Way_Ahead_Start_Here_2026-07-20.pdf"
-RESET_OUTPUT = OUTPUT_DIR / "My_Way_Ahead_Prototype_Experience_Reset_2026-07-20.pdf"
+FULL_OUTPUT = OUTPUT_DIR / "Way_Ahead_Strategy_System_2026-07-29.pdf"
+START_OUTPUT = OUTPUT_DIR / "Way_Ahead_Start_Here_2026-07-29.pdf"
+RESET_OUTPUT = OUTPUT_DIR / "Way_Ahead_Product_Experience_Reset_2026-07-29.pdf"
 
 SOURCE_FILES = [
     SOURCE_DIR / "00-start-here.md",
@@ -44,7 +44,7 @@ SOURCE_FILES = [
     SOURCE_DIR / "03-full-funnel-product-experience.md",
     SOURCE_DIR / "04-opportunity-intelligence-trust-ai-data.md",
     SOURCE_DIR / "05-business-model-validation-growth.md",
-    SOURCE_DIR / "06-delivery-roadmap-matt-case-study.md",
+    SOURCE_DIR / "06-delivery-roadmap-founder-dogfooding.md",
     SOURCE_DIR / "07-evidence-source-register.md",
     SOURCE_DIR / "08-measurement-learning-system.md",
     SOURCE_DIR / "09-founder-strategy-center-delivery-control.md",
@@ -54,9 +54,13 @@ SOURCE_FILES = [
     SOURCE_DIR / "13-prototype-experience-audit-2026-07-19.md",
     SOURCE_DIR / "14-company-organization-and-prototype-reset-plan-2026-07-19.md",
     SOURCE_DIR / "15-prototype-v2-implementation-and-qa-2026-07-19.md",
+    SOURCE_DIR / "16-founder-feedback-product-reset-2026-07-21.md",
+    SOURCE_DIR / "17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md",
+    SOURCE_DIR / "18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md",
+    SOURCE_DIR / "19-free-ai-foundation-and-provider-gate-2026-07-29.md",
 ]
 
-RESET_SOURCE_FILES = SOURCE_FILES[-2:]
+RESET_SOURCE_FILES = SOURCE_FILES[13:]
 
 INK = HexColor("#102127")
 DEEP = HexColor("#0B171C")
@@ -617,17 +621,17 @@ class StrategyDocTemplate(BaseDocTemplate):
 
 
 def cover_story(styles: dict[str, ParagraphStyle], short: bool = False, packet: bool = False) -> list:
-    title = "My Way Ahead\nStrategy System"
+    title = "Way Ahead\nStrategy System"
     subtitle = (
         "A self-contained operating strategy for the market, customer, brand, business model, "
-        "full funnel, opportunity intelligence, trust, AI, delivery, measurement, founder control, and Matt's first case study."
+        "full funnel, opportunity intelligence, trust, AI, delivery, measurement, founder control, and Matt's founder dogfooding."
     )
-    kicker = "FOUNDER REVIEW  /  VERSION 1.3"
+    kicker = "FOUNDER REVIEW  /  VERSION 1.4"
     if short:
-        title = "My Way Ahead\nStart Here"
+        title = "Way Ahead\nStart Here"
         subtitle = "The decisions, corrections, standards, authority, and next gates that govern the company and product."
     if packet:
-        title = "My Way Ahead\nExperience Reset"
+        title = "Way Ahead\nProduct Experience Reset"
         subtitle = (
             "The screenshot-led prototype audit, actual company organization, cross-functional evaluation plan, "
             "offer hypotheses, release gates, and next build sequence."
@@ -641,10 +645,10 @@ def cover_story(styles: dict[str, ParagraphStyle], short: bool = False, packet: 
         Spacer(1, 0.26 * inch),
         Table(
             [
-                [Paragraph("Research current through", styles["cover_meta"]), Paragraph("July 19, 2026", styles["cover_meta"])],
-                [Paragraph("Working brand", styles["cover_meta"]), Paragraph("My Way Ahead; mywayahead.com candidate; provisional only", styles["cover_meta"])],
-                [Paragraph("Case study zero", styles["cover_meta"]), Paragraph("Matt Dimock", styles["cover_meta"])],
-                [Paragraph("Current build gate", styles["cover_meta"]), Paragraph("Prototype comprehension and experience reset", styles["cover_meta"])],
+                [Paragraph("Research current through", styles["cover_meta"]), Paragraph("July 29, 2026", styles["cover_meta"])],
+                [Paragraph("Working brand", styles["cover_meta"]), Paragraph("Way Ahead; provisional and not legally cleared", styles["cover_meta"])],
+                [Paragraph("Founder dogfooding", styles["cover_meta"]), Paragraph("Matt Dimock using the same member product", styles["cover_meta"])],
+                [Paragraph("Current build gate", styles["cover_meta"]), Paragraph("Multi-user vertical slice and product experience reset", styles["cover_meta"])],
             ],
             colWidths=[1.55 * inch, 3.75 * inch],
             hAlign="LEFT",
@@ -672,13 +676,13 @@ def build_pdf(output: Path, sources: list[Path], short: bool = False, packet: bo
         output,
         pagesize=letter,
         title=(
-            "My Way Ahead Prototype Experience Reset"
+            "Way Ahead Product Experience Reset"
             if packet
-            else ("My Way Ahead Strategy System" if not short else "My Way Ahead Start Here")
+            else ("Way Ahead Strategy System" if not short else "Way Ahead Start Here")
         ),
         author="Matt Dimock and Codex expert council",
         subject="Evidence-grounded career opportunity platform strategy",
-        creator="My Way Ahead Strategy System",
+        creator="Way Ahead Strategy System",
     )
     story = cover_story(styles, short=short, packet=packet)
     if not short and not packet:

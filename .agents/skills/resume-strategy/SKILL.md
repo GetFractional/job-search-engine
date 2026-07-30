@@ -6,9 +6,9 @@ description: Create role-specific resume strategy before drafting, including pos
 # Resume Strategy Skill
 
 ## Project Defaults
-- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
-- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
-- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Start with `job-search-scenarios` when the user asks to find, score, prepare, approve, or later submit a job pursuit through Way Ahead.
+- Use Google Chrome for signed-in employer, LinkedIn, or job-board work when login state, Cloudflare, challenge prompts, or extension behavior matter. Observe Teal only when Matt explicitly requests bounded, read-only competitor research; never mutate it or use it for Matt's operating state.
+- Keep Way Ahead as the operating system for jobs, analyses, pursuits, assets, approvals, outcomes, and follow-ups. Teal is competitor research only and may not hold or mutate Matt's current job-search state.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 - Calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required. Do not use stale shorthand like `15+ years`.
@@ -28,7 +28,7 @@ Create a role-specific resume strategy before drafting.
 - Full JD
 - Research brief
 - Fit scorecard
-- Teal Job Matcher notes, if available
+- Current Way Ahead profile, evidence library, resume variants, and match-gap analysis
 
 ## Process
 1. Confirm role lane and mandate.
@@ -39,8 +39,8 @@ Create a role-specific resume strategy before drafting.
 6. Identify unsupported keywords to avoid.
 7. Map every chosen metric or story to the correct employer, client, or brand context before drafting.
 8. Remove redundant positioning themes before drafting, especially repeated consulting-summary language.
-9. Plan a two-page reverse-chronological resume and identify which lower-value proof can be cut or expanded after Teal preview/export shows actual length.
-10. Define Teal Job Matcher moves: selected existing bullets to reuse, summary changes, bullet changes, and Skills & Interests additions.
+9. Plan a two-page reverse-chronological resume and identify which lower-value proof can be cut or expanded after Way Ahead preview/export shows actual length.
+10. Define Way Ahead Resume Studio moves: approved evidence to reuse, summary changes, bullet changes, and categorized skill additions.
 11. Prioritize missing truthful hard skills first, then supporting soft skills, business terms, and platforms/tools.
 12. Separate score-improvement actions into:
    - reuse existing bullets
@@ -57,7 +57,7 @@ Create a role-specific resume strategy before drafting.
 - Keyword strategy
 - Claim safety table
 - Drafting instructions
-- Prioritized score-improvement suggestions for approval when shared Teal content would need to change
+- Prioritized fit and asset improvements, with approval states for any shared profile or evidence-library change
 
 ## Safety
 Do not draft from narrative strategy alone. Strategy must cite source-backed proof.

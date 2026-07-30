@@ -1,5 +1,7 @@
 # Phase 2 Decision Receipt Data, Telemetry, And Test Contract
 
+> **Current authority amendment, 2026-07-29:** This proposed contract is retained as historical input. The [Way Ahead company operating system](../company-os/my-way-ahead-company-operating-system-2026-07-20.md), current multi-tenant schema, and Strategy Chapters 16 through 19 control implementation. Matt is founder-dogfooding the same member data and workflow contract, not a separate `Case Study Zero`; Terry is one consented independent tester with an isolated tenant; and adaptive evidence-based work in progress replaces any permanent numeric initiative cap. Teal and other competitors are inspiration only, never product architecture or an operating dependency.
+
 Last updated: 2026-07-16
 Status: proposed implementation contract, not yet promoted
 Primary owner: Phase 2 product lead

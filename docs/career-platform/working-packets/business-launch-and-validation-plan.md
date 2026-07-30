@@ -1,5 +1,7 @@
 # Phase 2 Business Launch And Validation Plan
 
+> **Current authority amendment, 2026-07-29:** This unpromoted staging packet is retained as decision history. The [Way Ahead company operating system](../company-os/my-way-ahead-company-operating-system-2026-07-20.md) and Strategy Chapters 16 through 19 control current execution. Way Ahead is an owned multi-user SaaS, Matt founder-dogfoods the same member product rather than operating as a separate `Case Study Zero`, and Terry is one consented independent early tester rather than staff or a concierge operator. Work in progress is adaptive and evidence-based; no permanent numeric initiative cap applies. Human-guided offers, prices, billing, paid models, broad recruitment, indexing, partner enrollment, and employer-facing action remain separately gated.
+
 Status: decision-ready staging plan; not yet merged authority
 Date: 2026-07-16
 Canonical product base: `origin/main@2a1b2b4f5ee808cb17def805a02516b29271d868`

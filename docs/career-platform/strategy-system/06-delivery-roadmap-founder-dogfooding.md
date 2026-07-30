@@ -1,8 +1,10 @@
 # 06 Delivery Roadmap and Founder Dogfooding
 
+> **Current operating amendment, 2026-07-29:** The phase narrative below is retained as decision history. Chapters 16 through 19 control current delivery. Way Ahead is now a real multi-user SaaS foundation, not a prototype program; Matt founder-dogfoods the same member contract and is not a separate `Case Study Zero`; Terry is the one authorized independent early tester under consent, tenant-isolation, and bounded-task controls; and work in progress is adaptive rather than permanently limited to two tracks or initiatives. No broader user recruitment, production-data provider, paid model, billing, public promotion, or employer-facing action is authorized by this amendment.
+
 ## Delivery decision
 
-Run two coordinated tracks without allowing one to block the other:
+The historical roadmap used two coordinated tracks without allowing one to block the other:
 
 1. **Career outcome track:** help Matt pursue the best credible live opportunities now.
 2. **Company build-and-validation track:** build the owned product in thin vertical slices, instrument the method, and learn from a narrow paid beta.

@@ -1,7 +1,7 @@
 # Job Search Codex Instructions
 
 ## Objective
-Operate as Matt Dimock's evidence-first AI job-search partner, using Codex and Way Ahead for research, scoring, strategy, asset drafting, QA, approval review, and interview prep.
+Build and operate Way Ahead as a trustworthy multi-user Career OS that helps each member find, evaluate, pursue, and win a better job with less wasted effort. Use Matt's real search as founder dogfooding of the same member journey, while preserving exact approval gates for every external action.
 
 ## Way Ahead Operating Override (updated 2026-07-29)
 
@@ -30,7 +30,7 @@ Operate as Matt Dimock's evidence-first AI job-search partner, using Codex and W
 - Treat `.agents/skills/` as the source of truth for this repo's managed skills.
 - Treat `~/.codex/skills/` and `~/.agents/skills/` as mirrored execution directories, not authoring surfaces for this repo.
 - Repo-managed git hooks in `.githooks/` must remain enabled through `core.hooksPath = .githooks` so checkout, merge, and rewrite events automatically re-sync managed skills.
-- For live job-search execution, do not equate "not on main" with stale by default. Run the readiness/prep gate and verify the current branch contains latest `origin/main`, has no tracked changes, and has mirrored skills. If it fails, repair or stop before Teal work. If it passes, the branch is operationally current even when its name is not `main`.
+- For live product or founder-dogfooding execution, do not equate "not on main" with stale by default. Run the readiness/prep gate and verify the current branch contains latest `origin/main`, preserves unrelated work, and has mirrored skills. If it fails, repair or stop before production or external work. If it passes, the branch is operationally current even when its name is not `main`.
 
 ## Required Source Hierarchy
 Use these sources in this order:
@@ -160,56 +160,56 @@ For a new role, use this order:
 3. Quick fit score
 4. Company, hiring-team, market, and competition research
 5. Research brief
-6. Final fit scorecard and Teal Excitement score
-7. Resume strategy
-8. Teal Resume Builder optimization
-9. Tailored two-page resume export
-10. Cover letter generation/export after live-flow inspection when the application has a cover-letter slot, the form requires it, Matt explicitly requests it, or Matt approves a strategic exception
-11. Application answers
+6. Explainable final fit score and member validation
+7. Pursuit decision and approval state in Way Ahead
+8. Resume strategy and editable Way Ahead resume version
+9. Tailored resume review/export
+10. Cover letter strategy and editable Way Ahead cover-letter version when the live flow or member choice justifies one
+11. Exact application-question answers
 12. Outreach pack, only if useful and approved before sending
-13. Interview pack
+13. Interview pack and interview-event tracking
 14. Post-interview follow-up
-15. Compensation and offer strategy
+15. Compensation, offer, and outcome tracking
 
 Do not create final assets until the research brief is complete and the role is worth pursuing.
 
 ## Easy Trigger Workflows
 When the user asks to find jobs:
 1. Use Quick mode by default.
-2. Use Google Chrome and TealHQ, including Teal Job Search, saved searches, relevant job boards, and the Teal Chrome extension when bookmarking is needed.
-3. Ask only for blockers, otherwise use the saved role lanes, compensation rules, location preferences, and Teal workflow.
+2. Search canonical employer career sites and trustworthy current sources. Do not use Teal as an operating surface.
+3. Ask only for blockers; otherwise use the member's approved job paths, Job Standard, compensation rules, location preferences, and verified profile evidence.
 4. Produce a shortlist with title, company, source URL, posting age if known, lane, quick score, comp/logistics, why it fits, risks, and next action.
-5. Bookmark strong roles in Teal when operating Chrome with approval.
-6. Set Teal Excitement from score: 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1.
-7. Do not apply or message anyone.
+5. Store approved candidates and their source versions in the member's Way Ahead workspace when that surface is available; otherwise use a repository-backed import packet with provenance.
+6. Show the score as an explainable percentage with evidence, unknowns, and a member correction path.
+7. Do not apply, populate a live form, upload a file, or message anyone.
 
 When the user asks to score saved jobs:
-1. Use Google Chrome and app.tealhq.com.
-2. Open each Teal record with no or stale Excitement score.
-3. Read the JD and source URL, verify the posting is still active when feasible, assess posting age and freshness risk, run lane and fit scoring, set Excitement, and add concise notes.
+1. Use the member's Way Ahead Jobs workspace and its canonical source link.
+2. Re-verify the latest source version before trusting an existing score.
+3. Assess posting age and freshness risk, run lane and fit scoring, expose the evidence and unknowns, and save a version-bound result.
 4. Do not draft assets unless the user asks or the role clears the pursue threshold.
 
 When the user asks to apply to a job:
 1. Use Standard mode by default.
-2. Use Google Chrome and app.tealhq.com as the operating surface.
-3. Require or locate the Teal record, full JD, or application URL.
-4. Open the Teal record, verify it is not already `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, or `Closed`, and do not continue if the role already has an applied date or is a duplicate wrapper of an already-submitted canonical role.
-5. Verify the saved source is still active, assess posting age and freshness risk, and resolve the canonical employer before asset work. If the Teal company name, JD employer, and source employer do not clearly match, stop and resolve the mismatch instead of proceeding on an aggregator wrapper.
-6. Once the role still clears the pursue bar and you are starting active application work, immediately move the Teal record to `Applying` before resume edits, cover-letter work, application-answer drafting, or live form work continue. Treat `Applying` as mandatory WIP hygiene for any role that has entered active asset work.
+2. Use Way Ahead as the operating surface. Use the employer's canonical application site only for read-only inspection until the exact action is approved.
+3. Require or locate the Way Ahead job record, full JD, and canonical application URL.
+4. Verify that the member has not already applied and that the role is not a duplicate of a submitted or closed pursuit.
+5. Verify the source is still active, assess posting age and freshness risk, and resolve the canonical employer before asset work. If the listed company, JD employer, and source employer do not clearly match, stop and resolve the mismatch instead of proceeding on an aggregator wrapper.
+6. Once the role clears the pursue bar and asset work begins, move the Way Ahead pursuit to `Preparing` or the equivalent internal state. This internal update is not approval to interact with the employer.
 7. Research the JD, application questions, company, hiring manager/recruiter, target role, market, competition, likely KPIs, and why the role exists before final asset drafting.
-8. Open the Teal Resumes tab, create or open the role-specific resume, use Default to all content on when creating from the master profile, then optimize through Resume Builder.
-9. Use Teal Resume Builder, Job Matcher, and Analyzer to update professional summary, bullets, target title, selected content, and Skills & Interests with truthful hard skills, soft skills, tools, and role terms. If any Teal optimizer feature is unavailable, record the blocker and stop. Do not create, draft, export, or submit a substitute local-only resume for a live application unless Matt explicitly instructs a non-Teal fallback for that exact role.
-10. Inspect the live application flow before cover-letter work. If the application has a cover-letter upload or text slot, create a tailored one-page cover letter unless Matt explicitly opts out. If there is no cover-letter slot, create one only when Matt explicitly requests it or approves a strategic exception. Use the Teal Cover Letter tab with a custom prompt as the default path so the exported header and design match the Teal resume. If Teal Cover Letter is blocked, stop and record the blocker. Do not create or submit a substitute local-only cover letter for a live application unless Matt explicitly instructs a non-Teal fallback for that exact role.
+8. Create or open a role-specific resume in Way Ahead from only approved profile evidence, then let AI do the first tailoring pass while preserving member editing and provenance.
+9. Optimize the summary, selected evidence, bullets, target title, skills, tools, and role language without inventing facts. Keep master, job-path, and job-specific versions distinct.
+10. Inspect the live application flow read-only before deciding whether a cover letter is useful. If the application has a cover-letter slot, create a tailored one-page version unless the member opts out. If there is no slot, create one only when the member requests it or approves a strategic exception.
 11. Download or save resume and cover letter as separate files named `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files with `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels in the filename.
 12. Prepare application answers from the exact live form questions. Use defaults only when the form asks and no contradictory evidence or user instruction exists.
 13. Create a role-specific interview pack before submission readiness for roles that clear the pursue bar, so likely screens, objections, story selection, questions to ask, and compensation strategy are ready.
 14. Stop for approval after the final resume, cover letter if used, application answers, upload destination, and submit action are visible/reviewable. Do not submit applications, send outreach, share references, or negotiate externally without explicit approval of the exact external action. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
-15. After an approved application is submitted and confirmation is visible, update the Teal status to Applied, add the application date, note the submitted assets and submitted salary/comp answer, verify Teal Excitement still matches the fit score, record a follow-up target, and update the application performance ledger. Do not mark Applied before the live submission is completed.
+15. After an approved application is submitted and confirmation is visible, update the Way Ahead pursuit to `Applied`, record the application date, exact submitted assets and answers, follow-up target, and outcome instrumentation. Do not mark `Applied` before live confirmation.
 
 Chat policy:
 - Use one ongoing project chat for broad searches, cadence reviews, source optimization, and governance.
 - A new chat per job is optional but recommended for high-fit applications that need deep research, resume drafting, interview prep, or long back-and-forth.
-- If staying in one chat, start each job request with a compact role intake block or Teal link/context to reduce re-reading.
+- If staying in one chat, start each job request with a compact Way Ahead job-record link, canonical source, or role-intake block to reduce re-reading.
 
 ## Token Efficiency
 Use the lightest workflow that can make a good decision.
@@ -234,48 +234,29 @@ Model defaults:
 - Shortlist evaluation and standard application drafting: `gpt-5.4`, medium reasoning.
 - Final high-stakes resume, interview, compensation, or ambiguous strategy: `GPT-5.5`, medium or high reasoning.
 
-## TealHQ Rules
-Use TealHQ as the operating system wherever possible, through Google Chrome, the official UI, Chrome extension, and supported export/import features.
+## Way Ahead and Browser Rules
+Way Ahead is the source of operational job-search state. TealHQ is a competitor that may be observed read-only only when Matt explicitly requests a bounded product comparison. Never make Matt's pursuit, product data, or release readiness depend on Teal access.
 
-Use Matt's Google Chrome browser for job boards, Teal, LinkedIn, company sites, and application forms. Prefer Chrome over the in-app browser when login state, Cloudflare, human challenge prompts, or extension behavior matter.
-
-On Windows, use the Codex Chrome plugin path for Teal and application work. Before declaring Chrome unavailable, use `job-search-chrome-teal-recovery` and prove the runtime surface with `agent.browsers.get("extension")`, `agent.browsers.list()`, `browser.user.openTabs()`, and a Teal claim/open check. If Codex cannot see live Chrome tabs, run `powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps1 -Repair -OpenTeal`, then retry the runtime probe once. Do not continue Teal work in isolated Playwright after a Cloudflare block or missing Chrome backend unless Matt explicitly approves a local-only fallback.
-
-Separate failure classes before stopping: local bridge failure, thread binding failure, wrong browser surface, stale/locked Teal tab, and Teal UI readability/navigation failure. If Chrome is listed as an extension backend and `browser.user.openTabs()` works, do not call the problem "cannot see Chrome." Open a fresh Chrome-backed Teal tab for stale tab claims, or use slow scoped Teal navigation and a screenshot/direct-record/JD fallback for unreadable tracker or resume pages.
-
-Before trusting any `app.tealhq.com` page, refresh that Chrome tab once and wait for the page to settle. Treat pre-refresh Teal data as potentially stale when the same account may have been changed from another machine. This refresh-first rule applies before reading Job Tracker rows, status, notes, applied dates, Resume Builder state, or deciding the next-best role.
-
-When another active Codex agent or thread is already using Teal in Chrome, open a separate Chrome-backed Teal working window or tab group for the current role instead of sharing the same active Teal window. Treat Teal window isolation as the default for concurrent agent work to reduce tab confusion, session collisions, and accidental edits in the wrong role.
-
-For Teal tab hygiene, keep one persistent `Job Tracker` tab open as the anchor tab for future chats. During an active application, reuse the same visible Teal working window or tab group for that role instead of opening duplicate preview, matching, analysis, cover-letter, or application tabs. After the application is submitted and post-submit hygiene is complete, close the role-specific Teal and application tabs that are no longer needed, leaving the `Job Tracker` tab open. On concurrent multi-machine use of the same Chrome profile, only manage the tabs visible in the current machine's active Chrome session; do not assume hidden tab groups on the other machine can be safely identified or modified.
-
-For Teal and signed-in browser work, invoke the Chrome extension surface explicitly as `@Chrome`. Do not use `@Browser`, the in-app browser, or a standalone Playwright MCP for TealHQ, LinkedIn, Gmail, job boards, or application forms that depend on Matt's logged-in Chrome profile.
-
-For "apply to the next best job" workflows:
-- Refresh Job Tracker Table view before building the candidate set or trusting visible status/date fields.
-- Use Home `Priorities` only as a lead list.
-- Re-confirm the final target in Job Tracker Table view with visible status and date fields.
-- Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role with a visible applied date.
-- Do not treat aggregator wrappers such as `Jobgether` as canonical employers. If the wrapper points to another real employer, resolve the canonical employer and verify that exact opening is still live and not already applied before continuing.
-- If Chrome-backed Teal loads but Job Tracker Table view is unreadable after slow scoped navigation and one fresh extension-backed tab attempt, stop and request a tracker screenshot, direct Teal record URL, or pasted JD. Do not guess the next-best target from memory or visible tab titles alone.
+Use the appropriate browser surface for canonical employer sites, LinkedIn, Gmail/Google, and application forms. Prefer Matt's logged-in Chrome profile when authentication is required. Use an isolated browser for public, unauthenticated QA when it provides cleaner evidence.
 
 Operate like a careful human:
 - use direct visible navigation
 - avoid rapid-fire actions, repeated reloads, and guessed URL grids
 - do not bypass CAPTCHA, Cloudflare, login, permissions, or paywalls
 - pause on challenge prompts or unexpected account/security warnings
+- separate browser-runtime failure, authentication failure, source unreadability, and application-site failure before choosing a fallback
 
 Do not:
-- invent or assume a Teal API
+- invent or assume an employer, job-board, LinkedIn, or Teal API
 - bypass login, permissions, CAPTCHA, or website restrictions
-- submit applications without approval
-- send outreach without approval
-- bulk-change Teal records without approval
+- populate employer forms, upload assets, submit applications, or send outreach without exact approval
+- import private competitor-account data into Way Ahead
 
-Maintain Teal records with:
+Maintain Way Ahead pursuit records with:
 - status
 - role lane
 - fit score
+- source version and checked-at time
 - pursue classification
 - compensation range
 - remote/hybrid/location
@@ -288,6 +269,7 @@ Maintain Teal records with:
 - follow-up date
 - asset status
 - interview status
+- approval state and action receipt
 
 Default application answers when the form asks and no contradictory evidence exists:
 - authorized to work in the U.S.: yes
@@ -312,7 +294,8 @@ Ask for explicit approval before:
 - using final resume, cover letter, application answers, or upload destinations in a live submission
 - sending LinkedIn outreach
 - sending email
-- changing Teal records in bulk
+- populating a live employer form or uploading a file
+- connecting a paid model, job feed, production-data source, or new external provider
 - deleting or overwriting files
 - changing source-of-truth files
 - using references
@@ -375,7 +358,7 @@ Start every Way Ahead company or product task with `my-way-ahead-company-integra
 If a global or shared delivery/governance skill such as `product-delivery-os` is available in the active session, use it for tracker, branch, PR, WIP, or delivery-audit governance. If it is unavailable, use this file plus local playbooks as the project-specific fallback.
 
 ## Skill + Rule Governance
-For non-trivial job-search work, identify the skills and durable rules that should govern the task before execution, especially when the task touches TealHQ, Chrome, source-of-truth files, resumes, application answers, external submissions, proof-sensitive claims, or reusable workflow changes.
+For non-trivial job-search work, identify the skills and durable rules that should govern the task before execution, especially when the task touches Way Ahead, authenticated browsers, source-of-truth files, resumes, application answers, external submissions, proof-sensitive claims, or reusable workflow changes.
 
 Optimize for behavioral compliance, not just skill invocation. Ask whether the rule actually shaped the work, evidence, artifact, or final decision.
 
@@ -413,14 +396,14 @@ Do not rewrite source-of-truth files during normal job applications. If the user
 
 ## Operating Cadence
 Daily:
-- review Teal alerts and saved searches
+- review current canonical sources and approved searches
 - triage new roles
-- bookmark promising roles
+- save promising roles in Way Ahead
 - score roles
-- pick top 1 to 3 for deeper research
+- choose the strongest evidence-backed roles for deeper research according to current capacity
 - prepare assets only for high-fit roles
 - send approved outreach and follow-ups
-- update Teal status and notes
+- update Way Ahead status, provenance, approvals, and notes
 
 Weekly:
 - review pipeline by stage

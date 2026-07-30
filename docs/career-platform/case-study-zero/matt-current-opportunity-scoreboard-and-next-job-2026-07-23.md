@@ -1,5 +1,7 @@
 # Matt Case Study Zero: Current Opportunity Scoreboard and Next Job
 
+> **Historical snapshot, superseded 2026-07-29:** This artifact preserves a dated opportunity decision. Matt now founder-dogfoods the same multi-user Way Ahead member journey; his search is not a separate customer type, package, or efficacy proof. Refresh every role and source before reuse, and store current operating state in Way Ahead or its repository-backed import evidence.
+
 Review date: 2026-07-23  
 Decision owner: Matt Dimock  
 Research mode: Read-only, source-verified public research  
