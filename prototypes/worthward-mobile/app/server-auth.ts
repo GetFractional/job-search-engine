@@ -20,8 +20,8 @@ export class FounderAccessError extends Error {
 
 /**
  * FounderAccessError is retained as the compatibility name used by the
- * existing API routes. Access is now account-level; owner authorization is
- * enforced only by the owner-only repository action.
+ * existing API routes. Access is account-level; owner authorization is
+ * enforced only by explicitly owner-reserved repository actions.
  */
 export { FounderAccessError as UserAccessError };
 

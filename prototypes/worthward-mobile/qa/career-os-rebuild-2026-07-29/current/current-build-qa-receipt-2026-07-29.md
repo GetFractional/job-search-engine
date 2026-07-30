@@ -1,10 +1,10 @@
 # Way Ahead Current-Build QA Receipt
 
 Run date: 2026-07-30
-Build: final local source on `codex/way-ahead-p1-career-os`
+Build: GitHub candidate `2925c9c` on `codex/way-ahead-p1-career-os`
 Maker evidence: clean production suite plus current in-app browser evidence
 Release scope: bounded, non-indexed, authenticated alpha
-Production deployment: not yet performed in this receipt
+Production deployment: Sites version 14 on 2026-07-30
 
 ## Maker result
 
@@ -107,6 +107,20 @@ real hosted Terry-account or broad efficacy test.
 | Conflicted-source approval INSERT and UPDATE rejection | PASS |
 | Current member approval endpoint | FAIL CLOSED, HTTP 409 with no mutation |
 
+## Hosted technical acceptance
+
+Production version 14 now serves
+[https://wayahead.getfractional.co](https://wayahead.getfractional.co). The
+custom domain, provider routing, and SSL report active. Public Home, How It
+Works, and Career Tools returned HTTPS 200. Signed-out `/app/home` returned the
+expected 307 to ChatGPT sign-in. The client-supplied
+`oai-authenticated-user-email` application header returned HTTP 401 on
+`/api/workspace` and `POST /api/approvals`. Rendered metadata
+contains `noindex`; HSTS, CSP, clickjacking, MIME, referrer, and permissions
+headers are present.
+
+[Hosted deployment and access receipt](hosted-deployment-and-access-receipt-2026-07-30.md)
+
 ## Accessibility, privacy, and safety boundary
 
 Verified in this slice:
@@ -141,20 +155,25 @@ browser coverage remain real-device checks.
 5. A live AI provider, production email, billing, affiliate enrollment, public
    indexing, outreach, form population, upload, and application submission are
    disabled.
-6. Real hosted two-account proof, Terry's consented test, and physical-phone
-   QA remain post-deployment gates.
+6. Real hosted owner and second-account proof, Terry's consented test, and
+   physical-phone QA remain after the bounded technical deployment pass.
 7. `Way Ahead` remains provisional pending formal clearance; current collision
    risk is material.
 
 ## Independent verdict
 
-Independent Quality issued a **conditional pass** to deploy commit `3c92e3f`
-solely for hosted acceptance testing. The prior approval-integrity blocker is
-corrected: conflicted employer-source versions now fail closed at approval
-INSERT and UPDATE, member reviewability requires a verified source, and the
-unfinished approval workflow is disabled and removed from the current public
-promise.
+Independent Quality issued a **PASS for Matt-only hosted laptop and mobile QA
+handoff** on Sites production version 14. GitHub candidate `2925c9c` contains
+the reviewed app source, and Sites source mirror `c0b5dc5` has the same app
+tree. The prior approval-integrity blocker is corrected: conflicted
+employer-source versions now fail closed at approval INSERT and UPDATE, member
+reviewability requires a verified source, and the unfinished approval workflow
+is disabled and removed from the current public promise.
 
-This is not a public-alpha completion verdict. Hosted two-account isolation,
-account lifecycle, spoof-header rejection, physical-phone behavior, a settled
-job-detail capture, rollback evidence, and a fresh hosted verdict remain open.
+This is not a public-alpha completion verdict. Client-supplied application-auth
+header rejection, domain, SSL, headers, public routes, `noindex`, immutable
+provenance, fallback health, and saved rollback selection now pass. Real owner
+and second-account isolation, account lifecycle, an authenticated
+`/api/approvals` 409 plus D1 no-mutation readback, physical-phone behavior, a
+settled job-detail capture, a code-and-D1 rollback drill, and a fresh final
+verdict remain open.

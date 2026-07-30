@@ -1,21 +1,41 @@
-# Way Ahead Founder Production
+# Way Ahead Career OS Alpha
 
-Way Ahead is an owner-only production SaaS for finding work worth pursuing, testing the real fit, and preparing a stronger application without overstating the candidate's record. The product name remains provisional and legally uncleared.
+Way Ahead is a production-deployed multi-user alpha candidate for finding jobs
+worth pursuing, testing the evidence-backed fit, and preparing stronger
+truthful application materials. It is designed to give each authenticated
+member a separate personal workspace. Local two-member isolation passes; real
+hosted owner and second-account isolation remain unverified. The product name
+remains provisional and legally uncleared.
 
-This release uses Matt Dimock's real career record and one canonical employer opportunity. It does not import customer fixtures into the production application. Teal is not an operating dependency; it may be studied only as competitor evidence.
+Matt founder-dogfoods the same member product and data contract. His account is
+not a separate customer-facing mode or efficacy proof. This release does not
+import customer fixtures into the production application. Teal is not an
+operating dependency; it may be studied only as competitor evidence.
 
 ## What works
 
-- Sign in with ChatGPT, enforced at the hosting boundary and again by an owner-email allowlist.
-- Durable D1 storage for the career profile, Job Standard, career paths, source-versioned jobs, analyses, pursuits, assets, exact packages, approvals, and audit receipts.
-- Direct intake of canonical Greenhouse employer URLs through its public read endpoint.
-- A five-surface responsive workspace: Today, Jobs, Pursuit, Direction, and Profile.
-- Light, Dark, and System appearance choices.
-- Fingerprinted application-review packages whose approval is invalidated when the package changes.
+- Public Home, How It Works, and Career Tools pages before sign-in.
+- Self-service ChatGPT sign-in with member-by-default provisioning and a
+  tenant-scoped D1 workspace.
+- Resumable six-step onboarding, structured multi-role Career Evidence, Job
+  Standard, and multiple Job Paths.
+- Direct current-source intake for supported Greenhouse, Lever, and Ashby
+  employer postings.
+- Stable responsive routes for Home, Jobs, Pursuits, Plan, Career Profile,
+  Resume Studio, Cover Letter Studio, and Privacy.
+- Light and Dark appearance choices, with Light as the default.
+- Editable, versioned, exportable profile-grounded résumé and cover-letter
+  drafts.
+- Account export, deletion, and explicit empty-account restart.
 
 ## Deliberate boundaries
 
-This founder release cannot submit an application, upload files to an employer, send outreach, recruit external users, collect payment, or enable billing. It stores approval records only after every package blocker has been cleared; submission remains a separately reserved external action. R2, public sharing, and production model execution are off.
+This alpha cannot approve an application package, populate or upload to an
+employer form, submit an application, send outreach, use references, collect
+payment, or enable billing. Production AI generation, recurring monitoring,
+production email, broad recruitment, and public indexing are off. The current
+member flow stops at editable drafts; employer-facing action remains a
+separately reserved external decision.
 
 ## Local development
 
@@ -48,10 +68,21 @@ npm run lint
 
 ## Deployment and rollback
 
-OpenAI Sites owns the private HTTPS deployment, Sign in with ChatGPT boundary, and D1 binding. `.openai/hosting.json` stores only the opaque Sites project ID and resource bindings. Production environment values are configured in Sites, never committed.
+OpenAI Sites owns the public HTTPS application, Sign in with ChatGPT boundary,
+and D1 binding. `.openai/hosting.json` stores only the opaque Sites project ID
+and resource bindings. Production environment values are configured in Sites,
+never committed.
 
-Deploy only an exact pushed commit and packaged build. Verify owner-only access, environment readback, source commit SHA, authenticated page access, and D1 persistence after deployment. Roll back by redeploying the prior verified Sites version; do not rewrite or delete D1 during a code rollback.
+Deploy only an exact pushed commit and packaged build. Verify public routes,
+member-by-default access, owner-reserved boundaries, tenant isolation,
+environment readback, source provenance, authenticated page access, and D1
+persistence after deployment. Roll back by redeploying the prior verified Sites
+version; do not rewrite or delete D1 during a code rollback.
 
 ## Data truth
 
-Every candidate fact, employer source version, generated asset, and approval package preserves review state and provenance. Missing dates, conflicting compensation, stale-source risk, and unverified asset hashes remain visible instead of being smoothed over. Founder bootstrap data is loaded through the authenticated product and is never committed to Git.
+Every candidate fact, employer source version, generated asset, and future
+approval package preserves review state and provenance. Missing dates,
+conflicting compensation, stale-source risk, and unverified asset hashes remain
+visible instead of being smoothed over. Founder bootstrap data is loaded through
+the authenticated product and is never committed to Git.

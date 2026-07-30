@@ -2,17 +2,19 @@
 
 # Way Ahead Career OS and Founder Dogfooding Board Packet
 
-Packet date: 2026-07-29
+Packet date: 2026-07-30
 Board and final authority: Matt Dimock
-Current hosted version: production version 13
+Current hosted version: production version 14
 Current branch: `codex/way-ahead-p1-career-os`
-Current-branch deployment: withheld pending release gates
+Deployed GitHub candidate: `2925c9c`
+Sites source mirror: `c0b5dc5`
 
 ## CEO recommendation
 
-Deploy commit `3c92e3f` as one controlled, reversible hosted-acceptance
-checkpoint. Do not invite Terry, enter real career data, enable billing, connect
-a live model, or imply package approval until the hosted gates pass.
+Keep production version 14 live as the controlled, reversible
+hosted-acceptance checkpoint and have Matt complete the real owner and
+physical-phone checks. Do not invite Terry, enable billing, connect a live
+model, or imply package approval until the remaining hosted gates pass.
 
 The branch materially improves the public-to-member journey, truth boundaries,
 stable routes, responsive experience, two-member local isolation, and AI safety
@@ -22,9 +24,9 @@ approval INSERT and UPDATE, the unfinished member approval workflow fails
 closed, and the public promise stops at editable drafts. The clean suite passes
 98 of 98 tests.
 
-Independent Quality issued a conditional pass for an exact immutable deployment
-solely to complete hosted acceptance. It is not a public-alpha completion
-verdict.
+Independent Quality issued a **PASS for Matt-only hosted laptop and mobile QA
+handoff** after the immutable deployment and bounded hosted readback. It is not
+a public-alpha completion verdict.
 
 ## Results
 
@@ -71,14 +73,18 @@ verdict.
 | Production dependency audit | PASS, zero vulnerabilities |
 | Diff whitespace check | PASS |
 | Local two-member isolation | PASS for the exercised synthetic slice |
-| Current visual evidence | PASS for the fresh 390, 768, 1440, Light/Dark, reference-comparison, populated-dashboard, Going, pursuit, Studio, and second-user slice |
-| Independent verdict | **CONDITIONAL PASS** for exact-commit hosted acceptance only |
-| Current branch deployment | Not performed |
+| Current visual evidence | CONDITIONAL PASS for the fresh 390, 768, 1440, Light/Dark, reference-comparison, populated-dashboard, pursuit, Studio, and second-user slice; the Going job-detail capture remains open |
+| Independent verdict | **PASS for Matt-only hosted laptop and mobile QA handoff**; not public-alpha completion |
+| Immutable candidate deployment | PASS, GitHub candidate `2925c9c` through Sites mirror `c0b5dc5` as production version 14 |
+| Custom domain, SSL, public routes, security headers, and `noindex` | PASS |
+| Client-supplied `oai-authenticated-user-email` rejection on deployed `/api/workspace` and `POST /api/approvals` | PASS, HTTP 401 |
 | Hosted two-real-account proof | Not performed |
 
 Evidence:
 
 - [Current-build QA receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-29/current/current-build-qa-receipt-2026-07-29.md)
+- [Hosted deployment and access receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-29/current/hosted-deployment-and-access-receipt-2026-07-30.md)
+- [ClickUp hosted-acceptance readback](../clickup-hosted-acceptance-readback-receipt-2026-07-30.md)
 - [Independent verdict](../reviews/way-ahead-current-build-independent-verdict-2026-07-29.md)
 - [Cross-device access decision](../reviews/way-ahead-cross-device-access-decision-2026-07-29.md)
 - [Skill semantic audit](../reviews/way-ahead-skill-semantic-audit-2026-07-29.md)
@@ -139,32 +145,35 @@ GPT-OSS under the exact provider and data gate. No live provider is approved.
    assessment, Pursuits, and editable drafts, but it does not yet construct or
    approve a claim-safe package or manage interview, offer, outcome, and
    learning events.
-2. The current branch is not deployed. The hosted URL still serves production
-   version 13.
+2. Production version 14 is live and passed the bounded hosted technical
+   readback, but Matt has not yet completed its authenticated owner journey.
 3. A real hosted second account has not proven SSO, onboarding, tenant
    isolation, export, deletion, and restart.
 4. Physical iPhone Safari, Android Chrome, VoiceOver, TalkBack, safe areas,
    cellular behavior, actual 200 percent zoom, reduced motion, and broad browser
    compatibility remain open.
-5. Existing production version 13 rejected a client-supplied authentication
-   email header with HTTP 401. The exact future deployment must repeat that
-   proof and add two-real-account cross-tenant tests.
+5. Production version 14 rejected the client-supplied
+   `oai-authenticated-user-email` header on `/api/workspace` and
+   `POST /api/approvals` with HTTP 401. Real
+   two-account cross-tenant tests remain open.
 6. Going cannot support final externally usable narratives until Matt confirms
    the decision-changing experience facts.
 7. Way Ahead remains a provisional name without standalone domain or legal
    clearance.
-8. Production version 13 contains older capability copy and should not be used
-   as evidence for the un-deployed branch.
+8. The in-app browser's hosted screenshot stream cropped at device-pixel scale,
+   so it was excluded. Signed-in hosted and physical-phone captures remain
+   required.
 
 ## Rollback
 
-Production version 13 remains the current hosted rollback surface. No production
-mutation was made in this slice.
+Production version 14 is current. Saved version 13 remains the immediate
+rollback candidate; it was preserved and not deleted. The rollback selection
+was verified, but a production rollback drill was not run.
 
-The current work is isolated on a Git branch and must reach coherent commits,
-remote push, draft PR, independent recheck, and immutable Sites-version
-provenance before deployment. Any source, asset, answer, destination, package,
-or consent change after approval invalidates that approval.
+The work remains isolated on a Git branch with coherent commits, remote push,
+draft PR, independent review, and immutable Sites-version provenance. Any
+source, asset, answer, destination, package, or consent change after approval
+invalidates that approval.
 
 ## Exact next approvals
 
@@ -190,9 +199,6 @@ use, submission, or negotiation.
 
 ### Reserved company gates
 
-- Hosted acceptance deployment: proceed only with the exact pushed commit and
-  preserve version 13 for rollback. This does not authorize Terry or real-data
-  testing.
 - Terry: only after hosted privacy, real two-account isolation, support,
   deletion, and rollback prerequisites pass.
 - AI provider: approve exact provider, model, cost ceiling, data class,

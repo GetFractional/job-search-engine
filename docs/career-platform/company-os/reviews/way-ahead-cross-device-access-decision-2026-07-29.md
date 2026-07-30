@@ -17,17 +17,19 @@ website itself failed on mobile.
 
 ## Durable route
 
-- Current approved production checkpoint:
+- Current approved hosted-acceptance checkpoint:
   [https://wayahead.getfractional.co](https://wayahead.getfractional.co)
 - Sites fallback:
   [https://career-evidence-founder-2026.mattdimock.chatgpt.site](https://career-evidence-founder-2026.mattdimock.chatgpt.site)
 
-Both returned HTTPS 200 on 2026-07-29. They currently serve production version
-13, not the un-deployed branch reviewed in the current build receipt.
+Both resolve to production version 14 as of 2026-07-30. The custom URL returned
+HTTPS 200 for the public site; protected member routes redirect to the ChatGPT
+sign-in flow. The custom domain, provider routing, and SSL report active.
 
-The next branch must not replace version 13 until its independent release gates
-pass. When a reviewed version is deployed, the same URLs will work from the
-laptop and phone without a tunnel.
+The exact corrected candidate is now deployed through the same URLs. They work
+independently of the device that started Codex, so Matt can open the custom URL
+directly from a laptop or phone without a tunnel. Saved production version 13
+remains the immediate rollback candidate.
 
 ## Why Tailscale is no longer recommended
 
@@ -37,8 +39,26 @@ client installation, account/session management, device enrollment, and a
 network dependency. The current hosted Sites route already provides the
 cross-device result at zero incremental spend.
 
+Tailscale's current Personal plan is free, but Tailscale describes it as
+suitable for non-commercial use. Its Standard plan is currently $8 per user per
+month. Way Ahead is a commercial product, so the Personal plan is not a sound
+production dependency even if it works technically.
+
 Keep a private tunnel only as an emergency engineering diagnostic. It is not
 the product access model.
+
+## Free tunnel alternatives
+
+- [Cloudflare Quick Tunnels](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/trycloudflare/)
+  can expose localhost at a free random `trycloudflare.com` URL for temporary
+  browser testing. Cloudflare explicitly limits them to testing and development
+  and provides no SLA or uptime guarantee.
+- A remotely managed
+  [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/routing-to-tunnel/)
+  can publish a custom hostname without a paid Cloudflare Access plan. It still
+  depends on a running local origin and adds another operational path.
+- The current Sites deployment is preferable because it is already hosted,
+  authenticated, domain-bound, and independent of Matt's laptop being awake.
 
 ## Founder and Terry check
 

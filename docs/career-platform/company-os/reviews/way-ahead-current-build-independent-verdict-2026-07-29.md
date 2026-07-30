@@ -6,14 +6,21 @@ External mutations: None
 
 ## Current verdict
 
-**CONDITIONAL PASS to deploy commit `3c92e3f` solely for hosted acceptance
-testing.**
+**PASS for Matt-only hosted laptop and mobile QA handoff on Sites production
+version 14.**
 
-This is not a public-alpha completion verdict. The corrected source may replace
-version 13 only as a controlled, reversible acceptance checkpoint. Terry,
-production career data, broad promotion, billing, model-powered generation,
-package approval, employer action, outreach, and application submission remain
-gated.
+This is a technical hosted checkpoint, not a public-alpha completion verdict.
+Terry, real career-data entry, broad promotion, billing, model-powered
+generation, package approval, employer action, outreach, and application
+submission remain gated.
+
+Immutable deployment provenance:
+
+- reviewed GitHub candidate: `2925c9c7ee4731d9c8922dc71d66898658247a86`;
+- Sites source mirror with the same app tree:
+  `c0b5dc5bbe028599bccbc908619a708da20830d1`;
+- active Sites production version: 14; and
+- saved rollback candidate: version 13.
 
 ## Corrected release blocker
 
@@ -54,20 +61,30 @@ pursuit, and editable Resume and Cover Letter draft slice is now present. The
 current release deliberately does not claim package approval, application
 submission, automated discovery, or model-powered generation.
 
-## Hosted acceptance conditions
+## Hosted readback
 
-The exact pushed commit must be deployed and then prove:
+The bounded production readback passed:
 
-1. a settled replacement for excluded screenshot 30;
-2. custom-domain and fallback URL health, SSL, security headers, and `noindex`;
-3. owner and second-member SSO, onboarding, tenant isolation, export, deletion,
-   and restart;
-4. rejection of a client-supplied spoof authentication header;
-5. physical-phone navigation, touch targets, safe areas, responsive behavior,
-   and accessibility smoke checks;
-6. code and D1 rollback evidence; and
-7. a fresh independent hosted verdict.
+1. custom-domain and fallback URL health;
+2. SSL, public routes, security headers, and `noindex`;
+3. exact immutable candidate-to-Sites provenance;
+4. rejection with HTTP 401 of a client-supplied
+   `oai-authenticated-user-email` header on `/api/workspace` and
+   `POST /api/approvals`; and
+5. preservation of Sites version 13 as the immediate rollback candidate.
 
-Version 13 remains the rollback target until those checks pass. Do not invite
-Terry or enter real career data before the hosted isolation and account
-lifecycle conditions pass.
+## Remaining release gates
+
+1. Real owner SSO, onboarding, export, deletion, and restart.
+2. Real second-account tenant isolation across profile, jobs, pursuits,
+   documents, and account lifecycle.
+3. Authenticated `/api/approvals` must return HTTP 409, followed by D1 readback
+   proving no mutation.
+4. Physical-phone touch targets, safe areas, responsiveness, cellular behavior,
+   zoom, reduced motion, and accessibility.
+5. A settled replacement for excluded screenshot 30.
+6. Version 13 code rollback and D1 recovery drill with readback.
+7. A fresh independent final verdict after those checks.
+
+Do not invite Terry or enter real career data before the real-account isolation
+and account-lifecycle gates pass.

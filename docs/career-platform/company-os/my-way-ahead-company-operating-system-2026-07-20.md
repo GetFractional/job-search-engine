@@ -122,7 +122,7 @@ Targets are internal test hypotheses until observed. A later stage does not ente
 
 | Objective | Current evidence | Advance gate | Accountable role | Guardrail |
 |---|---|---|---|---|
-| O1. Produce a founder-reviewable public multi-user alpha | Production version 13 is the older public multi-user checkpoint and rollback surface; the corrected branch remains local and undeployed | Public website, self-service SSO, isolated personal workspaces, resumable onboarding, multi-path Today, functional navigation, and document studios pass fresh responsive, theme, state, interaction, accessibility, security, physical-iPhone, and independent review | Head of Product | No prior screenshot, local pass, or owner-only verdict may be represented as current for the corrected build |
+| O1. Produce a founder-reviewable public multi-user alpha | Production version 14 serves the exact corrected candidate and passes the bounded hosted technical readback; saved version 13 is the rollback candidate; real signed-in owner, second-account, and physical-phone proof remain open | Public website, self-service SSO, isolated personal workspaces, resumable onboarding, multi-path Home, functional navigation, and document studios pass fresh responsive, theme, state, interaction, accessibility, security, physical-iPhone, and independent review | Head of Product | No prior screenshot, local pass, deployment status, or owner-only verdict may be represented as complete multi-user proof |
 | O2. Prove trustworthy job interpretation | Seven adverse fixtures and data contract are designed, not yet fully benchmarked | Field-specific thresholds pass, critical fabrication is zero, unknowns stay unknown, every material recommendation traces to source and baseline | Head of Technology with Head of Career Intelligence | Cost or capacity never silently lowers integrity |
 | O3. Advance Matt's next-best job through founder dogfooding | Eight current roles span three credible Job Paths; Going, Director, Lifecycle Marketing is the current 85/100 recommendation, with final assets blocked on Matt-only factual confirmations | The same Way Ahead member contract produces a source-verified shortlist across at least two paths, one integrated recommendation, proof gaps, claim-safe assets, exact external action ready for Matt's approval, and generalized product-friction learning | Head of Career Intelligence | No Matt-only customer UX or efficacy claim; no Teal, employer form, application, or outreach mutation without approval |
 | O4. Prove independent usability, trust, privacy, and isolation | Strategy and founder evidence exist; Matt authorized Terry to self-register, but not broader recruitment or promotion | Terry independently self-registers, consents, receives an isolated workspace, completes bounded first-user and core tasks, and reports usability/trust feedback without tenant leakage | Head of Customer | Terry is not staff, an operator, or efficacy proof; record every rescue; zero critical fabrication; later alpha expansion requires its own gate |
@@ -203,7 +203,7 @@ Way Ahead uses adaptive, evidence-based WIP. The current portfolio may contain m
 - [00 Board + Company](https://app.clickup.com/45038325/v/li/901114167805)
 - [01 Product + Delivery](https://app.clickup.com/45038325/v/li/901114167804)
 - [02 Growth + Product Validation](https://app.clickup.com/45038325/v/li/901114167807)
-- [Active: current-build visual acceptance](https://app.clickup.com/t/868ke7y0a)
+- [Active: Career OS delivery and hosted acceptance](https://app.clickup.com/t/868ke7y0a)
 - [Active validation: Founder dogfooding](https://app.clickup.com/t/868ke7y7a)
 - [Backlog: job-intelligence benchmark](https://app.clickup.com/t/868ke7yfx)
 - [Backlog: model routing and cost telemetry](https://app.clickup.com/t/868ke7ygx)
@@ -214,6 +214,9 @@ Way Ahead uses adaptive, evidence-based WIP. The current portfolio may contain m
 The adaptive-WIP tracker synchronization and retired Case Study Zero label
 correction completed on July 29 with read-after-write proof in the
 [ClickUp adaptive-WIP receipt](clickup-adaptive-wip-readback-receipt-2026-07-29.md).
+The July 30 deployment, task rename, founder-dogfooding checkpoint, and list
+terminology correction are proven in the
+[hosted-acceptance ClickUp receipt](clickup-hosted-acceptance-readback-receipt-2026-07-30.md).
 Future synchronizations must preserve historical comments, avoid the legacy Job
 Filter lists, and never change statuses merely to manufacture a task count.
 
@@ -298,10 +301,23 @@ Critical fabrication, false-active status, privacy or security incident, mislead
 ### Confirmed
 
 - Executive Evidence typography, color, and trust language remain design inputs. Matt rejected its connected timeline as the governing interaction pattern.
-- Production version 13 is live at `https://wayahead.getfractional.co` with a public website before sign-in, ChatGPT SSO self-registration, member-by-default accounts, tenant-bound D1 persistence, responsive navigation, Light/Dark appearance, Resume and Cover Letter Studios, and privacy controls. It is the current rollback surface while the next reviewed branch remains local.
-- The current local branch replaces query-only navigation with stable member routes, requires first-run onboarding before Home, hides scores unless analysis is trusted and bound to the latest source version, requires one explicitly confirmed structured role, and qualifies discovery and monitoring claims to current capability.
+- Production version 14 is live at `https://wayahead.getfractional.co` from
+  immutable GitHub candidate `2925c9c` through Sites source mirror `c0b5dc5`.
+  Its public routes, signed-out auth redirect, custom domain, SSL, security
+  headers, `noindex`, and rejection of a client-supplied
+  `oai-authenticated-user-email` header passed bounded hosted readback. Saved
+  version 13 remains the immediate rollback candidate.
+- The immutable deployed candidate replaces query-only navigation with stable
+  member routes, requires first-run onboarding before Home, hides scores unless
+  analysis is trusted and bound to the latest source version, requires one
+  explicitly confirmed structured role, and qualifies discovery and monitoring
+  claims to current capability.
 - The current local clean suite passes TypeScript, production build, ESLint, 98 of 98 tests, and a production dependency audit with zero vulnerabilities.
-- Fresh current-build visual evidence covers public and member surfaces at 320, 390, 768, and 1440 pixels, Light and Dark, the selected-reference comparison, menu and navigation states, onboarding, truthful empty states, and document studios.
+- Fresh current-build visual evidence covers public and member surfaces at 320,
+  390, 768, and 1440 pixels, Light and Dark, the selected-reference comparison,
+  menu and navigation states, onboarding, truthful empty states, and document
+  studios. The Going job-detail capture remains excluded pending a settled
+  hosted replacement.
 - Two synthetic members were exercised against the same local D1 database. The first has two confirmed roles, one standard, three paths, the source-verified Going role, an 83 percent preliminary assessment, a private pursuit, and draft Resume and Cover Letter versions; the second has none and is routed to onboarding with no first-member data in its rendered response.
 - A provider-neutral AI safety foundation now enforces off/synthetic/public-only/minimized-profile modes, consent-bounded facts, redaction, hard quotas, strict schemas, no tools or actions, exact replay, and evidence receipts. No live model, credential, binding, network call, or member career data is connected to a provider.
 - The production and local foundations do not charge a card, send outreach, populate or upload to an employer form, use references, submit an application, or negotiate.
@@ -330,7 +346,7 @@ This stage goal follows [OpenAI's Codex best practices](https://learn.chatgpt.co
 
 ### Controlling context
 
-- Production version 13 is the older public multi-user checkpoint and rollback surface; the corrected branch remains local and undeployed.
+- Production version 14 is the current hosted-acceptance checkpoint; saved version 13 remains the rollback candidate. Real owner, second-account, and physical-phone acceptance remain open.
 - The selected Executive Evidence typography, color, and trust language remain; its timeline interaction does not.
 - Way Ahead must own the product and user state. Teal is competitor inspiration only.
 - The current result-changing work is the Career OS vertical slice plus Matt's founder-dogfooding validation lane; Terry's independent test stays gated until deployment, privacy, isolation, support, and rollback prerequisites pass.
@@ -349,8 +365,8 @@ The stage is complete only when:
 
 1. signed-out visitors see a real public website before authentication;
 2. a new self-service SSO user enters resumable résumé-first onboarding and receives a separate private workspace;
-3. Job Standard, multiple career paths, path-segmented Today scoreboards, functional responsive navigation, Jobs, Pursuits, Career Profile, Resume Studio, and Cover Letter Studio work without sample data;
-4. current mobile, tablet, desktop, Light, Dark, System, interaction, empty, loading, error, success, accessibility, privacy, and two-user isolation evidence passes;
+3. Job Standard, multiple career paths, path-segmented Home scoreboards, functional responsive navigation, Jobs, Pursuits, Career Profile, Resume Studio, and Cover Letter Studio work without sample data;
+4. current mobile, tablet, desktop, Light, Dark, interaction, empty, loading, error, success, accessibility, privacy, and two-user isolation evidence passes;
 5. typecheck, lint, build, migrations, unit, integration, and security tests pass after corrections and Independent Quality records a verdict;
 6. `wayahead.getfractional.co` and SSL are active against the verified build with rollback proven;
 7. Matt's source-verified shortlist spans at least two career paths and one next-best role has a claim-safe résumé, cover letter when useful, application answers, and exact approval payload inside Way Ahead;
@@ -359,7 +375,7 @@ The stage is complete only when:
 
 ## Current execution controls
 
-1. Preserve the current live Sites version as the rollback baseline while the corrected source is built and verified locally.
+1. Preserve saved Sites version 13 as the immediate rollback candidate while production version 14 completes hosted acceptance.
 2. Never treat a sign-in page, deployment status, synthetic fixture, stale screenshot, or local response alone as proof of a first-user or multi-user workflow.
 3. Keep ClickUp limited to work that changes the result and satisfies the adaptive-WIP contract. ClickUp controls initiative status; repo docs control company and product truth; GitHub controls code provenance and rollback; test and hosted artifacts control verification.
 4. Use Way Ahead for Matt's career record, current jobs, scoring, pursuit assets, and approval payload. Use Teal only as competitor evidence and do not mutate it.

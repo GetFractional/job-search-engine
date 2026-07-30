@@ -1,4 +1,4 @@
-/** Cloudflare Worker entry point for the owner-only Way Ahead workspace. */
+/** Cloudflare Worker entry point for the multi-user Way Ahead application. */
 import handler from "vinext/server/app-router-entry";
 import { ensureRuntimeIntegrityTriggers } from "../db/integrity";
 
