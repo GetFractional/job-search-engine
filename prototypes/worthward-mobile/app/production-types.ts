@@ -83,6 +83,28 @@ export type AssetRecord = {
   updatedAt: number;
 };
 
+export type PursuitEventType =
+  | "application_submitted"
+  | "interview_scheduled"
+  | "interview_completed"
+  | "follow_up_scheduled"
+  | "offer_received"
+  | "offer_accepted"
+  | "offer_declined"
+  | "rejected"
+  | "withdrawn"
+  | "closed_no_response"
+  | "learning_recorded";
+
+export type PursuitEventRecord = {
+  id: string;
+  type: PursuitEventType;
+  occurredAt: number;
+  note: string | null;
+  metadata: JsonRecord;
+  createdAt: number;
+};
+
 export type OpportunityRecord = {
   id: string;
   employer: string;
@@ -115,6 +137,7 @@ export type OpportunityRecord = {
   } | null;
   pursuit: {
     id: string;
+    revision: number;
     state:
       | "saved"
       | "researching"
@@ -123,6 +146,8 @@ export type OpportunityRecord = {
       | "applying"
       | "applied"
       | "interviewing"
+      | "offered"
+      | "accepted"
       | "closed";
     nextAction: string | null;
     externalApprovalState:
@@ -145,13 +170,16 @@ export type OpportunityRecord = {
       } | null;
     };
     assets: AssetRecord[];
+    events: PursuitEventRecord[];
     package: {
       id: string;
       version: number;
       destinationUrl: string;
       jobPostingVersionId: string;
       payloadSha256: string;
-      approvalState: "approved" | "not_approved";
+      approvalState: "approved" | "completed" | "not_approved";
+      approvedAt: number | null;
+      completedAt: number | null;
       blockers: string[];
       readinessState: "blocked" | "ready_for_review" | "superseded";
       assetManifest: JsonRecord;

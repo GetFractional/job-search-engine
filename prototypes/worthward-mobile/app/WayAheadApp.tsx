@@ -29,6 +29,14 @@ import {
 } from "react";
 import { CareerEvidenceManager } from "./CareerEvidenceManager";
 import { CoverLetterStudio } from "./CoverLetterStudio";
+import {
+  applicationQuestionFields,
+  invalidApplicationAnswers,
+  isBooleanApplicationQuestion,
+  requiredApplicationGaps,
+  sourceAcceptsAsset,
+  sourceRequiresAsset,
+} from "./application-package";
 import { CURRENT_DETERMINISTIC_ASSESSMENT_POLICY } from "./deterministic-assessment";
 import { PrivacyCenter } from "./PrivacyCenter";
 import { ResumeStudio } from "./ResumeStudio";
@@ -39,6 +47,7 @@ import type {
   FounderActor,
   JobStandardRecord,
   OpportunityRecord,
+  PursuitEventType,
   WorkspaceRecord,
 } from "./production-types";
 
@@ -62,8 +71,8 @@ const NAVIGATION: Array<{
   { key: "today", label: "Home", icon: Compass },
   { key: "jobs", label: "Jobs", icon: Briefcase },
   { key: "pursuit", label: "Pursuits", icon: Target },
-  { key: "studio", label: "Studio", icon: FileText },
-  { key: "direction", label: "Plan", icon: RoadHorizon },
+  { key: "studio", label: "Documents", icon: FileText },
+  { key: "profile", label: "Career Profile", icon: UserCircle },
 ];
 
 const VIEW_KEYS = new Set<ViewKey>([
@@ -120,10 +129,29 @@ function currentJobId(): string | null {
   return new URLSearchParams(window.location.search).get("job");
 }
 
+function currentDocumentId(): string | null {
+  if (typeof window === "undefined") return null;
+  const pathMatch = window.location.pathname.match(
+    /^\/app\/documents\/(?:resumes|cover-letters)\/([^/]+)\/?$/,
+  );
+  if (!pathMatch?.[1]) return null;
+  try {
+    return decodeURIComponent(pathMatch[1]);
+  } catch {
+    return pathMatch[1];
+  }
+}
+
+function currentClientRoute(): string {
+  if (typeof window === "undefined") return "";
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
 export function viewPath(
   view: ViewKey,
   jobId?: string | null,
   studio: StudioKey = "resume",
+  documentId?: string | null,
 ): string {
   if (view === "today") return "/app/home";
   if (view === "jobs") {
@@ -137,9 +165,11 @@ export function viewPath(
       : "/app/pursuits";
   }
   if (view === "studio") {
-    return studio === "cover"
-      ? "/app/documents/cover-letters"
-      : "/app/documents/resumes";
+    const base =
+      studio === "cover"
+        ? "/app/documents/cover-letters"
+        : "/app/documents/resumes";
+    return documentId ? `${base}/${encodeURIComponent(documentId)}` : base;
   }
   if (view === "direction") return "/app/plan";
   if (view === "profile") return "/app/profile";
@@ -271,71 +301,38 @@ function reviewValue(value: unknown): string {
   return String(value);
 }
 
+function normalizedAbsoluteUrl(value: string): string {
+  try {
+    return new URL(value).toString();
+  } catch {
+    return value;
+  }
+}
+
+function localDateTimeInputValue(date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
 const SHA256_PATTERN = /^[a-f0-9]{64}$/i;
-
-function hasReviewableAnswer(answers: Record<string, unknown>, key: string): boolean {
-  if (!Object.prototype.hasOwnProperty.call(answers, key)) return false;
-  const value = answers[key];
-  if (typeof value === "boolean") return true;
-  if (typeof value === "number") return Number.isFinite(value);
-  if (typeof value === "string") return value.trim().length > 0;
-  return Array.isArray(value) ? value.length > 0 : Boolean(value && typeof value === "object");
-}
-
-function formAnswerKeys(label: string, fieldNames: string[]): string[] {
-  const normalizedLabel = label.toLowerCase();
-  const keys = fieldNames.flatMap((name) => {
-    const bracketValue = name.match(/\[([^\]]+)\]$/)?.[1] ?? name;
-    const camel = bracketValue.replace(/_([a-z])/g, (_, character: string) => character.toUpperCase());
-    return [name, bracketValue, camel];
-  });
-  if (normalizedLabel.includes("first name")) keys.push("firstName");
-  if (normalizedLabel.includes("last name")) keys.push("lastName");
-  if (normalizedLabel.includes("email")) keys.push("email");
-  if (normalizedLabel.includes("phone")) keys.push("phone");
-  if (normalizedLabel.includes("linkedin")) keys.push("linkedInProfile");
-  if (normalizedLabel.includes("sponsor")) keys.push("requiresSponsorship");
-  return [...new Set(keys)];
-}
-
-function requiredFormAnswerGaps(
-  sourceFacts: Record<string, unknown>,
-  answers: Record<string, unknown>,
-  assets: OutboundManifestAsset[],
-): string[] {
-  if (!Array.isArray(sourceFacts.questionSet)) return ["The employer question set is missing."];
-  const assetTypes = new Set(assets.map((asset) => asset.type));
-  return sourceFacts.questionSet.flatMap((entry) => {
-    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-      return ["An employer question is malformed."];
-    }
-    const question = entry as Record<string, unknown>;
-    if (question.required !== true) return [];
-    const label = typeof question.label === "string" ? question.label : "Required employer question";
-    const normalizedLabel = label.toLowerCase();
-    if (normalizedLabel.includes("resume")) return assetTypes.has("resume") ? [] : [label];
-    if (normalizedLabel.includes("cover letter")) return assetTypes.has("cover_letter") ? [] : [label];
-    const fieldNames = Array.isArray(question.fields)
-      ? question.fields.flatMap((field) => {
-          if (!field || typeof field !== "object" || Array.isArray(field)) return [];
-          const name = (field as Record<string, unknown>).name;
-          return typeof name === "string" && name ? [name] : [];
-        })
-      : [];
-    return formAnswerKeys(label, fieldNames).some((key) => hasReviewableAnswer(answers, key)) ? [] : [label];
-  });
-}
 
 export default function WayAheadApp({
   actor,
   initialView = "today",
   initialJobId = null,
   initialStudio = "resume",
+  initialDocumentId = null,
 }: {
   actor: FounderActor;
   initialView?: ViewKey;
   initialJobId?: string | null;
   initialStudio?: StudioKey;
+  initialDocumentId?: string | null;
 }) {
   const [view, setView] = useState<ViewKey>(initialView);
   const [workspace, setWorkspace] = useState<WorkspaceRecord | null>(null);
@@ -344,7 +341,12 @@ export default function WayAheadApp({
   const [theme, setTheme] = useState<ThemeChoice>("light");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(initialJobId);
-  const [selectedPursuitJobId, setSelectedPursuitJobId] = useState<string | null>(initialJobId);
+  const [selectedPursuitId, setSelectedPursuitId] = useState<string | null>(initialJobId);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(
+    initialDocumentId,
+  );
+  const [selectedStudio, setSelectedStudio] =
+    useState<StudioKey>(initialStudio);
   const accountRootRef = useRef<HTMLDivElement>(null);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountMenuRef = useRef<HTMLDivElement>(null);
@@ -352,10 +354,25 @@ export default function WayAheadApp({
 
   useEffect(() => {
     const syncLocation = () => {
+      const nextRoute = currentClientRoute();
+      const previousRoute =
+        document.documentElement.dataset.wayAheadCurrentRoute;
+      if (
+        previousRoute &&
+        nextRoute !== previousRoute &&
+        document.documentElement.dataset.wayAheadUnsavedDocument === "true" &&
+        !window.confirm("Discard the unsaved document changes on this screen?")
+      ) {
+        window.history.pushState({}, "", previousRoute);
+        return;
+      }
+      document.documentElement.dataset.wayAheadCurrentRoute = nextRoute;
       setView(currentView());
       const jobId = currentJobId();
       setSelectedJobId(jobId);
-      setSelectedPursuitJobId(jobId);
+      setSelectedPursuitId(jobId);
+      setSelectedStudio(currentStudio());
+      setSelectedDocumentId(currentDocumentId());
     };
     const frame = window.requestAnimationFrame(() => {
       syncLocation();
@@ -428,14 +445,33 @@ export default function WayAheadApp({
     nextView: ViewKey,
     jobId?: string,
     studio: StudioKey = "resume",
+    documentId?: string,
   ) => {
+    const nextPath = viewPath(nextView, jobId, studio, documentId);
+    if (
+      view === "studio" &&
+      nextPath !== currentClientRoute() &&
+      document.documentElement.dataset.wayAheadUnsavedDocument === "true" &&
+      !window.confirm("Discard the unsaved document changes on this screen?")
+    ) {
+      return;
+    }
     const main = document.querySelector<HTMLElement>("#main-content");
     if (main) main.scrollTop = 0;
     setView(nextView);
     if (nextView === "jobs") setSelectedJobId(jobId ?? null);
-    if (nextView === "pursuit") setSelectedPursuitJobId(jobId ?? null);
+    if (nextView === "pursuit") setSelectedPursuitId(jobId ?? null);
+    if (nextView === "studio") {
+      setSelectedStudio(studio);
+      setSelectedDocumentId(documentId ?? null);
+    }
     setSettingsOpen(false);
-    window.history.pushState({}, "", viewPath(nextView, jobId, studio));
+    window.history.pushState(
+      {},
+      "",
+      nextPath,
+    );
+    document.documentElement.dataset.wayAheadCurrentRoute = nextPath;
     window.requestAnimationFrame(() => {
       if (main) main.scrollTop = 0;
       main?.focus();
@@ -462,6 +498,19 @@ export default function WayAheadApp({
     navigate(nextView, jobId, studio);
   };
 
+  const replaceStudioDocumentRoute = useCallback(
+    (studio: StudioKey, documentId: string) => {
+      const nextPath = viewPath("studio", null, studio, documentId);
+      setSelectedStudio(studio);
+      setSelectedDocumentId(documentId);
+      if (nextPath !== currentClientRoute()) {
+        window.history.replaceState({}, "", nextPath);
+      }
+      document.documentElement.dataset.wayAheadCurrentRoute = nextPath;
+    },
+    [],
+  );
+
   const chooseTheme = (choice: ThemeChoice) => {
     setTheme(choice);
     window.localStorage.setItem("way-ahead-theme", choice);
@@ -470,20 +519,20 @@ export default function WayAheadApp({
 
   const selectedJob = workspace?.opportunities.find((job) => job.id === selectedJobId) ?? null;
   const pursuedJobs = workspace?.opportunities.filter((job) => job.pursuit) ?? [];
-  const pursuedJob = selectedPursuitJobId
-    ? pursuedJobs.find((job) => job.id === selectedPursuitJobId) ?? null
+  const pursuedJob = selectedPursuitId
+    ? pursuedJobs.find(
+        (job) =>
+          job.pursuit?.id === selectedPursuitId || job.id === selectedPursuitId,
+      ) ?? null
     : pursuedJobs[0] ?? null;
-  const activeLabel =
-    NAVIGATION.find((item) => item.key === view)?.label ??
-    (view === "profile"
-      ? "Career profile"
-      : view === "account"
-        ? "Data & privacy"
-        : "Home");
-
-  const openPursuit = (jobId: string) => {
-    setSelectedPursuitJobId(jobId);
-    navigate("pursuit", jobId);
+  const openPursuit = (jobOrPursuitId: string) => {
+    const match = workspace?.opportunities.find(
+      (job) =>
+        job.id === jobOrPursuitId || job.pursuit?.id === jobOrPursuitId,
+    );
+    const pursuitId = match?.pursuit?.id ?? jobOrPursuitId;
+    setSelectedPursuitId(pursuitId);
+    navigate("pursuit", pursuitId);
   };
 
   const selectJob = (jobId: string | null) => {
@@ -602,7 +651,6 @@ export default function WayAheadApp({
       </header>
 
       <main className="wa-main" id="main-content" tabIndex={-1}>
-        <div className="wa-mobile-title" aria-live="polite">{activeLabel}</div>
         {loading ? <WorkspaceLoading /> : null}
         {!loading && error ? <WorkspaceError message={error} onRetry={refresh} /> : null}
         {!loading && !error && workspace ? (
@@ -625,17 +673,23 @@ export default function WayAheadApp({
             ) : null}
             {view === "pursuit" ? (
               <PursuitView
+                actor={actor}
                 key={`${pursuedJob?.id ?? "none"}:${pursuedJob?.sourceVersion?.id ?? "none"}:${pursuedJob?.pursuit?.package?.id ?? "none"}:${pursuedJob?.pursuit?.package?.payloadSha256 ?? "none"}`}
                 opportunity={pursuedJob}
                 pursuedJobs={pursuedJobs}
-                requestedJobId={selectedPursuitJobId}
+                requestedJobId={selectedPursuitId}
                 onSelectOpportunity={openPursuit}
                 navigate={navigate}
                 onRefresh={refresh}
               />
             ) : null}
             {view === "studio" ? (
-              <DocumentStudioView initialStudio={initialStudio} />
+              <DocumentStudioView
+                documentId={selectedDocumentId}
+                studio={selectedStudio}
+                navigate={navigate}
+                onDocumentSelected={replaceStudioDocumentRoute}
+              />
             ) : null}
             {view === "direction" ? <DirectionView workspace={workspace} onRefresh={refresh} /> : null}
             {view === "profile" ? (
@@ -679,19 +733,29 @@ export default function WayAheadApp({
 }
 
 function DocumentStudioView({
-  initialStudio,
+  documentId,
+  studio,
+  navigate,
+  onDocumentSelected,
 }: {
-  initialStudio: StudioKey;
+  documentId: string | null;
+  studio: StudioKey;
+  navigate: (
+    view: ViewKey,
+    jobId?: string,
+    studio?: StudioKey,
+    documentId?: string,
+  ) => void;
+  onDocumentSelected: (studio: StudioKey, documentId: string) => void;
 }) {
-  const [studio, setStudio] = useState<StudioKey>(initialStudio);
-
-  useEffect(() => {
-    const syncStudio = () => setStudio(currentStudio());
-    syncStudio();
-    window.addEventListener("popstate", syncStudio);
-    return () => window.removeEventListener("popstate", syncStudio);
-  }, []);
-
+  const selectResumeDocument = useCallback(
+    (resumeId: string) => onDocumentSelected("resume", resumeId),
+    [onDocumentSelected],
+  );
+  const selectCoverDocument = useCallback(
+    (letterId: string) => onDocumentSelected("cover", letterId),
+    [onDocumentSelected],
+  );
   const chooseStudio = (
     event: ReactMouseEvent<HTMLAnchorElement>,
     nextStudio: StudioKey,
@@ -707,11 +771,7 @@ function DocumentStudioView({
       return;
     }
     event.preventDefault();
-    const main = document.querySelector<HTMLElement>("#main-content");
-    setStudio(nextStudio);
-    window.history.pushState({}, "", viewPath("studio", null, nextStudio));
-    if (main) main.scrollTop = 0;
-    window.requestAnimationFrame(() => main?.focus());
+    navigate("studio", undefined, nextStudio);
   };
 
   return (
@@ -737,7 +797,17 @@ function DocumentStudioView({
         </a>
       </div>
       <section id="document-studio-content" tabIndex={-1}>
-        {studio === "resume" ? <ResumeStudio /> : <CoverLetterStudio />}
+        {studio === "resume" ? (
+          <ResumeStudio
+            initialResumeId={documentId}
+            onDocumentSelected={selectResumeDocument}
+          />
+        ) : (
+          <CoverLetterStudio
+            initialLetterId={documentId}
+            onDocumentSelected={selectCoverDocument}
+          />
+        )}
       </section>
     </div>
   );
@@ -1501,6 +1571,7 @@ function JobsView({
 }
 
 function PursuitView({
+  actor,
   opportunity,
   pursuedJobs,
   requestedJobId,
@@ -1508,6 +1579,7 @@ function PursuitView({
   navigate,
   onRefresh,
 }: {
+  actor: FounderActor;
   opportunity: OpportunityRecord | null;
   pursuedJobs: OpportunityRecord[];
   requestedJobId: string | null;
@@ -1516,6 +1588,7 @@ function PursuitView({
     view: ViewKey,
     jobId?: string,
     studio?: StudioKey,
+    documentId?: string,
   ) => void;
   onRefresh: () => Promise<void>;
 }) {
@@ -1524,6 +1597,70 @@ function PursuitView({
   const [approvalMessage, setApprovalMessage] = useState<FormMessage | null>(null);
   const [starterBusy, setStarterBusy] = useState(false);
   const [starterMessage, setStarterMessage] = useState<FormMessage | null>(null);
+  const nameParts = actor.displayName.trim().split(/\s+/).filter(Boolean);
+  const initialPackageAnswers = opportunity?.pursuit?.package?.answers ?? {};
+  const initialQuestionFields = applicationQuestionFields(
+    opportunity?.sourceVersion?.facts ?? {},
+  );
+  const [draftAnswers, setDraftAnswers] = useState<Record<string, unknown>>(() => {
+    const semanticDefaults: Record<string, unknown> = {
+      firstName: nameParts[0] ?? "",
+      lastName: nameParts.slice(1).join(" "),
+      email: actor.email,
+    };
+    return Object.fromEntries(
+      initialQuestionFields.flatMap((field) => {
+        if (field.isFileUpload || field.unsupportedReason) return [];
+        const exactValue = initialPackageAnswers[field.key];
+        const legacyValue = initialPackageAnswers[field.semanticKey];
+        let value =
+          exactValue !== undefined
+            ? exactValue
+            : legacyValue !== undefined
+              ? legacyValue
+              : semanticDefaults[field.semanticKey];
+        if (field.options.length && typeof value === "boolean") {
+          const expected = value ? "yes" : "no";
+          value = field.options.find(
+            (option) =>
+              option.label.trim().toLowerCase() === expected ||
+              option.value.trim().toLowerCase() === expected,
+          )?.value;
+        }
+        return value === undefined ? [] : [[field.key, value]];
+      }),
+    );
+  });
+  const [includeCoverLetter, setIncludeCoverLetter] = useState(
+    Boolean(
+      opportunity?.pursuit?.package &&
+        outboundManifestAssets(
+          opportunity.pursuit.package.assetManifest,
+        ).some((asset) => asset.type === "cover_letter"),
+    ),
+  );
+  const [packageBusy, setPackageBusy] = useState(false);
+  const [packageMessage, setPackageMessage] = useState<FormMessage | null>(null);
+  const [assetReviewBusy, setAssetReviewBusy] = useState<string | null>(null);
+  const [assetReviewChecks, setAssetReviewChecks] = useState<Record<string, boolean>>({});
+  const [eventType, setEventType] =
+    useState<PursuitEventType>("application_submitted");
+  const [eventOccurredAt, setEventOccurredAt] = useState(
+    localDateTimeInputValue,
+  );
+  const [eventNote, setEventNote] = useState("");
+  const [eventBaseCompensation, setEventBaseCompensation] = useState("");
+  const [eventCurrency, setEventCurrency] = useState("USD");
+  const [eventSubmissionSource, setEventSubmissionSource] = useState<
+    "" | "approved_package" | "outside_way_ahead"
+  >("");
+  const [renderedAt] = useState(() => Date.now());
+  const [eventConstraintNow, setEventConstraintNow] = useState(() =>
+    Date.now(),
+  );
+  const [eventConfirmed, setEventConfirmed] = useState(false);
+  const [eventBusy, setEventBusy] = useState(false);
+  const [eventMessage, setEventMessage] = useState<FormMessage | null>(null);
   if (requestedJobId && !opportunity) {
     return (
       <div className="wa-page">
@@ -1555,19 +1692,56 @@ function PursuitView({
   const packageRecord = pursuit.package;
   const blockers = packageRecord?.blockers ?? [];
   const sourceVersion = opportunity.sourceVersion;
+  const sourceFacts = sourceVersion?.facts ?? {};
+  const questionFields = applicationQuestionFields(sourceFacts);
+  const answerFields = questionFields.filter(
+    (field) => !field.isFileUpload && !field.unsupportedReason,
+  );
+  const answerLabels = new Map(
+    answerFields.map((field) => [field.key, field.label]),
+  );
+  const acceptsCoverLetter = sourceAcceptsAsset(sourceFacts, "cover_letter");
+  const requiresCoverLetter = sourceRequiresAsset(sourceFacts, "cover_letter");
   const manifestAssets = packageRecord ? outboundManifestAssets(packageRecord.assetManifest) : [];
   const rawManifestAssets = packageRecord?.assetManifest.assets;
+  const sourceRecheck =
+    packageRecord?.assetManifest.sourceRecheck &&
+    typeof packageRecord.assetManifest.sourceRecheck === "object" &&
+    !Array.isArray(packageRecord.assetManifest.sourceRecheck)
+      ? (packageRecord.assetManifest.sourceRecheck as Record<string, unknown>)
+      : null;
+  const sourceRecheckAuditEventId =
+    typeof sourceRecheck?.auditEventId === "string"
+      ? sourceRecheck.auditEventId
+      : "";
+  const sourceRecheckPostingCheckedAt =
+    typeof sourceRecheck?.postingLastCheckedAt === "number"
+      ? sourceRecheck.postingLastCheckedAt
+      : null;
+  const sourceRecheckVerifiedAt =
+    typeof sourceRecheck?.verifiedAt === "number"
+      ? sourceRecheck.verifiedAt
+      : null;
+  const sourceRecheckDescriptionChecksum =
+    typeof sourceRecheck?.descriptionChecksum === "string"
+      ? sourceRecheck.descriptionChecksum
+      : "";
   const answers = packageRecord?.answers ?? {};
   const questionSetChecksum = typeof answers.questionSetChecksum === "string" ? answers.questionSetChecksum : "";
   const answerEntries = Object.entries(answers).filter(([key]) => key !== "questionSetChecksum");
   const outboundTypes = new Set(manifestAssets.map((asset) => asset.type));
+  const coverLetterCount = manifestAssets.filter(
+    (asset) => asset.type === "cover_letter",
+  ).length;
   const manifestReviewable = Array.isArray(rawManifestAssets)
-    && rawManifestAssets.length === 2
+    && rawManifestAssets.length >= 1
+    && rawManifestAssets.length <= 2
     && manifestAssets.length === rawManifestAssets.length
     && outboundTypes.has("resume")
-    && outboundTypes.has("cover_letter")
-    && outboundTypes.size === 2
-    && new Set(manifestAssets.map((asset) => asset.id)).size === 2
+    && coverLetterCount <= 1
+    && (!requiresCoverLetter || coverLetterCount === 1)
+    && (coverLetterCount === 0 || acceptsCoverLetter)
+    && new Set(manifestAssets.map((asset) => asset.id)).size === manifestAssets.length
     && manifestAssets.every((asset) =>
       Boolean(asset.id.trim())
       && Boolean(asset.filename.trim())
@@ -1579,22 +1753,24 @@ function PursuitView({
       && SHA256_PATTERN.test(asset.contentSha256)
       && SHA256_PATTERN.test(asset.fileSha256));
   const formAnswerGaps = sourceVersion
-    ? requiredFormAnswerGaps(sourceVersion.facts, answers, manifestAssets)
+    ? requiredApplicationGaps(sourceFacts, answers, outboundTypes)
     : ["The employer question set is unavailable."];
+  const invalidAnswers = sourceVersion
+    ? invalidApplicationAnswers(sourceFacts, answers)
+    : [];
   const sourceQuestionSetChecksum = typeof sourceVersion?.facts.questionSetChecksum === "string"
     ? sourceVersion.facts.questionSetChecksum
     : "";
-  const baseAnswersReviewable = hasReviewableAnswer(answers, "firstName")
-    && hasReviewableAnswer(answers, "lastName")
-    && hasReviewableAnswer(answers, "email")
-    && typeof answers.email === "string"
-    && /^\S+@\S+\.\S+$/.test(answers.email)
-    && typeof answers.requiresSponsorship === "boolean";
-  const answersReviewable = baseAnswersReviewable
-    && answerEntries.length >= 4
-    && SHA256_PATTERN.test(questionSetChecksum)
+  const answersReviewable = SHA256_PATTERN.test(questionSetChecksum)
     && questionSetChecksum === sourceQuestionSetChecksum
-    && formAnswerGaps.length === 0;
+    && formAnswerGaps.length === 0
+    && invalidAnswers.length === 0;
+  const expectedDestination =
+    typeof sourceFacts.applyUrl === "string" && sourceFacts.applyUrl
+      ? normalizedAbsoluteUrl(sourceFacts.applyUrl)
+      : typeof sourceFacts.canonicalUrl === "string" && sourceFacts.canonicalUrl
+        ? normalizedAbsoluteUrl(sourceFacts.canonicalUrl)
+        : normalizedAbsoluteUrl(opportunity.canonicalUrl);
   const sourceReviewable = Boolean(
     packageRecord
       && sourceVersion?.id
@@ -1602,7 +1778,15 @@ function PursuitView({
       && SHA256_PATTERN.test(sourceVersion.checksum)
       && sourceVersion.checkedAt
       && sourceVersion.captureState === "verified"
-      && packageRecord.destinationUrl === opportunity.canonicalUrl,
+      && Boolean(sourceRecheckAuditEventId)
+      && sourceRecheckDescriptionChecksum === sourceVersion.checksum
+      && sourceRecheckPostingCheckedAt !== null
+      && sourceRecheckVerifiedAt !== null
+      && sourceRecheckPostingCheckedAt >= renderedAt - 24 * 60 * 60 * 1000
+      && sourceRecheckPostingCheckedAt <= renderedAt + 5 * 60 * 1000
+      && Math.abs(sourceRecheckVerifiedAt - sourceRecheckPostingCheckedAt)
+        <= 5 * 60 * 1000
+      && packageRecord.destinationUrl === expectedDestination,
   );
   const packageFingerprintReviewable = Boolean(
     packageRecord
@@ -1614,17 +1798,21 @@ function PursuitView({
     !packageFingerprintReviewable ? "The package version or fingerprint is invalid." : null,
     !sourceReviewable ? "The package is not bound to the current reviewable employer source and destination." : null,
     !answersReviewable ? "The exact answers or employer form version receipt is incomplete." : null,
-    ...formAnswerGaps.map((label) => `Required answer missing: ${label}`),
-    !manifestReviewable ? "The outbound resume and cover letter manifest is incomplete." : null,
+    ...formAnswerGaps.map(
+      (label) => `Required employer-form item unresolved: ${label}`,
+    ),
+    ...invalidAnswers,
+    !manifestReviewable ? "The exact outbound file manifest is incomplete." : null,
   ].filter((value): value is string => Boolean(value));
-  const approvalWorkflowEnabled = false;
+  const approvalWorkflowEnabled = true;
   const canApprove = Boolean(
     approvalWorkflowEnabled
       && packageRecord
+      && pursuit.state === "ready_for_approval"
       && packageRecord.readinessState === "ready_for_review"
       && blockers.length === 0
       && reviewGaps.length === 0
-      && packageRecord.approvalState !== "approved",
+      && packageRecord.approvalState === "not_approved",
   );
 
   const ensureStarters = async () => {
@@ -1660,6 +1848,155 @@ function PursuitView({
     }
   };
 
+  const reviewAsset = async (assetId: string) => {
+    if (!assetReviewChecks[assetId]) return;
+    setAssetReviewBusy(assetId);
+    setPackageMessage(null);
+    try {
+      const response = await fetch("/api/pursuit-assets/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          assetId,
+          confirmation: "confirm_claim_safe_file",
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "The application file review could not be recorded.",
+        );
+      }
+      setPackageMessage({
+        text: "Exact PDF review recorded. This file can now be considered for a new package version.",
+        kind: "success",
+      });
+      setAssetReviewChecks((current) => ({ ...current, [assetId]: false }));
+      await onRefresh();
+    } catch (assetError) {
+      setPackageMessage({
+        text:
+          assetError instanceof Error
+            ? assetError.message
+            : "The application file review could not be recorded.",
+        kind: "error",
+      });
+    } finally {
+      setAssetReviewBusy(null);
+    }
+  };
+
+  const buildPackage = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setPackageBusy(true);
+    setPackageMessage(null);
+    try {
+      const response = await fetch("/api/application-package", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pursuitId: pursuit.id,
+          answers: draftAnswers,
+          includeCoverLetter,
+        }),
+      });
+      const result = (await response.json()) as {
+        error?: string;
+        applicationPackage?: {
+          readinessState: "blocked" | "ready_for_review";
+          blockers: string[];
+        };
+      };
+      if (!response.ok || !result.applicationPackage) {
+        throw new Error(
+          result.error ?? "The exact application package could not be built.",
+        );
+      }
+      await onRefresh();
+      setPackageMessage({
+        text:
+          result.applicationPackage.readinessState === "ready_for_review"
+            ? "A new immutable package version is ready for exact review."
+            : `A blocked package receipt was saved with ${result.applicationPackage.blockers.length} issue${result.applicationPackage.blockers.length === 1 ? "" : "s"} to resolve.`,
+        kind:
+          result.applicationPackage.readinessState === "ready_for_review"
+            ? "success"
+            : "error",
+      });
+    } catch (packageError) {
+      setPackageMessage({
+        text:
+          packageError instanceof Error
+            ? packageError.message
+            : "The exact application package could not be built.",
+        kind: "error",
+      });
+    } finally {
+      setPackageBusy(false);
+    }
+  };
+
+  const recordEvent = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!eventConfirmed) return;
+    setEventBusy(true);
+    setEventMessage(null);
+    const occurredAt = new Date(eventOccurredAt).getTime();
+    const metadata: Record<string, unknown> = {};
+    if (eventType === "application_submitted") {
+      if (
+        eventSubmissionSource === "approved_package" &&
+        packageRecord?.approvalState === "approved"
+      ) {
+        metadata.packageId = packageRecord.id;
+      } else if (eventSubmissionSource === "outside_way_ahead") {
+        metadata.reportedOutsideWayAhead = true;
+      }
+    }
+    if (eventType === "offer_received") {
+      metadata.baseCompensation = Number(eventBaseCompensation);
+      metadata.currency = eventCurrency;
+    }
+    try {
+      const response = await fetch("/api/pursuit-events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pursuitId: pursuit.id,
+          type: eventType,
+          occurredAt,
+          note: eventNote,
+          metadata,
+          confirmation: eventConfirmed ? "record_member_reported_event" : "",
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(
+          result.error ?? "The pursuit update could not be recorded.",
+        );
+      }
+      setEventNote("");
+      setEventSubmissionSource("");
+      setEventConfirmed(false);
+      setEventMessage({
+        text: "Member-reported pursuit update recorded. Way Ahead did not perform an external action.",
+        kind: "success",
+      });
+      await onRefresh();
+    } catch (eventError) {
+      setEventMessage({
+        text:
+          eventError instanceof Error
+            ? eventError.message
+            : "The pursuit update could not be recorded.",
+        kind: "error",
+      });
+    } finally {
+      setEventBusy(false);
+    }
+  };
+
   const recordApproval = async () => {
     if (!packageRecord || !approvalChecked) return;
     setApprovalBusy(true);
@@ -1672,6 +2009,8 @@ function PursuitView({
           packageId: packageRecord.id,
           payloadSha256: packageRecord.payloadSha256,
           confirmation: "approve_application_package",
+          expectedRevision: pursuit.revision,
+          attestationVersion: "application-package-staging-v1",
         }),
       });
       const result = await response.json() as { error?: string };
@@ -1689,18 +2028,34 @@ function PursuitView({
       {pursuedJobs.length > 1 ? (
         <label className="wa-pursuit-switcher">
           <span>Active pursuit</span>
-          <select value={opportunity.id} onChange={(event) => onSelectOpportunity(event.target.value)}>
-            {pursuedJobs.map((job) => <option key={job.id} value={job.id}>{job.title} · {job.employer}</option>)}
+          <select value={pursuit.id} onChange={(event) => onSelectOpportunity(event.target.value)}>
+            {pursuedJobs.map((job) => <option key={job.pursuit?.id ?? job.id} value={job.pursuit?.id ?? job.id}>{job.title} · {job.employer}</option>)}
           </select>
         </label>
       ) : null}
       <section className="wa-page-heading wa-pursuit-heading">
         <div><p className="wa-eyebrow">{opportunity.employer} · Active pursuit</p><h1>{opportunity.title}</h1></div>
-        <span className={`wa-status wa-status-${packageRecord?.readinessState === "ready_for_review" ? "verified" : "conflict"}`}>{titleCase(packageRecord?.readinessState ?? pursuit.state)}</span>
+        <div className="wa-pursuit-statuses">
+          <span className="wa-status wa-status-partial">
+            Pursuit: {titleCase(pursuit.state)}
+          </span>
+          <span className={`wa-status wa-status-${packageRecord?.readinessState === "ready_for_review" ? "verified" : "conflict"}`}>
+            Package: {titleCase(packageRecord?.readinessState ?? "not started")}
+          </span>
+        </div>
       </section>
       <div className="wa-pursuit-banner">
         <div><span>Next action</span><strong>{pursuit.nextAction ?? "Review the current evidence and assets."}</strong></div>
-        <div><span>External action</span><strong>Not authorized</strong></div>
+        <div>
+          <span>External action</span>
+          <strong>
+            {packageRecord?.approvalState === "approved"
+              ? "Exact package approved for manual staging only"
+              : packageRecord?.approvalState === "completed"
+                ? "Approval consumed by the recorded application"
+              : "Not authorized"}
+          </strong>
+        </div>
       </div>
 
       <section className="wa-section">
@@ -1732,7 +2087,14 @@ function PursuitView({
               <button
                 className="wa-secondary-button"
                 type="button"
-                onClick={() => navigate("studio", undefined, "resume")}
+                onClick={() =>
+                  navigate(
+                    "studio",
+                    undefined,
+                    "resume",
+                    pursuit.starters.resume?.id,
+                  )
+                }
               >
                 Edit resume
               </button>
@@ -1752,7 +2114,14 @@ function PursuitView({
               <button
                 className="wa-secondary-button"
                 type="button"
-                onClick={() => navigate("studio", undefined, "cover")}
+                onClick={() =>
+                  navigate(
+                    "studio",
+                    undefined,
+                    "cover",
+                    pursuit.starters.coverLetter?.id,
+                  )
+                }
               >
                 Edit cover letter
               </button>
@@ -1788,25 +2157,229 @@ function PursuitView({
             <div className="wa-empty-inline"><FileText size={24} /><span>No role-specific asset has passed into this pursuit yet.</span></div>
           )}
         </div>
+        {pursuit.assets.some(
+          (asset) =>
+            asset.reviewState === "draft" &&
+            asset.invalidatedAt === null &&
+            asset.filename?.toLowerCase().endsWith(".pdf") &&
+            Boolean(asset.pageCount),
+        ) ? (
+          <div className="wa-file-review-list">
+            <h3>Review downloaded PDFs</h3>
+            <p>
+              Open each downloaded file and inspect every page. This is a
+              human review receipt, not automated proof that the visual output
+              is correct.
+            </p>
+            {pursuit.assets
+              .filter(
+                (asset) =>
+                  asset.reviewState === "draft" &&
+                  asset.invalidatedAt === null &&
+                  asset.filename?.toLowerCase().endsWith(".pdf") &&
+                  Boolean(asset.pageCount),
+              )
+              .map((asset) => (
+                <article key={asset.id} className="wa-file-review">
+                  <div>
+                    <strong>{asset.filename}</strong>
+                    <span>
+                      {asset.pageCount} page{asset.pageCount === 1 ? "" : "s"} ·
+                      Version {asset.version}
+                    </span>
+                  </div>
+                  <label className="wa-checkbox-row">
+                    <input
+                      type="checkbox"
+                      checked={assetReviewChecks[asset.id] === true}
+                      onChange={(event) =>
+                        setAssetReviewChecks((current) => ({
+                          ...current,
+                          [asset.id]: event.target.checked,
+                        }))
+                      }
+                    />
+                    I reviewed this exact PDF and every career claim is
+                    accurate.
+                  </label>
+                  <button
+                    className="wa-secondary-button"
+                    type="button"
+                    disabled={
+                      assetReviewBusy === asset.id ||
+                      assetReviewChecks[asset.id] !== true
+                    }
+                    onClick={() => void reviewAsset(asset.id)}
+                  >
+                    {assetReviewBusy === asset.id
+                      ? "Recording…"
+                      : "Mark exact PDF claim-safe"}
+                  </button>
+                </article>
+              ))}
+          </div>
+        ) : null}
+        <FormFeedback message={packageMessage} />
+      </section>
+
+      <section className="wa-section">
+        <div className="wa-section-heading">
+          <div>
+            <p className="wa-eyebrow">Application package</p>
+            <h2>Bind the exact answers and files before any approval.</h2>
+            <p>
+              Way Ahead reads the employer&apos;s current question set,
+              validates required answers and upload slots, and computes the
+              package fingerprint on the server.
+            </p>
+          </div>
+          <span>
+            {sourceVersion?.captureState === "verified"
+              ? "Source verified"
+              : "Source blocked"}
+          </span>
+        </div>
+        <form className="wa-package-builder" onSubmit={buildPackage}>
+          {answerFields.length ? (
+            <div className="wa-form-grid">
+              {answerFields.map((field) => (
+                <label key={field.key}>
+                  {field.label}
+                  {field.options.length ? (
+                    <select
+                      value={
+                        typeof draftAnswers[field.key] === "string"
+                          ? String(draftAnswers[field.key])
+                          : ""
+                      }
+                      onChange={(event) =>
+                        setDraftAnswers((current) => ({
+                          ...current,
+                          [field.key]: event.target.value,
+                        }))
+                      }
+                      required={field.required}
+                    >
+                      <option value="">Choose an employer option</option>
+                      {field.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : isBooleanApplicationQuestion(field) ? (
+                    <select
+                      value={
+                        typeof draftAnswers[field.key] === "boolean"
+                          ? draftAnswers[field.key]
+                            ? "yes"
+                            : "no"
+                          : ""
+                      }
+                      onChange={(event) =>
+                        setDraftAnswers((current) => {
+                          const next = { ...current };
+                          if (!event.target.value) delete next[field.key];
+                          else next[field.key] = event.target.value === "yes";
+                          return next;
+                        })
+                      }
+                      required={field.required}
+                    >
+                      <option value="">Choose Yes or No</option>
+                      <option value="no">No</option>
+                      <option value="yes">Yes</option>
+                    </select>
+                  ) : (
+                    <input
+                      type={
+                        field.semanticKey === "email"
+                          ? "email"
+                          : field.semanticKey === "phone"
+                            ? "tel"
+                            : field.semanticKey === "linkedInProfile"
+                              ? "url"
+                              : "text"
+                      }
+                      value={
+                        typeof draftAnswers[field.key] === "string" ||
+                        typeof draftAnswers[field.key] === "number"
+                          ? String(draftAnswers[field.key])
+                          : ""
+                      }
+                      onChange={(event) =>
+                        setDraftAnswers((current) => ({
+                          ...current,
+                          [field.key]: event.target.value,
+                        }))
+                      }
+                      required={field.required}
+                    />
+                  )}
+                </label>
+              ))}
+            </div>
+          ) : (
+            <div className="wa-recorded-risks">
+              <strong>Employer form receipt unavailable</strong>
+              <p>
+                This source does not expose a verified question set. Way Ahead
+                will save a blocked receipt rather than invent an application
+                form.
+              </p>
+            </div>
+          )}
+          {acceptsCoverLetter ? (
+            <label className="wa-checkbox-row">
+              <input
+                type="checkbox"
+                checked={includeCoverLetter || requiresCoverLetter}
+                disabled={requiresCoverLetter}
+                onChange={(event) =>
+                  setIncludeCoverLetter(event.target.checked)
+                }
+              />
+              {requiresCoverLetter
+                ? "The current employer form requires a cover letter."
+                : "Include my reviewed cover letter in this package."}
+            </label>
+          ) : (
+            <p className="wa-muted">
+              The current employer form does not expose a cover-letter upload
+              slot, so the package will use the reviewed resume only.
+            </p>
+          )}
+          <button
+            className="wa-primary-button"
+            type="submit"
+            disabled={packageBusy}
+          >
+            {packageBusy
+              ? "Building exact package…"
+              : "Build new immutable package version"}
+          </button>
+          <small>
+            Building a package does not populate an employer form, upload a
+            file, or submit an application.
+          </small>
+        </form>
       </section>
 
       <section className="wa-section wa-approval-section">
         <div>
           <p className="wa-eyebrow">Exact action gate</p>
           <h2>
-            {!approvalWorkflowEnabled
-              ? "Package approval is not available in this alpha."
-              : !packageRecord
-                ? "Build and review the exact package before approval."
+            {!packageRecord
+              ? "Build and review the exact package before approval."
               : blockers.length || reviewGaps.length
                 ? "Approval stays locked until the package is internally consistent."
                 : "This exact package is ready for your decision."}
           </h2>
           <p>
-            The current release stops at editable drafts. A later reviewed
-            release must construct and display the exact employer destination,
-            verified source version, answers, filenames, asset versions, and
-            payload fingerprint before any approval can be recorded.
+            Approval binds only this employer destination, source and form
+            version, answer set, filenames, asset versions, and fingerprint.
+            It authorizes manual staging review only. Population, upload, and
+            submission remain unavailable.
           </p>
         </div>
         {packageRecord ? (
@@ -1822,6 +2395,8 @@ function PursuitView({
                 <div><dt>Current source version</dt><dd><code>{sourceVersion?.id ?? "Missing"}</code></dd></div>
                 <div><dt>Source checksum</dt><dd><code className="wa-hash-code">{sourceVersion?.checksum ?? "Missing"}</code></dd></div>
                 <div><dt>Checked at</dt><dd>{sourceVersion?.checkedAt ? new Date(sourceVersion.checkedAt).toLocaleString() : "Missing"}</dd></div>
+                <div><dt>Canonical recheck</dt><dd>{sourceRecheckPostingCheckedAt ? new Date(sourceRecheckPostingCheckedAt).toLocaleString() : "Missing"}</dd></div>
+                <div><dt>Recheck receipt</dt><dd><code className="wa-hash-code">{sourceRecheckAuditEventId || "Missing"}</code></dd></div>
               </dl>
               {sourceVersion?.conflicts.length ? (
                 <div className="wa-recorded-risks">
@@ -1833,7 +2408,7 @@ function PursuitView({
             <section className="wa-package-review-block" aria-labelledby="answers-heading">
               <h3 id="answers-heading">Exact employer-form answers</h3>
               <dl className="wa-review-list">
-                {answerEntries.map(([key, value]) => <div key={key}><dt>{answerLabel(key)}</dt><dd>{reviewValue(value)}</dd></div>)}
+                {answerEntries.map(([key, value]) => <div key={key}><dt>{answerLabels.get(key) ?? answerLabel(key)}</dt><dd>{reviewValue(value)}</dd></div>)}
               </dl>
               <div className="wa-form-version-receipt"><span>Employer form-version receipt</span><code className="wa-hash-code">{questionSetChecksum || "Missing"}</code></div>
             </section>
@@ -1865,6 +2440,8 @@ function PursuitView({
             {reviewGaps.length ? <ul>{reviewGaps.map((gap) => <li key={gap}>{gap}</li>)}</ul> : null}
             {packageRecord.approvalState === "approved" ? (
               <div className="wa-approved-receipt"><CheckCircle size={22} weight="fill" /><span><strong>Exact package approved for form staging</strong>No employer form has been populated and no application has been submitted.</span></div>
+            ) : packageRecord.approvalState === "completed" ? (
+              <div className="wa-approved-receipt"><CheckCircle size={22} weight="fill" /><span><strong>Approval consumed</strong>This exact package was tied to the member-reported application at {packageRecord.completedAt ? new Date(packageRecord.completedAt).toLocaleString() : "the recorded submission time"}. It is no longer authorized for another action.</span></div>
             ) : canApprove ? (
               <div className="wa-approval-control">
                 <label>
@@ -1886,7 +2463,253 @@ function PursuitView({
             <small>Way Ahead has no employer-form population, upload, outreach, or submission capability in this release.</small>
           </div>
         ) : (
-          <div className="wa-empty-inline"><LockKey size={24} /><span>No claim-safe, fingerprinted application package can be created in this alpha.</span></div>
+          <div className="wa-empty-inline"><LockKey size={24} /><span>Build a package above to see its exact immutable review receipt.</span></div>
+        )}
+      </section>
+
+      <section className="wa-section">
+        <div className="wa-section-heading">
+          <div>
+            <p className="wa-eyebrow">Application through outcome</p>
+            <h2>Manage the search, not just the documents.</h2>
+            <p>
+              Record what happened after you act outside Way Ahead. Events are
+              append-only, member-reported receipts. The platform does not
+              submit, message, schedule, negotiate, accept, or decline.
+            </p>
+          </div>
+          <span>{pursuit.events.length} updates</span>
+        </div>
+        <form className="wa-pursuit-event-form" onSubmit={recordEvent}>
+          <div className="wa-form-grid">
+            <label>
+              Update
+              <select
+                value={eventType}
+                onChange={(event) => {
+                  setEventType(event.target.value as PursuitEventType);
+                  setEventSubmissionSource("");
+                  setEventConstraintNow(Date.now());
+                }}
+              >
+                <option value="application_submitted">
+                  Application submitted
+                </option>
+                <option value="interview_scheduled">
+                  Interview scheduled
+                </option>
+                <option value="interview_completed">
+                  Interview completed
+                </option>
+                <option value="follow_up_scheduled">
+                  Follow-up scheduled
+                </option>
+                <option value="offer_received">Offer received</option>
+                <option value="offer_accepted">Offer accepted</option>
+                <option value="offer_declined">Offer declined</option>
+                <option value="rejected">Employer declined</option>
+                <option value="withdrawn">I withdrew</option>
+                <option value="closed_no_response">
+                  Closed after no response
+                </option>
+                <option value="learning_recorded">Learning recorded</option>
+              </select>
+            </label>
+            <label>
+              Date and time
+              <input
+                type="datetime-local"
+                step="1"
+                value={eventOccurredAt}
+                onFocus={() => setEventConstraintNow(Date.now())}
+                onChange={(event) =>
+                  setEventOccurredAt(event.target.value)
+                }
+                min={
+                  eventType === "application_submitted" &&
+                  eventSubmissionSource === "approved_package" &&
+                  packageRecord?.approvedAt
+                    ? localDateTimeInputValue(
+                        new Date(packageRecord.approvedAt),
+                      )
+                    : localDateTimeInputValue(
+                        new Date(
+                          eventConstraintNow -
+                            10 * 365 * 24 * 60 * 60 * 1000,
+                        ),
+                      )
+                }
+                max={
+                  eventType === "interview_scheduled" ||
+                  eventType === "follow_up_scheduled"
+                    ? localDateTimeInputValue(
+                        new Date(
+                          eventConstraintNow +
+                            2 * 365 * 24 * 60 * 60 * 1000,
+                        ),
+                      )
+                    : localDateTimeInputValue(
+                        new Date(eventConstraintNow),
+                      )
+                }
+                required
+              />
+            </label>
+            {eventType === "offer_received" ? (
+              <>
+                <label>
+                  Base compensation
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={eventBaseCompensation}
+                    onChange={(event) =>
+                      setEventBaseCompensation(event.target.value)
+                    }
+                    required
+                  />
+                </label>
+                <label>
+                  Currency
+                  <select
+                    value={eventCurrency}
+                    onChange={(event) => setEventCurrency(event.target.value)}
+                  >
+                    <option value="USD">USD</option>
+                    <option value="CAD">CAD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                  </select>
+                </label>
+              </>
+            ) : null}
+          </div>
+          {eventType === "application_submitted" ? (
+            <fieldset className="wa-submission-source">
+              <legend>Which application package did you use?</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="application-submission-source"
+                  value="approved_package"
+                  checked={eventSubmissionSource === "approved_package"}
+                  disabled={packageRecord?.approvalState !== "approved"}
+                  onChange={() => {
+                    const selectedAt = Date.now();
+                    setEventConstraintNow(selectedAt);
+                    setEventSubmissionSource("approved_package");
+                    if (
+                      packageRecord?.approvedAt &&
+                      new Date(eventOccurredAt).getTime() <
+                        packageRecord.approvedAt
+                    ) {
+                      setEventOccurredAt(
+                        localDateTimeInputValue(new Date(selectedAt)),
+                      );
+                    }
+                  }}
+                  required
+                />
+                <span>
+                  <strong>This exact approved package</strong>
+                  <small>
+                    {packageRecord?.approvalState === "approved"
+                      ? `Package v${packageRecord.version} · ${packageRecord.payloadSha256.slice(0, 12)}…`
+                      : "No current approved package is available."}
+                  </small>
+                </span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="application-submission-source"
+                  value="outside_way_ahead"
+                  checked={eventSubmissionSource === "outside_way_ahead"}
+                  onChange={() => {
+                    setEventConstraintNow(Date.now());
+                    setEventSubmissionSource("outside_way_ahead");
+                  }}
+                  required
+                />
+                <span>
+                  <strong>A different or no Way Ahead package</strong>
+                  <small>
+                    Record the application truthfully without consuming this
+                    package&apos;s approval.
+                  </small>
+                </span>
+              </label>
+            </fieldset>
+          ) : null}
+          <label>
+            Evidence and note
+            <textarea
+              value={eventNote}
+              onChange={(event) => setEventNote(event.target.value)}
+              rows={4}
+              required={
+                eventType === "offer_accepted" ||
+                eventType === "offer_declined"
+              }
+              placeholder="Record what is known. Keep assumptions and sourced feedback separate."
+            />
+          </label>
+          <label className="wa-checkbox-row">
+            <input
+              type="checkbox"
+              checked={eventConfirmed}
+              onChange={(event) => setEventConfirmed(event.target.checked)}
+              required
+            />
+            I confirm this is my report of what happened. Way Ahead did not
+            perform the external action.
+          </label>
+          <button
+            className="wa-primary-button"
+            type="submit"
+            disabled={eventBusy || !eventConfirmed}
+          >
+            {eventBusy ? "Recording…" : "Record pursuit update"}
+          </button>
+          <FormFeedback message={eventMessage} />
+        </form>
+        {pursuit.events.length ? (
+          <ol className="wa-pursuit-timeline">
+            {pursuit.events.map((event) => (
+              <li key={event.id}>
+                <div>
+                  <strong>{titleCase(event.type)}</strong>
+                  <time dateTime={new Date(event.occurredAt).toISOString()}>
+                    {new Date(event.occurredAt).toLocaleDateString()}
+                  </time>
+                </div>
+                {event.type === "offer_received" &&
+                typeof event.metadata.baseCompensation === "number" ? (
+                  <p>
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency:
+                        typeof event.metadata.currency === "string"
+                          ? event.metadata.currency
+                          : "USD",
+                      maximumFractionDigits: 0,
+                    }).format(event.metadata.baseCompensation)}
+                  </p>
+                ) : null}
+                {event.note ? <p>{event.note}</p> : null}
+                <small>Member reported · Way Ahead executed nothing</small>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div className="wa-empty-inline">
+            <Target size={24} />
+            <span>
+              No application, interview, offer, outcome, or learning receipt
+              has been recorded yet.
+            </span>
+          </div>
         )}
       </section>
     </div>

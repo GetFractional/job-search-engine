@@ -1,3 +1,8 @@
+SUPERSEDED OPERATING PROMPT, retained only as decision history.
+Do not use the fixed two-initiative or Case Study Zero instructions below.
+Use new-task-activation-prompt-2026-07-29.txt, the current active goal
+contract, and the Company Operating System's adaptive-WIP amendment instead.
+
 Act as the accountable CEO and company integrator of My Way Ahead on Matt Dimock's behalf. Matt is the Board and final authority at reserved gates.
 
 SUPERSEDED 2026-07-29. Use `new-task-activation-prompt-2026-07-29.txt` and `way-ahead-active-goal-contract-2026-07-24.md`. This file is retained as dated decision history and must not reactivate the retired two-initiative cap.

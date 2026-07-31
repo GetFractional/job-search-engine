@@ -3,6 +3,14 @@ import {
   assessDeterministically,
   CURRENT_DETERMINISTIC_ASSESSMENT_POLICY,
 } from "./deterministic-assessment";
+import {
+  applicationQuestionFields,
+  invalidApplicationAnswers,
+  isQuestionSetChecksum,
+  requiredApplicationGaps,
+  sourceAcceptsAsset,
+  sourceRequiresAsset,
+} from "./application-package";
 import type {
   AssetRecord,
   CareerPathRecord,
@@ -11,6 +19,7 @@ import type {
   JobStandardRecord,
   JsonRecord,
   OpportunityRecord,
+  PursuitEventType,
   WorkspaceRecord,
 } from "./production-types";
 import type {
@@ -94,6 +103,16 @@ function isSha256Hex(value: unknown): value is string {
 export async function sha256Hex(value: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function jobPostingVersionId(
+  postingId: string,
+  descriptionChecksum: string,
+): Promise<string> {
+  const identityChecksum = await sha256Hex(
+    canonicalJson({ postingId, descriptionChecksum }),
+  );
+  return `jobver_${identityChecksum.slice(0, 24)}`;
 }
 
 export async function deletedIdentityWorkloadRef(
@@ -509,7 +528,7 @@ export async function recordMemberOpportunityAssessment(
         }>(),
       db
         .prepare(
-          "SELECT id, source_checked_at, description_checksum, source_facts_json, source_conflicts_json, capture_state FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
+          "SELECT version.id, version.source_checked_at, version.description_checksum, version.source_facts_json, version.source_conflicts_json, version.capture_state FROM job_posting_versions version JOIN job_postings posting ON posting.id = version.job_posting_id AND posting.description_checksum = version.description_checksum WHERE version.job_posting_id = ? LIMIT 1",
         )
         .bind(jobPostingId)
         .first<{
@@ -877,7 +896,7 @@ export async function recordOwnerOpportunityAnalysis(
       }>(),
     db
       .prepare(
-        "SELECT id, capture_state, description_checksum FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
+        "SELECT version.id, version.capture_state, version.description_checksum FROM job_posting_versions version JOIN job_postings posting ON posting.id = version.job_posting_id AND posting.description_checksum = version.description_checksum WHERE version.job_posting_id = ? LIMIT 1",
       )
       .bind(jobPostingId)
       .first<{
@@ -1012,7 +1031,7 @@ async function readOpportunity(
   const [version, analysis, pursuit] = await Promise.all([
     db
       .prepare(
-        "SELECT id, source_checked_at, description_checksum, source_facts_json, source_conflicts_json, capture_state FROM job_posting_versions WHERE job_posting_id = ? ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1",
+        "SELECT version.id, version.source_checked_at, version.description_checksum, version.source_facts_json, version.source_conflicts_json, version.capture_state FROM job_posting_versions version JOIN job_postings posting ON posting.id = version.job_posting_id AND posting.description_checksum = version.description_checksum WHERE version.job_posting_id = ? LIMIT 1",
       )
       .bind(posting.id)
       .first<{
@@ -1040,11 +1059,12 @@ async function readOpportunity(
       }>(),
     db
       .prepare(
-        "SELECT id, state, next_action, external_approval_state FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1",
+        "SELECT id, revision, state, next_action, external_approval_state FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1",
       )
       .bind(userId, posting.id)
       .first<{
         id: string;
+        revision: number;
         state: NonNullable<OpportunityRecord["pursuit"]>["state"];
         next_action: string | null;
         external_approval_state: NonNullable<OpportunityRecord["pursuit"]>["externalApprovalState"];
@@ -1053,7 +1073,7 @@ async function readOpportunity(
 
   let pursuitRecord: OpportunityRecord["pursuit"] = null;
   if (pursuit) {
-    const [assetRows, packageRow, resumeStarter, coverLetterStarter] = await Promise.all([
+    const [assetRows, packageRow, resumeStarter, coverLetterStarter, eventRows] = await Promise.all([
       db
         .prepare(
           "SELECT id, type, version, filename, content_sha256, page_count, review_state, content_json, invalidated_at, updated_at FROM generated_assets WHERE user_id = ? AND pursuit_id = ? ORDER BY type, version DESC",
@@ -1073,7 +1093,7 @@ async function readOpportunity(
         }>(),
       db
         .prepare(
-          "SELECT pp.id, pp.version, pp.destination_url, pp.job_posting_version_id, pp.payload_sha256, pp.blockers_json, pp.readiness_state, pp.asset_manifest_json, pp.answers_json, pp.created_at, CASE WHEN EXISTS (SELECT 1 FROM external_action_approvals approval WHERE approval.user_id = pp.user_id AND approval.pursuit_package_id = pp.id AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state = 'approved') THEN 'approved' ELSE 'not_approved' END AS approval_state FROM pursuit_packages pp WHERE pp.user_id = ? AND pp.pursuit_id = ? ORDER BY pp.version DESC LIMIT 1",
+          "SELECT pp.id, pp.version, pp.destination_url, pp.job_posting_version_id, pp.payload_sha256, pp.blockers_json, pp.readiness_state, pp.asset_manifest_json, pp.answers_json, pp.created_at, CASE WHEN EXISTS (SELECT 1 FROM external_action_approvals approval WHERE approval.user_id = pp.user_id AND approval.pursuit_package_id = pp.id AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state = 'approved') THEN 'approved' WHEN EXISTS (SELECT 1 FROM external_action_approvals approval WHERE approval.user_id = pp.user_id AND approval.pursuit_package_id = pp.id AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state = 'completed') THEN 'completed' ELSE 'not_approved' END AS approval_state, (SELECT approval.approved_at FROM external_action_approvals approval WHERE approval.user_id = pp.user_id AND approval.pursuit_package_id = pp.id AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state IN ('approved','completed') ORDER BY approval.approved_at DESC LIMIT 1) AS approved_at, (SELECT approval.completed_at FROM external_action_approvals approval WHERE approval.user_id = pp.user_id AND approval.pursuit_package_id = pp.id AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state = 'completed' ORDER BY approval.completed_at DESC LIMIT 1) AS completed_at FROM pursuit_packages pp WHERE pp.user_id = ? AND pp.pursuit_id = ? ORDER BY pp.version DESC LIMIT 1",
         )
         .bind(userId, pursuit.id)
         .first<{
@@ -1082,7 +1102,9 @@ async function readOpportunity(
           destination_url: string;
           job_posting_version_id: string;
           payload_sha256: string;
-          approval_state: "approved" | "not_approved";
+          approval_state: "approved" | "completed" | "not_approved";
+          approved_at: number | null;
+          completed_at: number | null;
           blockers_json: string;
           readiness_state: "blocked" | "ready_for_review" | "superseded";
           asset_manifest_json: string;
@@ -1110,9 +1132,23 @@ async function readOpportunity(
           version: number;
           review_state: "draft" | "claim_safe" | "approved" | "superseded";
         }>(),
+      db
+        .prepare(
+          "SELECT id, event_type, occurred_at, note, metadata_json, created_at FROM pursuit_events WHERE user_id = ? AND pursuit_id = ? ORDER BY occurred_at DESC, created_at DESC, id DESC",
+        )
+        .bind(userId, pursuit.id)
+        .all<{
+          id: string;
+          event_type: PursuitEventType;
+          occurred_at: number;
+          note: string | null;
+          metadata_json: string;
+          created_at: number;
+        }>(),
     ]);
     pursuitRecord = {
       id: pursuit.id,
+      revision: pursuit.revision,
       state: pursuit.state,
       nextAction: pursuit.next_action,
       externalApprovalState: pursuit.external_approval_state,
@@ -1145,6 +1181,14 @@ async function readOpportunity(
         invalidatedAt: asset.invalidated_at,
         updatedAt: asset.updated_at,
       })),
+      events: eventRows.results.map((event) => ({
+        id: event.id,
+        type: event.event_type,
+        occurredAt: event.occurred_at,
+        note: event.note,
+        metadata: parseJson(event.metadata_json, {}),
+        createdAt: event.created_at,
+      })),
       package: packageRow
         ? {
             id: packageRow.id,
@@ -1153,6 +1197,8 @@ async function readOpportunity(
             jobPostingVersionId: packageRow.job_posting_version_id,
             payloadSha256: packageRow.payload_sha256,
             approvalState: packageRow.approval_state,
+            approvedAt: packageRow.approved_at,
+            completedAt: packageRow.completed_at,
             blockers: parseJson(packageRow.blockers_json, []),
             readinessState: packageRow.readiness_state,
             assetManifest: parseJson(packageRow.asset_manifest_json, {}),
@@ -2336,7 +2382,7 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
   const db = database();
   const job = await db
     .prepare(
-      "SELECT jp.id, (SELECT jpv.id FROM job_posting_versions jpv WHERE jpv.job_posting_id = jp.id ORDER BY jpv.source_checked_at DESC, jpv.created_at DESC, jpv.id DESC LIMIT 1) AS latest_version_id FROM job_postings jp WHERE jp.id = ? AND jp.removed_at IS NULL AND EXISTS (SELECT 1 FROM user_job_links ujl WHERE ujl.user_id = ? AND ujl.job_posting_id = jp.id AND ujl.state = 'active') LIMIT 1",
+      "SELECT jp.id, (SELECT jpv.id FROM job_posting_versions jpv WHERE jpv.job_posting_id = jp.id AND jpv.description_checksum = jp.description_checksum LIMIT 1) AS latest_version_id FROM job_postings jp WHERE jp.id = ? AND jp.removed_at IS NULL AND EXISTS (SELECT 1 FROM user_job_links ujl WHERE ujl.user_id = ? AND ujl.job_posting_id = jp.id AND ujl.state = 'active') LIMIT 1",
     )
     .bind(jobPostingId, founder.id)
     .first<{ id: string; latest_version_id: string | null }>();
@@ -2375,19 +2421,29 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
     );
   }
   const existing = await db
-    .prepare("SELECT id FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1")
+    .prepare("SELECT id, current_analysis_id FROM pursuits WHERE user_id = ? AND job_posting_id = ? LIMIT 1")
     .bind(founder.id, jobPostingId)
-    .first<{ id: string }>();
+    .first<{ id: string; current_analysis_id: string | null }>();
   const linkId = `joblink_${(
     await sha256Hex(`${founder.id}:${jobPostingId}`)
   ).slice(0, 24)}`;
   if (existing) {
-    await db
-      .prepare(
-        "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
-      )
-      .bind(linkId, founder.id, jobPostingId)
-      .run();
+    await db.batch([
+      db
+        .prepare(
+          "INSERT INTO user_job_links (id, user_id, job_posting_id, source, state) VALUES (?, ?, ?, 'user_added', 'active') ON CONFLICT(user_id, job_posting_id) DO UPDATE SET state = 'active', updated_at = unixepoch() * 1000",
+        )
+        .bind(linkId, founder.id, jobPostingId),
+      ...(existing.current_analysis_id === analysis.id
+        ? []
+        : [
+            db
+              .prepare(
+                "UPDATE pursuits SET current_analysis_id = ?, next_action = 'The current trusted analysis is selected. Build fresh job-specific assets before package review.', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ?",
+              )
+              .bind(analysis.id, existing.id, founder.id),
+          ]),
+    ]);
     return existing.id;
   }
   const id = `pursuit_${crypto.randomUUID()}`;
@@ -2404,6 +2460,962 @@ export async function createPursuit(actor: FounderActor, jobPostingId: string): 
       .bind(id, founder.id, jobPostingId, analysis.id),
   ]);
   return id;
+}
+
+function boundedApplicationAnswerValue(value: unknown, key: string): unknown {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    if (normalized.length > 12_000) {
+      throw new Error(`${key} is too long for an employer-form answer.`);
+    }
+    return normalized;
+  }
+  if (Array.isArray(value)) {
+    if (value.length > 100) throw new Error(`${key} has too many selected values.`);
+    return value.map((entry) => {
+      if (
+        typeof entry !== "string" &&
+        typeof entry !== "number" &&
+        typeof entry !== "boolean"
+      ) {
+        throw new Error(`${key} contains an unsupported answer value.`);
+      }
+      return boundedApplicationAnswerValue(entry, key);
+    });
+  }
+  if (value === null) return null;
+  throw new Error(`${key} contains an unsupported employer-form answer.`);
+}
+
+function normalizeApplicationAnswers(value: unknown): JsonRecord {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Review the exact employer-form answers before building a package.");
+  }
+  const entries = Object.entries(value as Record<string, unknown>);
+  if (entries.length > 150) {
+    throw new Error("The employer form exceeds this alpha's bounded answer set.");
+  }
+  return Object.fromEntries(
+    entries.map(([key, answer]) => {
+      const normalizedKey = key.trim();
+      if (!normalizedKey || normalizedKey.length > 160) {
+        throw new Error("An employer-form answer has an invalid field name.");
+      }
+      return [normalizedKey, boundedApplicationAnswerValue(answer, normalizedKey)];
+    }),
+  );
+}
+
+function safeApplicationDestination(sourceFacts: JsonRecord, canonicalUrl: string): string {
+  const candidate =
+    nonEmptyString(sourceFacts.applyUrl) ??
+    nonEmptyString(sourceFacts.canonicalUrl) ??
+    canonicalUrl;
+  let destination: URL;
+  try {
+    destination = new URL(candidate);
+  } catch {
+    throw new Error("The employer application destination is not reviewable.");
+  }
+  if (destination.protocol !== "https:") {
+    throw new Error("The employer application destination must use HTTPS.");
+  }
+  return destination.toString();
+}
+
+type ReviewableOutboundAsset = {
+  id: string;
+  type: "resume" | "cover_letter";
+  version: number;
+  filename: string;
+  content_sha256: string;
+  page_count: number;
+  content_json: string;
+  source_versions_json: string;
+};
+
+function outboundManifestEntry(asset: ReviewableOutboundAsset): JsonRecord {
+  const content = parseJson<JsonRecord>(asset.content_json, {});
+  return {
+    id: asset.id,
+    type: asset.type,
+    version: asset.version,
+    filename: asset.filename,
+    pageCount: asset.page_count,
+    reviewState: "claim_safe",
+    contentSha256: asset.content_sha256,
+    fileSha256: nonEmptyString(content.fileSha256) ?? "",
+  };
+}
+
+export async function markPursuitAssetClaimSafe(
+  actor: FounderActor,
+  assetId: string,
+  confirmation: string,
+): Promise<{ assetId: string; reviewState: "claim_safe" }> {
+  if (confirmation !== "confirm_claim_safe_file") {
+    throw new Error("Confirm that you reviewed this exact rendered file before marking it claim-safe.");
+  }
+  const user = await ensureUser(actor);
+  const db = database();
+  const asset = await db
+    .prepare(
+      "SELECT ga.id, ga.pursuit_id, ga.type, ga.version, ga.filename, ga.page_count, ga.content_sha256, ga.content_json, ga.source_versions_json, ga.generation_policy_version, ga.review_state, ga.invalidated_at, p.job_posting_id, p.current_analysis_id, (SELECT current_version.id FROM job_posting_versions current_version JOIN job_postings current_posting ON current_posting.id = current_version.job_posting_id AND current_posting.description_checksum = current_version.description_checksum WHERE current_version.job_posting_id = p.job_posting_id LIMIT 1) AS latest_job_posting_version_id, (SELECT current_version.description_checksum FROM job_posting_versions current_version JOIN job_postings current_posting ON current_posting.id = current_version.job_posting_id AND current_posting.description_checksum = current_version.description_checksum WHERE current_version.job_posting_id = p.job_posting_id LIMIT 1) AS latest_job_description_checksum, (SELECT ja.integrity_gates_json FROM job_analyses ja WHERE ja.id = p.current_analysis_id AND ja.user_id = p.user_id AND ja.validation_state = 'trusted' LIMIT 1) AS current_analysis_gates_json FROM generated_assets ga JOIN pursuits p ON p.id = ga.pursuit_id AND p.user_id = ga.user_id WHERE ga.id = ? AND ga.user_id = ? AND ga.type IN ('resume','cover_letter') LIMIT 1",
+    )
+    .bind(assetId, user.id)
+    .first<{
+      id: string;
+      pursuit_id: string;
+      type: "resume" | "cover_letter";
+      version: number;
+      filename: string | null;
+      page_count: number | null;
+      content_sha256: string | null;
+      content_json: string | null;
+      source_versions_json: string;
+      generation_policy_version: string;
+      review_state: "draft" | "claim_safe" | "approved" | "superseded";
+      invalidated_at: number | null;
+      job_posting_id: string;
+      current_analysis_id: string | null;
+      latest_job_posting_version_id: string | null;
+      latest_job_description_checksum: string | null;
+      current_analysis_gates_json: string | null;
+  }>();
+  if (!asset) throw new Error("That application file is not available.");
+  const alreadyClaimSafe = asset.review_state === "claim_safe";
+  if (
+    (!alreadyClaimSafe && asset.review_state !== "draft") ||
+    asset.invalidated_at !== null ||
+    asset.generation_policy_version !== "client-render-receipt-v1"
+  ) {
+    throw new Error("Review the current rendered application file instead.");
+  }
+  if (
+    !asset.filename?.toLowerCase().endsWith(".pdf") ||
+    !positiveInteger(asset.page_count) ||
+    !isSha256Hex(asset.content_sha256)
+  ) {
+    throw new Error("A claim-safe application file requires a current PDF, page count, and exact fingerprint.");
+  }
+  const content = parseJson<JsonRecord>(asset.content_json, {});
+  const sourceVersions = parseJson<JsonRecord>(asset.source_versions_json, {});
+  const analysisGates = parseJson<JsonRecord>(
+    asset.current_analysis_gates_json,
+    {},
+  );
+  if (
+    !isSha256Hex(content.fileSha256) ||
+    !isSha256Hex(content.semanticContentSha256) ||
+    sourceVersions.jobPostingVersionId !== asset.latest_job_posting_version_id ||
+    sourceVersions.analysisId !== asset.current_analysis_id ||
+    analysisGates.jobVersionId !== asset.latest_job_posting_version_id ||
+    analysisGates.jobDescriptionChecksum !==
+      asset.latest_job_description_checksum
+  ) {
+    throw new Error("The rendered file is not bound to the current employer source and analysis.");
+  }
+
+  let semanticReviewStatement: D1PreparedStatement;
+  if (asset.type === "resume") {
+    const semanticResumeId = nonEmptyString(sourceVersions.semanticResumeId);
+    const semanticResume = semanticResumeId
+      ? await db
+          .prepare(
+            "SELECT id, content_json, review_state FROM resumes WHERE id = ? AND user_id = ? LIMIT 1",
+          )
+          .bind(semanticResumeId, user.id)
+          .first<{ id: string; content_json: string; review_state: string }>()
+      : null;
+    if (
+      !semanticResume ||
+      semanticResume.review_state === "superseded" ||
+      (await sha256Hex(canonicalJson(parseJson(semanticResume.content_json, {})))) !==
+        content.semanticContentSha256
+    ) {
+      throw new Error("The rendered resume no longer matches the current saved resume.");
+    }
+    semanticReviewStatement = db
+      .prepare(
+        "UPDATE resumes SET review_state = 'approved', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ?",
+      )
+      .bind(semanticResume.id, user.id);
+  } else {
+    const semanticLetterId = nonEmptyString(sourceVersions.semanticCoverLetterId);
+    const semanticLetter = semanticLetterId
+      ? await db
+          .prepare(
+            "SELECT id, content_sha256, review_state, generation_policy_version FROM generated_assets WHERE id = ? AND user_id = ? AND pursuit_id = ? AND type = 'cover_letter' LIMIT 1",
+          )
+          .bind(semanticLetterId, user.id, asset.pursuit_id)
+          .first<{
+            id: string;
+            content_sha256: string | null;
+            review_state: string;
+            generation_policy_version: string;
+          }>()
+      : null;
+    if (
+      !semanticLetter ||
+      semanticLetter.review_state === "superseded" ||
+      semanticLetter.generation_policy_version === "client-render-receipt-v1" ||
+      semanticLetter.content_sha256 !== content.semanticContentSha256
+    ) {
+      throw new Error("The rendered cover letter no longer matches the current saved letter.");
+    }
+    semanticReviewStatement = db
+      .prepare(
+        "UPDATE generated_assets SET review_state = 'claim_safe', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ?",
+      )
+      .bind(semanticLetter.id, user.id);
+  }
+  if (alreadyClaimSafe) {
+    return { assetId: asset.id, reviewState: "claim_safe" };
+  }
+
+  await db.batch([
+    db
+      .prepare(
+        "UPDATE generated_assets SET review_state = 'claim_safe', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ? AND review_state = 'draft' AND invalidated_at IS NULL",
+      )
+      .bind(asset.id, user.id),
+    semanticReviewStatement,
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'application_file_claim_safe_confirmed', 'generated_asset', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        user.id,
+        `chatgpt:${user.email}`,
+        asset.id,
+        canonicalJson({
+          pursuitId: asset.pursuit_id,
+          type: asset.type,
+          version: asset.version,
+          filename: asset.filename,
+          pageCount: asset.page_count,
+          contentSha256: asset.content_sha256,
+          fileSha256: content.fileSha256,
+          userReviewedExactFile: true,
+          externalActionAuthorized: false,
+        }),
+      ),
+  ]);
+  return { assetId: asset.id, reviewState: "claim_safe" };
+}
+
+export async function buildApplicationPackage(
+  actor: FounderActor,
+  input: {
+    pursuitId: string;
+    answers: unknown;
+    includeCoverLetter: boolean;
+  },
+): Promise<{
+  packageId: string;
+  payloadSha256: string;
+  readinessState: "blocked" | "ready_for_review";
+  blockers: string[];
+}> {
+  const user = await ensureUser(actor);
+  const db = database();
+  const pursuitId = input.pursuitId.trim();
+  const context = await db
+    .prepare(
+      "SELECT p.id, p.revision, p.current_analysis_id, jp.id AS job_posting_id, jp.canonical_url, jpv.id AS job_posting_version_id, jpv.source_checked_at, jpv.description_checksum, jpv.source_facts_json, jpv.source_conflicts_json, jpv.capture_state, ja.validation_state, ja.integrity_gates_json, (SELECT audit.id FROM audit_events audit WHERE audit.user_id = p.user_id AND audit.entity_type = 'job_posting' AND audit.entity_id = jp.id AND audit.event_type IN ('greenhouse_job_ingested','lever_job_ingested','ashby_job_ingested') AND json_valid(audit.metadata_json) AND json_extract(audit.metadata_json, '$.descriptionChecksum') = jpv.description_checksum ORDER BY audit.created_at DESC, audit.id DESC LIMIT 1) AS source_recheck_audit_id, (SELECT audit.created_at FROM audit_events audit WHERE audit.user_id = p.user_id AND audit.entity_type = 'job_posting' AND audit.entity_id = jp.id AND audit.event_type IN ('greenhouse_job_ingested','lever_job_ingested','ashby_job_ingested') AND json_valid(audit.metadata_json) AND json_extract(audit.metadata_json, '$.descriptionChecksum') = jpv.description_checksum ORDER BY audit.created_at DESC, audit.id DESC LIMIT 1) AS source_recheck_verified_at FROM pursuits p JOIN job_postings jp ON jp.id = p.job_posting_id LEFT JOIN job_posting_versions jpv ON jpv.job_posting_id = jp.id AND jpv.description_checksum = jp.description_checksum LEFT JOIN job_analyses ja ON ja.id = p.current_analysis_id AND ja.user_id = p.user_id WHERE p.id = ? AND p.user_id = ? AND p.state NOT IN ('applied','interviewing','offered','accepted','closed') AND jp.removed_at IS NULL LIMIT 1",
+    )
+    .bind(pursuitId, user.id)
+    .first<{
+      id: string;
+      revision: number;
+      current_analysis_id: string | null;
+      job_posting_id: string;
+      canonical_url: string;
+      job_posting_version_id: string | null;
+      source_checked_at: number | null;
+      description_checksum: string | null;
+      source_facts_json: string | null;
+      source_conflicts_json: string | null;
+      capture_state: "verified" | "partial" | "conflict" | "unavailable" | null;
+      validation_state: "pending" | "trusted" | "blocked" | "invalidated" | null;
+      integrity_gates_json: string | null;
+      source_recheck_audit_id: string | null;
+      source_recheck_verified_at: number | null;
+    }>();
+  if (!context) throw new Error("That active pursuit is not available.");
+
+  const sourceFacts = parseJson<JsonRecord>(context.source_facts_json, {});
+  const sourceConflicts = parseJson<string[]>(context.source_conflicts_json, []);
+  const analysisGates = parseJson<JsonRecord>(
+    context.integrity_gates_json,
+    {},
+  );
+  const analysisIsCurrent =
+    Boolean(context.current_analysis_id) &&
+    analysisGates.jobVersionId === context.job_posting_version_id &&
+    analysisGates.jobDescriptionChecksum === context.description_checksum;
+  const packageBuiltAt = Date.now();
+  const sourceRecheckIsCurrent =
+    Boolean(context.source_recheck_audit_id) &&
+    positiveInteger(context.source_recheck_verified_at) &&
+    context.source_recheck_verified_at! >= packageBuiltAt - 24 * 60 * 60 * 1000 &&
+    context.source_recheck_verified_at! <= packageBuiltAt + 5 * 60 * 1000;
+  const sourceChecksum = sourceFacts.questionSetChecksum;
+  const normalizedAnswers = normalizeApplicationAnswers(input.answers);
+  const answerKeys = new Set(
+    applicationQuestionFields(sourceFacts)
+      .filter((field) => !field.isFileUpload && !field.unsupportedReason)
+      .map((field) => field.key),
+  );
+  const unsupportedAnswerKeys = Object.keys(normalizedAnswers).filter(
+    (key) => key !== "questionSetChecksum" && !answerKeys.has(key),
+  );
+  if (unsupportedAnswerKeys.length) {
+    throw new Error(
+      "The employer form changed. Refresh before reviewing its exact answers.",
+    );
+  }
+  const answers = Object.fromEntries(
+    Object.entries(normalizedAnswers).filter(([key]) => answerKeys.has(key)),
+  );
+  if (isQuestionSetChecksum(sourceChecksum)) {
+    answers.questionSetChecksum = sourceChecksum.toLowerCase();
+  }
+
+  const assetRows = await db
+    .prepare(
+      "SELECT candidate.id, candidate.type, candidate.version, candidate.filename, candidate.content_sha256, candidate.page_count, candidate.content_json, candidate.source_versions_json FROM generated_assets candidate WHERE candidate.user_id = ? AND candidate.pursuit_id = ? AND candidate.type IN ('resume','cover_letter') AND candidate.generation_policy_version = 'client-render-receipt-v1' AND candidate.review_state = 'claim_safe' AND candidate.invalidated_at IS NULL AND json_valid(candidate.source_versions_json) AND json_extract(candidate.source_versions_json, '$.jobPostingVersionId') = ? AND json_extract(candidate.source_versions_json, '$.analysisId') = ? AND NOT EXISTS (SELECT 1 FROM generated_assets newer WHERE newer.user_id = candidate.user_id AND newer.pursuit_id = candidate.pursuit_id AND newer.type = candidate.type AND newer.version > candidate.version AND newer.invalidated_at IS NULL) ORDER BY candidate.type, candidate.version DESC, candidate.updated_at DESC",
+    )
+    .bind(
+      user.id,
+      pursuitId,
+      context.job_posting_version_id,
+      context.current_analysis_id,
+    )
+    .all<ReviewableOutboundAsset>();
+  const semanticCurrentAssets = (
+    await Promise.all(
+      assetRows.results.map(async (asset) => {
+        const sourceVersions = parseJson<JsonRecord>(
+          asset.source_versions_json,
+          {},
+        );
+        const content = parseJson<JsonRecord>(asset.content_json, {});
+        if (asset.type === "resume") {
+          const semanticResumeId = nonEmptyString(
+            sourceVersions.semanticResumeId,
+          );
+          const semanticResume = semanticResumeId
+            ? await db
+                .prepare(
+                  "SELECT content_json, review_state FROM resumes WHERE id = ? AND user_id = ? LIMIT 1",
+                )
+                .bind(semanticResumeId, user.id)
+                .first<{ content_json: string; review_state: string }>()
+            : null;
+          return semanticResume &&
+            semanticResume.review_state !== "superseded" &&
+            isSha256Hex(content.semanticContentSha256) &&
+            (await sha256Hex(
+              canonicalJson(parseJson(semanticResume.content_json, {})),
+            )) === content.semanticContentSha256
+            ? asset
+            : null;
+        }
+        const semanticLetterId = nonEmptyString(
+          sourceVersions.semanticCoverLetterId,
+        );
+        const semanticLetter = semanticLetterId
+          ? await db
+              .prepare(
+                "SELECT content_sha256, review_state, generation_policy_version FROM generated_assets WHERE id = ? AND user_id = ? AND pursuit_id = ? AND type = 'cover_letter' LIMIT 1",
+              )
+              .bind(semanticLetterId, user.id, pursuitId)
+              .first<{
+                content_sha256: string | null;
+                review_state: string;
+                generation_policy_version: string;
+              }>()
+          : null;
+        return semanticLetter &&
+          semanticLetter.review_state !== "superseded" &&
+          semanticLetter.generation_policy_version !==
+            "client-render-receipt-v1" &&
+          semanticLetter.content_sha256 === content.semanticContentSha256
+          ? asset
+          : null;
+      }),
+    )
+  ).filter((asset): asset is ReviewableOutboundAsset => Boolean(asset));
+  const resume =
+    semanticCurrentAssets.find((asset) => asset.type === "resume") ?? null;
+  const coverLetter =
+    semanticCurrentAssets.find((asset) => asset.type === "cover_letter") ??
+    null;
+  const acceptsResume = sourceAcceptsAsset(sourceFacts, "resume");
+  const acceptsCoverLetter = sourceAcceptsAsset(sourceFacts, "cover_letter");
+  const requiresCoverLetter = sourceRequiresAsset(sourceFacts, "cover_letter");
+  const shouldIncludeCoverLetter =
+    acceptsCoverLetter && (requiresCoverLetter || input.includeCoverLetter);
+  const selectedAssets = [
+    resume,
+    shouldIncludeCoverLetter ? coverLetter : null,
+  ].filter((asset): asset is ReviewableOutboundAsset => Boolean(asset));
+  const manifestAssets = selectedAssets.map(outboundManifestEntry);
+  const assetTypes = new Set(
+    manifestAssets.flatMap((asset) =>
+      typeof asset.type === "string" ? [asset.type] : [],
+    ),
+  );
+
+  const blockers = [
+    context.capture_state !== "verified"
+      ? "The current employer source is not verified."
+      : null,
+    !isSha256Hex(context.description_checksum)
+      ? "The current job description fingerprint is invalid."
+      : null,
+    !sourceRecheckIsCurrent
+      ? "Refresh the canonical employer job within 24 hours of package review."
+      : null,
+    context.validation_state !== "trusted"
+      ? "The current job analysis is not trusted."
+      : null,
+    !analysisIsCurrent
+      ? "Reassess this exact employer-source version before package review."
+      : null,
+    sourceConflicts.length
+      ? "Resolve the recorded employer-source conflict before package review."
+      : null,
+    !isQuestionSetChecksum(sourceChecksum)
+      ? "The employer form-version receipt is unavailable."
+      : null,
+    !acceptsResume
+      ? "The verified employer form does not expose a resume upload field."
+      : null,
+    !resume
+      ? "Download and review a current job-specific resume PDF."
+      : null,
+    input.includeCoverLetter && !acceptsCoverLetter
+      ? "The verified employer form does not accept a cover letter."
+      : null,
+    shouldIncludeCoverLetter && !coverLetter
+      ? "Download and review a current cover-letter PDF for this employer form."
+      : null,
+    ...requiredApplicationGaps(sourceFacts, answers, assetTypes).map(
+      (label) => `Required employer-form item missing: ${label}`,
+    ),
+    ...invalidApplicationAnswers(sourceFacts, answers),
+    ...manifestAssets.flatMap((asset) =>
+      isSha256Hex(asset.contentSha256) &&
+      isSha256Hex(asset.fileSha256) &&
+      positiveInteger(asset.pageCount) &&
+      nonEmptyString(asset.filename)
+        ? []
+        : [`The ${String(asset.type).replace("_", " ")} file receipt is incomplete.`],
+    ),
+  ].filter((value): value is string => Boolean(value));
+  const uniqueBlockers = [...new Set(blockers)];
+  const destinationUrl = safeApplicationDestination(
+    sourceFacts,
+    context.canonical_url,
+  );
+  const versionRow = await db
+    .prepare(
+      "SELECT coalesce(max(version), 0) AS version FROM pursuit_packages WHERE user_id = ? AND pursuit_id = ?",
+    )
+    .bind(user.id, pursuitId)
+    .first<{ version: number }>();
+  const version = (versionRow?.version ?? 0) + 1;
+  const readinessState =
+    uniqueBlockers.length === 0 ? "ready_for_review" : "blocked";
+  const assetManifest = {
+    assets: manifestAssets,
+    sourceRecheck: {
+      auditEventId: context.source_recheck_audit_id,
+      postingLastCheckedAt: context.source_recheck_verified_at,
+      verifiedAt: context.source_recheck_verified_at,
+      descriptionChecksum: context.description_checksum,
+    },
+  };
+  const packageCore = {
+    destinationUrl,
+    jobVersionId: context.job_posting_version_id,
+    answers,
+    assetManifest,
+    blockers: uniqueBlockers,
+  };
+  const payloadSha256 = await sha256Hex(canonicalJson(packageCore));
+  const packageId = `package_${crypto.randomUUID()}`;
+  if (!context.job_posting_version_id) {
+    throw new Error("The current employer source version is unavailable.");
+  }
+
+  await db.batch([
+    db
+      .prepare(
+        "INSERT INTO pursuit_packages (id, user_id, pursuit_id, version, destination_url, job_posting_version_id, answers_json, asset_manifest_json, blockers_json, payload_sha256, readiness_state) VALUES (?, (SELECT current_pursuit.user_id FROM pursuits current_pursuit WHERE current_pursuit.id = ? AND current_pursuit.user_id = ? AND current_pursuit.revision = ? AND current_pursuit.state NOT IN ('applied','interviewing','offered','accepted','closed')), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      )
+      .bind(
+        packageId,
+        pursuitId,
+        user.id,
+        context.revision,
+        pursuitId,
+        version,
+        destinationUrl,
+        context.job_posting_version_id,
+        canonicalJson(answers),
+        canonicalJson(assetManifest),
+        canonicalJson(uniqueBlockers),
+        payloadSha256,
+        readinessState,
+      ),
+    db
+      .prepare(
+        "UPDATE pursuits SET state = ?, revision = revision + 1, external_approval_state = ?, next_action = ?, updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ? AND revision = ? AND state NOT IN ('applied','interviewing','offered','accepted','closed')",
+      )
+      .bind(
+        readinessState === "ready_for_review" ? "ready_for_approval" : "preparing",
+        readinessState === "ready_for_review" ? "requested" : "not_requested",
+        readinessState === "ready_for_review"
+          ? "Review this exact employer destination, form version, answers, and outbound files before approving form staging."
+          : "Resolve every package blocker, then build a new immutable package version.",
+        pursuitId,
+        user.id,
+        context.revision,
+      ),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'application_package_built', 'pursuit_package', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        user.id,
+        `chatgpt:${user.email}`,
+        packageId,
+        canonicalJson({
+          pursuitId,
+          version,
+          payloadSha256,
+          readinessState,
+          blockerCount: uniqueBlockers.length,
+          outboundAssetIds: manifestAssets.map((asset) => asset.id),
+          sourceRecheckAuditEventId: context.source_recheck_audit_id,
+          employerFormPopulated: false,
+          fileUploaded: false,
+          applicationSubmitted: false,
+        }),
+      ),
+  ]);
+  return {
+    packageId,
+    payloadSha256,
+    readinessState,
+    blockers: uniqueBlockers,
+  };
+}
+
+const PURSUIT_EVENT_TYPES = new Set<PursuitEventType>([
+  "application_submitted",
+  "interview_scheduled",
+  "interview_completed",
+  "follow_up_scheduled",
+  "offer_received",
+  "offer_accepted",
+  "offer_declined",
+  "rejected",
+  "withdrawn",
+  "closed_no_response",
+  "learning_recorded",
+]);
+
+function normalizedPursuitEventMetadata(value: unknown): JsonRecord {
+  if (value === undefined || value === null) return {};
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("The pursuit update details must be structured.");
+  }
+  const entries = Object.entries(value as Record<string, unknown>);
+  if (entries.length > 30) throw new Error("The pursuit update has too many details.");
+  return Object.fromEntries(
+    entries.map(([key, entry]) => [
+      key.slice(0, 120),
+      boundedApplicationAnswerValue(entry, key),
+    ]),
+  );
+}
+
+export async function recordPursuitEvent(
+  actor: FounderActor,
+  input: {
+    pursuitId: string;
+    type: unknown;
+    occurredAt: unknown;
+    note: unknown;
+    metadata: unknown;
+    confirmation: unknown;
+  },
+): Promise<{ eventId: string; pursuitState: NonNullable<OpportunityRecord["pursuit"]>["state"] }> {
+  if (input.confirmation !== "record_member_reported_event") {
+    throw new Error("Confirm that this is a member-reported pursuit update.");
+  }
+  if (typeof input.type !== "string" || !PURSUIT_EVENT_TYPES.has(input.type as PursuitEventType)) {
+    throw new Error("Choose a supported pursuit update.");
+  }
+  const type = input.type as PursuitEventType;
+  const now = Date.now();
+  const futureScheduledEvent =
+    type === "interview_scheduled" || type === "follow_up_scheduled";
+  const latestAllowedAt = futureScheduledEvent
+    ? now + 2 * 365 * 24 * 60 * 60 * 1000
+    : now + 5 * 60 * 1000;
+  const occurredAt =
+    typeof input.occurredAt === "number" &&
+    Number.isInteger(input.occurredAt) &&
+    input.occurredAt > now - 10 * 365 * 24 * 60 * 60 * 1000 &&
+    input.occurredAt <= latestAllowedAt
+      ? input.occurredAt
+      : (() => {
+          throw new Error(
+            futureScheduledEvent
+              ? "Choose a valid scheduled date within the next two years."
+              : "Outcome updates cannot be dated in the future.",
+          );
+        })();
+  const note =
+    input.note === null || input.note === undefined
+      ? null
+      : nonEmptyString(input.note);
+  if (note && note.length > 4_000) {
+    throw new Error("Keep the pursuit note to 4,000 characters or fewer.");
+  }
+  const metadata = normalizedPursuitEventMetadata(input.metadata);
+  const user = await ensureUser(actor);
+  const db = database();
+  const pursuit = await db
+    .prepare(
+      "SELECT id, revision, state, external_approval_state FROM pursuits WHERE id = ? AND user_id = ? LIMIT 1",
+    )
+    .bind(input.pursuitId.trim(), user.id)
+    .first<{
+      id: string;
+      revision: number;
+      state: NonNullable<OpportunityRecord["pursuit"]>["state"];
+      external_approval_state: NonNullable<
+        OpportunityRecord["pursuit"]
+      >["externalApprovalState"];
+    }>();
+  if (!pursuit) throw new Error("That pursuit is not available.");
+
+  const allowedStates: Record<PursuitEventType, Set<typeof pursuit.state>> = {
+    application_submitted: new Set([
+      "saved",
+      "researching",
+      "preparing",
+      "ready_for_approval",
+      "applying",
+    ]),
+    interview_scheduled: new Set(["applied", "interviewing"]),
+    interview_completed: new Set(["interviewing"]),
+    follow_up_scheduled: new Set(["applied", "interviewing", "offered"]),
+    offer_received: new Set(["applied", "interviewing"]),
+    offer_accepted: new Set(["offered"]),
+    offer_declined: new Set(["offered"]),
+    rejected: new Set(["applied", "interviewing", "offered"]),
+    withdrawn: new Set([
+      "saved",
+      "researching",
+      "preparing",
+      "ready_for_approval",
+      "applying",
+      "applied",
+      "interviewing",
+      "offered",
+    ]),
+    closed_no_response: new Set(["applied", "interviewing"]),
+    learning_recorded: new Set([
+      "saved",
+      "researching",
+      "preparing",
+      "ready_for_approval",
+      "applying",
+      "applied",
+      "interviewing",
+      "offered",
+      "accepted",
+      "closed",
+    ]),
+  };
+  if (!allowedStates[type].has(pursuit.state)) {
+    throw new Error(
+      `Record the preceding pursuit stage before ${type.replaceAll("_", " ")}.`,
+    );
+  }
+
+  let consumedApproval: {
+    id: string;
+    packageId: string;
+    approvedAt: number;
+  } | null = null;
+  let verifiedMetadata = metadata;
+  if (type === "application_submitted") {
+    const packageId = nonEmptyString(metadata.packageId);
+    const reportedOutsideWayAhead =
+      metadata.reportedOutsideWayAhead === true;
+    if (Boolean(packageId) === reportedOutsideWayAhead) {
+      throw new Error(
+        "Choose exactly one submission source: this approved package, or a different or no Way Ahead package.",
+      );
+    }
+    const approvedPackage = packageId
+          ? await db
+          .prepare(
+            "SELECT pp.id AS package_id, approval.id AS approval_id, approval.approved_at FROM pursuit_packages pp JOIN external_action_approvals approval ON approval.pursuit_package_id = pp.id AND approval.user_id = pp.user_id JOIN job_posting_versions version ON version.id = pp.job_posting_version_id JOIN job_postings current_posting ON current_posting.id = version.job_posting_id AND current_posting.description_checksum = version.description_checksum JOIN audit_events source_recheck ON source_recheck.id = json_extract(pp.asset_manifest_json, '$.sourceRecheck.auditEventId') AND source_recheck.user_id = pp.user_id AND source_recheck.entity_type = 'job_posting' AND source_recheck.entity_id = version.job_posting_id AND source_recheck.event_type IN ('greenhouse_job_ingested','lever_job_ingested','ashby_job_ingested') WHERE pp.id = ? AND pp.user_id = ? AND pp.pursuit_id = ? AND pp.readiness_state = 'ready_for_review' AND pp.blockers_json = '[]' AND approval.action = 'approve_application_package' AND approval.payload_sha256 = pp.payload_sha256 AND approval.state = 'approved' AND approval.approved_at IS NOT NULL AND approval.approved_at <= ? AND approval.revoked_at IS NULL AND approval.completed_at IS NULL AND json_valid(pp.asset_manifest_json) AND json_valid(source_recheck.metadata_json) AND json_extract(source_recheck.metadata_json, '$.descriptionChecksum') IS version.description_checksum AND json_extract(pp.asset_manifest_json, '$.sourceRecheck.descriptionChecksum') IS version.description_checksum AND json_extract(pp.asset_manifest_json, '$.sourceRecheck.verifiedAt') IS source_recheck.created_at AND json_extract(pp.asset_manifest_json, '$.sourceRecheck.postingLastCheckedAt') IS source_recheck.created_at AND json_extract(pp.asset_manifest_json, '$.sourceRecheck.postingLastCheckedAt') >= (? - 86400000) AND json_extract(pp.asset_manifest_json, '$.sourceRecheck.postingLastCheckedAt') <= (? + 300000) LIMIT 1",
+          )
+          .bind(
+            packageId,
+            user.id,
+            pursuit.id,
+            occurredAt,
+            occurredAt,
+            occurredAt,
+          )
+          .first<{
+            package_id: string;
+            approval_id: string;
+            approved_at: number;
+          }>()
+      : null;
+    if (packageId && !approvedPackage) {
+      throw new Error(
+        "The selected package was not approved at the recorded submission time. Review the exact approval receipt or choose the outside Way Ahead option.",
+      );
+    }
+    if (approvedPackage) {
+      consumedApproval = {
+        id: approvedPackage.approval_id,
+        packageId: approvedPackage.package_id,
+        approvedAt: approvedPackage.approved_at,
+      };
+      verifiedMetadata = {
+        packageId: approvedPackage.package_id,
+        approvalId: approvedPackage.approval_id,
+        submissionSource: "approved_package",
+      };
+    } else {
+      verifiedMetadata = {
+        reportedOutsideWayAhead: true,
+        submissionSource: "outside_way_ahead",
+      };
+    }
+  }
+  if (
+    type === "offer_received" &&
+    !(
+      typeof metadata.baseCompensation === "number" &&
+      metadata.baseCompensation >= 0 &&
+      nonEmptyString(metadata.currency)
+    )
+  ) {
+    throw new Error("Record the offer's base compensation and currency.");
+  }
+  if (
+    (type === "offer_accepted" || type === "offer_declined") &&
+    !note
+  ) {
+    throw new Error("Record the reason behind this offer decision.");
+  }
+
+  const transition: Record<
+    PursuitEventType,
+    {
+      state: NonNullable<OpportunityRecord["pursuit"]>["state"] | null;
+      nextAction: string;
+    }
+  > = {
+    application_submitted: {
+      state: "applied",
+      nextAction: "Track the employer response and prepare for the first interview.",
+    },
+    interview_scheduled: {
+      state: "interviewing",
+      nextAction: "Prepare evidence-backed stories and questions for the scheduled interview.",
+    },
+    interview_completed: {
+      state: "interviewing",
+      nextAction: "Record the interview outcome and schedule a truthful follow-up.",
+    },
+    follow_up_scheduled: {
+      state: null,
+      nextAction: "Complete the scheduled follow-up without overstating the relationship.",
+    },
+    offer_received: {
+      state: "offered",
+      nextAction: "Compare the complete offer with your Job Standard before deciding.",
+    },
+    offer_accepted: {
+      state: "accepted",
+      nextAction: "Record the final terms and the search lessons worth carrying forward.",
+    },
+    offer_declined: {
+      state: "closed",
+      nextAction: "Record what this pursuit taught you before closing it.",
+    },
+    rejected: {
+      state: "closed",
+      nextAction: "Separate sourced feedback from inference and record one useful learning.",
+    },
+    withdrawn: {
+      state: "closed",
+      nextAction: "Record why this job stopped being worth the effort.",
+    },
+    closed_no_response: {
+      state: "closed",
+      nextAction: "Record the elapsed time and one improvement hypothesis.",
+    },
+    learning_recorded: {
+      state: null,
+      nextAction: "Apply only the learning supported by this pursuit's evidence.",
+    },
+  };
+  const next = transition[type];
+  const nextState = next.state ?? pursuit.state;
+  const eventId = `pursuit_event_${crypto.randomUUID()}`;
+  const outsideSubmissionRevokesApproval =
+    type === "application_submitted" &&
+    !consumedApproval &&
+    pursuit.external_approval_state === "approved";
+  const nextExternalApprovalState = consumedApproval
+    ? "completed"
+    : outsideSubmissionRevokesApproval
+      ? "revoked"
+      : pursuit.external_approval_state;
+  const statements = [];
+
+  if (consumedApproval) {
+    statements.push(
+      db
+        .prepare(
+          "UPDATE external_action_approvals SET state = 'completed', completed_at = ? WHERE id = ? AND user_id = ? AND pursuit_package_id = ? AND action = 'approve_application_package' AND state = 'approved' AND approved_at = ? AND approved_at <= ? AND revoked_at IS NULL AND completed_at IS NULL",
+        )
+        .bind(
+          occurredAt,
+          consumedApproval.id,
+          user.id,
+          consumedApproval.packageId,
+          consumedApproval.approvedAt,
+          occurredAt,
+        ),
+    );
+  } else if (outsideSubmissionRevokesApproval) {
+    statements.push(
+      db
+        .prepare(
+          "UPDATE external_action_approvals SET state = 'revoked', revoked_at = ? WHERE user_id = ? AND action = 'approve_application_package' AND state = 'approved' AND pursuit_package_id IN (SELECT package.id FROM pursuit_packages package WHERE package.user_id = ? AND package.pursuit_id = ?)",
+        )
+        .bind(now, user.id, user.id, pursuit.id),
+    );
+  }
+
+  const eventMetadataJson = canonicalJson({
+    ...verifiedMetadata,
+    provenance: "member_reported",
+    platformExecutedExternalAction: false,
+  });
+  statements.push(
+    consumedApproval
+      ? db
+          .prepare(
+            "INSERT INTO pursuit_events (id, user_id, pursuit_id, event_type, occurred_at, note, metadata_json) VALUES (?, (SELECT current_pursuit.user_id FROM pursuits current_pursuit JOIN external_action_approvals consumed ON consumed.id = ? AND consumed.user_id = current_pursuit.user_id WHERE current_pursuit.id = ? AND current_pursuit.user_id = ? AND current_pursuit.revision = ? AND consumed.pursuit_package_id = ? AND consumed.state = 'completed' AND consumed.completed_at = ?), ?, ?, ?, ?, ?)",
+          )
+          .bind(
+            eventId,
+            consumedApproval.id,
+            pursuit.id,
+            user.id,
+            pursuit.revision,
+            consumedApproval.packageId,
+            occurredAt,
+            pursuit.id,
+            type,
+            occurredAt,
+            note,
+            eventMetadataJson,
+          )
+      : db
+          .prepare(
+            "INSERT INTO pursuit_events (id, user_id, pursuit_id, event_type, occurred_at, note, metadata_json) VALUES (?, (SELECT current_pursuit.user_id FROM pursuits current_pursuit WHERE current_pursuit.id = ? AND current_pursuit.user_id = ? AND current_pursuit.revision = ?), ?, ?, ?, ?, ?)",
+          )
+          .bind(
+            eventId,
+            pursuit.id,
+            user.id,
+            pursuit.revision,
+            pursuit.id,
+            type,
+            occurredAt,
+            note,
+            eventMetadataJson,
+          ),
+    db
+      .prepare(
+        "UPDATE pursuits SET state = ?, revision = revision + 1, external_approval_state = ?, next_action = ?, applied_at = CASE WHEN ? = 'application_submitted' AND applied_at IS NULL THEN ? ELSE applied_at END, closed_reason = CASE WHEN ? IN ('offer_declined','rejected','withdrawn','closed_no_response') THEN ? ELSE closed_reason END, updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ? AND revision = ? AND (? IS NULL OR EXISTS (SELECT 1 FROM external_action_approvals consumed WHERE consumed.id = ? AND consumed.user_id = ? AND consumed.pursuit_package_id = ? AND consumed.state = 'completed' AND consumed.completed_at = ?)) AND (? = 0 OR NOT EXISTS (SELECT 1 FROM external_action_approvals approval JOIN pursuit_packages package ON package.id = approval.pursuit_package_id AND package.user_id = approval.user_id WHERE approval.user_id = ? AND package.pursuit_id = ? AND approval.action = 'approve_application_package' AND approval.state = 'approved'))",
+      )
+      .bind(
+        nextState,
+        nextExternalApprovalState,
+        next.nextAction,
+        type,
+        occurredAt,
+        type,
+        type,
+        pursuit.id,
+        user.id,
+        pursuit.revision,
+        consumedApproval?.id ?? null,
+        consumedApproval?.id ?? null,
+        user.id,
+        consumedApproval?.packageId ?? null,
+        occurredAt,
+        outsideSubmissionRevokesApproval ? 1 : 0,
+        user.id,
+        pursuit.id,
+      ),
+    db
+      .prepare(
+        "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, (SELECT current_pursuit.user_id FROM pursuits current_pursuit WHERE current_pursuit.id = ? AND current_pursuit.user_id = ? AND current_pursuit.revision = ? AND current_pursuit.state = ? AND current_pursuit.external_approval_state = ?), ?, 'pursuit_event_recorded', 'pursuit_event', ?, ?)",
+      )
+      .bind(
+        crypto.randomUUID(),
+        pursuit.id,
+        user.id,
+        pursuit.revision + 1,
+        nextState,
+        nextExternalApprovalState,
+        `chatgpt:${user.email}`,
+        eventId,
+        canonicalJson({
+          pursuitId: pursuit.id,
+          type,
+          occurredAt,
+          previousState: pursuit.state,
+          nextState,
+          submissionSource:
+            type === "application_submitted"
+              ? consumedApproval
+                ? "approved_package"
+                : "outside_way_ahead"
+              : null,
+          consumedApprovalId: consumedApproval?.id ?? null,
+          platformExecutedExternalAction: false,
+        }),
+      ),
+  );
+  await db.batch(statements);
+  return { eventId, pursuitState: nextState };
 }
 
 type GreenhouseJobResponse = {
@@ -2430,6 +3442,41 @@ type GreenhouseJobResponse = {
     }>;
   }>;
 };
+
+function greenhouseDecisionSnapshot(
+  job: GreenhouseJobResponse,
+  questionSet: Array<{
+    label: string;
+    required: boolean;
+    fields: Array<{ name: string; type: string; values: unknown[] }>;
+  }>,
+  questionSetChecksum: string,
+  employer: string,
+  canonicalUrl: string,
+) {
+  const descriptionHtml = job.content ?? "";
+  return {
+    employer: employer.trim(),
+    title: job.title.trim(),
+    location: job.location?.name?.trim() || null,
+    departments: (job.departments ?? [])
+      .map((department) => department.name?.trim())
+      .filter((name): name is string => Boolean(name)),
+    offices: (job.offices ?? [])
+      .map((office) => office.name?.trim())
+      .filter((name): name is string => Boolean(name)),
+    updatedAt: job.updated_at ?? null,
+    firstPublished: job.first_published ?? null,
+    applicationDeadline: job.application_deadline ?? null,
+    metadata: job.metadata ?? [],
+    compensationRanges: job.pay_input_ranges ?? [],
+    questionSet,
+    questionSetChecksum,
+    descriptionHtml,
+    descriptionCharacterCount: descriptionHtml.length,
+    canonicalUrl,
+  };
+}
 
 function parseGreenhouseUrl(input: string): { board: string; jobId: string } {
   let url: URL;
@@ -2503,30 +3550,24 @@ export async function ingestGreenhouseJob(
     })),
   }));
   const questionSetChecksum = await sha256Hex(canonicalJson(questionSet));
-  const descriptionChecksum = await sha256Hex(`${job.content ?? ""}\n${canonicalJson(questionSet)}`);
-  const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const employer = job.company_name?.trim() || board;
+  const canonicalUrl = job.absolute_url?.startsWith("https://") ? job.absolute_url : sourceUrl;
+  const sourceSnapshot = greenhouseDecisionSnapshot(
+    job,
+    questionSet,
+    questionSetChecksum,
+    employer,
+    canonicalUrl,
+  );
+  const descriptionChecksum = await sha256Hex(canonicalJson(sourceSnapshot));
+  const versionId = await jobPostingVersionId(postingId, descriptionChecksum);
   const linkId = `joblink_${(
     await sha256Hex(`${founder.id}:${postingId}`)
   ).slice(0, 24)}`;
-  const employer = job.company_name?.trim() || board;
-  const canonicalUrl = job.absolute_url?.startsWith("https://") ? job.absolute_url : sourceUrl;
-  const location = job.location?.name?.trim();
-  const sourceFacts: JsonRecord = {
-    employer,
-    title: job.title,
-    location: location ?? null,
-    departments: job.departments?.map((department) => department.name).filter(Boolean) ?? [],
-    offices: job.offices?.map((office) => office.name).filter(Boolean) ?? [],
-    updatedAt: job.updated_at ?? null,
-    firstPublished: job.first_published ?? null,
-    applicationDeadline: job.application_deadline ?? null,
-    metadata: job.metadata ?? [],
-    questionSet,
-    questionSetChecksum,
-    descriptionCharacterCount: job.content?.length ?? 0,
-    canonicalUrl,
-    retrieval: "Greenhouse public Job Board GET API",
-  };
+  const sourceFacts: JsonRecord = Object.fromEntries(
+    Object.entries(sourceSnapshot).filter(([key]) => key !== "descriptionHtml"),
+  );
+  sourceFacts.retrieval = "Greenhouse public Job Board GET API";
   const db = database();
   await db.batch([
     db
@@ -2544,8 +3585,8 @@ export async function ingestGreenhouseJob(
         jobId,
         canonicalUrl,
         employer,
-        job.title,
-        json(location ? [location] : []),
+        sourceSnapshot.title,
+        json(sourceSnapshot.location ? [sourceSnapshot.location] : []),
         json({ sourceRanges: job.pay_input_ranges ?? [], state: "source_reported" }),
         descriptionChecksum,
         checkedAt,
@@ -2695,7 +3736,7 @@ async function ingestLeverJob(
   const descriptionChecksum = await sha256Hex(canonicalJson(sourceSnapshot));
   const sourceId = `lever_${(await sha256Hex(site)).slice(0, 20)}`;
   const postingId = `job_${(await sha256Hex(`lever:${site}:${jobId}`)).slice(0, 24)}`;
-  const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const versionId = await jobPostingVersionId(postingId, descriptionChecksum);
   const linkId = `joblink_${(
     await sha256Hex(`${user.id}:${postingId}`)
   ).slice(0, 24)}`;
@@ -3078,7 +4119,7 @@ async function ingestAshbyJob(
   const postingId = `job_${(
     await sha256Hex(`ashby:${board}:${jobId}`)
   ).slice(0, 24)}`;
-  const versionId = `jobver_${descriptionChecksum.slice(0, 24)}`;
+  const versionId = await jobPostingVersionId(postingId, descriptionChecksum);
   const linkId = `joblink_${(
     await sha256Hex(`${user.id}:${postingId}`)
   ).slice(0, 24)}`;
@@ -3092,7 +4133,6 @@ async function ingestAshbyJob(
     sourceFamily: "ashby_public_job_postings_api",
     endpoint,
     apiVersion: feed.apiVersion,
-    checkedAt,
     board,
     externalId: jobId,
     rightsState: "approved_for_private_user_requested_analysis_only",
@@ -3229,15 +4269,23 @@ export async function approvePursuitPackage(
   packageId: string,
   payloadSha256: string,
   confirmation: string,
-): Promise<{ approvalId: string; approvedAt: number }> {
+  expectedRevision: number,
+  attestationVersion: string,
+): Promise<{ approvalId: string; approvedAt: number; pursuitRevision: number }> {
   if (confirmation !== "approve_application_package") {
     throw new Error("Confirm the exact application package and employer form version before approval.");
+  }
+  if (attestationVersion !== "application-package-staging-v1") {
+    throw new Error("Review the current package approval attestation.");
+  }
+  if (!Number.isInteger(expectedRevision) || expectedRevision < 1) {
+    throw new Error("Refresh the pursuit before recording approval.");
   }
   const founder = await ensureUser(actor);
   const db = database();
   const packageRecord = await db
     .prepare(
-      "SELECT pp.id, pp.pursuit_id, pp.payload_sha256, pp.blockers_json, pp.readiness_state, p.external_approval_state FROM pursuit_packages pp JOIN pursuits p ON p.id = pp.pursuit_id AND p.user_id = pp.user_id WHERE pp.id = ? AND pp.user_id = ? LIMIT 1",
+      "SELECT pp.id, pp.pursuit_id, pp.payload_sha256, pp.blockers_json, pp.readiness_state, p.external_approval_state, p.state AS pursuit_state, p.revision AS pursuit_revision FROM pursuit_packages pp JOIN pursuits p ON p.id = pp.pursuit_id AND p.user_id = pp.user_id WHERE pp.id = ? AND pp.user_id = ? AND pp.id = (SELECT current_package.id FROM pursuit_packages current_package WHERE current_package.user_id = pp.user_id AND current_package.pursuit_id = pp.pursuit_id ORDER BY current_package.version DESC LIMIT 1) LIMIT 1",
     )
     .bind(packageId, founder.id)
     .first<{
@@ -3247,6 +4295,8 @@ export async function approvePursuitPackage(
       blockers_json: string;
       readiness_state: string;
       external_approval_state: string;
+      pursuit_state: NonNullable<OpportunityRecord["pursuit"]>["state"];
+      pursuit_revision: number;
     }>();
   if (!packageRecord) throw new Error("The application package is not available.");
   if (packageRecord.payload_sha256 !== payloadSha256) {
@@ -3261,21 +4311,55 @@ export async function approvePursuitPackage(
     )
     .bind(founder.id, packageId, payloadSha256)
     .first<{ id: string; approved_at: number }>();
-  if (existing) return { approvalId: existing.id, approvedAt: existing.approved_at };
+  if (existing) {
+    return {
+      approvalId: existing.id,
+      approvedAt: existing.approved_at,
+      pursuitRevision: packageRecord.pursuit_revision,
+    };
+  }
+  if (
+    packageRecord.pursuit_state !== "ready_for_approval" ||
+    packageRecord.pursuit_revision !== expectedRevision
+  ) {
+    throw new Error("The pursuit changed before approval. Refresh and review the current package.");
+  }
 
   const approvedAt = Date.now();
   const approvalId = `approval_${crypto.randomUUID()}`;
+  const attestationSha256 = await sha256Hex(
+    canonicalJson({
+      version: attestationVersion,
+      packageId,
+      payloadSha256,
+      pursuitId: packageRecord.pursuit_id,
+      pursuitRevision: expectedRevision,
+      scope: "form_staging_only",
+      formPopulationAuthorized: false,
+      fileUploadAuthorized: false,
+      submissionAuthorized: false,
+    }),
+  );
   await db.batch([
     db
       .prepare(
-        "INSERT INTO external_action_approvals (id, user_id, pursuit_package_id, action, payload_sha256, state, approved_at) VALUES (?, ?, ?, 'approve_application_package', ?, 'approved', ?)",
+        "INSERT INTO external_action_approvals (id, user_id, pursuit_package_id, action, payload_sha256, approved_pursuit_revision, attestation_version, attestation_sha256, state, approved_at) VALUES (?, ?, ?, 'approve_application_package', ?, ?, ?, ?, 'approved', ?)",
       )
-      .bind(approvalId, founder.id, packageId, payloadSha256, approvedAt),
+      .bind(
+        approvalId,
+        founder.id,
+        packageId,
+        payloadSha256,
+        expectedRevision,
+        attestationVersion,
+        attestationSha256,
+        approvedAt,
+      ),
     db
       .prepare(
-        "UPDATE pursuits SET state = 'ready_for_approval', external_approval_state = 'approved', next_action = 'The exact package and employer form version are approved for staging. Form population, file upload, and submission remain separate external actions.', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ?",
+        "UPDATE pursuits SET state = 'applying', revision = revision + 1, external_approval_state = 'approved', next_action = 'This exact package is approved for manual form staging. Way Ahead still cannot populate the form, upload files, or submit the application.', updated_at = unixepoch() * 1000 WHERE id = ? AND user_id = ? AND revision = ? AND state = 'ready_for_approval'",
       )
-      .bind(packageRecord.pursuit_id, founder.id),
+      .bind(packageRecord.pursuit_id, founder.id, expectedRevision),
     db
       .prepare(
         "INSERT INTO audit_events (id, user_id, actor_subject, event_type, entity_type, entity_id, metadata_json) VALUES (?, ?, ?, 'application_package_approved_for_form_staging', 'pursuit_package', ?, ?)",
@@ -3288,11 +4372,32 @@ export async function approvePursuitPackage(
         json({
           payloadSha256,
           action: "approve_application_package",
+          pursuitRevision: expectedRevision,
+          attestationVersion,
+          attestationSha256,
           formPopulationExecuted: false,
           fileUploadExecuted: false,
           submissionExecuted: false,
         }),
       ),
   ]);
-  return { approvalId, approvedAt };
+  const readback = await db
+    .prepare(
+      "SELECT revision, state, external_approval_state FROM pursuits WHERE id = ? AND user_id = ? LIMIT 1",
+    )
+    .bind(packageRecord.pursuit_id, founder.id)
+    .first<{ revision: number; state: string; external_approval_state: string }>();
+  if (
+    !readback ||
+    readback.revision !== expectedRevision + 1 ||
+    readback.state !== "applying" ||
+    readback.external_approval_state !== "approved"
+  ) {
+    throw new Error("The approval receipt could not be read back safely.");
+  }
+  return {
+    approvalId,
+    approvedAt,
+    pursuitRevision: readback.revision,
+  };
 }

@@ -178,7 +178,7 @@ test("assessment, pursuit, and starter storage preserve tenant, source, and appr
   );
   const pursuit = workspace.slice(
     workspace.indexOf("export async function createPursuit"),
-    workspace.indexOf("export async function buildFounderApplicationPackage"),
+    workspace.indexOf("function boundedApplicationAnswerValue"),
   );
   const starters = documents.slice(
     documents.indexOf("export async function createJobResumeFromProfile"),

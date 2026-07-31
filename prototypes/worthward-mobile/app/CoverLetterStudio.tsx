@@ -32,7 +32,13 @@ type CoverLetterApiResponse = {
 
 type Panel = "content" | "design" | "preview";
 
-export function CoverLetterStudio() {
+export function CoverLetterStudio({
+  initialLetterId = null,
+  onDocumentSelected,
+}: {
+  initialLetterId?: string | null;
+  onDocumentSelected?: (letterId: string) => void;
+}) {
   const [letters, setLetters] = useState<CoverLetterStudioRecord[]>([]);
   const [pursuits, setPursuits] = useState<DocumentPursuitOption[]>([]);
   const [displayName, setDisplayName] = useState("");
@@ -57,7 +63,7 @@ export function CoverLetterStudio() {
   const hasUnsavedChanges = selected
     ? pursuitId !== selected.pursuitId ||
       JSON.stringify(content) !== JSON.stringify(selected.content)
-    : true;
+    : JSON.stringify(content) !== JSON.stringify(emptyCoverLetterContent());
 
   const choose = useCallback((letter: CoverLetterStudioRecord) => {
     setSelectedId(letter.id);
@@ -82,9 +88,19 @@ export function CoverLetterStudio() {
         setLetters(payload.letters);
         setPursuits(payload.pursuits);
         setDisplayName(payload.displayName);
-        const next =
-          payload.letters.find((letter) => letter.id === preferredId) ??
-          payload.letters[0];
+        const requestedId = preferredId ?? initialLetterId;
+        const requested = requestedId
+          ? payload.letters.find((letter) => letter.id === requestedId)
+          : null;
+        if (requestedId && !requested) {
+          setSelectedId(null);
+          setNotice({
+            tone: "error",
+            text: "This cover letter is not available in your private workspace. No different letter was substituted.",
+          });
+          return;
+        }
+        const next = requested ?? payload.letters[0];
         if (next) choose(next);
         if (!next && payload.pursuits[0]) {
           setPursuitId(payload.pursuits[0].id);
@@ -101,13 +117,47 @@ export function CoverLetterStudio() {
         setLoading(false);
       }
     },
-    [choose],
+    [choose, initialLetterId],
   );
 
   useEffect(() => {
-    const task = window.setTimeout(() => void load(), 0);
+    const task = window.setTimeout(
+      () => void load(initialLetterId ?? undefined),
+      0,
+    );
     return () => window.clearTimeout(task);
-  }, [load]);
+  }, [initialLetterId, load]);
+
+  useEffect(() => {
+    if (selectedId) onDocumentSelected?.(selectedId);
+  }, [onDocumentSelected, selectedId]);
+
+  useEffect(() => {
+    document.documentElement.dataset.wayAheadUnsavedDocument =
+      hasUnsavedChanges ? "true" : "false";
+    return () => {
+      delete document.documentElement.dataset.wayAheadUnsavedDocument;
+    };
+  }, [hasUnsavedChanges]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeUnload);
+    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  const confirmDiscard = () =>
+    !hasUnsavedChanges ||
+    window.confirm("Discard the unsaved cover-letter changes on this screen?");
+
+  const requestChoose = (letter: CoverLetterStudioRecord) => {
+    if (letter.id === selectedId || !confirmDiscard()) return;
+    choose(letter);
+  };
 
   async function createStarter() {
     setSaving(true);
@@ -243,6 +293,7 @@ export function CoverLetterStudio() {
   }
 
   function startNew() {
+    if (!confirmDiscard()) return;
     const firstPursuit = pursuits[0];
     setSelectedId(null);
     setPursuitId(firstPursuit?.id ?? "");
@@ -390,7 +441,7 @@ export function CoverLetterStudio() {
                   className={styles.recordButton}
                   data-active={letter.id === selectedId}
                   key={letter.id}
-                  onClick={() => choose(letter)}
+                  onClick={() => requestChoose(letter)}
                   type="button"
                 >
                   <span>Cover letter · v{letter.version}</span>

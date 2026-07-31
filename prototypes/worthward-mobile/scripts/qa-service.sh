@@ -172,6 +172,10 @@ stop_session() {
 
 start_service() {
   cd "$project_dir"
+  WRANGLER_LOG_PATH=".wrangler/wrangler.log" \
+    ./node_modules/.bin/wrangler d1 migrations apply DB \
+    --local \
+    --config wrangler.local.jsonc
   npm run build
   if session_running || managed_process_running; then
     if ! stop_session; then

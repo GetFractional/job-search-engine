@@ -17,6 +17,7 @@ type ProductRoutePageProps = {
   view: ViewKey;
   jobId?: string | null;
   studio?: StudioKey;
+  documentId?: string | null;
 };
 
 export async function ProductRoutePage({
@@ -24,6 +25,7 @@ export async function ProductRoutePage({
   view,
   jobId = null,
   studio = "resume",
+  documentId = null,
 }: ProductRoutePageProps) {
   const actor = await requireUserPage(returnPath);
   if (await deletedAccountNeedsRestart(actor)) {
@@ -38,6 +40,7 @@ export async function ProductRoutePage({
     <WayAheadApp
       actor={actor}
       initialJobId={jobId}
+      initialDocumentId={documentId}
       initialStudio={studio}
       initialView={view}
     />

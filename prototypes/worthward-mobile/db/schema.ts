@@ -57,7 +57,21 @@ export type PursuitState =
   | "applying"
   | "applied"
   | "interviewing"
+  | "offered"
+  | "accepted"
   | "closed";
+export type PursuitEventType =
+  | "application_submitted"
+  | "interview_scheduled"
+  | "interview_completed"
+  | "follow_up_scheduled"
+  | "offer_received"
+  | "offer_accepted"
+  | "offer_declined"
+  | "rejected"
+  | "withdrawn"
+  | "closed_no_response"
+  | "learning_recorded";
 export type RevenueStream = "software" | "affiliate" | "human_service";
 export type OfferBillingType =
   | "free"
@@ -802,6 +816,7 @@ export const pursuits = sqliteTable(
       .references(() => jobPostings.id, { onDelete: "restrict" }),
     currentAnalysisId: text("current_analysis_id"),
     state: text("state").$type<PursuitState>().notNull().default("saved"),
+    revision: integer("revision").notNull().default(1),
     nextAction: text("next_action"),
     externalApprovalState: text("external_approval_state")
       .$type<"not_requested" | "requested" | "approved" | "revoked" | "completed">()
@@ -821,6 +836,38 @@ export const pursuits = sqliteTable(
       name: "pursuits_current_analysis_tenant_fk",
     }).onDelete("restrict"),
     index("pursuits_user_state_idx").on(table.userId, table.state),
+  ],
+);
+
+export const pursuitEvents = sqliteTable(
+  "pursuit_events",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pursuitId: text("pursuit_id").notNull(),
+    eventType: text("event_type").$type<PursuitEventType>().notNull(),
+    occurredAt: integer("occurred_at", { mode: "timestamp_ms" }).notNull(),
+    note: text("note"),
+    metadataJson: text("metadata_json", { mode: "json" })
+      .$type<JsonObject>()
+      .notNull()
+      .default(sql`'{}'`),
+    createdAt: timestampMs("created_at"),
+  },
+  (table) => [
+    uniqueIndex("pursuit_events_user_id_unique").on(table.userId, table.id),
+    foreignKey({
+      columns: [table.userId, table.pursuitId],
+      foreignColumns: [pursuits.userId, pursuits.id],
+      name: "pursuit_events_pursuit_tenant_fk",
+    }).onDelete("cascade"),
+    index("pursuit_events_pursuit_occurred_idx").on(
+      table.userId,
+      table.pursuitId,
+      table.occurredAt,
+    ),
   ],
 );
 
@@ -922,6 +969,9 @@ export const externalActionApprovals = sqliteTable(
     pursuitPackageId: text("pursuit_package_id").notNull(),
     action: text("action").$type<"approve_application_package" | "submit_application">().notNull(),
     payloadSha256: text("payload_sha256").notNull(),
+    approvedPursuitRevision: integer("approved_pursuit_revision"),
+    attestationVersion: text("attestation_version"),
+    attestationSha256: text("attestation_sha256"),
     state: text("state")
       .$type<"requested" | "approved" | "revoked" | "completed">()
       .notNull()

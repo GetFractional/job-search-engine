@@ -309,7 +309,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.wa-mobile-title,
 .wa-mobile-nav {
   display: none;
 }
@@ -1234,6 +1233,13 @@ input[aria-invalid="true"] {
   justify-self: end;
 }
 
+.wa-pursuit-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .wa-pursuit-banner {
   display: grid;
   grid-template-columns: 1fr 260px;
@@ -1424,6 +1430,186 @@ input[aria-invalid="true"] {
   color: var(--ink-tertiary);
   font-size: 10px;
   font-weight: 700;
+}
+
+.wa-file-review-list,
+.wa-package-builder,
+.wa-pursuit-event-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.wa-file-review-list > h3,
+.wa-file-review-list > p {
+  margin: 0;
+}
+
+.wa-file-review-list > p {
+  max-width: 760px;
+  color: var(--ink-secondary);
+}
+
+.wa-file-review {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1.4fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 16px;
+}
+
+.wa-file-review > div {
+  display: grid;
+  gap: 4px;
+}
+
+.wa-file-review > div span {
+  color: var(--ink-tertiary);
+  font-size: 11px;
+}
+
+.wa-file-review .wa-checkbox-row {
+  margin: 0;
+}
+
+.wa-package-builder {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 22px;
+}
+
+.wa-package-builder > .wa-primary-button,
+.wa-pursuit-event-form > .wa-primary-button {
+  justify-self: start;
+}
+
+.wa-pursuit-event-form {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 22px;
+}
+
+.wa-submission-source {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.wa-submission-source legend {
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.wa-submission-source label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+  padding: 14px;
+  cursor: pointer;
+}
+
+.wa-submission-source label:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.wa-submission-source label:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.wa-submission-source input {
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--accent);
+}
+
+.wa-submission-source span {
+  display: grid;
+  gap: 4px;
+}
+
+.wa-submission-source strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.wa-submission-source small {
+  color: var(--ink-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.wa-pursuit-event-form > label:not(.wa-checkbox-row) {
+  display: grid;
+  gap: 8px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.wa-pursuit-event-form textarea {
+  width: 100%;
+  min-height: 112px;
+  border: 1px solid var(--border-strong);
+  border-radius: 11px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  padding: 12px;
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.wa-pursuit-timeline {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wa-pursuit-timeline li {
+  display: grid;
+  gap: 8px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  background: var(--surface);
+  padding: 16px 18px;
+}
+
+.wa-pursuit-timeline li > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wa-pursuit-timeline p {
+  margin: 0;
+  color: var(--ink-secondary);
+}
+
+.wa-pursuit-timeline time,
+.wa-pursuit-timeline small {
+  color: var(--ink-tertiary);
+  font-size: 11px;
 }
 
 .wa-empty-inline {
@@ -1895,16 +2081,6 @@ input[aria-invalid="true"] {
     padding-bottom: 102px;
   }
 
-  .wa-mobile-title {
-    display: block;
-    margin-bottom: 12px;
-    color: var(--ink-tertiary);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
   .wa-mobile-nav {
     position: fixed;
     z-index: 48;
@@ -2151,8 +2327,13 @@ input[aria-invalid="true"] {
   }
 
   .wa-detail-hero .wa-secondary-button,
-  .wa-pursuit-heading > .wa-status {
+  .wa-pursuit-heading > .wa-status,
+  .wa-pursuit-statuses {
     justify-self: start;
+  }
+
+  .wa-pursuit-statuses {
+    justify-content: flex-start;
   }
 
   .wa-pursuit-banner {
@@ -2179,6 +2360,16 @@ input[aria-invalid="true"] {
   }
 
   .wa-starter-recovery .wa-primary-button {
+    width: 100%;
+  }
+
+  .wa-file-review {
+    grid-template-columns: 1fr;
+  }
+
+  .wa-file-review .wa-secondary-button,
+  .wa-package-builder > .wa-primary-button,
+  .wa-pursuit-event-form > .wa-primary-button {
     width: 100%;
   }
 

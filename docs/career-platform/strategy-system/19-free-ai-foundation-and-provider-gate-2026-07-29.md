@@ -5,18 +5,20 @@ Status: architecture implemented; live provider not approved or connected
 
 ## Decision
 
-Way Ahead now has a provider-neutral, fail-closed AI foundation for controlled development and benchmarking. No live model, API key, network call, personal profile data, or production binding is connected.
+Way Ahead has a provider-neutral, fail-closed AI foundation for local development and controlled benchmarking. No live model, provider account, API key, binding, network request, personal profile data, or production route is selected, approved, or connected.
 
-Kimi is not the default zero-spend choice. Cloudflare's Kimi models currently require Workers Paid, whose published minimum is $5 per month. That can be reconsidered after revenue or if an already-paid account has unused capacity.
+Cloudflare currently marks `@cf/moonshotai/kimi-k2.6` as unavailable on Workers Free and requiring Workers Paid, whose published minimum is $5 per month. Kimi K2.6 is excluded from the zero-incremental-spend benchmark and alpha paths.
 
-The first native benchmark candidate is Cloudflare Workers AI `@cf/openai/gpt-oss-120b`, compared with `gpt-oss-20b`, Gemma 4, and GLM 4.7 Flash. Groq Free with GPT-OSS and zero-data-retention configuration is the fallback benchmark. Gemini Free is limited to synthetic or public text because its unpaid-service terms permit submitted content to be used for service improvement and human review.
+Cloudflare-hosted `@cf/openai/gpt-oss-120b`, `@cf/openai/gpt-oss-20b`, `@cf/google/gemma-4-26b-a4b-it`, and `@cf/zai-org/glm-4.7-flash` are unqualified synthetic benchmark candidates. GPT-OSS 120B is only a proposed first comparative quality baseline; no benchmark result, production task qualification, provider route, or live model has been selected or approved. Groq and Gemini remain research-only alternatives, not approved fallbacks, activation routes, or member-data processors.
+
+The current Sites hosting contract has no proven native Workers AI binding. The deployed app contains no AI binding or provider credential. Any future native binding, isolated benchmark REST route, or production REST route requires separate compatibility proof and exact Board approval. Cloudflare's no-training-without-consent statement is not proof of zero retention; retention remains an unresolved approval item.
 
 ## Implemented controls
 
 - modes: `off`, `synthetic`, `public_only`, and `minimized_profile`
 - exact consented fact selection
 - PII and secret redaction before adapter access
-- per-tenant and global hard quotas
+- in-memory per-tenant and global development quotas; production tenant-safe atomic quotas remain gated
 - strict typed output schemas
 - rejection of tool or execution payloads
 - deterministic fake and exact-match replay adapters
@@ -33,12 +35,12 @@ Matt must approve the exact:
 3. benchmark result and task scope;
 4. data class allowed to leave Way Ahead;
 5. retention and training policy;
-6. production secret and binding configuration;
+6. benchmark or production invocation route, Sites compatibility proof, and exact secret or binding configuration;
 7. tenant-safe atomic quota implementation;
 8. member consent language;
 9. failure and fallback behavior.
 
-No provider may be connected merely because it offers a free tier.
+No external benchmark or provider connection may be activated merely because a provider offers a free tier.
 
 ## Verification
 
@@ -53,6 +55,11 @@ No provider may be connected merely because it offers a free tier.
 - [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
 - [Cloudflare Kimi K2.6](https://developers.cloudflare.com/workers-ai/models/kimi-k2.6/)
 - [Cloudflare GPT-OSS 120B](https://developers.cloudflare.com/workers-ai/models/gpt-oss-120b/)
+- [Cloudflare GPT-OSS 20B](https://developers.cloudflare.com/workers-ai/models/gpt-oss-20b/)
+- [Cloudflare Gemma 4](https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/)
+- [Cloudflare GLM 4.7 Flash](https://developers.cloudflare.com/workers-ai/models/glm-4.7-flash/)
+- [Workers AI bindings](https://developers.cloudflare.com/workers-ai/configuration/bindings/)
+- [Workers AI REST API](https://developers.cloudflare.com/workers-ai/get-started/rest-api/)
 - [Cloudflare model limits](https://developers.cloudflare.com/workers-ai/platform/limits/)
 - [Cloudflare data usage](https://developers.cloudflare.com/workers-ai/platform/data-usage/)
 - [Groq models](https://console.groq.com/docs/models)

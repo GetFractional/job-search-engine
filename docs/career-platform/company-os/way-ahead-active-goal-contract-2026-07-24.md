@@ -2,12 +2,10 @@
 
 Date: 2026-07-29
 Board and final authority: Matt Dimock
-Status: Board-governing supplement and canonical replacement text. The active
-goal already contains no numeric initiative cap; this correction makes
-adaptive WIP, founder dogfooding, and Terry's independent-test role explicit.
-The available goal tool does not expose objective-text edits while a goal is
-active, so Matt's current direction and this file govern until the objective
-can be replaced in the goal UI.
+Status: Board-governing supplement and canonical goal text. The active goal
+contains no numeric initiative cap and explicitly governs adaptive WIP,
+founder dogfooding, Terry's independent-test role, exact external-action
+approval, and provider activation boundaries.
 
 ## Canonical replacement goal text
 
@@ -38,12 +36,15 @@ can be replaced in the goal UI.
 > ClickUp has read-after-write proof; Matt has one source-verified, claim-safe
 > next-job package ready for exact approval; and the Board receives one concise
 > packet with results, risks, economics, rollback, and next approvals. Preserve
-> provenance, corrections, unknowns, and failed gates. Integrate the best
-> zero-incremental-spend AI route behind provider-neutral, consented,
-> quota-capped, fail-closed controls and synthetic claim-safety fixtures so the
-> evidence can justify or reject a later paid model. Use GitHub branches,
+> provenance, corrections, unknowns, and failed gates. Prepare a disconnected
+> provider-neutral AI adapter and synthetic benchmark behind consented,
+> quota-capped, fail-closed controls and claim-safety fixtures so the evidence
+> can qualify or reject later provider candidates. No external benchmark,
+> model, provider, binding, secret, or member-data transfer is authorized by
+> this goal. Use GitHub branches,
 > coherent commits, review, and immutable deployment provenance so every code
-> change can be inspected or rolled back. Do not connect a paid model, spend,
+> change can be inspected or rolled back. Do not connect any live model or
+> provider, transfer member data, run an external benchmark, spend,
 > enable billing, index or broadly promote, recruit beyond an approved
 > alpha, scrape LinkedIn, mutate Teal, populate or upload to an employer form,
 > send outreach, use references, submit an application, negotiate, restore

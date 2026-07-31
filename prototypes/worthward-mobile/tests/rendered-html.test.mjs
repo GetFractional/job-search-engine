@@ -147,7 +147,7 @@ test("keeps the production UI data-backed, responsive, and approval-bound", asyn
   assert.doesNotMatch(app, /\b(?:sample|demo|fixture|synthetic)\b|\bprototype\b(?!\.)/i);
 });
 
-test("keeps future package review exact while current alpha disables member approval", async () => {
+test("keeps package review exact and limits approval to manual form staging", async () => {
   const [app, css, approvalApi] = await Promise.all([
     readFile(new URL("../app/WayAheadApp.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/production.css", import.meta.url), "utf8"),
@@ -163,16 +163,20 @@ test("keeps future package review exact while current alpha disables member appr
   assert.match(app, /Package-bound version/);
   assert.match(app, /Current source version/);
   assert.match(app, /Recorded fit and freshness risks/);
-  assert.match(app, /requiredFormAnswerGaps/);
+  assert.match(app, /requiredApplicationGaps/);
   assert.match(app, /SHA256_PATTERN/);
   assert.match(app, /packageRecord\.jobPostingVersionId === sourceVersion\.id/);
   assert.match(app, /sourceVersion\.captureState === "verified"/);
-  assert.match(app, /const approvalWorkflowEnabled = false/);
-  assert.match(app, /Package approval is not available in this alpha/);
+  assert.match(app, /const approvalWorkflowEnabled = true/);
+  assert.match(app, /fetch\("\/api\/application-package"/);
+  assert.match(app, /fetch\("\/api\/pursuit-assets\/review"/);
+  assert.match(app, /fetch\("\/api\/approvals"/);
   assert.match(app, /approve_application_package/);
+  assert.match(app, /application-package-staging-v1/);
   assert.match(app, /Approve exact package for form staging/);
   assert.match(app, /This is not submission authorization/);
   assert.match(app, /application history and included career evidence shown here are accurate/);
+  assert.match(app, /No form was populated, no file was uploaded, and no application was submitted/);
   assert.doesNotMatch(app, /Matt|Zaytinya|Owner analysis receipt/);
   assert.match(app, /packageRecord\.approvalState === "approved"/);
   assert.match(app, /key=\{`\$\{pursuedJob\?\.id[\s\S]*pursuedJob\?\.pursuit\?\.package\?\.payloadSha256/);
@@ -181,9 +185,13 @@ test("keeps future package review exact while current alpha disables member appr
   assert.doesNotMatch(app, /confirmation: "submit_application"/);
   assert.match(css, /\.wa-package-review-block/);
   assert.match(css, /\.wa-hash-code/);
-  assert.match(approvalApi, /Package approval is not enabled in this alpha/);
-  assert.match(approvalApi, /status:\s*409/);
-  assert.doesNotMatch(approvalApi, /approvePursuitPackage/);
+  assert.match(approvalApi, /requireUserRequest/);
+  assert.match(approvalApi, /requireSameOrigin/);
+  assert.match(approvalApi, /readBoundedJson/);
+  assert.match(approvalApi, /expectedRevision/);
+  assert.match(approvalApi, /attestationVersion/);
+  assert.match(approvalApi, /approvePursuitPackage/);
+  assert.doesNotMatch(approvalApi, /submit_application/);
 });
 
 test("derives package fingerprints server-side and versions employer content with its exact form", async () => {

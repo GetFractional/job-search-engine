@@ -69,6 +69,7 @@ export default function OnboardingFlow({
   const [error, setError] = useState("");
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const errorRef = useRef<HTMLDivElement>(null);
+  const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (editMode) return;
@@ -77,6 +78,13 @@ export default function OnboardingFlow({
       "",
       `/app/onboarding?step=${state.currentStep}`,
     );
+    shellRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    const focusFrame = window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLElement>("#onboarding-main")
+        ?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(focusFrame);
   }, [editMode, state.currentStep]);
 
   const save = async (payload: OnboardingStepPayload) => {
@@ -89,7 +97,6 @@ export default function OnboardingFlow({
         window.location.assign(editMode ? "/app/profile" : "/app/home");
         return;
       }
-      document.querySelector<HTMLElement>("#onboarding-main")?.focus();
     } catch (saveError) {
       setError(
         saveError instanceof Error
@@ -103,7 +110,7 @@ export default function OnboardingFlow({
   };
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} ref={shellRef}>
       <a className={styles.skipLink} href="#onboarding-main">
         Skip to setup
       </a>

@@ -148,6 +148,11 @@ test("keeps authenticated setup navigation stable on mobile", () => {
   assert.match(onboarding, /href="\/app\/onboarding"/);
   assert.match(onboarding, /signOutHref/);
   assert.match(onboarding, /aria-current="page"/);
+  assert.match(
+    onboarding,
+    /shellRef\.current\?\.scrollTo\(\{ top: 0, left: 0, behavior: "auto" \}\)/,
+  );
+  assert.match(onboarding, /\.focus\(\{ preventScroll: true \}\)/);
   assert.match(onboardingCss, /grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
   assert.doesNotMatch(onboardingCss, /min-width:\s*510px/);
 });

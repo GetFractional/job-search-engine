@@ -30,7 +30,7 @@ const sitesV1StaleTriggerDefinitions = JSON.parse(
 
 assert.equal(
   integrityTriggerDefinitions.length,
-  33,
+  56,
   "expected the complete production integrity-trigger set",
 );
 
@@ -131,7 +131,7 @@ const resumeFixtureSql = `
     ('job-1', 'source-1', 'ext-1', 'https://example.test/job-1', 'Acme', 'Director', 'jd-hash');
 `;
 
-test("applies the 35-table migration with foreign keys intact", () => {
+test("applies the 36-table migration with foreign keys intact", () => {
   expectSqlPass(
     `
       SELECT count(*) FROM sqlite_master
@@ -145,7 +145,7 @@ test("applies the 35-table migration with foreign keys intact", () => {
        WHERE "table" = 'cost_allocation_groups'
          AND "from" = 'allocation_group_id';
     `,
-    "35\n0\n2:1:SET NULL\nRESTRICT",
+    "36\n0\n2:1:SET NULL\nRESTRICT",
   );
 });
 
@@ -200,7 +200,7 @@ test("applies every migration statement across fresh SQLite connections", () => 
     });
 
     assert.equal(verification.status, 0, verification.stderr);
-    assert.equal(verification.stdout.trim(), "35\n0\n33");
+    assert.equal(verification.stdout.trim(), "36\n0\n56");
   } finally {
     rmSync(migrationDirectory, { recursive: true, force: true });
   }
@@ -213,10 +213,33 @@ test("converges a partially migrated Sites v1 database to the exact trigger set"
     sitesV1StaleTriggerDefinitions.map((definition) => [definition.name, definition]),
   );
   const v1MissingNames = new Set([
+    "external_action_approvals_analysis_source_binding_insert",
+    "external_action_approvals_analysis_source_binding_update",
+    "external_action_approvals_asset_source_binding_insert",
+    "external_action_approvals_asset_source_binding_update",
     "external_action_approvals_identity_payload_immutable",
+    "external_action_approvals_semantic_asset_binding_insert",
+    "external_action_approvals_semantic_asset_binding_update",
+    "external_action_approvals_source_recheck_insert",
+    "external_action_approvals_source_recheck_update",
+    "external_action_approvals_unsupported_required_field_insert",
+    "external_action_approvals_unsupported_required_field_update",
+    "generated_assets_review_state_transition_gate",
+    "job_posting_versions_new_snapshot_invalidates_analyses",
     "job_posting_versions_new_snapshot_supersedes_packages",
+    "job_postings_current_version_reversion_invalidates_dependents",
+    "pursuit_events_delete_immutable",
+    "pursuit_events_occurred_at_guard",
+    "pursuit_events_update_immutable",
+    "pursuit_events_validate_insert",
+    "pursuit_packages_sync_pursuit_after_invalidation",
     "pursuit_packages_new_version_supersedes_previous",
     "pursuit_packages_version_monotonic",
+    "pursuits_analysis_change_supersedes_packages",
+    "pursuits_state_validate_insert",
+    "pursuits_state_validate_update",
+    "resumes_payload_immutable",
+    "resumes_supersession_invalidates_rendered_assets",
   ]);
   const sitesV1Definitions = integrityTriggerDefinitions
     .filter(({ name }) => !v1MissingNames.has(name))
@@ -271,10 +294,12 @@ test("converges a partially migrated Sites v1 database to the exact trigger set"
         { encoding: "utf8" },
       ).stdout,
     );
-    assert.equal(rows.length, 33);
+    assert.equal(rows.length, 56);
     assert.deepEqual(
       rows.map(({ name, sql }) => [name, normalizeSql(sql)]),
-      integrityTriggerDefinitions.map(({ name, sql }) => [name, normalizeSql(sql)]),
+      [...integrityTriggerDefinitions]
+        .sort((left, right) => left.name.localeCompare(right.name))
+        .map(({ name, sql }) => [name, normalizeSql(sql)]),
     );
   } finally {
     rmSync(migrationDirectory, { recursive: true, force: true });
@@ -1238,7 +1263,11 @@ test("rejects malformed economics records and cross-tenant allocations", () => {
   );
 });
 
-const approvalAssetManifest = JSON.stringify({
+const sourceRecheckAt = Date.now();
+const sourceRecheckAuditId = "audit-source-recheck";
+const resumeSemanticSha256 = "r".repeat(64);
+const coverLetterSemanticSha256 = "c".repeat(64);
+const approvalAssetManifestObject = {
   assets: [
     {
       id: "asset-a",
@@ -1253,7 +1282,7 @@ const approvalAssetManifest = JSON.stringify({
     {
       id: "asset-cover-a",
       type: "cover_letter",
-      version: 1,
+      version: 2,
       contentSha256: "asset-hash-cover-a",
       fileSha256: "cover-file-hash",
       filename: "Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf",
@@ -1261,6 +1290,63 @@ const approvalAssetManifest = JSON.stringify({
       reviewState: "claim_safe",
     },
   ],
+  sourceRecheck: {
+    auditEventId: sourceRecheckAuditId,
+    postingLastCheckedAt: sourceRecheckAt,
+    verifiedAt: sourceRecheckAt,
+    descriptionChecksum: "job-hash",
+  },
+};
+const approvalAssetManifest = JSON.stringify(approvalAssetManifestObject);
+
+const employerFormChecksum = "f".repeat(64);
+const changedEmployerFormChecksum = "c".repeat(64);
+const wrongEmployerFormChecksum = "w".repeat(64);
+const packageAttestationSha256 = "a".repeat(64);
+const employerFormSourceFacts = JSON.stringify({
+  questionSetChecksum: employerFormChecksum,
+  applyUrl: "https://employer.example/jobs/123/apply",
+  questionSet: [
+    {
+      id: "first-name",
+      key: "firstName",
+      label: "First name",
+      type: "text",
+      required: true,
+    },
+    {
+      id: "resume",
+      key: "resume",
+      label: "Resume",
+      type: "file",
+      required: true,
+    },
+    {
+      id: "cover-letter",
+      key: "coverLetter",
+      label: "Cover letter",
+      type: "file",
+      required: false,
+    },
+  ],
+});
+const employerFormAnswers = JSON.stringify({
+  questionSetChecksum: employerFormChecksum,
+  firstName: "Matt",
+});
+const employerFormAnswersWithLastName = JSON.stringify({
+  questionSetChecksum: employerFormChecksum,
+  firstName: "Matt",
+  lastName: "Dimock",
+});
+const changedEmployerFormSourceFacts = JSON.stringify({
+  questionSetChecksum: changedEmployerFormChecksum,
+  applyUrl: "https://employer.example/jobs/123/apply",
+  questionSet: [],
+});
+const wrongEmployerFormAnswers = JSON.stringify({
+  questionSetChecksum: wrongEmployerFormChecksum,
+  firstName: "Matt",
 });
 
 const productionPursuitSql = `
@@ -1280,10 +1366,11 @@ const productionPursuitSql = `
   VALUES ('source-live', 'Employer careers', 'employer_ats', 'approved');
   INSERT INTO job_postings
     (id, source_id, external_id, canonical_url, employer, title,
-     description_checksum, freshness_state)
+     description_checksum, freshness_state, last_checked_at)
   VALUES
     ('job-live', 'source-live', '123', 'https://employer.example/jobs/123',
-     'Employer', 'Director, Revenue Operations', 'job-hash', 'fresh');
+     'Employer', 'Director, Revenue Operations', 'job-hash', 'fresh',
+     ${sourceRecheckAt});
   INSERT INTO job_posting_versions
     (id, job_posting_id, source_checked_at, source_url,
      description_checksum, source_facts_json, source_conflicts_json,
@@ -1291,46 +1378,80 @@ const productionPursuitSql = `
   VALUES
     ('job-version-live', 'job-live', 1,
      'https://employer.example/jobs/123', 'job-hash',
-     '{"questionSetChecksum":"form-hash"}', '[]', 'verified');
+     '${employerFormSourceFacts}', '[]', 'verified');
   INSERT INTO job_analyses
     (id, user_id, job_posting_id, career_path_id, job_standard_id,
      policy_version, evidence_version, integrity_gates_json, fit_json,
      unknowns_json, recommendation, validation_state)
   VALUES
     ('analysis-a', 'user-a', 'job-live', 'path-a', 'standard-a', 'policy-1',
-     'evidence-1', '{}', '{}', '[]', 'pursue', 'trusted'),
+     'evidence-1',
+     '{"jobVersionId":"job-version-live","jobDescriptionChecksum":"job-hash"}',
+     '{}', '[]', 'pursue', 'trusted'),
     ('analysis-b', 'user-b', 'job-live', 'path-b', 'standard-b', 'policy-1',
-     'evidence-1', '{}', '{}', '[]', 'pursue', 'trusted');
+     'evidence-1',
+     '{"jobVersionId":"job-version-live","jobDescriptionChecksum":"job-hash"}',
+     '{}', '[]', 'pursue', 'trusted');
   INSERT INTO pursuits
     (id, user_id, job_posting_id, current_analysis_id, state)
   VALUES
     ('pursuit-a', 'user-a', 'job-live', 'analysis-a', 'ready_for_approval'),
     ('pursuit-b', 'user-b', 'job-live', 'analysis-b', 'ready_for_approval');
+  INSERT INTO resumes
+    (id, user_id, name, kind, version, content_json, template_key, review_state)
+  VALUES
+    ('resume-semantic-a', 'user-a', 'Employer Director Resume', 'job', 1,
+     '{"summary":"Current semantic resume"}', 'ats-basic', 'approved');
+  INSERT INTO generated_assets
+    (id, user_id, pursuit_id, type, source_versions_json,
+     generation_policy_version, version, content_json, content_sha256,
+     review_state)
+  VALUES
+    ('cover-semantic-a', 'user-a', 'pursuit-a', 'cover_letter',
+     '{"jobPostingVersionId":"job-version-live","analysisId":"analysis-a"}',
+     'semantic-cover-v1', 1, '{"body":"Current semantic cover letter"}',
+     '${coverLetterSemanticSha256}', 'claim_safe');
   INSERT INTO generated_assets
     (id, user_id, pursuit_id, type, source_versions_json,
      generation_policy_version, version, content_json, content_sha256,
      filename, page_count, review_state)
   VALUES
-    ('asset-a', 'user-a', 'pursuit-a', 'resume', '{}', 'policy-1', 1,
-     '{"fileSha256":"resume-file-hash"}',
+    ('asset-a', 'user-a', 'pursuit-a', 'resume',
+     '{"jobPostingVersionId":"job-version-live","analysisId":"analysis-a","semanticResumeId":"resume-semantic-a","semanticResumeVersion":1}',
+     'client-render-receipt-v1', 1,
+     '{"fileSha256":"resume-file-hash","semanticResumeId":"resume-semantic-a","semanticResumeVersion":1,"semanticContentSha256":"${resumeSemanticSha256}"}',
      'asset-hash-a',
      'Employer - Director Revenue Operations - Matt Dimock - Resume.pdf',
      2, 'claim_safe'),
-    ('asset-cover-a', 'user-a', 'pursuit-a', 'cover_letter', '{}', 'policy-1', 1,
-     '{"fileSha256":"cover-file-hash"}',
+    ('asset-cover-a', 'user-a', 'pursuit-a', 'cover_letter',
+     '{"jobPostingVersionId":"job-version-live","analysisId":"analysis-a","semanticCoverLetterId":"cover-semantic-a","semanticCoverLetterVersion":1}',
+     'client-render-receipt-v1', 2,
+     '{"fileSha256":"cover-file-hash","semanticContentSha256":"${coverLetterSemanticSha256}"}',
      'asset-hash-cover-a',
      'Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf',
      1, 'claim_safe'),
-    ('asset-b', 'user-b', 'pursuit-b', 'resume', '{}', 'policy-1', 1, '{}',
+    ('asset-b', 'user-b', 'pursuit-b', 'resume',
+     '{"jobPostingVersionId":"job-version-live","analysisId":"analysis-b"}',
+     'policy-1', 1, '{}',
      'asset-hash-b',
      'Employer - Director Revenue Operations - Other Candidate - Resume.pdf',
      2, 'claim_safe');
+  UPDATE pursuits
+     SET state = 'ready_for_approval'
+   WHERE id IN ('pursuit-a', 'pursuit-b');
+  INSERT INTO audit_events
+    (id, user_id, actor_subject, event_type, entity_type, entity_id,
+     metadata_json, created_at)
+  VALUES
+    ('${sourceRecheckAuditId}', 'user-a', 'test:source-recheck',
+     'greenhouse_job_ingested', 'job_posting', 'job-live',
+     '{"descriptionChecksum":"job-hash"}', ${sourceRecheckAt});
 `;
 
 const readyPackageSql = ({
   id = "package-a",
   jobVersionId = "job-version-live",
-  answersJson = '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+  answersJson = employerFormAnswers,
   manifest = approvalAssetManifest,
   blockersJson = "[]",
   payloadSha256 = "payload-a",
@@ -1355,10 +1476,12 @@ const packageApprovalSql = ({
 } = {}) => `
   INSERT INTO external_action_approvals
     (id, user_id, pursuit_package_id, action, payload_sha256, state,
+     approved_pursuit_revision, attestation_version, attestation_sha256,
      approved_at)
   VALUES
     ('${id}', 'user-a', 'package-a', '${action}', '${payloadSha256}',
-     '${state}', 2);
+     '${state}', 1, 'application-package-staging-v1',
+     '${packageAttestationSha256}', 2);
 `;
 
 test("binds external approval to one tenant's immutable ready package", () => {
@@ -1372,14 +1495,16 @@ test("binds external approval to one tenant's immutable ready package", () => {
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256,
          approved_at)
       VALUES
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
-         'payload-a', 'approved', 2);
+         'payload-a', 'approved', 1, 'application-package-staging-v1',
+         '${packageAttestationSha256}', 2);
       SELECT state || ':' || payload_sha256
         FROM external_action_approvals WHERE id = 'approval-a';
     `,
@@ -1396,7 +1521,7 @@ test("binds external approval to one tenant's immutable ready package", () => {
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state)
@@ -1404,7 +1529,175 @@ test("binds external approval to one tenant's immutable ready package", () => {
         ('approval-cross', 'user-b', 'package-a', 'approve_application_package',
          'payload-a', 'approved');
     `,
-    /FOREIGN KEY constraint failed|approval package, source version, form answers, or outbound assets are not exact and current/,
+    /FOREIGN KEY constraint failed|approval package, source version, form answers, or outbound assets are not exact and current|approval source recheck receipt is missing or older than 24 hours/,
+  );
+});
+
+test("consumes one exact approved package once and preserves completion evidence", () => {
+  const completionAt = sourceRecheckAt + 1;
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE pursuits
+         SET state = 'applying',
+             revision = 2,
+             external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      UPDATE external_action_approvals
+         SET state = 'completed',
+             completed_at = ${completionAt}
+       WHERE id = 'approval-a';
+      UPDATE pursuits
+         SET state = 'applied',
+             revision = 3,
+             external_approval_state = 'completed'
+       WHERE id = 'pursuit-a';
+      SELECT approval.state || ':' || approval.approved_at || ':' ||
+             approval.completed_at || ':' || pursuit.state || ':' ||
+             pursuit.external_approval_state
+        FROM external_action_approvals approval
+        JOIN pursuit_packages package
+          ON package.id = approval.pursuit_package_id
+        JOIN pursuits pursuit
+          ON pursuit.id = package.pursuit_id
+       WHERE approval.id = 'approval-a';
+    `,
+    `completed:2:${completionAt}:applied:completed`,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE pursuits
+         SET state = 'applying',
+             revision = 2,
+             external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      UPDATE external_action_approvals
+         SET state = 'completed',
+             completed_at = 1
+       WHERE id = 'approval-a';
+    `,
+    /approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid|approval source recheck receipt is missing or older than 24 hours/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-requested', 'user-a', 'package-a',
+         'approve_application_package', 'payload-a', 'requested');
+      UPDATE external_action_approvals
+         SET state = 'completed',
+             completed_at = ${completionAt}
+       WHERE id = 'approval-requested';
+    `,
+    /approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE external_action_approvals
+         SET state = 'completed',
+             completed_at = ${completionAt}
+       WHERE id = 'approval-a';
+    `,
+    /approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE pursuits
+         SET state = 'applying',
+             revision = 3,
+             external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      UPDATE external_action_approvals
+         SET state = 'completed',
+             completed_at = ${completionAt}
+       WHERE id = 'approval-a';
+    `,
+    /approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid/,
+  );
+});
+
+test("rejects direct completion and malformed approval timestamp shapes", () => {
+  const completionAt = sourceRecheckAt + 1;
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256,
+         approved_at, completed_at)
+      VALUES
+        ('approval-direct-completed', 'user-a', 'package-a',
+         'approve_application_package', 'payload-a', 'completed', 1,
+         'application-package-staging-v1', '${packageAttestationSha256}',
+         ${sourceRecheckAt}, ${completionAt});
+    `,
+    /approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_at)
+      VALUES
+        ('approval-requested-with-evidence', 'user-a', 'package-a',
+         'approve_application_package', 'payload-a', 'requested',
+         ${sourceRecheckAt});
+    `,
+    /approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256)
+      VALUES
+        ('approval-missing-approved-at', 'user-a', 'package-a',
+         'approve_application_package', 'payload-a', 'approved', 1,
+         'application-package-staging-v1', '${packageAttestationSha256}');
+    `,
+    /approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256,
+         approved_at, completed_at)
+      VALUES
+        ('approval-approved-with-completion', 'user-a', 'package-a',
+         'approve_application_package', 'payload-a', 'approved', 1,
+         'application-package-staging-v1', '${packageAttestationSha256}',
+         ${sourceRecheckAt}, ${completionAt});
+    `,
+    /approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 });
 
@@ -1419,7 +1712,7 @@ test("rejects blocked or mismatched approval and revokes approval when readiness
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '["proof missing"]', 'payload-a', 'blocked');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state)
@@ -1427,7 +1720,7 @@ test("rejects blocked or mismatched approval and revokes approval when readiness
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
          'payload-a', 'approved');
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   expectSqlReject(
@@ -1440,7 +1733,7 @@ test("rejects blocked or mismatched approval and revokes approval when readiness
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state)
@@ -1448,7 +1741,7 @@ test("rejects blocked or mismatched approval and revokes approval when readiness
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
          'wrong-payload', 'approved');
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   expectSqlPass(
@@ -1461,14 +1754,16 @@ test("rejects blocked or mismatched approval and revokes approval when readiness
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256,
          approved_at)
       VALUES
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
-         'payload-a', 'approved', 2);
+         'payload-a', 'approved', 1, 'application-package-staging-v1',
+         '${packageAttestationSha256}', 2);
       UPDATE pursuit_packages
          SET readiness_state = 'superseded', superseded_at = 3
        WHERE id = 'package-a';
@@ -1489,7 +1784,7 @@ test("prevents mutation of a fingerprinted pursuit package payload", () => {
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       UPDATE pursuit_packages SET answers_json = '{"changed":true}'
        WHERE id = 'package-a';
@@ -1519,14 +1814,16 @@ test("binds approval to immutable asset versions and revokes it when a newer ver
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256,
          approved_at)
       VALUES
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
-         'payload-a', 'approved', 2);
+         'payload-a', 'approved', 1, 'application-package-staging-v1',
+         '${packageAttestationSha256}', 2);
       INSERT INTO generated_assets
         (id, user_id, pursuit_id, type, source_versions_json,
          generation_policy_version, version, content_json, content_sha256,
@@ -1547,6 +1844,7 @@ test("binds approval to immutable asset versions and revokes it when a newer ver
 
 test("rejects approval when the package manifest does not match stored assets", () => {
   const mismatchedManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
     assets: [
       {
         id: "asset-a",
@@ -1561,7 +1859,7 @@ test("rejects approval when the package manifest does not match stored assets", 
       {
         id: "asset-cover-a",
         type: "cover_letter",
-        version: 1,
+        version: 2,
         contentSha256: "asset-hash-cover-a",
         fileSha256: "cover-file-hash",
         filename: "Employer - Director Revenue Operations - Matt Dimock - Cover Letter.pdf",
@@ -1580,7 +1878,7 @@ test("rejects approval when the package manifest does not match stored assets", 
       VALUES
         ('package-a', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${mismatchedManifest}', '[]', 'payload-a', 'ready_for_review');
       INSERT INTO external_action_approvals
         (id, user_id, pursuit_package_id, action, payload_sha256, state)
@@ -1588,7 +1886,42 @@ test("rejects approval when the package manifest does not match stored assets", 
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
          'payload-a', 'approved');
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+});
+
+test("rejects package approval when an outbound file is bound to stale source evidence", () => {
+  const staleBoundAssetSql = productionPursuitSql.replace(
+    '"jobPostingVersionId":"job-version-live","analysisId":"analysis-a","semanticResumeId"',
+    '"jobPostingVersionId":"job-version-stale","analysisId":"analysis-a","semanticResumeId"',
+  );
+  assert.notEqual(staleBoundAssetSql, productionPursuitSql);
+
+  expectSqlReject(
+    `
+      ${staleBoundAssetSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+    `,
+    /approval outbound assets are not bound to the current source and analysis/,
+  );
+
+  expectSqlReject(
+    `
+      ${staleBoundAssetSql}
+      ${readyPackageSql()}
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256)
+      VALUES
+        ('approval-a', 'user-a', 'package-a', 'approve_application_package',
+         'payload-a', 'requested', 1, 'application-package-staging-v1',
+         '${packageAttestationSha256}');
+      UPDATE external_action_approvals
+         SET state = 'approved', approved_at = 2
+       WHERE id = 'approval-a';
+    `,
+    /approval outbound assets are not bound to the current source and analysis/,
   );
 });
 
@@ -1628,7 +1961,7 @@ test("makes source versions, assets, packages, and approval fingerprints identit
          SET action = 'submit_application'
        WHERE id = 'approval-a';
     `,
-    /external approval identity and payload are immutable/,
+    /external approval identity and payload are immutable|approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid/,
   );
 });
 
@@ -1638,6 +1971,9 @@ test("supersedes the exact package and revokes approval when a newer source snap
       ${productionPursuitSql}
       ${readyPackageSql()}
       ${packageApprovalSql()}
+      UPDATE job_postings
+         SET description_checksum = 'job-hash-new'
+       WHERE id = 'job-live';
       INSERT INTO job_posting_versions
         (id, job_posting_id, source_checked_at, source_url,
          description_checksum, source_facts_json, source_conflicts_json,
@@ -1645,15 +1981,82 @@ test("supersedes the exact package and revokes approval when a newer source snap
       VALUES
         ('job-version-new', 'job-live', 3,
          'https://employer.example/jobs/123', 'job-hash-new',
-         '{"questionSetChecksum":"form-hash-new"}', '[]', 'verified');
+         '${changedEmployerFormSourceFacts}', '[]', 'verified');
       SELECT pp.readiness_state || ':' || a.state || ':' || p.state || ':' ||
-             p.external_approval_state
+             p.external_approval_state || ':' || analysis.validation_state ||
+             ':' || (p.current_analysis_id IS NULL)
         FROM pursuit_packages pp
         JOIN external_action_approvals a ON a.pursuit_package_id = pp.id
         JOIN pursuits p ON p.id = pp.pursuit_id
+        JOIN job_analyses analysis ON analysis.id = 'analysis-a'
        WHERE pp.id = 'package-a';
     `,
-    "superseded:revoked:preparing:revoked",
+    "superseded:revoked:preparing:revoked:invalidated:1",
+  );
+});
+
+test("treats A to B to A as a new current observation and invalidates B-bound work", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      UPDATE job_postings
+         SET description_checksum = 'job-hash-b'
+       WHERE id = 'job-live';
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('job-version-b', 'job-live', 3,
+         'https://employer.example/jobs/123', 'job-hash-b',
+         '${changedEmployerFormSourceFacts}', '[]', 'verified');
+      INSERT INTO job_analyses
+        (id, user_id, job_posting_id, career_path_id, job_standard_id,
+         policy_version, evidence_version, integrity_gates_json, fit_json,
+         unknowns_json, recommendation, validation_state)
+      VALUES
+        ('analysis-current-b', 'user-a', 'job-live', 'path-a', 'standard-a',
+         'policy-b', 'evidence-b',
+         '{"jobVersionId":"job-version-b","jobDescriptionChecksum":"job-hash-b"}',
+         '{}', '[]', 'pursue', 'trusted');
+      UPDATE pursuits
+         SET current_analysis_id = 'analysis-current-b',
+             state = 'ready_for_approval',
+             external_approval_state = 'requested'
+       WHERE id = 'pursuit-a';
+      INSERT INTO pursuit_packages
+        (id, user_id, pursuit_id, version, destination_url,
+         job_posting_version_id, answers_json, asset_manifest_json,
+         blockers_json, payload_sha256, readiness_state)
+      VALUES
+        ('package-current-b', 'user-a', 'pursuit-a', 1,
+         'https://employer.example/jobs/123/apply', 'job-version-b',
+         '{}', '{}', '["awaiting exact files"]', 'payload-b', 'blocked');
+      INSERT INTO external_action_approvals
+        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+      VALUES
+        ('approval-current-b', 'user-a', 'package-current-b',
+         'approve_application_package', 'payload-b', 'requested');
+
+      UPDATE job_postings
+         SET description_checksum = 'job-hash'
+       WHERE id = 'job-live';
+
+      SELECT current_version.id || ':' || package.readiness_state || ':' ||
+             approval.state || ':' || analysis.validation_state || ':' ||
+             (pursuit.current_analysis_id IS NULL) || ':' || pursuit.state
+        FROM job_postings posting
+        JOIN job_posting_versions current_version
+          ON current_version.job_posting_id = posting.id
+         AND current_version.description_checksum = posting.description_checksum
+        JOIN pursuit_packages package ON package.id = 'package-current-b'
+        JOIN external_action_approvals approval
+          ON approval.id = 'approval-current-b'
+        JOIN job_analyses analysis ON analysis.id = 'analysis-current-b'
+        JOIN pursuits pursuit ON pursuit.id = 'pursuit-a'
+       WHERE posting.id = 'job-live';
+    `,
+    "job-version-live:superseded:revoked:invalidated:1:researching",
   );
 });
 
@@ -1673,7 +2076,7 @@ test("supersedes an approved package and revokes its approval when a newer packa
       VALUES
         ('package-b', 'user-a', 'pursuit-a', 2,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt","lastName":"Dimock"}',
+         '${employerFormAnswersWithLastName}',
          '${approvalAssetManifest}', '[]', 'payload-b', 'ready_for_review');
       SELECT old_package.readiness_state || ':' || old_approval.state || ':' ||
              pursuit.state || ':' || pursuit.external_approval_state || ':' ||
@@ -1701,7 +2104,7 @@ test("supersedes an approved package and revokes its approval when a newer packa
       VALUES
         ('package-out-of-order', 'user-a', 'pursuit-a', 1,
          'https://employer.example/jobs/123/apply', 'job-version-live',
-         '{"questionSetChecksum":"form-hash","firstName":"Matt"}',
+         '${employerFormAnswers}',
          '${approvalAssetManifest}', '[]', 'payload-old', 'ready_for_review');
     `,
     /pursuit package version must advance monotonically|UNIQUE constraint failed/,
@@ -1723,12 +2126,34 @@ test("keeps runtime integrity triggers outside the Sites migration parser", () =
   assert.ok(triggerNames.has("external_action_approvals_insert_gate"));
   assert.ok(triggerNames.has("external_action_approvals_update_gate"));
   assert.ok(triggerNames.has("pursuit_packages_new_version_supersedes_previous"));
+  for (const name of [
+    "external_action_approvals_unsupported_required_field_insert",
+    "external_action_approvals_unsupported_required_field_update",
+    "external_action_approvals_analysis_source_binding_insert",
+    "external_action_approvals_analysis_source_binding_update",
+    "pursuits_analysis_change_supersedes_packages",
+    "pursuit_packages_sync_pursuit_after_invalidation",
+    "job_posting_versions_new_snapshot_invalidates_analyses",
+    "job_postings_current_version_reversion_invalidates_dependents",
+    "pursuit_events_occurred_at_guard",
+    "external_action_approvals_source_recheck_insert",
+    "external_action_approvals_source_recheck_update",
+    "resumes_payload_immutable",
+    "external_action_approvals_semantic_asset_binding_insert",
+    "external_action_approvals_semantic_asset_binding_update",
+    "resumes_supersession_invalidates_rendered_assets",
+  ]) {
+    assert.ok(triggerNames.has(name), `missing fail-closed trigger ${name}`);
+  }
 });
 
 test("rejects approval against a stale source version or mismatched employer form receipt", () => {
   expectSqlReject(
     `
       ${productionPursuitSql}
+      UPDATE job_postings
+         SET description_checksum = 'job-hash-new'
+       WHERE id = 'job-live';
       INSERT INTO job_posting_versions
         (id, job_posting_id, source_checked_at, source_url,
          description_checksum, source_facts_json, source_conflicts_json,
@@ -1736,30 +2161,29 @@ test("rejects approval against a stale source version or mismatched employer for
       VALUES
         ('job-version-new', 'job-live', 3,
          'https://employer.example/jobs/123', 'job-hash-new',
-         '{"questionSetChecksum":"form-hash-new"}', '[]', 'verified');
+         '${changedEmployerFormSourceFacts}', '[]', 'verified');
       ${readyPackageSql()}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval analysis is not bound to the current employer source/,
   );
 
   expectSqlReject(
     `
       ${productionPursuitSql}
       ${readyPackageSql({
-        answersJson:
-          '{"questionSetChecksum":"wrong-form-hash","firstName":"Matt"}',
+        answersJson: wrongEmployerFormAnswers,
       })}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 });
 
 test("rejects conflicted or incomplete source capture at approval insert and update", () => {
   const conflictSourceSql = productionPursuitSql.replace(
-    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'verified');",
-    "'{\"questionSetChecksum\":\"form-hash\"}', '[\"salary conflict\"]', 'conflict');",
+    `'${employerFormSourceFacts}', '[]', 'verified');`,
+    `'${employerFormSourceFacts}', '["salary conflict"]', 'conflict');`,
   );
   assert.notEqual(conflictSourceSql, productionPursuitSql);
   expectSqlReject(
@@ -1768,7 +2192,7 @@ test("rejects conflicted or incomplete source capture at approval insert and upd
       ${readyPackageSql()}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   expectSqlReject(
@@ -1776,20 +2200,22 @@ test("rejects conflicted or incomplete source capture at approval insert and upd
       ${conflictSourceSql}
       ${readyPackageSql()}
       INSERT INTO external_action_approvals
-        (id, user_id, pursuit_package_id, action, payload_sha256, state)
+        (id, user_id, pursuit_package_id, action, payload_sha256, state,
+         approved_pursuit_revision, attestation_version, attestation_sha256)
       VALUES
         ('approval-a', 'user-a', 'package-a', 'approve_application_package',
-         'payload-a', 'requested');
+         'payload-a', 'requested', 1, 'application-package-staging-v1',
+         '${packageAttestationSha256}');
       UPDATE external_action_approvals
          SET state = 'approved', approved_at = 2
        WHERE id = 'approval-a';
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, evidence, package, source version, form answers, or outbound assets are invalid/,
   );
 
   const partialSourceSql = productionPursuitSql.replace(
-    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'verified');",
-    "'{\"questionSetChecksum\":\"form-hash\"}', '[]', 'partial');",
+    `'${employerFormSourceFacts}', '[]', 'verified');`,
+    `'${employerFormSourceFacts}', '[]', 'partial');`,
   );
   assert.notEqual(partialSourceSql, productionPursuitSql);
   expectSqlReject(
@@ -1798,7 +2224,204 @@ test("rejects conflicted or incomplete source capture at approval insert and upd
       ${readyPackageSql()}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
+  );
+});
+
+test("rejects approval when a required employer file or multi-select cannot be represented exactly", () => {
+  const unsupportedFileFacts = JSON.stringify({
+    ...JSON.parse(employerFormSourceFacts),
+    questionSet: [
+      ...JSON.parse(employerFormSourceFacts).questionSet,
+      {
+        id: "portfolio",
+        key: "portfolio",
+        label: "Portfolio",
+        type: "file",
+        required: true,
+      },
+    ],
+  });
+  const unsupportedMultiSelectFacts = JSON.stringify({
+    ...JSON.parse(employerFormSourceFacts),
+    questionSet: [
+      ...JSON.parse(employerFormSourceFacts).questionSet,
+      {
+        id: "certifications",
+        key: "certifications",
+        label: "Select all relevant certifications",
+        type: "multi_select",
+        required: true,
+        values: ["PMP", "SHRM"],
+      },
+    ],
+  });
+  for (const sourceFacts of [
+    unsupportedFileFacts,
+    unsupportedMultiSelectFacts,
+  ]) {
+    const unsupportedSourceSql = productionPursuitSql.replace(
+      `'${employerFormSourceFacts}', '[]', 'verified');`,
+      `'${sourceFacts}', '[]', 'verified');`,
+    );
+    assert.notEqual(unsupportedSourceSql, productionPursuitSql);
+    expectSqlReject(
+      `
+        ${unsupportedSourceSql}
+        ${readyPackageSql()}
+        ${packageApprovalSql()}
+      `,
+      /approval is blocked by an unsupported required employer field/,
+    );
+  }
+});
+
+test("rejects stale source-recheck receipts older than 24 hours", () => {
+  const staleSourceRecheckAt = sourceRecheckAt - 86_400_001;
+  const staleProductionPursuitSql = productionPursuitSql.replaceAll(
+    String(sourceRecheckAt),
+    String(staleSourceRecheckAt),
+  );
+  const staleManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
+    sourceRecheck: {
+      ...approvalAssetManifestObject.sourceRecheck,
+      postingLastCheckedAt: staleSourceRecheckAt,
+      verifiedAt: staleSourceRecheckAt,
+    },
+  });
+
+  assert.notEqual(staleProductionPursuitSql, productionPursuitSql);
+  expectSqlReject(
+    `
+      ${staleProductionPursuitSql}
+      ${readyPackageSql({ manifest: staleManifest })}
+      ${packageApprovalSql()}
+    `,
+    /approval source recheck receipt is missing or older than 24 hours/,
+  );
+});
+
+test("does not let another tenant's fresh recheck refresh a stale user receipt", () => {
+  const staleSourceRecheckAt = sourceRecheckAt - 86_400_001;
+  const staleUserProductionSql = productionPursuitSql.replaceAll(
+    String(sourceRecheckAt),
+    String(staleSourceRecheckAt),
+  );
+  const staleUserManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
+    sourceRecheck: {
+      ...approvalAssetManifestObject.sourceRecheck,
+      postingLastCheckedAt: staleSourceRecheckAt,
+      verifiedAt: staleSourceRecheckAt,
+    },
+  });
+
+  expectSqlReject(
+    `
+      ${staleUserProductionSql}
+      INSERT INTO audit_events
+        (id, user_id, actor_subject, event_type, entity_type, entity_id,
+         metadata_json, created_at)
+      VALUES
+        ('audit-user-b-fresh', 'user-b', 'test:source-recheck',
+         'greenhouse_job_ingested', 'job_posting', 'job-live',
+         '{"descriptionChecksum":"job-hash"}', ${sourceRecheckAt});
+      UPDATE job_postings
+         SET last_checked_at = ${sourceRecheckAt}
+       WHERE id = 'job-live';
+      ${readyPackageSql({ manifest: staleUserManifest })}
+      ${packageApprovalSql()}
+    `,
+    /approval source recheck receipt is missing or older than 24 hours/,
+  );
+});
+
+test("rejects future outcome dates while allowing bounded future scheduled events", () => {
+  const now = Date.now();
+  expectSqlReject(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_events
+        (id, user_id, pursuit_id, event_type, occurred_at, metadata_json)
+      VALUES
+        ('future-outcome', 'user-a', 'pursuit-a', 'application_submitted',
+         ${now + 10 * 60 * 1000}, '{}');
+    `,
+    /pursuit event date is outside the allowed window/,
+  );
+
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      INSERT INTO pursuit_events
+        (id, user_id, pursuit_id, event_type, occurred_at, metadata_json)
+      VALUES
+        ('future-interview', 'user-a', 'pursuit-a', 'interview_scheduled',
+         ${now + 365 * 24 * 60 * 60 * 1000}, '{}');
+      SELECT event_type FROM pursuit_events WHERE id = 'future-interview';
+    `,
+    "interview_scheduled",
+  );
+});
+
+test("changing the current analysis supersedes the package and revokes approval WIP", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      INSERT INTO job_analyses
+        (id, user_id, job_posting_id, career_path_id, job_standard_id,
+         policy_version, evidence_version, integrity_gates_json, fit_json,
+         unknowns_json, recommendation, validation_state)
+      VALUES
+        ('analysis-new', 'user-a', 'job-live', 'path-a', 'standard-a',
+         'policy-2', 'evidence-2',
+         '{"jobVersionId":"job-version-live","jobDescriptionChecksum":"job-hash"}',
+         '{}', '[]', 'pursue', 'trusted');
+      UPDATE pursuits
+         SET current_analysis_id = 'analysis-new',
+             external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      SELECT pp.readiness_state || ':' || approval.state || ':' ||
+             pursuit.state || ':' || pursuit.external_approval_state || ':' ||
+             (pursuit.revision > 1)
+        FROM pursuit_packages pp
+        JOIN external_action_approvals approval
+          ON approval.pursuit_package_id = pp.id
+        JOIN pursuits pursuit ON pursuit.id = pp.pursuit_id
+       WHERE pp.id = 'package-a';
+    `,
+    "superseded:revoked:preparing:revoked:1",
+  );
+});
+
+test("superseding a semantic resume invalidates its file, package, and approval", () => {
+  expectSqlPass(
+    `
+      ${productionPursuitSql}
+      ${readyPackageSql()}
+      ${packageApprovalSql()}
+      UPDATE pursuits
+         SET external_approval_state = 'approved'
+       WHERE id = 'pursuit-a';
+      UPDATE resumes
+         SET review_state = 'superseded'
+       WHERE id = 'resume-semantic-a';
+      SELECT semantic.review_state || ':' || rendered.review_state || ':' ||
+             (rendered.invalidated_at IS NOT NULL) || ':' ||
+             package.readiness_state || ':' || approval.state || ':' ||
+             pursuit.state || ':' || pursuit.external_approval_state
+        FROM resumes semantic
+        JOIN generated_assets rendered ON rendered.id = 'asset-a'
+        JOIN pursuit_packages package ON package.id = 'package-a'
+        JOIN external_action_approvals approval
+          ON approval.pursuit_package_id = package.id
+        JOIN pursuits pursuit ON pursuit.id = package.pursuit_id
+       WHERE semantic.id = 'resume-semantic-a';
+    `,
+    "superseded:superseded:1:superseded:revoked:preparing:revoked",
   );
 });
 
@@ -1809,6 +2432,7 @@ test("rejects draft assets and missing or mismatched binary file fingerprints", 
   );
   assert.notEqual(draftResumeSql, productionPursuitSql);
   const draftManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
     assets: approvalAssetManifest
       ? JSON.parse(approvalAssetManifest).assets.map((asset) =>
           asset.id === "asset-a" ? { ...asset, reviewState: "draft" } : asset,
@@ -1822,15 +2446,16 @@ test("rejects draft assets and missing or mismatched binary file fingerprints", 
       ${readyPackageSql({ manifest: draftManifest })}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   const missingFileHashSql = productionPursuitSql.replace(
-    `     '{"fileSha256":"resume-file-hash"}',`,
-    "     '{}',",
+    '"fileSha256":"resume-file-hash",',
+    "",
   );
   assert.notEqual(missingFileHashSql, productionPursuitSql);
   const missingFileHashManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
     assets: JSON.parse(approvalAssetManifest).assets.map((asset) => {
       if (asset.id !== "asset-a") return asset;
       const withoutFileSha256 = { ...asset };
@@ -1845,10 +2470,11 @@ test("rejects draft assets and missing or mismatched binary file fingerprints", 
       ${readyPackageSql({ manifest: missingFileHashManifest })}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   const wrongFileHashManifest = JSON.stringify({
+    ...approvalAssetManifestObject,
     assets: JSON.parse(approvalAssetManifest).assets.map((asset) =>
       asset.id === "asset-a" ? { ...asset, fileSha256: "wrong-file-hash" } : asset,
     ),
@@ -1859,7 +2485,7 @@ test("rejects draft assets and missing or mismatched binary file fingerprints", 
       ${readyPackageSql({ manifest: wrongFileHashManifest })}
       ${packageApprovalSql()}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 });
 
@@ -1870,7 +2496,7 @@ test("keeps future application submission behind a distinct package approval", (
       ${readyPackageSql()}
       ${packageApprovalSql({ id: "submission-a", action: "submit_application" })}
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval package, source version, form answers, or outbound assets are not exact and current|approval lifecycle, timestamps, package, source version, form answers, or outbound assets are invalid/,
   );
 
   expectSqlPass(

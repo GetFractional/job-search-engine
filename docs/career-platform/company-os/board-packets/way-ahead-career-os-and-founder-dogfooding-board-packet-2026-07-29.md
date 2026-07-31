@@ -1,209 +1,195 @@
-[Open the current hosted checkpoint](https://wayahead.getfractional.co)
+[Open the current hosted Way Ahead checkpoint](https://wayahead.getfractional.co)
 
 # Way Ahead Career OS and Founder Dogfooding Board Packet
 
 Packet date: 2026-07-30
 Board and final authority: Matt Dimock
-Current hosted version: production version 14
-Current branch: `codex/way-ahead-p1-career-os`
-Deployed GitHub candidate: `2925c9c`
-Sites source mirror: `c0b5dc5`
+Branch: `codex/way-ahead-p1-career-os`
+Current production before candidate release: Sites version 14
+Candidate: v15, validated locally and awaiting immutable Sites release
 
 ## CEO recommendation
 
-Keep production version 14 live as the controlled, reversible
-hosted-acceptance checkpoint and have Matt complete the real owner and
-physical-phone checks. Do not invite Terry, enable billing, connect a live
-model, or imply package approval until the remaining hosted gates pass.
+Release v15 to the existing noindex alpha URL, complete hosted readback, and
+give Matt and Terry the same self-service member journey. Keep billing, paid
+models, email, indexing, broad recruitment, and every employer-facing action
+disabled.
 
-The branch materially improves the public-to-member journey, truth boundaries,
-stable routes, responsive experience, two-member local isolation, and AI safety
-foundation. Independent Quality found and stopped one approval-integrity
-defect. The corrected trigger now rejects conflicted employer sources at both
-approval INSERT and UPDATE, the unfinished member approval workflow fails
-closed, and the public promise stops at editable drafts. The clean suite passes
-98 of 98 tests.
-
-Independent Quality issued a **PASS for Matt-only hosted laptop and mobile QA
-handoff** after the immutable deployment and bounded hosted readback. It is not
-a public-alpha completion verdict.
+Treat Matt's real search as founder dogfooding, not a special product mode or
+efficacy claim. Going is the strongest current pursuit, but its application
+package must remain locked until Matt supplies the missing lifecycle facts and
+the exact employer-form receipt is represented inside Way Ahead.
 
 ## Results
 
-### Company and delivery
+### Product
 
-- Replaced the permanent two-initiative cap with adaptive, evidence-based work
-  in progress. Each active workstream still requires one DRI, one writer per
-  overlapping surface, bounded dependencies and data, acceptance evidence,
-  review capacity, cost, rollback, and a stop condition.
-- Recast Matt's real search as founder dogfooding of the same member product.
-  It is not a separate customer type, product mode, or efficacy proof.
-- Recast Terry as one independent early tester with self-registration, consent,
-  tenant isolation, bounded tasks, and no staff, operator, or broader
-  recruitment authority. His result is not efficacy proof.
-- Repaired the repo-managed job-search skills so Way Ahead owns member state and
-  Teal is read-only competitor evidence only.
-- Confirmed the monthly read-only skill-health automation is active and added a
-  durable GitHub audit gate.
+- Public website, ChatGPT SSO boundary, and six-step onboarding before Home.
+- Structured Career Profile with local PDF, DOCX, and text extraction,
+  explicit fact confirmation, native month inputs, and later correction.
+- Job Standard and multiple Job Paths with a path-segmented Home scoreboard.
+- Canonical Greenhouse, Lever, and Ashby intake; source versions, freshness,
+  explainable structured alignment, and visible unknowns.
+- Stable Jobs, Pursuits, Resume Studio, Cover Letter Studio, Plan, Profile, and
+  Privacy routes.
+- Editable, versioned job-specific documents with PDF and DOCX export.
+- Immutable application-package fingerprint, exact answer and file contract,
+  claim-safe review, approval request, approval, revocation, one-time
+  completion, and member-reported pursuit events.
+- No employer-form population, file upload, application submission, outreach,
+  reference use, negotiation, billing, production email, or live AI-provider
+  action exists.
 
-### Current local product
+### Company system
 
-- Public website before sign-in with literal next-job language.
-- Six-step onboarding before Home, including consent and one explicitly
-  confirmed structured role.
-- Stable member routes for Home, Jobs, job detail, Pursuits, pursuit detail,
-  Resume Studio, Cover Letter Studio, Plan, Profile, and Privacy.
-- Light default with Light and Dark only.
-- Scores withheld unless trusted and bound to the latest source version.
-- Profile-grounded Resume and Cover Letter draft starters with versioned editing
-  and exports. Claim-safe package construction and approval are not live.
-- Provider-neutral AI safety foundation with off, synthetic, public-only, and
-  minimized-profile modes; consent-bounded facts; redaction; strict schemas;
-  hard quotas; exact replay; no tools, actions, or silent fallback.
-- No provider, model credential, billing, production email, employer action, or
-  paid service was connected.
+- The permanent two-initiative cap is retired. Adaptive WIP now requires a
+  measurable result, DRI, one writer per overlapping surface, bounded
+  dependencies and tenant data, acceptance evidence, review capacity, cost,
+  rollback, and stop condition.
+- “Matt Case Study Zero” is retired. Matt uses the same multi-user product and
+  contract as every member.
+- Terry is one independent early tester who self-registers, consents, and gets
+  an isolated workspace. He is not staff, an operator, or outcome proof.
+- Teal is competitor inspiration only and is not Way Ahead architecture or
+  Matt's job-search operating surface.
+- Monthly skill-health review and quarterly broader review remain active and
+  read-only.
 
-### Current verification
+## Verification
 
 | Gate | Result |
 | --- | --- |
-| Typecheck and clean production build | PASS |
-| Automated tests | PASS, 98 of 98 on the corrected current branch |
 | Lint | PASS |
-| Production dependency audit | PASS, zero vulnerabilities |
-| Diff whitespace check | PASS |
-| Local two-member isolation | PASS for the exercised synthetic slice |
-| Current visual evidence | CONDITIONAL PASS for the fresh 390, 768, 1440, Light/Dark, reference-comparison, populated-dashboard, pursuit, Studio, and second-user slice; the Going job-detail capture remains open |
-| Independent verdict | **PASS for Matt-only hosted laptop and mobile QA handoff**; not public-alpha completion |
-| Immutable candidate deployment | PASS, GitHub candidate `2925c9c` through Sites mirror `c0b5dc5` as production version 14 |
-| Custom domain, SSL, public routes, security headers, and `noindex` | PASS |
-| Client-supplied `oai-authenticated-user-email` rejection on deployed `/api/workspace` and `POST /api/approvals` | PASS, HTTP 401 |
-| Hosted two-real-account proof | Not performed |
+| Typecheck and production build | PASS |
+| Full automated suite | PASS, 125 of 125 |
+| Targeted onboarding and rendered-bundle checks | PASS, 16 of 16 |
+| Independent integrity checks | PASS, 77 of 77 |
+| Independent lifecycle checks | PASS, 4 of 4 |
+| Production dependency audit | PASS, zero known vulnerabilities |
+| Responsive visual evidence | PASS at 390, 768, and 1280 CSS pixels |
+| Light, Dark, menu, keyboard, error, empty, privacy, and package-lock states | PASS |
+| Local two-member isolation | PASS |
+| Hosted v15 deployment and readback | Pending release |
+| Physical iPhone Safari and Android Chrome | Pending |
+| Real second-account hosted isolation | Pending Terry or another approved tester |
 
-Evidence:
+Fresh browser evidence:
 
-- [Current-build QA receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-29/current/current-build-qa-receipt-2026-07-29.md)
-- [Hosted deployment and access receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-29/current/hosted-deployment-and-access-receipt-2026-07-30.md)
-- [ClickUp hosted-acceptance readback](../clickup-hosted-acceptance-readback-receipt-2026-07-30.md)
-- [Independent verdict](../reviews/way-ahead-current-build-independent-verdict-2026-07-29.md)
-- [Cross-device access decision](../reviews/way-ahead-cross-device-access-decision-2026-07-29.md)
-- [Skill semantic audit](../reviews/way-ahead-skill-semantic-audit-2026-07-29.md)
-- [AI foundation gate](../../strategy-system/19-free-ai-foundation-and-provider-gate-2026-07-29.md)
+- [v15 current-build QA receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/README.md)
+- [Reference and current mobile comparison](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/29-reference-vs-current-390.png)
+- [Final owner mobile Home](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/05-app-home-390-light.png)
+- [Complete new-member onboarding](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/19-new-member-onboarding-step1-390-light.png)
+- [Empty activated member Home](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/26-new-member-empty-home-390-light.png)
+- [Immutable package locked state](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/31-app-package-locked-390-light.png)
 
-## Founder dogfooding result
+Fresh QA found and corrected two visible defects:
 
-The current eight-role source-verified shortlist spans Lifecycle / CRM, Revenue /
-GTM Operations, and Growth / Revenue Marketing.
+1. Onboarding preserved the previous step's mobile scroll position. The fixed
+   flow now moves from 972 px to 0 px and focuses the next main region without
+   hiding its heading.
+2. Mobile Home repeated the “Home” label. The duplicate eyebrow was removed.
 
-The provisional next-best pursuit is [Going, Director, Lifecycle
-Marketing](https://jobs.ashbyhq.com/Going/0095e055-2b79-4dab-878b-4b723b873b8f):
+## Founder dogfooding recommendation
 
-- fit: 85 out of 100, not a hiring probability;
+[Going, Director, Lifecycle Marketing](https://jobs.ashbyhq.com/Going/0095e055-2b79-4dab-878b-4b723b873b8f)
+remains the strongest current pursuit:
+
+- current fit judgment: 85 out of 100, not a hiring probability;
 - canonical Ashby publication: 2026-07-10;
 - listed and employer page active on 2026-07-30;
 - remote across United States time zones;
-- compensation is $175,000 to $190,000 plus equity;
-- strongest supported overlap: lifecycle systems, Braze exposure, scaled
-  consumer context, reporting, workflow automation, and leadership;
-- main gaps: exact Braze/Liquid depth, push/in-app ownership,
-  cohort/LTV/SQL depth, lifecycle-specific AI proof, and exact lifecycle tenure.
+- compensation: $175,000 to $190,000 plus equity;
+- strongest overlap: lifecycle systems, Braze exposure, consumer scale,
+  reporting, automation, cross-functional delivery, and leadership;
+- decision risks: exact Braze and Liquid depth, direct push and in-app
+  ownership, cohort and LTV depth, SQL, lifecycle-specific AI proof, and exact
+  people-management scope.
 
-Read-only Gmail and repo searches found no Going application confirmation or
-submitted record. That lowers duplicate risk but does not replace Matt's
-attestation.
+The live employer form was inspected read-only. It requires résumé, contact
+facts, location, work authorization, sponsorship, LinkedIn, and four narratives
+covering end-to-end lifecycle ownership, Braze depth, AI use, and reason for
+leaving. It has no cover-letter field. Nothing was populated, uploaded, or
+submitted.
 
-Fallback order:
+The current working package is:
 
-1. Tebra, Director, GTM Operations.
-2. Wpromote, Director, Revenue Operations.
+- [source and fit receipt](../../../../applications/professional-lanes/going-director-lifecycle-marketing-2026-07-29/01-current-source-and-fit-receipt.md)
+- [resume strategy and copy-ready draft](../../../../applications/professional-lanes/going-director-lifecycle-marketing-2026-07-29/02-resume-strategy-and-copy-ready-draft.md)
+- [application answers and approval packet](../../../../applications/professional-lanes/going-director-lifecycle-marketing-2026-07-29/03-application-answers-and-exact-action-approval-packet.md)
+- [independent claim audit](../../../../applications/professional-lanes/going-director-lifecycle-marketing-2026-07-29/04-independent-style-claim-audit.md)
 
-[Current shortlist and approval path](../../founder-dogfooding/matt-current-role-shortlist-2026-07-29.md)
-
-No Teal record, employer form, upload, outreach, reference, application,
-submission, or negotiation changed.
+It is reviewable working copy, not a final externally usable package. Read-only
+Gmail and repo checks found no Going submission confirmation, but Matt still
+must attest that he has not already applied.
 
 ## Economics
 
 Incremental cash spend for this slice is **$0**.
 
-Current connected model, production email, billing, employer-action, affiliate,
-and human-service variable cost is $0 because none is enabled. Founder labor
-remains visible as noncash effort.
+Billing, production email, external job feeds, live AI, employer action,
+affiliate enrollment, and human service are disabled, so connected variable
+cost is currently $0. Founder labor remains visible as noncash effort.
 
-All prices remain private hypotheses. There is no observed paid demand,
-retention, CAC, refund, support burden, or contribution evidence. Software,
-affiliate, data, model, and any future human-service economics remain separate.
-A free quota is capacity, not a business model.
+No price has public approval or observed demand. Software, AI, data, affiliate,
+payment, and any future human-service economics remain separate. A free quota
+is capacity, not a business model.
 
-Kimi is not the default zero-spend model because its current Cloudflare route
-requires Workers Paid. The first benchmark candidate is Cloudflare-hosted
-GPT-OSS under the exact provider and data gate. No live provider is approved.
+Kimi K2.6 is excluded from the current zero-spend route because Cloudflare
+marks it as requiring Workers Paid. GPT-OSS 120B and 20B, Gemma 4, and GLM 4.7
+Flash remain unqualified synthetic benchmark candidates only. The current app
+has no live model provider, credential, binding, request, or member-data route.
 
 ## Material risks
 
-1. The current branch has multi-role Career Evidence, supported-source
-   assessment, Pursuits, and editable drafts, but it does not yet construct or
-   approve a claim-safe package or manage interview, offer, outcome, and
-   learning events.
-2. Production version 14 is live and passed the bounded hosted technical
-   readback, but Matt has not yet completed its authenticated owner journey.
-3. A real hosted second account has not proven SSO, onboarding, tenant
-   isolation, export, deletion, and restart.
-4. Physical iPhone Safari, Android Chrome, VoiceOver, TalkBack, safe areas,
-   cellular behavior, actual 200 percent zoom, reduced motion, and broad browser
-   compatibility remain open.
-5. Production version 14 rejected the client-supplied
-   `oai-authenticated-user-email` header on `/api/workspace` and
-   `POST /api/approvals` with HTTP 401. Real
-   two-account cross-tenant tests remain open.
-6. Going cannot support final externally usable narratives until Matt confirms
-   the decision-changing experience facts.
-7. Way Ahead remains a provisional name without standalone domain or legal
-   clearance.
-8. The in-app browser's hosted screenshot stream cropped at device-pixel scale,
-   so it was excluded. Signed-in hosted and physical-phone captures remain
-   required.
+1. Ashby's public job-postings API does not expose the exact employer question
+   set. Way Ahead therefore creates a fingerprinted blocked package and exposes
+   no approval control. A safe form-receipt intake path is still needed.
+2. Matt's Going résumé and four required narratives cannot be finalized without
+   his decision-changing factual answers.
+3. Local two-member isolation passed, but hosted isolation still needs two real
+   accounts.
+4. Chromium browser evidence passed. Safari, Firefox, VoiceOver, TalkBack,
+   cellular behavior, 200 percent zoom, and reduced motion remain release smoke
+   checks.
+5. Way Ahead is provisional. Standalone domain availability, ownership, and
+   legal clearance are unresolved.
+6. No paid demand, retention, CAC, support burden, or contribution margin has
+   been observed.
 
 ## Rollback
 
-Production version 14 is current. Saved version 13 remains the immediate
-rollback candidate; it was preserved and not deleted. The rollback selection
-was verified, but a production rollback drill was not run.
+Sites version 14 remains the immediate production rollback until v15 is
+successfully saved, deployed, and read back. The release branch and coherent
+commit preserve code provenance. Source, form, fact, asset, answer,
+destination, or consent changes invalidate the exact package approval.
 
-The work remains isolated on a Git branch with coherent commits, remote push,
-draft PR, independent review, and immutable Sites-version provenance. Any
-source, asset, answer, destination, package, or consent change after approval
-invalidates that approval.
-
-## Exact next approvals
+## Exact next decisions
 
 ### Matt factual gate for Going
 
-Matt must attest that he has not already applied, then answer only the
-decision-changing experience questions:
+Matt must answer these before Way Ahead can produce a claim-safe exact package:
 
-1. What did he personally do in Braze, for how long, and did he use Canvas,
-   Liquid, segmentation, triggers, testing, events, or integrations?
-2. What direct or led experience does he have with push, in-app, and web
-   lifecycle messages?
-3. What is the strongest end-to-end lifecycle journey he can defend, and which
-   metrics did it use?
-4. For cohort, retention, churn, LTV, A/B testing, SQL, and lifecycle AI, which
-   are hands-on, directed, output-used, or none?
-5. Which people reported directly to him, and what technical partners did he
-   lead?
+1. Exact Braze dates, access, and features used: Canvas, Liquid, segmentation,
+   triggers, events, testing, integrations, reporting, governance, and QA.
+2. Strongest end-to-end lifecycle program: employer, audience, lifecycle
+   stages, channels, hands-on work versus leadership, direct reports, technical
+   partners, metrics owned, and result.
+3. Direct cohort, retention, churn, LTV, experimentation, SQL, and
+   lifecycle-specific AI experience, separating hands-on, directed,
+   output-used, and none.
+4. Confirmation that Get Fractional is selective part-time work, that Matt is
+   seeking a full-time leadership role with no conflict, and correction or
+   approval of the prepared reason-for-leaving answer.
+5. Attestation that he has not already applied to this exact Going opening.
 
-These answers authorize evidence reconciliation and package completion only.
-They do not authorize employer-form population, upload, outreach, reference
-use, submission, or negotiation.
+These answers authorize internal evidence reconciliation and package completion
+only. Employer-form population, upload, submission, outreach, references, and
+negotiation remain separately reserved.
 
-### Reserved company gates
+### Other reserved gates
 
-- Terry: only after hosted privacy, real two-account isolation, support,
-  deletion, and rollback prerequisites pass.
-- AI provider: approve exact provider, model, cost ceiling, data class,
-  retention, consent, quota, failure behavior, and rollback.
-- Commercial: billing, prices, renewals, refunds, taxes, affiliate enrollment,
-  paid acquisition, public indexing, and broad promotion remain unapproved.
-- Brand: standalone domain purchase, trademark work, entity-name use, and legal
-  spend remain unapproved.
+- AI: exact provider, account, model, data class, retention, binding, quota,
+  cost ceiling, failure mode, benchmark, and rollback before any external call.
+- Commercial: prices, renewals, refunds, taxes, billing, partner enrollment,
+  paid acquisition, indexing, and broad promotion.
+- Brand: domain purchase, trademark work, entity-name use, and legal spend.

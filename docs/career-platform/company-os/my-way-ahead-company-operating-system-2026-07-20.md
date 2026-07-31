@@ -1,11 +1,13 @@
 # Way Ahead Company Operating System
 
-> **2026-07-23 governing Career OS correction:** [Career OS Customer Journey, Screen-State Architecture, and Critical Path](../strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md) now controls the literal job-search journey, account lifecycle, customer/operator separation, Home architecture, Career Evidence Library, Job Paths, document precedence, score language, Light/Dark policy, acquisition pilots, AI provider gate, screen states, and product critical path. Historical “move,” Today, System-theme, owner-first, and lifecycle-only completion language below is superseded where it conflicts.
+> **2026-07-23 governing Career OS correction:** [Career OS Customer Journey, Screen-State Architecture, and Critical Path](../strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md) now controls the literal job-search journey, account lifecycle, customer/operator separation, Home architecture, Career Evidence Library, Job Paths, document precedence, score language, Light/Dark policy, acquisition pilots, screen states, and product critical path. Historical “move,” Today, System-theme, owner-first, and lifecycle-only completion language below is superseded where it conflicts.
+
+> **2026-07-30 governing AI-provider correction:** [Free AI Foundation and Provider Gate](../strategy-system/19-free-ai-foundation-and-provider-gate-2026-07-29.md) supersedes Strategy 18's Kimi recommendation and controls provider, model, data, quota, retention, consent, binding, and activation decisions. Kimi K2.6 requires Workers Paid and is excluded from the zero-incremental-spend path. GPT-OSS and the other named Cloudflare models are unqualified synthetic benchmark candidates only. The current Sites app has no proven native Workers AI binding, live provider, credential, network request, or member-data route. None is authorized by this amendment.
 
 > **2026-07-29 governing portfolio and validation correction:** Way Ahead uses adaptive, evidence-based work in progress, not a permanent numeric initiative cap. Activate a workstream only when it has one measurable result, one DRI, one writer per overlapping surface, bounded dependencies, tenant data, and write scope, acceptance evidence, available review capacity, cost and rollback boundaries, and a stop condition. One integrator owns sequencing and synthesis. Matt founder-dogfoods the same multi-user product and member contract; his result is personal outcome evidence and generalized product learning, not a separate customer type or efficacy proof. Terry is an independent early tester who self-registers, explicitly consents, uses an isolated member workspace, completes bounded tasks, and supplies independent usability and trust feedback. He is not staff or an operator, and his access does not authorize broader recruitment.
 
-**Version:** 1.4
-**Operating date:** 2026-07-29
+**Version:** 1.5
+**Operating date:** 2026-07-30
 **Board and owner:** Matt Dimock
 **Accountable CEO and integrator:** Codex root, within the authority contract below
 **Company name:** Way Ahead, temporary local founder-checkpoint label only; the master brand remains open after a high-collision knockout screen
@@ -16,7 +18,7 @@
 
 > **Board amendment, 2026-07-22:** Matt superseded the prototype-only and Teal-operating assumptions. Way Ahead must now be the real operating surface for Matt's career record, current jobs, decisions, pursuit assets, and exact approval payload. Teal is competitor research only and may not hold or mutate Matt's job-search state. Matt authorized a zero-incremental-spend, owner-only production foundation with real authentication, tenant-bound D1 persistence, and a live HTTPS URL restricted to `mattdim805@gmail.com`. This authorization does not include external users, billing, public access, model or job-feed spend, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment. No customer-visible sample or demo content is permitted in the production founder workspace.
 
-> **Board amendment, 2026-07-23:** Matt rejected the owner-only Sites candidate as a product experience. The [current hosted audit](../../../prototypes/worthward-mobile/qa/production-reset-2026-07-23/README.md) confirms that the signed-out website is absent; a new account is sent directly into a Seso-specific workspace; Profile and Direction are dead-end empty states; Today is not a multi-path scoreboard; and no résumé or cover-letter creation and editing workflow exists. [Public Multi-User Alpha, Job Supply, and Growth Architecture](../strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md) now governs this correction. Matt authorized a zero-incremental-spend, non-indexed public alpha surface, self-service account creation through an approved SSO path, a separate personal workspace for each user, Terry's self-registration without an email allowlist, and the temporary `wayahead.getfractional.co` subdomain after the corrected deployment passes. This authorization includes the DNS records required by Sites for that exact hostname. It does not authorize a public marketing announcement, search indexing, paid infrastructure, billing, production email, paid model calls, source contracts, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment.
+> **Board amendment, 2026-07-23:** Matt rejected the owner-only Sites candidate as a product experience. The [current hosted audit](../../../prototypes/worthward-mobile/qa/production-reset-2026-07-23/README.md) confirms that the signed-out website is absent; a new account is sent directly into a Seso-specific workspace; Profile and Direction are dead-end empty states; Today is not a multi-path scoreboard; and no résumé or cover-letter creation and editing workflow exists. [Public Multi-User Alpha, Job Supply, and Growth Architecture](../strategy-system/17-public-multi-user-alpha-job-supply-and-growth-architecture-2026-07-23.md) now governs this correction. Matt authorized a zero-incremental-spend, non-indexed public alpha surface, self-service account creation through an approved SSO path, a separate personal workspace for each user, Terry's self-registration without an email allowlist, and the temporary `wayahead.getfractional.co` subdomain after the corrected deployment passes. This authorization includes the DNS records required by Sites for that exact hostname. It does not authorize a public marketing announcement, search indexing, paid infrastructure, billing, production email, any live model call or member-data transfer, source contracts, employer-form population or upload, outreach, references, application submission, domain purchase, trademark work, partner enrollment, or any legal commitment.
 
 ## Board resolution
 
@@ -226,13 +228,13 @@ Matt's exact approval is required before:
 
 - public brand lock, domain purchase, trademark filing, or legal spend,
 - public marketing announcements, search indexing, or broad recruitment beyond a shared alpha link,
-- authentication, model, source, or vendor connections other than the authorized Sites and ChatGPT SSO alpha path,
+- authentication, any live model or provider connection, member-data transfer, source, or vendor connections other than the authorized Sites and ChatGPT SSO alpha path,
 - any spend, paid API, payment, price commitment, refund term, or billing activation,
 - hiring, contracting, partnership, data sharing, or legal obligation,
 - public outcome claim or guarantee,
 - Teal mutation, job application, outreach, reference use, submission, or negotiation.
 
-The 2026-07-23 Board amendment already authorizes the bounded zero-spend alpha publication, Sites-native `wayahead.getfractional.co` binding and required DNS records, ChatGPT SSO self-registration, and separate personal workspaces. It does not authorize an independent Google or LinkedIn OAuth app, paid model, production email, advertising, indexing, or any employer-facing action.
+The 2026-07-23 Board amendment already authorizes the bounded zero-spend alpha publication, Sites-native `wayahead.getfractional.co` binding and required DNS records, ChatGPT SSO self-registration, and separate personal workspaces. It does not authorize an independent Google or LinkedIn OAuth app, any live model or provider connection, member-data transfer, production email, advertising, indexing, or any employer-facing action.
 
 An approval packet shows the exact action, destination, cost, consequence, evidence, alternatives, recommendation, rollback, and what is not authorized. Approval of one action is not blanket authority for adjacent actions.
 
@@ -356,7 +358,7 @@ This stage goal follows [OpenAI's Codex best practices](https://learn.chatgpt.co
 - Use adaptive evidence-based WIP, one DRI per workstream, one writer per overlapping surface, bounded dependencies/data/write scopes, available review capacity, and explicit acceptance, cost, rollback, and stop controls.
 - Use a public-capable Sites deployment, ChatGPT SSO, tenant-scoped D1, and `wayahead.getfractional.co` without incremental cash for this stage.
 - Do not use demo or sample customer content.
-- Do not spend, enable billing, connect a paid model or production email, index or broadly promote the site, populate or upload to an employer form, send outreach, share references, submit an application, or make a legal commitment without the exact reserved approval.
+- Do not spend, enable billing, connect any live model, send data to a model provider, connect production email, index or broadly promote the site, populate or upload to an employer form, send outreach, share references, submit an application, or make a legal commitment without the exact reserved approval.
 - Preserve source truth, user corrections, privacy, tenant isolation, explicit unknowns, and exact approval boundaries.
 
 ### Done when

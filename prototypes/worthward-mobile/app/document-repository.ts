@@ -818,6 +818,11 @@ export async function saveResumeVersion(
           "UPDATE pursuit_packages SET readiness_state = 'superseded', superseded_at = unixepoch() * 1000 WHERE user_id = ? AND readiness_state <> 'superseded' AND EXISTS (SELECT 1 FROM json_each(pursuit_packages.asset_manifest_json, '$.assets') manifest JOIN generated_assets asset ON asset.id = json_extract(manifest.value, '$.id') AND asset.user_id = pursuit_packages.user_id WHERE json_valid(asset.source_versions_json) AND json_extract(asset.source_versions_json, '$.semanticResumeId') = ?)",
         )
         .bind(user.id, input.sourceResumeId),
+      db
+        .prepare(
+          "UPDATE generated_assets SET review_state = 'superseded', invalidated_at = unixepoch() * 1000, updated_at = unixepoch() * 1000 WHERE user_id = ? AND generation_policy_version = 'client-render-receipt-v1' AND invalidated_at IS NULL AND json_valid(source_versions_json) AND json_extract(source_versions_json, '$.semanticResumeId') = ?",
+        )
+        .bind(user.id, input.sourceResumeId),
     );
   }
   finalStatements.push(
@@ -1126,7 +1131,7 @@ export async function recordResumeRender(
   const receipt = renderReceipt(input);
   const resume = await db
     .prepare(
-      "SELECT r.id, r.version, r.content_json, r.template_key, r.review_state, ra.job_posting_id, p.id AS pursuit_id, p.current_analysis_id, jpv.id AS job_posting_version_id FROM resumes r JOIN resume_assignments ra ON ra.resume_id = r.id AND ra.user_id = r.user_id JOIN pursuits p ON p.user_id = r.user_id AND p.job_posting_id = ra.job_posting_id AND p.state <> 'closed' LEFT JOIN job_posting_versions jpv ON jpv.id = (SELECT latest.id FROM job_posting_versions latest WHERE latest.job_posting_id = ra.job_posting_id ORDER BY latest.source_checked_at DESC, latest.created_at DESC, latest.id DESC LIMIT 1) WHERE r.id = ? AND r.user_id = ? AND r.kind = 'job' AND ra.scope = 'job' LIMIT 1",
+      "SELECT r.id, r.version, r.content_json, r.template_key, r.review_state, ra.job_posting_id, p.id AS pursuit_id, p.current_analysis_id, jpv.id AS job_posting_version_id FROM resumes r JOIN resume_assignments ra ON ra.resume_id = r.id AND ra.user_id = r.user_id JOIN pursuits p ON p.user_id = r.user_id AND p.job_posting_id = ra.job_posting_id AND p.state <> 'closed' JOIN job_postings jp ON jp.id = ra.job_posting_id LEFT JOIN job_posting_versions jpv ON jpv.job_posting_id = jp.id AND jpv.description_checksum = jp.description_checksum WHERE r.id = ? AND r.user_id = ? AND r.kind = 'job' AND ra.scope = 'job' LIMIT 1",
     )
     .bind(input.resumeId, user.id)
     .first<{
@@ -1234,7 +1239,7 @@ export async function recordCoverLetterRender(
   const receipt = renderReceipt(input);
   const letter = await db
     .prepare(
-      "SELECT ga.id, ga.pursuit_id, ga.version, ga.content_json, ga.review_state, p.job_posting_id, p.current_analysis_id, jpv.id AS job_posting_version_id FROM generated_assets ga JOIN pursuits p ON p.id = ga.pursuit_id AND p.user_id = ga.user_id LEFT JOIN job_posting_versions jpv ON jpv.id = (SELECT latest.id FROM job_posting_versions latest WHERE latest.job_posting_id = p.job_posting_id ORDER BY latest.source_checked_at DESC, latest.created_at DESC, latest.id DESC LIMIT 1) WHERE ga.id = ? AND ga.user_id = ? AND ga.type = 'cover_letter' AND ga.invalidated_at IS NULL LIMIT 1",
+      "SELECT ga.id, ga.pursuit_id, ga.version, ga.content_json, ga.review_state, p.job_posting_id, p.current_analysis_id, jpv.id AS job_posting_version_id FROM generated_assets ga JOIN pursuits p ON p.id = ga.pursuit_id AND p.user_id = ga.user_id JOIN job_postings jp ON jp.id = p.job_posting_id LEFT JOIN job_posting_versions jpv ON jpv.job_posting_id = jp.id AND jpv.description_checksum = jp.description_checksum WHERE ga.id = ? AND ga.user_id = ? AND ga.type = 'cover_letter' AND ga.invalidated_at IS NULL LIMIT 1",
     )
     .bind(input.letterId, user.id)
     .first<{

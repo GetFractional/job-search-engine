@@ -279,7 +279,9 @@ test("the product shell exposes stable, refresh-safe section routes", () => {
     .sort();
   for (const route of [
     "ProductRoutePage.tsx",
+    "documents/cover-letters/[letterId]/page.tsx",
     "documents/cover-letters/page.tsx",
+    "documents/resumes/[resumeId]/page.tsx",
     "documents/resumes/page.tsx",
     "home/page.tsx",
     "jobs/[jobId]/page.tsx",
@@ -289,7 +291,7 @@ test("the product shell exposes stable, refresh-safe section routes", () => {
     "page.tsx",
     "plan/page.tsx",
     "profile/page.tsx",
-    "pursuits/[jobId]/page.tsx",
+    "pursuits/[pursuitId]/page.tsx",
     "pursuits/page.tsx",
     "settings/privacy/page.tsx",
   ]) {
@@ -311,7 +313,7 @@ test("the product shell exposes stable, refresh-safe section routes", () => {
   assert.doesNotMatch(productSource, /href=["'`]\/app\?view=/);
 });
 
-test("Today evaluates exact latest job-version binding and executes only active-path rows", () => {
+test("Today evaluates exact current canonical job-version binding and executes only active-path rows", () => {
   const { isAnalysisCurrent, scoresAreVisible } = evaluateFunctions(
     "app/today-repository.ts",
     ["isAnalysisCurrent", "scoresAreVisible"],
@@ -377,6 +379,11 @@ test("Today evaluates exact latest job-version binding and executes only active-
     "app/today-repository.ts",
     "SELECT ja.job_posting_id",
   );
+  assert.match(
+    todayQuery,
+    /jpv\.job_posting_id = jp\.id AND jpv\.description_checksum = jp\.description_checksum/,
+  );
+  assert.doesNotMatch(todayQuery, /ORDER BY candidate\.source_checked_at/);
   const boundTodayQuery = bindAnonymousSql(todayQuery, ["user-a"]);
   expectSqlPass(
     `
@@ -433,9 +440,65 @@ test("Today evaluates exact latest job-version binding and executes only active-
     `,
     "job-active:path-active",
   );
+
+  expectSqlPass(
+    `
+      ${tenantUsersSql}
+      INSERT INTO career_paths
+        (id, user_id, label, primary_lane, state, is_primary)
+      VALUES
+        ('path-reversion', 'user-a', 'Revenue Operations',
+         'revenue_operations', 'active', 1);
+      INSERT INTO job_standards
+        (id, user_id, version, is_current)
+      VALUES
+        ('standard-reversion', 'user-a', 1, 1);
+      INSERT INTO job_sources (id, name, kind, rights_state)
+      VALUES
+        ('source-reversion', 'Employer careers', 'employer_ats', 'approved');
+      INSERT INTO job_postings
+        (id, source_id, external_id, canonical_url, employer, title,
+         description_checksum, freshness_state)
+      VALUES
+        ('job-reversion', 'source-reversion', 'reversion',
+         'https://example.test/reversion', 'Reversion Employer',
+         'Revenue Operations Director', 'hash-a', 'fresh');
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('version-a', 'job-reversion', 100,
+         'https://example.test/reversion', 'hash-a', '{}', '[]', 'verified');
+      UPDATE job_postings
+         SET description_checksum = 'hash-b'
+       WHERE id = 'job-reversion';
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('version-b', 'job-reversion', 200,
+         'https://example.test/reversion', 'hash-b', '{}', '[]', 'verified');
+      UPDATE job_postings
+         SET description_checksum = 'hash-a'
+       WHERE id = 'job-reversion';
+      INSERT INTO job_analyses
+        (id, user_id, job_posting_id, career_path_id, job_standard_id,
+         policy_version, evidence_version, integrity_gates_json, fit_json,
+         recommendation, validation_state)
+      VALUES
+        ('analysis-rechecked-a', 'user-a', 'job-reversion',
+         'path-reversion', 'standard-reversion', 'policy', 'evidence',
+         '{"jobVersionId":"version-a"}', '{}', 'pursue', 'trusted');
+      SELECT job_posting_id || ':' || job_posting_version_id
+        FROM (${boundTodayQuery});
+    `,
+    "job-reversion:version-a",
+  );
 });
 
-test("Jobs exposes scores only for trusted analysis bound to the latest source version", () => {
+test("Jobs exposes scores only for trusted analysis bound to the current source version", () => {
   const { currentTrustedAnalysis } = evaluateFunctions(
     "app/WayAheadApp.tsx",
     ["currentTrustedAnalysis"],
@@ -474,7 +537,7 @@ test("Jobs exposes scores only for trusted analysis bound to the latest source v
   assert.match(app, /visibleAnalysis\?\.moveValueScore/);
   assert.match(
     workspaceRepository,
-    /ORDER BY source_checked_at DESC, created_at DESC, id DESC LIMIT 1/,
+    /posting\.description_checksum = version\.description_checksum/,
   );
   assert.doesNotMatch(
     findFunction("app/WayAheadApp.tsx", "JobsView").node.getText(
@@ -725,6 +788,13 @@ test("render receipts stay draft, reject cross-tenant IDs, and cannot authorize 
     "app/document-repository.ts",
     "SELECT ga.id, ga.pursuit_id, ga.version, ga.content_json",
   );
+  for (const lookup of [resumeLookup, coverLookup]) {
+    assert.match(
+      lookup,
+      /jpv\.job_posting_id = jp\.id AND jpv\.description_checksum = jp\.description_checksum/,
+    );
+    assert.doesNotMatch(lookup, /ORDER BY latest\.source_checked_at/);
+  }
   expectSqlPass(
     `
       ${threePursuitsSql}
@@ -754,6 +824,50 @@ test("render receipts stay draft, reject cross-tenant IDs, and cannot authorize 
         (SELECT count(*) FROM (${bindAnonymousSql(coverLookup, ["cover-b", "user-b"])}));
     `,
     "0:1:0:1",
+  );
+
+  expectSqlPass(
+    `
+      ${threePursuitsSql}
+      UPDATE job_postings
+         SET description_checksum = 'hash-a1-b'
+       WHERE id = 'job-a1';
+      INSERT INTO job_posting_versions
+        (id, job_posting_id, source_checked_at, source_url,
+         description_checksum, source_facts_json, source_conflicts_json,
+         capture_state)
+      VALUES
+        ('version-a1-b', 'job-a1', 200, 'https://employer.test/a1',
+         'hash-a1-b', '{}', '[]', 'verified');
+      UPDATE job_postings
+         SET description_checksum = 'hash-a1'
+       WHERE id = 'job-a1';
+      INSERT INTO resumes
+        (id, user_id, name, kind, version, content_json, template_key)
+      VALUES
+        ('resume-a-reversion', 'user-a', 'A Resume', 'job', 1, '{}',
+         'executive');
+      INSERT INTO resume_assignments
+        (id, user_id, resume_id, scope, job_posting_id)
+      VALUES
+        ('assignment-a-reversion', 'user-a', 'resume-a-reversion', 'job',
+         'job-a1');
+      INSERT INTO generated_assets
+        (id, user_id, pursuit_id, type, source_versions_json,
+         generation_policy_version, version, content_json, content_sha256,
+         filename, page_count, review_state)
+      VALUES
+        ('cover-a-reversion', 'user-a', 'pursuit-a1', 'cover_letter', '{}',
+         'semantic', 1, '{}', 'cover-a-reversion-hash', 'A Cover.pdf', 1,
+         'draft');
+      SELECT
+        (SELECT job_posting_version_id
+           FROM (${bindAnonymousSql(resumeLookup, ["resume-a-reversion", "user-a"])})) ||
+        ':' ||
+        (SELECT job_posting_version_id
+           FROM (${bindAnonymousSql(coverLookup, ["cover-a-reversion", "user-a"])}));
+    `,
+    "version-a1:version-a1",
   );
 
   expectSqlReject(
@@ -803,11 +917,13 @@ test("render receipts stay draft, reject cross-tenant IDs, and cannot authorize 
          generation_policy_version, version, content_json, content_sha256,
          filename, page_count, review_state)
       VALUES
-        ('resume-draft', 'user-a', 'pursuit-a1', 'resume', '{}',
+        ('resume-draft', 'user-a', 'pursuit-a1', 'resume',
+         '{"jobPostingVersionId":"version-a1","analysisId":null}',
          'client-render-receipt-v1', 1, '{"fileSha256":"resume-file"}',
          'resume-content',
          'Employer A1 - Director A1 - Candidate - Resume.pdf', 2, 'draft'),
-        ('cover-safe', 'user-a', 'pursuit-a1', 'cover_letter', '{}',
+        ('cover-safe', 'user-a', 'pursuit-a1', 'cover_letter',
+         '{"jobPostingVersionId":"version-a1","analysisId":null}',
          'semantic', 1, '{"fileSha256":"cover-file"}', 'cover-content',
          'Employer A1 - Director A1 - Candidate - Cover Letter.pdf', 1,
          'claim_safe');
@@ -826,7 +942,7 @@ test("render receipts stay draft, reject cross-tenant IDs, and cannot authorize 
         ('approval-draft', 'user-a', 'package-draft',
          'approve_application_package', 'payload-draft', 'approved');
     `,
-    /approval package, source version, form answers, or outbound assets are not exact and current/,
+    /approval (?:package, source version, form answers, or outbound assets are not exact and current|outbound file no longer matches the current semantic document)/,
   );
 });
 
@@ -892,6 +1008,124 @@ test("resume import keeps raw bytes on-device and sends only the extracted recei
     read("app/onboarding-types.ts"),
     /\b(?:rawFile|fileBytes|arrayBuffer|base64|blob)\b/i,
   );
+});
+
+test("employer ATS versions bind every decision snapshot to one posting identity", async () => {
+  const sha256Hex = async (value) => {
+    const digest = await globalThis.crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(value),
+    );
+    return Buffer.from(digest).toString("hex");
+  };
+  const {
+    canonicalJson,
+    jobPostingVersionId,
+    greenhouseDecisionSnapshot,
+  } = evaluateFunctions(
+    "app/workspace-repository.ts",
+    [
+      "canonicalize",
+      "canonicalJson",
+      "jobPostingVersionId",
+      "greenhouseDecisionSnapshot",
+    ],
+    ["sha256Hex"],
+    [sha256Hex],
+  );
+
+  const baseJob = {
+    id: 123,
+    title: "Director, Lifecycle Marketing",
+    updated_at: "2026-07-30T12:00:00Z",
+    absolute_url: "https://job-boards.greenhouse.io/acme/jobs/123",
+    content: "<p>Own lifecycle strategy and execution.</p>",
+    company_name: "Acme",
+    location: { name: "Remote" },
+    departments: [{ id: 1, name: "Marketing" }],
+    offices: [{ id: 2, name: "Remote" }],
+    metadata: [{ id: 3, name: "Employment Type", value: "Full-time" }],
+    pay_input_ranges: [
+      {
+        min_cents: 17_500_000,
+        max_cents: 19_000_000,
+        currency_type: "USD",
+      },
+    ],
+    first_published: "2026-07-10T00:00:00Z",
+    application_deadline: "2026-08-15",
+  };
+  const questionSet = [
+    {
+      label: "First name",
+      required: true,
+      fields: [{ name: "first_name", type: "input_text", values: [] }],
+    },
+  ];
+  const questionSetChecksum = "f".repeat(64);
+  const snapshotFor = (job) =>
+    greenhouseDecisionSnapshot(
+      job,
+      questionSet,
+      questionSetChecksum,
+      job.company_name,
+      job.absolute_url,
+    );
+  const checksumFor = (job) => sha256Hex(canonicalJson(snapshotFor(job)));
+  const baseChecksum = await checksumFor(baseJob);
+
+  const metadataOnly = {
+    ...baseJob,
+    metadata: [
+      { id: 3, name: "Employment Type", value: "Contract" },
+    ],
+  };
+  const titleOnly = {
+    ...baseJob,
+    title: "Senior Director, Lifecycle Marketing",
+  };
+  const urlOnly = {
+    ...baseJob,
+    absolute_url: "https://job-boards.greenhouse.io/acme/jobs/123-new",
+  };
+  assert.notEqual(await checksumFor(metadataOnly), baseChecksum);
+  assert.notEqual(await checksumFor(titleOnly), baseChecksum);
+  assert.notEqual(await checksumFor(urlOnly), baseChecksum);
+
+  const firstVersionId = await jobPostingVersionId("job_first", baseChecksum);
+  const secondVersionId = await jobPostingVersionId("job_second", baseChecksum);
+  assert.notEqual(firstVersionId, secondVersionId);
+  assert.match(firstVersionId, /^jobver_[a-f0-9]{24}$/);
+  assert.match(secondVersionId, /^jobver_[a-f0-9]{24}$/);
+
+  const { ast } = sourceFile("app/workspace-repository.ts");
+  const greenhouseSource = findFunction(
+    "app/workspace-repository.ts",
+    "ingestGreenhouseJob",
+  ).node.getText(ast);
+  const leverSource = findFunction(
+    "app/workspace-repository.ts",
+    "ingestLeverJob",
+  ).node.getText(ast);
+  const ashbySource = findFunction(
+    "app/workspace-repository.ts",
+    "ingestAshbyJob",
+  ).node.getText(ast);
+  for (const source of [greenhouseSource, leverSource, ashbySource]) {
+    assert.match(
+      source,
+      /jobPostingVersionId\(postingId, descriptionChecksum\)/,
+    );
+  }
+  assert.match(
+    greenhouseSource,
+    /sha256Hex\(canonicalJson\(sourceSnapshot\)\)/,
+  );
+  const ashbyReceipt = ashbySource.slice(
+    ashbySource.indexOf("const sourceReceipt"),
+    ashbySource.indexOf("const sourceFacts"),
+  );
+  assert.doesNotMatch(ashbyReceipt, /checkedAt/);
 });
 
 test("Lever intake accepts only canonical employer URLs and records freshness with an atomic audit trail", () => {

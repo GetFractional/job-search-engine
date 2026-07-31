@@ -109,7 +109,6 @@ export function TodayDashboard() {
   return (
     <section className={styles.dashboard} aria-labelledby="today-title">
       <header className={styles.heading}>
-        <p className="wa-eyebrow">Home</p>
         <h1 id="today-title">Your job search, prioritized.</h1>
         <p>
           Ranked across your active Job Paths using your Job Standard,
@@ -496,12 +495,12 @@ export function TodayDashboard() {
                     {job.documentStatus.coverLetter}.
                   </p>
                 </div>
-                <a
+                <Link
                   className={styles.secondaryLink}
                   href="/app/documents/resumes"
                 >
                   Open Studio
-                </a>
+                </Link>
               </article>
             ))}
           </div>

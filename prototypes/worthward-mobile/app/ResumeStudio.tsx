@@ -46,7 +46,13 @@ function copyContent(content: ResumeContent): ResumeContent {
   return structuredClone(content);
 }
 
-export function ResumeStudio() {
+export function ResumeStudio({
+  initialResumeId = null,
+  onDocumentSelected,
+}: {
+  initialResumeId?: string | null;
+  onDocumentSelected?: (resumeId: string) => void;
+}) {
   const [records, setRecords] = useState<ResumeStudioRecord[]>([]);
   const [careerPaths, setCareerPaths] = useState<ResumeCareerPathOption[]>([]);
   const [jobs, setJobs] = useState<ResumeJobOption[]>([]);
@@ -76,7 +82,11 @@ export function ResumeStudio() {
       careerPathId !== (selected.assignment?.careerPathId ?? "") ||
       jobPostingId !== (selected.assignment?.jobPostingId ?? "") ||
       JSON.stringify(content) !== JSON.stringify(selected.content)
-    : true;
+    : name !== "Master Resume" ||
+      kind !== "master" ||
+      careerPathId !== "" ||
+      jobPostingId !== "" ||
+      JSON.stringify(content) !== JSON.stringify(emptyResumeContent());
 
   const choose = useCallback((record: ResumeStudioRecord) => {
     setSelectedId(record.id);
@@ -101,9 +111,19 @@ export function ResumeStudio() {
         setCareerPaths(payload.careerPaths);
         setJobs(payload.jobs);
         setDisplayName(payload.displayName);
-        const next =
-          payload.resumes.find((record) => record.id === preferredId) ??
-          payload.resumes[0];
+        const requestedId = preferredId ?? initialResumeId;
+        const requested = requestedId
+          ? payload.resumes.find((record) => record.id === requestedId)
+          : null;
+        if (requestedId && !requested) {
+          setSelectedId(null);
+          setNotice({
+            tone: "error",
+            text: "This resume is not available in your private workspace. No different resume was substituted.",
+          });
+          return;
+        }
+        const next = requested ?? payload.resumes[0];
         if (next) choose(next);
       } catch (error) {
         setNotice({
@@ -117,13 +137,47 @@ export function ResumeStudio() {
         setLoading(false);
       }
     },
-    [choose],
+    [choose, initialResumeId],
   );
 
   useEffect(() => {
-    const task = window.setTimeout(() => void load(), 0);
+    const task = window.setTimeout(
+      () => void load(initialResumeId ?? undefined),
+      0,
+    );
     return () => window.clearTimeout(task);
-  }, [load]);
+  }, [initialResumeId, load]);
+
+  useEffect(() => {
+    if (selectedId) onDocumentSelected?.(selectedId);
+  }, [onDocumentSelected, selectedId]);
+
+  useEffect(() => {
+    document.documentElement.dataset.wayAheadUnsavedDocument =
+      hasUnsavedChanges ? "true" : "false";
+    return () => {
+      delete document.documentElement.dataset.wayAheadUnsavedDocument;
+    };
+  }, [hasUnsavedChanges]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges) return;
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeUnload);
+    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  const confirmDiscard = () =>
+    !hasUnsavedChanges ||
+    window.confirm("Discard the unsaved resume changes on this screen?");
+
+  const requestChoose = (record: ResumeStudioRecord) => {
+    if (record.id === selectedId || !confirmDiscard()) return;
+    choose(record);
+  };
 
   async function create(action: "starter_from_profile" | "create_blank") {
     setSaving(true);
@@ -266,6 +320,7 @@ export function ResumeStudio() {
   }
 
   function startNew() {
+    if (!confirmDiscard()) return;
     setSelectedId(null);
     setName("Master Resume");
     setKind("master");
@@ -434,7 +489,7 @@ export function ResumeStudio() {
                   className={styles.recordButton}
                   data-active={record.id === selectedId}
                   key={record.id}
-                  onClick={() => choose(record)}
+                  onClick={() => requestChoose(record)}
                   type="button"
                 >
                   <span>

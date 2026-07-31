@@ -8,6 +8,8 @@ pid_file="/tmp/my-way-ahead-qa.pid"
 
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export WRANGLER_LOG_PATH=".wrangler/wrangler.log"
+export WAY_AHEAD_ENVIRONMENT="development"
+export WAY_AHEAD_DEV_EMAIL="mattdim805@gmail.com"
 
 cd "$project_dir"
 
@@ -33,7 +35,7 @@ stop_child() {
 
 trap stop_child EXIT HUP INT TERM
 
-./node_modules/.bin/vinext start --hostname 127.0.0.1 --port 3011 > /tmp/my-way-ahead-qa.log 2>&1 &
+./node_modules/.bin/vite preview --host 0.0.0.0 --port 3011 --strictPort > /tmp/my-way-ahead-qa.log 2>&1 &
 child_pid="$!"
 print -r -- "$child_pid" > "$pid_file"
 

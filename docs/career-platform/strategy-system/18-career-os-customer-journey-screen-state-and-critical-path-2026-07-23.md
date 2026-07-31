@@ -294,14 +294,23 @@ Users can define hard constraints and rank their top three priorities. Do not ex
 
 ## AI provider decision
 
-No model is connected by this decision.
+No model, provider route, credential, binding, network request, or member-data transfer is selected, approved, or connected by this decision.
 
-The best no-incremental-spend pilot candidate is Cloudflare Workers AI's hosted Kimi K2.6, not the direct Moonshot API. Cloudflare documents a Workers AI free allocation, states that Workers AI inputs and outputs are not used to train models without explicit consent, and hosts Kimi K2.6 under its model catalog. The free allocation is appropriate only for Matt and a few bounded testers, not an unrestricted public promise.
+> **2026-07-30 supersession:** [Free AI Foundation and Provider Gate](19-free-ai-foundation-and-provider-gate-2026-07-29.md) now governs provider and model decisions.
+
+Cloudflare currently marks `@cf/moonshotai/kimi-k2.6` as unavailable on Workers Free and requiring Workers Paid. Because Workers Paid has a published $5 monthly minimum, Kimi K2.6 is excluded from the zero-incremental-spend path.
+
+Cloudflare-hosted `@cf/openai/gpt-oss-120b`, `@cf/openai/gpt-oss-20b`, `@cf/google/gemma-4-26b-a4b-it`, and `@cf/zai-org/glm-4.7-flash` are unqualified synthetic benchmark candidates only. GPT-OSS 120B may be considered as the first comparative quality baseline after exact benchmark approval; it is not a selected production model or an approved member-data processor.
+
+The current Sites app has no proven native Workers AI binding. Any native binding or direct REST route requires separate compatibility proof and exact Board approval. Local Wrangler execution also contacts Cloudflare and therefore counts as external-provider activation.
 
 Primary evidence:
 
 - [Cloudflare Kimi K2.6](https://developers.cloudflare.com/workers-ai/models/kimi-k2.6/)
 - [Workers AI pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/)
+- [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/)
+- [Workers AI bindings](https://developers.cloudflare.com/workers-ai/configuration/bindings/)
+- [Workers AI REST API](https://developers.cloudflare.com/workers-ai/get-started/rest-api/)
 - [Workers AI data usage](https://developers.cloudflare.com/workers-ai/platform/data-usage/)
 - [Workers AI limits](https://developers.cloudflare.com/workers-ai/platform/limits/)
 
@@ -317,7 +326,7 @@ Before activation:
 - Fail closed at the free quota. Never incur spend or silently downgrade.
 - Log provider, model, policy, capacity, latency, and corrections without raw résumé telemetry.
 - Pass synthetic claim-safety and accuracy fixtures.
-- Obtain exact Board approval for provider, consent, route, tester cap, and zero-spend behavior.
+- Obtain exact Board approval before any external benchmark or provider connection, including provider account and plan, model set, invocation route, binding or secret configuration, synthetic-only data class, quota, logging and retention, tester cap, failure behavior, and rollback. Live member-data use requires a later, separate approval.
 
 ## Acquisition validation
 
