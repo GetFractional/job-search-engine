@@ -1,60 +1,54 @@
 ---
 name: qa-fact-check
-description: Audit job-search assets for factual accuracy, claim safety, tone, ATS clarity, role fit, overstatement, metric support, and source alignment before use. Trigger when reviewing resumes, cover letters, outreach, application answers, interview materials, or profile updates.
+description: Audit Matt's job-search assets and Way Ahead application packages for factual accuracy, claim safety, ATS clarity, role fit, overstatement, source alignment, and approval integrity before any external use.
 ---
 
-# QA And Fact-Check Skill
+# QA And Fact Check
 
-## Project Defaults
-- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
-- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
-- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
-- Use `docs/teal-ui-navigation.md` for Teal preview, export, and PDF readiness checks.
-- Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
-- Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
+## Required sources
 
-## Purpose
-Audit every asset before use for accuracy, claim safety, tone, ATS clarity, role fit, and overstatement.
-
-## Required Sources
 1. `source-files/01_matt_dimock_canonical_profile.md`
 2. `source-files/02_metrics_ledger.md`
 3. `source-files/03_role_lane_glossary.md`
 4. `source-files/04_story_bank.md`
 5. `docs/claim-safety-rules.md`
+6. Current canonical job posting and exact employer form
+7. Current Way Ahead source version, analysis, assets, and package
 
-## Inputs
-- Asset draft
-- Role
-- JD
-- Research brief
-- Fit scorecard
+Teal is competitor research only and is never part of Matt's asset or approval workflow.
 
 ## Process
+
 1. Check every number against the Metrics Ledger.
 2. Check every story against the Story Bank or Canonical Profile.
-3. Check role lane alignment.
-4. Remove overclaiming and unsupported ownership.
-5. Check brand and employer context so client-specific metrics are not floating under unrelated entities.
-6. Check for duplicate or near-duplicate positioning across summary, highlights, and experience.
-7. Check recruiter comprehension and ATS clarity.
-8. Check tone: human, calm, specific, commercially intelligent.
-9. Remove em dashes and AI-sounding phrasing.
-10. For Teal resumes, verify Analyzer status, Job Matcher status, selected content, Skills & Interests, and two-page preview/export readiness.
-11. For Teal library changes, verify the action was safe: toggled per-role, added as a durable reusable item, edited with global update unchecked, or explicitly approved for global update.
-12. Flag any destructive library action, including `Delete Skill`, bullet deletion, shared-summary overwrite, or shared-library cleanup.
-13. For exported PDFs, verify the file exists in Downloads or the target folder, is named correctly, has no page 3, keeps the correct contact block and target title, and contains no browser print headers, file paths, timestamps, URLs, or machine-generated footer text.
-14. For application packages, block upload if filenames contain `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels. Required names are `{Company} - {Role} - Matt Dimock - Resume.pdf` and, when used, `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`.
-15. For cover letters, verify the final file is one page.
-16. Flag anything requiring user confirmation.
+3. Check role-lane and mandate alignment.
+4. Remove unsupported ownership, overstatement, and implied expertise.
+5. Keep employer and client metrics attached to the correct context.
+6. Remove duplicate positioning across the summary, highlights, and experience.
+7. Check recruiter comprehension, ATS clarity, natural tone, and role vocabulary.
+8. Remove em dashes, hype, theatrical language, and machine-sounding phrasing.
+9. Verify every required employer-form answer against trusted facts.
+10. Confirm the question-set checksum represents the exact current form.
+11. Verify resume and cover-letter filenames, file types, page counts, binary hashes, content hashes, and claim-safe review states.
+12. Render every PDF page and block blank, clipped, overlapping, broken, or third-page output.
+13. Block local paths, internal source labels, demo text, unsupported metrics, and tool labels.
+14. Confirm the Way Ahead outbound manifest contains only the files intended for the employer.
+15. Confirm the package binds the exact destination, newest job source version, answers, outbound files, and zero unresolved blockers.
+16. Confirm package approval is described as review or form-staging approval, never submission authorization.
+17. Revoke or block approval when the source, form, answers, or any file changes.
+18. Flag every fact or external action that still needs Matt's decision.
 
-## Output
-- QA verdict
-- Required fixes
-- Optional improvements
-- Claim safety table
-- Approval readiness
+## Verdict
 
-## Safety
-Do not mark an asset ready if any required claim is unsupported.
-Do not mark an asset ready if a strong metric is technically true but contextually misleading.
+Return:
+
+- `PASS`, `PASS WITH CONDITIONS`, or `BLOCK`
+- required fixes
+- optional improvements
+- claim-safety table
+- exact files and hashes checked
+- source and form versions checked
+- package-approval readiness
+- remaining external-action gates
+
+Do not mark an asset or package ready when a required claim is unsupported, a metric is contextually misleading, the exact form is unknown, an outbound file is not reviewable, or any blocker remains. This skill never authorizes form population, upload, outreach, reference sharing, negotiation, or submission.

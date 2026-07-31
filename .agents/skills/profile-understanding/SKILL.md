@@ -6,9 +6,9 @@ description: Understand Matt's canonical profile, safe claims, validated metrics
 # Profile Understanding Skill
 
 ## Project Defaults
-- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
-- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
-- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Start with `job-search-scenarios` when the user asks to find, score, prepare, approve, or later submit a job pursuit through Way Ahead.
+- Use the in-app Browser for public canonical sources and Way Ahead product QA. Use Google Chrome only when a source requires Matt's signed-in profile, Cloudflare, a challenge prompt, or extension behavior.
+- Keep Way Ahead as the operating system for jobs, analyses, pursuits, assets, approvals, outcomes, and follow-ups. Teal is competitor research only and may not hold or mutate Matt's current job-search state.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 - For tenure framing, calculate professional marketing experience from Matt's National Positions start year in 2007. As of 2026, use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required. Do not substitute stale shorthand like `15+ years`.

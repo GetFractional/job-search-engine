@@ -1,236 +1,131 @@
 ---
 name: job-search-scenarios
-description: Route Matt's recurring job-search starting scenarios through the correct Teal-centered workflow. Use when the user asks Codex to find jobs, score jobs, triage saved Teal jobs, apply to a specific job, prepare a resume or cover letter through Teal, update Teal job records, use the Teal Chrome extension, or operate Google Chrome for job-search work.
+description: Route Matt's recurring job-search work through canonical employer sources and Way Ahead. Use when Matt asks to find, score, prepare, approve, or later submit a job pursuit.
 ---
 
 # Job Search Scenarios
 
-## Purpose
-Use this as the first skill for job-search execution. It routes the request, enforces Chrome + Teal workflow discipline, and calls the narrower skills only after the scenario is clear.
+## Controlling operating surface
 
-## Required Sources
+Way Ahead is Matt's job-search operating system and founder-dogfooding surface.
+Matt uses the same member contract as every other user; his result is personal
+outcome evidence and generalized product learning, not a separate customer type
+or efficacy proof.
+
+- Teal is competitor research only. Do not read or use it as part of Matt's member workflow, and never write, score, stage, export, or track his applications there. A bounded read-only observation is allowed only when Matt explicitly asks for competitor research and `tealhq-workflow` governs it.
+- Use canonical employer sources and Matt's source hierarchy directly.
+- Store profile evidence, job snapshots, analyses, pursuits, assets, form versions, package approvals, and receipts in Way Ahead.
+- Keep package approval, form population, file upload, and application submission as separate actions.
+- Do not submit, contact anyone, share references, or negotiate without Matt's exact approval for that action.
+
+## Required sources
+
 1. `AGENTS.md`
-2. `docs/teal-workflow.md`
-3. `docs/job-search-continuous-improvement.md`
-4. `docs/job-search-process-optimization.md`
-5. `templates/job-search-run-metrics.md`
-6. `references/scenario-workflows.md`
-7. Task-specific skills named by the scenario
+2. `source-files/01_matt_dimock_canonical_profile.md`
+3. `source-files/02_metrics_ledger.md`
+4. `source-files/03_role_lane_glossary.md`
+5. `source-files/04_story_bank.md`
+6. `docs/claim-safety-rules.md`
+7. Current canonical employer posting and exact application form
+8. Way Ahead's current source-version, pursuit, asset, package, and approval records
 
-## Browser Rule
-Use Matt's logged-in Google Chrome browser for Teal, LinkedIn, job boards, company career sites, and applications. Prefer visible UI interaction through Chrome over in-app browser automation when login, Cloudflare, bot checks, or Teal extension behavior matter.
+If a supporting source conflicts with the Canonical Profile or Metrics Ledger, use the safer claim and preserve the conflict.
 
-Before substantial live job-search execution, use the repo workspace readiness gate when available. The relevant test is not simply whether the checkout is named `main`; it is whether the current branch contains latest `origin/main`, has no tracked local workflow edits, and has mirrored `.agents/skills` into the execution skill directories. If the readiness gate fails, repair or stop before Teal work. If it passes, do not warn the user that a non-`main` branch is stale solely because of its branch name.
+## Scenario router
 
-On Windows, use the Codex Chrome plugin path for job-search browser work. Do not use isolated/headless Playwright for Teal, LinkedIn, job boards, or application forms that depend on Matt's logged-in profile, Cloudflare trust, or the Teal Chrome extension. If Chrome plugin communication fails, diagnose Chrome, the Codex Chrome Extension, and the native host before proceeding; stop rather than switching to an isolated browser.
+### Find jobs
 
-Before declaring live Chrome unavailable, use `job-search-chrome-teal-recovery`. A green bridge script is not sufficient; the thread must attempt the Chrome extension runtime probe with `agent.browsers.get("extension")`, `browser.user.openTabs()`, and `browser.user.claimTab(...)`.
+1. Search direct employer career sites, official ATS pages, and approved sources.
+2. Resolve the canonical employer and exact requisition.
+3. Verify the posting is live and capture the checked date, first-published or posted date when available, compensation, location, and application URL.
+4. Ingest the source-versioned role into Way Ahead.
+5. Classify the mandate and role lane, then score the role.
+6. Return a source-verified shortlist and one next-best recommendation.
 
-If the runtime probe can list `Chrome` as an extension backend and `browser.user.openTabs()` returns visible tabs, do not report "Chrome unavailable." Classify later failures as one of: stale/locked Teal tab, wrong browser surface, Teal UI readability/navigation failure, text-entry failure, upload failure, login/security challenge, or application-site failure.
+### Score current jobs
 
-If an existing Teal tab cannot be claimed because it belongs to another browser session, open a fresh Chrome-extension-backed Teal tab and continue from a direct route. If Chrome-backed Teal loads but the tracker or resume pages are unreadable after slow scoped navigation and one fresh tab attempt, stop with the exact blocker and ask for a screenshot, direct Teal record URL, or pasted JD. Do not rerun repair loops or guess from memory.
+1. Read the current Way Ahead jobs and pursuits.
+2. Refresh the canonical source before trusting status or form fields.
+3. Recompute freshness, lane fit, evidence match, compensation, logistics, risks, and missing proof.
+4. Store a new analysis version without overwriting older evidence.
+5. Supersede any package or approval bound to an older source version.
 
-Before trusting any `app.tealhq.com` page, refresh that Teal tab once and wait for the page to settle. Treat status, notes, applied dates, tracker rows, and resume state as stale-risk until after refresh, especially when another machine may have changed the same account.
+### Prepare an application package
 
-Use `docs/teal-ui-navigation.md` for the current Teal route map and slow-mode guidance. The map applies to both Mac and Windows Chrome sessions unless a section explicitly says Windows.
+1. Confirm the role is not already submitted or in another terminal state.
+2. Refresh the canonical posting and exact employer form.
+3. Capture the employer's current question set and checksum.
+4. Complete company, role, market, hiring-team, compensation, and risk research.
+5. Finish the fit score before final asset work.
+6. Draft only the assets the exact form or pursuit needs.
+7. Run claim, ATS, page-count, filename, rendering, and binary-hash QA.
+8. Bind the exact destination, source version, form version, answers, outbound files, and blockers into one package.
+9. Show every outbound value in Way Ahead before package approval can be recorded.
+10. Stop before opening or populating the employer form unless Matt approves that exact staging action.
 
-Use `mattdim805@gmail.com` as the job-search Google identity for Gmail, Google Calendar, and Google Drive tasks. Do not use work/client Google accounts for personal job-search operations unless Matt explicitly instructs it.
+### Stage or submit an approved application
 
-Act like a careful human operator:
-- open direct, relevant pages only
-- avoid rapid repeated clicks, reload loops, scraping loops, or guessed URL grids
-- do not solve CAPTCHA or challenge prompts
-- stop before submitting applications, outreach, references, or sensitive data
+1. Re-read the approved package and prove it is still current.
+2. Recheck the employer form and revoke approval if the posting, questions, answers, or files changed.
+3. Require separate approval before form population and file upload.
+4. Require a later exact approval before submission.
+5. After a confirmed submission, record the employer confirmation, date, exact files and answers, follow-up target, and outcome in Way Ahead.
 
-## Posting Freshness Gate
-- Treat posting age as a gating signal during search, scoring, and apply workflows.
-- Prefer roles posted within the last 30 days.
-- If a role is older than 30 days, mark it stale-risk unless there is strong evidence of recent hiring activity.
-- If a role is older than 60 days, default to pass, archive, or low-priority save unless the user explicitly wants a strategic exception.
-- A listing still being visible does not by itself prove the role is actively hiring.
-- Include posting age, freshness evidence, and stale-risk in the recommendation.
+## Freshness gate
 
-## Resume Guardrails
-For resume and cover-letter work:
-- keep company-specific metrics attached to the correct brand or employer context
-- do not place detached performance bullets under unrelated entities such as `Get Fractional` when the proof belongs to another brand
-- if cross-client consulting proof is used, either name the brand when appropriate or rewrite the bullet at the consulting-layer outcome without borrowing isolated client metrics out of context
-- remove redundant lines that restate the same positioning, especially repeated consulting-summary lines or overlapping summary bullets
-- when tenure is mentioned, calculate professional marketing experience from Matt's National Positions start year in 2007; as of 2026 use `19 years of professional marketing experience` when a calendar-year count is acceptable, or `18+ years` if exact start-month precision is required
-- do not default external resume summaries to `in marketing since 2007` when the target asset expects a years-of-experience claim
-- never use em dashes in final assets
-- avoid AI-sounding phrasing, hype, or theatrical self-branding
-- for Nashville hospitality resumes, use the Teal resume `Nashville Broadway Hospitality Base | Server | Bartender | Barback` as the approved starting artifact
-- preserve Matt's currently selected Teal professional summary unless he explicitly asks to rewrite it
-- keep the default structure to full chronology with selected hospitality-transfer bullets across all roles
-- include bullets that prove service, pace, memory, training, handoffs, customer judgment, ownership, physical support, or calm execution
-- do not use marketing bullets, extra Skills sections, or keyword stuffing as hospitality relevance proof by default
+- Prefer roles posted within 30 days.
+- More than 30 days is stale-risk unless current hiring evidence exists.
+- More than 60 days defaults to pass or archive unless Matt approves a strategic exception supported by unusually strong evidence.
+- A visible application form proves availability at the check moment, not active staffing or urgency.
+- Never invent a deadline from a third-party listing.
 
-## Scenario Router
-For every request, classify it first:
+## Claim and asset guardrails
 
-1. **Find jobs**: Use Teal Job Search, saved searches, Google Chrome, and the Teal Chrome extension. Shortlist roles, bookmark strong roles, and set Excitement from fit score.
-2. **Score saved jobs**: Open Teal Job Tracker, find jobs with missing Excitement, read the JD, score each role, update Excitement, and add concise notes.
-3. **Apply to a job / apply to the next best job**: If the user asks to apply without a specific URL, Teal record, or pasted JD, select the next best eligible role from refreshed Job Tracker Table view before asset work. Do not guess from memory, Home cards, or visible tab titles.
-4. **Apply to a specific job**: If the user provides a URL, Teal record, or JD, open or create the Teal job record, verify the saved source is active, research the company and role, create or optimize a Teal resume, inspect the live application flow early, prepare only the assets that flow actually needs, prepare application answers, download named files, present final assets/copy/destination for approval, and stop before final submission unless the user explicitly approves that exact submission.
-5. **Prepare assets only**: Use the same research, resume, cover-letter, and QA path, but do not change Teal unless the user asked for it.
-6. **Pipeline governance**: Update statuses, notes, next actions, follow-up dates, and contacts without drafting assets unless needed.
+- Check every number against the Metrics Ledger.
+- Keep metrics with their correct employer or client context.
+- Use supported ownership language such as `helped`, `supported`, or `built systems that enabled` when sole ownership is not proven.
+- Preserve Salesforce as familiarity unless stronger current evidence exists.
+- Do not imply direct ARR, forecasting, territory, quota, compensation-plan, churn, NRR, or CAC ownership without source proof.
+- Use `19 years of professional marketing experience` only when a calendar-year count is acceptable; use `18+ years` when exact-month precision matters.
+- Final resumes default to two pages and cover letters to one page.
+- Final filenames must be `{Company} - {Role} - Matt Dimock - Resume.pdf` and, when used, `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`.
+- Filenames must not contain tool, draft, version, source, or date labels.
+- Never include local paths, internal source labels, demo text, or unreviewed generated claims in an external asset.
 
-Short prompts are sufficient. Treat "Apply to a job for me" as next-best selection, "Apply to the next best job for me" as explicit next-best selection, and "Apply to [job URL] for me" as a specific-job application. The user should not need to mention branch, skill sync, Chrome backend, freshness gates, canonical employer checks, or run metrics.
+## Browser and source behavior
 
-For substantial searches, saved-job scoring batches, applications, or workflow-improvement passes, assign a compact `run_id` and track the scenario, mode, model/reasoning level, estimated current-response tokens, estimated run-to-date tokens, elapsed time when known, stage blockers, and one self-healing candidate. Use `templates/job-search-run-metrics.md` for general runs and `templates/application-retrospective.md` for Standard or Deep applications.
+- Use the in-app Browser for Way Ahead product QA and public hosted checkpoints.
+- Use Chrome only when an employer or source requires Matt's signed-in Chrome profile.
+- Do not bypass CAPTCHA, Cloudflare, authentication, permissions, or paywalls.
+- Use direct visible navigation and stop on unexpected account or security warnings.
 
-For "apply to the next best Teal job", own target selection only after the Job Tracker is readable in live Chrome. Use Table view and status filters to build the candidate set. Exclude `Applied`, `Interviewing`, `Negotiating`, `Accepted`, `Archived`, `Closed`, and any role already showing a submitted application date. Treat Home `Priorities` as suggestion-only, not as the final source of truth for target selection. If the tracker is blocked, ask for a tracker screenshot, direct Teal record URL, or pasted JD instead of guessing.
+## Default candidate facts
 
-Rank eligible next-best candidates by:
-- Teal Excitement
-- fit score
-- role lane
-- compensation fit
-- logistics fit
-- posting freshness
-- expected application effort
+Use standing defaults only when the exact form asks and no current evidence contradicts them. Preserve each answer in the reviewable package.
 
-For next-best target selection, reject wrapper or aggregator ambiguity before asset work:
-- if the Teal company name, JD employer, and source employer do not clearly match, stop and resolve the canonical employer first
-- if the record is an aggregator wrapper such as `Jobgether` and the underlying employer is someone else such as `Housecall Pro`, the canonical employer record wins
-- if the wrapper source is dead, redirected, duplicated, or no longer maps cleanly to a live canonical opening, do not continue asset work on that record
-- do not reopen or continue any role that has already been applied to, even if another wrapper record for the same underlying job still appears in Teal
-- before asset work, verify the live source and application path in Chrome; browser-rendered source evidence outranks cached Teal details, search snippets, or old notes
-- if the best candidate is inactive, unavailable, stale without strong evidence, below floor, logistically incompatible, or blocked by a hard mismatch, note the reason and move to the next eligible candidate
-- move the selected record to `Applying` only after live viability is confirmed and active asset work begins
+- Authorized to work in the United States: Yes
+- Needs sponsorship now or later: No
+- Current state: Tennessee
+- Relocation: Open for the right opportunity; paid relocation preferred
+- Valid passport and Canada business travel: Yes
+- Previously worked at target employer: No unless evidence says otherwise
+- Family or relatives at target employer: No
+- Veteran status: Not a veteran
+- Security clearance: No active clearance unless Matt provides one
 
-## Skill Order
-Use the smallest complete chain for the scenario.
+Voluntary demographic and disability fields remain optional and must not be stored or populated unless Matt specifically chooses that action for the exact application.
 
-Find jobs:
-1. `job-search-chrome-teal-recovery`
-2. `tealhq-workflow`
-3. `role-lane-classification`
-4. `fit-scoring`
-5. `company-research` only for high-fit finalists or ambiguous companies
+## Output and verification
 
-Score saved jobs:
-1. `job-search-chrome-teal-recovery`
-2. `tealhq-workflow`
-3. `role-intake`
-4. `role-lane-classification`
-5. `fit-scoring`
+For substantial work, include:
 
-Apply to a job:
-1. `job-search-chrome-teal-recovery`
-2. `tealhq-workflow`
-3. `role-intake`
-4. `role-lane-classification`
-5. `company-research`
-6. `hiring-manager-recruiter-research`
-7. `market-competition`
-8. `fit-scoring`
-9. `resume-strategy`
-10. `resume-drafting`
-11. `qa-fact-check`
-12. `cover-letter`
-13. `application-answer`
-14. `compensation-offer-strategy` when compensation questions appear
+- canonical source and checked time
+- posting age and freshness risk
+- lane, fit score, compensation, logistics, risks, and missing evidence
+- exact Way Ahead record or receipt
+- asset filenames, page counts, review states, and hashes
+- exact destination, form checksum, answers, package fingerprint, and blockers
+- package approval state and every later reserved action
+- run metrics and one workflow-improvement note
 
-## Teal Execution Gates
-For application work, do not finish until these are handled or explicitly blocked:
-- Teal job record opened in Chrome
-- correct browser surface verified before role selection or mutation with the Chrome extension backend, live user tabs, and a Teal claim/open check
-- Teal page refreshed after claim/open and before trusting tracker rows, status, notes, applied date, or resume state
-- Chrome/Teal failure classified before stopping: local bridge failure, thread binding failure, wrong browser surface, stale/locked tab, Teal readability/navigation failure, text-entry failure, upload failure, login/security challenge, or application-site failure
-- stale/locked Teal tabs handled by opening a fresh Chrome-extension-backed Teal tab before declaring a blocker
-- Teal tracker/readability blockers handled with slow scoped navigation plus one fresh-tab attempt, then a screenshot/direct-record/JD fallback
-- next-best target selected from readable tracker evidence, not memory
-- next-best target confirmed not already applied, not in another terminal stage, and not a duplicate wrapper of an already-applied canonical role
-- Home `Priorities` used only as a lead list; final selection confirmed in Job Tracker Table view with visible status and date fields
-- Teal company, source employer, and JD employer aligned to one canonical target before resume or application work begins
-- job source verified active
-- Excitement score set from fit score
-- job moved to Applying only after active asset work begins and the role still clears the pursue bar
-- research brief completed before final assets
-- live application flow inspected before optional asset work such as cover-letter drafting
-- exposed ATS/profile fields completed to the fullest truthful extent before relying on resume upload alone; when a portal parses the resume, review and correct parsed experience, skills, dates, employer names, eligibility, availability, and screening questions whenever the UI exposes those fields
-- Teal Resumes tab used
-- resume opened in Resume Builder
-- Job Matcher reviewed for missing hard and soft skills
-- Analyzer reviewed when visible, with a best-effort plan to improve truthful Match and Analyzer scores before final export
-- if Job Matcher, Analyzer, or Teal Resume Builder cannot be reached, stop with the blocker unless the user explicitly approves a local-only fallback
-- existing Teal bullets and summary lines reused first
-- bullet and skill checkboxes used for per-job inclusion before editing shared library content
-- durable reusable bullets or skills added when a truthful gap is missing from the library
-- `update in all resumes` or global-update options left unchecked unless Matt explicitly approves a global library change
-- proposed shared-bullet or summary edits surfaced for approval before mutating shared library content unless direct mutation was explicitly requested
-- Content Editor updated naturally, without stuffing
-- missing truthful keywords grouped into hard skills, soft skills, business terms, and platform/tool terms before editing
-- duplicate or near-duplicate bullets removed before final export
-- brand-specific metrics checked for context fit before final export
-- Skills & Interests toggled per role and updated only with high-value truthful skills
-- no `Delete Skill`, bullet deletion, or shared-library cleanup unless Matt explicitly approves it
-- cover letter created through Teal Cover Letter with a custom prompt when the application flow supports it, requires it, or the user explicitly wants it prepared anyway
-- final resume length checked in Teal preview/export, targeting strong two-page use without spilling to page 3
-- any local reformatting checked to remove file path footers, browser print headers/footers, timestamps, and URLs
-- resume and cover letter exported or blocked by Teal limitations
-- files named exactly `{Company} - {Role} - Matt Dimock - Resume.pdf` and, when used, `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`
-- if Teal exports a generic filename, the local file is renamed or copied to the required format before upload or delivery
-- filenames checked before upload: no `Teal`, `final`, `draft`, `v2`, dates, source labels, tool labels, or job-board phrasing such as `Barback at W Nashville.pdf`
-- if the wrong filename is visible in a live application upload, remove it and re-upload the approved-name file before continuing
-- if the application has a cover-letter slot, a tailored one-page Teal-designed cover letter is created and named canonically unless Matt explicitly opts out
-- interview pack created before submission readiness for roles that clear the pursue bar
-- attachment upload preflight completed when the application requires files; if Chrome reports `Not allowed`, verify `Allow access to file URLs` for the Codex extension and restart/retry before using any fallback
-- application answers prepared
-- structured application fields and pre-interview questions answered when visible; do not skip optional experience, skills, availability, or role-fit fields solely because the resume is attached
-- compensation answers preserve leverage: never guess a low pay number; use `Negotiable` when the form accepts text. For hospitality roles where Matt has approved numeric fallback handling, use the active posting's pay evidence first when a numeric field is required; if no posted pay is visible, use current market evidence for the exact lane and note the source after submission. Never use `$18/hr` as a blind fallback unless the active posting shows it or Matt approves it for that exact role.
-- final submission held for explicit user approval
-- Teal status moved to Applied only after user-approved submission is completed and confirmation is visible
-- after submission, Teal post-submit hygiene completed: Applied status, applied date, Excitement from fit score, submitted salary/comp answer, exact submitted asset filenames, follow-up target, and application ledger entry
-
-## Excitement Mapping
-Set Teal Excitement from the final fit score:
-- 90-100: 5 stars
-- 75-89: 4 stars
-- 60-74: 3 stars
-- 45-59: 2 stars
-- 0-44: 1 star
-
-Use judgment for strategic exceptions, but record the reason in Teal notes.
-
-## Default Candidate Facts
-Use these only when the form asks and the user has not overridden them:
-- authorized to work in the U.S.: yes
-- needs sponsorship now or later: no
-- current state: Tennessee
-- relocation: open for the right opportunity, paid relocation preferred
-- SMS consent for employer follow-up about the application: yes
-- valid passport: yes
-- Canada travel for work: yes, with prior business-travel history to Canada
-- family or relatives at target employer: no
-- previous employment at target employer: no unless evidence says otherwise
-- race/ethnicity: White / Not Hispanic or Latino for voluntary self-ID
-- gender: male for voluntary self-ID
-- pronouns: he/him only when asked
-- veteran status: not a protected veteran / not a veteran
-- disability status: no disability / no history or record of disability
-- security clearance: no active clearance unless Matt provides one for the exact application
-
-## Output
-Always end with:
-- what was updated in Teal
-- asset status
-- Teal optimizer status, including Job Matcher, Analyzer, and two-page preview/export result
-- bullet/skill library actions: toggled, added, edited, globally updated with approval, or blocked
-- workflow improvement note: bottleneck, reusable item, search rule, reusable answer/asset, or proposed docs/skills update
-- post-submit hygiene status when an application was submitted
-- downloaded file paths if any
-- workflow metrics summary: `run_id`, scenario, mode, estimated current-response tokens, estimated run-to-date tokens, elapsed time if known, blocker count, revision loops, and self-healing status
-- unanswered questions or approval gates
-- how to verify
-- risks and rollback
-
-When listing roles or recommendations, also include:
-- posting age if known
-- freshness evidence or uncertainty
-- stale-risk assessment
-
-## Safety
-Do not submit applications, send messages, share references, or accept/decline/negotiate externally without explicit approval. Voluntary self-ID, race, gender, veteran, disability, and clearance questions may be answered from standing defaults when no contradictory instruction exists.
+Completion requires current source evidence, local or hosted acceptance proof, claim-safe assets, an independent verdict, and Way Ahead readback. Never report a submission that is not visibly confirmed by the employer.

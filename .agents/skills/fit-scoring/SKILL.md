@@ -6,9 +6,9 @@ description: Score job opportunities out of 100 and classify whether Matt should
 # Fit Scoring Skill
 
 ## Project Defaults
-- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
-- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
-- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Start with `job-search-scenarios` when the user asks to find, score, prepare, approve, or later submit a job pursuit through Way Ahead.
+- Use the in-app Browser for public canonical sources and Way Ahead product QA. Use Google Chrome only when a source requires Matt's signed-in profile, Cloudflare, a challenge prompt, or extension behavior.
+- Keep Way Ahead as the operating system for jobs, analyses, pursuits, assets, approvals, outcomes, and follow-ups. Teal is competitor research only and may not hold or mutate Matt's current job-search state.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 
@@ -32,7 +32,7 @@ Score roles out of 100 and classify pursuit effort.
 - Canonical employer, duplicate-wrapper, and already-applied status
 
 ## Process
-1. Confirm the role is not already applied, not in a terminal Teal stage, not an unresolved duplicate wrapper, and not blocked by canonical-employer mismatch before recommending asset work.
+1. Confirm the role is not already applied, not in a terminal Way Ahead stage, not an unresolved duplicate wrapper, and not blocked by canonical-employer mismatch before recommending asset work.
 2. Confirm source-active status, posting age, freshness evidence, and freshness risk before assigning the final score.
 3. Score lane fit, mandate fit, evidence match, compensation, logistics, company/stage, hiring access, freshness/source risk, and other risk.
 4. Apply compensation rules, including the `$120k` strategic floor only for strong opportunities.
@@ -49,7 +49,8 @@ Score roles out of 100 and classify pursuit effort.
 - Canonical-employer, duplicate-wrapper, and already-applied gate status
 - Missing information
 - Next action
-- Teal Excitement score using 90-100 = 5 stars, 75-89 = 4, 60-74 = 3, 45-59 = 2, 0-44 = 1
+- Way Ahead fit percentage and pursue classification
 
 ## Safety
-Do not let Teal keyword match override strategic fit or claim safety.
+Do not let keyword overlap override strategic fit or claim safety. Never mutate
+Teal; it is competitor evidence only.

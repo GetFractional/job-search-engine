@@ -6,9 +6,9 @@ description: Research a target company for a job opportunity, diagnose why the r
 # Company Research Skill
 
 ## Project Defaults
-- Start with `job-search-scenarios` when the user asks to find jobs, score jobs, apply to a job, work in Teal, use the Teal Chrome extension, or operate Chrome for job-search work.
-- Use Google Chrome for Teal, LinkedIn, job boards, company career sites, and application forms when login state, Cloudflare, challenge prompts, or extension behavior matter.
-- Keep Teal as the operating system when the scenario requires pipeline, notes, Excitement, assets, contacts, or follow-ups.
+- Start with `job-search-scenarios` when the user asks to find, score, prepare, approve, or later submit a job pursuit through Way Ahead.
+- Use Google Chrome for signed-in employer, LinkedIn, or job-board work when login state, Cloudflare, challenge prompts, or extension behavior matter. Observe Teal only when Matt explicitly requests bounded, read-only competitor research; never mutate it or use it for Matt's operating state.
+- Keep Way Ahead as the operating system for jobs, analyses, pursuits, assets, approvals, outcomes, and follow-ups. Teal is competitor research only and may not hold or mutate Matt's current job-search state.
 - Preserve claim safety with the Canonical Profile and Metrics Ledger before external-facing metrics, bullets, cover letters, application answers, or outreach.
 - Stop before application submission, outreach, references, or external compensation negotiation unless the user explicitly approves. Voluntary self-ID, race, gender, veteran, disability, and clearance fields may be answered from standing defaults when no contradictory instruction exists.
 
@@ -27,7 +27,7 @@ Research the company enough to diagnose why the role exists and how Matt should 
 - JD
 - Company website
 - Recent news or funding
-- Teal record
+- Current Way Ahead job and pursuit records
 
 ## Process
 1. Summarize product, customer, business model, pricing, stage, and size.

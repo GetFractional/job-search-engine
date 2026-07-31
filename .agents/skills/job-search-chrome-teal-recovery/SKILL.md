@@ -1,30 +1,35 @@
 ---
 name: job-search-chrome-teal-recovery
-description: Diagnose and recover Windows Codex access to Matt's real Chrome-backed TealHQ session before job-search browser work. Use when Teal, Chrome, @Chrome, live Chrome tabs, or browser binding is unavailable or uncertain.
+description: Diagnose Chrome access only for an explicitly requested, bounded, read-only Teal competitor-research session. Never use this skill to operate Matt's job search, mutate Teal, or replace Way Ahead.
 ---
 
-# Job Search Chrome/Teal Recovery
+# Teal Competitor Browser Recovery
 
 ## Purpose
-Prove Codex is controlling Matt's logged-in Google Chrome profile before any TealHQ, LinkedIn, job-board, or application-form work.
+Recover a Chrome-backed Teal view only when Matt explicitly asks to inspect Teal as a competitor. The output is product-research evidence, never Matt's job-search operating state.
 
-This skill exists because the local bridge health script can pass while a Codex thread still fails to bind to live Chrome. Do not stop after the bridge script alone.
+For Way Ahead QA, canonical employer research, LinkedIn, job boards, or application forms, use the applicable product or job-search browser workflow instead.
 
 ## Required Sources
 1. `docs/chrome-bridge-recovery.md`
-2. `docs/teal-workflow.md`
-3. `AGENTS.md`
+2. `AGENTS.md`
+3. `tealhq-workflow`
 
 ## Hard Rules
-- Use the Chrome extension backend for Teal: `agent.browsers.get("extension")`.
-- Do not use the in-app browser for Teal.
-- Do not use standalone or isolated Playwright for Teal.
+- Invoke this skill only after Matt explicitly requests bounded Teal competitor research.
+- Define the exact feature, screen, or interaction to observe before opening Teal.
+- Use the Chrome extension backend because competitor research may depend on Matt's existing login.
+- Read only. Do not click controls that save, create, edit, delete, rate, stage, bookmark, export, generate, upload, message, apply, or change account settings.
+- Do not read Matt's saved jobs, resumes, cover letters, contacts, application history, notes, or other personal content unless the exact competitor question makes that specific surface necessary and Matt explicitly approves viewing it.
+- Do not copy personal content into Way Ahead. Record only generalized interface facts and redacted screenshots.
+- Do not use Teal to find, score, prepare, stage, submit, or track Matt's pursuits.
+- Way Ahead remains the source of member profile, job, analysis, pursuit, asset, approval, event, and outcome state.
 - Do not treat a green bridge script as proof of usable browser control.
 - Do not declare Chrome unavailable until the runtime probe below has been attempted or the required `node_repl` tool is genuinely unavailable after tool discovery.
-- Do not describe a Teal navigation, readability, stale-tab, or timeout problem as "cannot see Chrome" if the runtime probe can list the `Chrome` extension backend and visible user tabs.
+- Stop on CAPTCHA, Cloudflare, login, permission, security, or unexpected account warnings. Do not bypass them.
 
 ## Runtime Probe
-When a thread needs Chrome/Teal access, do this before role selection or Teal mutation:
+Run this probe only after the competitor-research scope and exact Teal surface are approved:
 
 1. If the `node_repl` JavaScript tool is not already callable, use tool discovery for `node_repl js`.
 2. Import the Chrome plugin browser client from the current Windows user profile:
@@ -40,7 +45,7 @@ await chromeModule.setupAtlasRuntime({ globals: globalThis });
 
 ```js
 const browser = await agent.browsers.get("extension");
-await browser.nameSession("Job Search Chrome/Teal");
+await browser.nameSession("Read-only Teal competitor research");
 ```
 
 4. Confirm available browser backends:
@@ -51,28 +56,29 @@ const browsers = await agent.browsers.list();
 
 Pass condition: the list includes `Chrome` with type `extension`.
 
-5. List visible user tabs:
+5. List visible user tabs only to prove the browser bridge:
 
 ```js
 const openTabs = await browser.user.openTabs();
 ```
 
-6. Claim an existing Teal tab when present:
+Do not inspect, claim, or summarize unrelated tabs.
+
+6. Open a fresh Chrome-extension-backed tab at the exact approved competitor-research URL:
 
 ```js
-const tealInfo = openTabs.find(t => (t.url || "").startsWith("https://app.tealhq.com"));
-const tealTab = tealInfo ? await browser.user.claimTab(tealInfo) : await browser.tabs.new();
-if (!tealInfo) await tealTab.goto("https://app.tealhq.com/home");
+const competitorTab = await browser.tabs.new();
+await competitorTab.goto(approvedCompetitorUrl);
 ```
 
-If claiming an existing Teal tab fails with a stale session, locked wrapper, timeout, or other already-claimed-tab error, do not classify that as a Chrome outage. Open a fresh Chrome-extension-backed tab, navigate to the needed Teal route, and verify it with the same checks below.
+`approvedCompetitorUrl` must be the Teal URL or route Matt authorized for the named research question. Do not guess or crawl nearby routes.
 
-7. Verify the claimed/new tab:
+7. Verify the new tab without interacting with product controls:
 
 ```js
-const title = await tealTab.title();
-const url = await tealTab.url();
-const snap = await tealTab.playwright.domSnapshot();
+const title = await competitorTab.title();
+const url = await competitorTab.url();
+const snap = await competitorTab.playwright.domSnapshot();
 const hasCloudflareBlock = snap.includes("Sorry, you have been blocked") || snap.includes("Cloudflare Ray ID");
 const hasSignInPrompt = snap.includes("Sign in") || snap.includes("Log in");
 ```
@@ -83,22 +89,12 @@ Pass condition:
 - no sign-in prompt
 - title or visible state confirms Teal loaded
 
-8. Refresh the Teal tab once before handoff or downstream Teal work, then wait for the page to settle:
+8. Capture only the minimum redacted evidence needed for the approved comparison. Do not capture personal job, resume, contact, note, or application data.
 
-```js
-await tealTab.reload();
-```
-
-After refresh, reconfirm the title or URL if the page changed routes. Treat any pre-refresh tracker rows, status, notes, applied dates, or resume state as stale.
-
-9. Keep the Teal tab for handoff if stopping:
-
-```js
-await browser.tabs.finalize({ keep: [{ status: "handoff", tab: tealTab }] });
-```
+9. Close the competitor tab after evidence capture unless Matt explicitly asks to keep that exact tab for a continued read-only comparison.
 
 ## Bridge Repair
-If the runtime probe cannot list or claim Chrome tabs, run:
+If the runtime probe cannot list Chrome tabs, and Matt has approved the competitor session, run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\ensure-codex-chrome-bridge.ps1 -Repair -OpenTeal
@@ -110,17 +106,16 @@ Run that from the Job Search repo root. If PowerShell is in another folder, use 
 powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\Jobs\Job Search\scripts\ensure-codex-chrome-bridge.ps1" -Repair -OpenTeal
 ```
 
-Then retry the runtime probe once.
+Then retry the runtime probe once. The repair is not authorization to inspect Teal broadly or perform any member workflow.
 
 ## Failure Classification
 Classify the failure before stopping:
 
 - **Local bridge failure:** native host, extension install, extension enabled state, Chrome running state, or profile is wrong. Fix with the bridge repair script and rerun the runtime probe.
 - **Thread binding failure:** local bridge checks are green, but `agent.browsers.get("extension")` fails or the backend list lacks `Chrome`. Stop same-thread retries after one repair and route to Codex Desktop Chrome plugin reset/rebind/restart or support escalation.
-- **Wrong browser surface:** Teal is opened in isolated Playwright or the in-app browser, often with Cloudflare. Stop that path and switch to the Chrome extension backend.
-- **Stale tab claim:** `Chrome` backend and `browser.user.openTabs()` work, but an existing Teal tab cannot be claimed. Open a fresh extension-backed Teal tab instead of rerunning bridge repair.
-- **Stale page data:** Chrome works and Teal loads, but the visible page may not reflect cross-device changes yet. Refresh the Teal tab once and wait for the UI to settle before trusting the page.
-- **Teal UI readability/navigation failure:** Chrome works and Teal loads, but the tracker, table, Resume Builder, or Job Matcher cannot be read or acted on reliably. Do not call this a Chrome failure. Use slow scoped Teal navigation, a direct Teal record URL, or a screenshot/pasted JD fallback.
+- **Wrong browser surface:** the approved Teal route is opened in isolated Playwright or the in-app browser and cannot use Matt's existing session. Stop that path and switch to the Chrome extension backend.
+- **Scope failure:** the screen exposes personal data not needed for the approved comparison, or the answer would require a mutation. Stop and report that the research cannot be completed within the read-only boundary.
+- **Competitor UI readability failure:** the exact approved surface loads but cannot be read reliably. Do not expand navigation or inspect personal records to compensate; report the bounded blocker.
 
 ## Stop Conditions
 Stop and report a real blocker only when one of these is true:
@@ -129,20 +124,24 @@ Stop and report a real blocker only when one of these is true:
 - Chrome backend does not appear after bridge repair and one runtime retry.
 - Teal loads with Cloudflare in the Chrome extension backend.
 - Teal requires login or a security challenge in the Chrome extension backend.
-- Chrome works, but Teal tracker or resume pages remain unreadable after slow scoped navigation and one fresh extension-backed tab attempt; in that case ask for a screenshot, direct Teal record URL, or pasted JD instead of guessing.
+- The exact approved competitor surface remains unreadable after one fresh extension-backed tab attempt.
+- The observation would expose unnecessary personal data or require any account, content, job, asset, or workflow mutation.
 
 Do not stop merely because:
 - `@Chrome` is not directly listed as a visible tool name.
 - the bridge script only reports local health.
-- `browser.tabs.list()` is empty before claiming user tabs.
+- `browser.tabs.list()` is empty before opening the fresh competitor tab.
 - existing user tabs are visible only through `browser.user.openTabs()`.
-- an existing Teal tab cannot be claimed, if a fresh Chrome-extension-backed tab can still load Teal.
 
 ## Output
 Report:
+- the approved competitor question and exact surface observed
 - whether `node_repl` was available
 - browser backends found
-- whether a Teal tab was claimed or opened
+- whether a fresh Teal competitor tab opened
 - Teal title and URL
 - Cloudflare/sign-in status
-- next safe action
+- redacted interface facts relevant to the approved question
+- explicit confirmation that no Teal data or workflow was mutated
+- any personal-data exposure avoided or redacted
+- next safe Way Ahead product implication

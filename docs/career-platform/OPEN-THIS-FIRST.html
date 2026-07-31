@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Career Platform Working Pack</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f0e8;
+      --panel: #fffdf8;
+      --panel-2: #ebe5da;
+      --text: #14201d;
+      --muted: #5b6763;
+      --line: #d7d0c4;
+      --accent: #126d58;
+      --accent-soft: #d9eee7;
+      --warn: #8a5a12;
+      --warn-soft: #f5ead3;
+      --shadow: 0 18px 55px rgba(35, 42, 39, .10);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #07110f;
+        --panel: #0d1916;
+        --panel-2: #13231f;
+        --text: #eef5f0;
+        --muted: #a5b2ad;
+        --line: #29413a;
+        --accent: #80d7b3;
+        --accent-soft: #173b31;
+        --warn: #f1ba5f;
+        --warn-soft: #3c2e16;
+        --shadow: 0 22px 70px rgba(0, 0, 0, .30);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 13%, transparent), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: var(--accent); text-underline-offset: .18em; }
+    a:hover { text-decoration-thickness: .14em; }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+    .shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 36px 0 72px; }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
+      gap: 28px;
+      align-items: end;
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow { margin: 0 0 8px; color: var(--accent); font-size: .78rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h1, h2, h3 { margin-top: 0; line-height: 1.15; }
+    h1 { margin-bottom: 14px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.2rem, 6vw, 4.7rem); font-weight: 500; letter-spacing: -.035em; }
+    h2 { margin-bottom: 16px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+    h3 { margin-bottom: 8px; font-size: 1.1rem; }
+    p { margin: 0 0 14px; }
+    .lede { max-width: 66ch; color: var(--muted); font-size: 1.05rem; }
+    .status { display: grid; gap: 10px; }
+    .status div { padding: 13px 15px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel-2); }
+    .status b { display: block; margin-bottom: 2px; color: var(--text); }
+    .status span { color: var(--muted); font-size: .9rem; }
+
+    nav { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 44px; }
+    nav a { padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--text); text-decoration: none; font-size: .9rem; }
+
+    section { margin-top: 52px; scroll-margin-top: 18px; }
+    .section-intro { max-width: 76ch; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; margin-top: 22px; }
+    .card { grid-column: span 4; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--panel); box-shadow: 0 10px 32px rgba(0, 0, 0, .06); }
+    .card.wide { grid-column: span 6; }
+    .card.full { grid-column: 1 / -1; }
+    .card p, .card li { color: var(--muted); }
+    .card ul, .card ol { margin: 12px 0 0; padding-left: 20px; }
+    .card li + li { margin-top: 7px; }
+    .kicker { color: var(--accent); font-size: .76rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+    .action-link { display: inline-block; margin-top: 10px; font-weight: 700; }
+
+    figure { margin: 0; }
+    figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 14px; background: #08110f; }
+    figcaption { margin-top: 10px; color: var(--muted); font-size: .88rem; }
+    .selected { border-color: color-mix(in srgb, var(--accent) 62%, var(--line)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent); }
+
+    .notice { margin-top: 22px; padding: 17px 19px; border: 1px solid color-mix(in srgb, var(--warn) 55%, var(--line)); border-radius: 14px; background: var(--warn-soft); color: var(--text); }
+    .notice b { color: var(--warn); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+    td:first-child { font-weight: 750; }
+
+    .decision { padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: var(--accent-soft); }
+    .decision strong { color: var(--accent); }
+    .small { color: var(--muted); font-size: .88rem; }
+
+    footer { margin-top: 54px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; }
+
+    @media (max-width: 840px) {
+      header { grid-template-columns: 1fr; padding: 24px; }
+      .card, .card.wide { grid-column: 1 / -1; }
+      .shell { width: min(100% - 22px, 1180px); padding-top: 12px; }
+      th:nth-child(3), td:nth-child(3) { display: none; }
+    }
+
+    @media print {
+      :root {
+        --bg: #ffffff;
+        --panel: #ffffff;
+        --panel-2: #f2f4f2;
+        --text: #14201d;
+        --muted: #4c5753;
+        --line: #cfd6d2;
+        --accent: #126d58;
+        --accent-soft: #e5f2ed;
+        --warn: #7a4f0f;
+        --warn-soft: #faf1df;
+      }
+      body { background: #fff; }
+      .shell { width: 100%; padding: 0; }
+      header, .card { box-shadow: none; }
+      nav { display: none; }
+      section { break-inside: avoid; margin-top: 34px; }
+      figure { break-inside: avoid; }
+      a { color: var(--accent); }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">Career platform working pack</p>
+        <h1>Start here.</h1>
+        <p class="lede">One accessible view of the working mobile prototype, selected product direction, launch plan, naming decision, market position, repository controls, and Matt's first-case-study opportunity radar. Detailed source packets remain linked below.</p>
+      </div>
+      <div class="status" aria-label="Current status">
+        <div><b>Product direction</b><span>Radar Setup to Brief to Review to native Pursuit</span></div>
+        <div><b>Working prototype</b><span>Built and QA-tested locally; private phone sharing is the next gate</span></div>
+        <div><b>Brand candidate</b><span>Worthward advances to validation, not launch</span></div>
+        <div><b>First case study</b><span>Going ranks first at 85/100, pending proof</span></div>
+      </div>
+    </header>
+
+    <nav aria-label="Page sections">
+      <a href="#prototype">Working prototype</a>
+      <a href="#direction">Visual direction</a>
+      <a href="#packets">Working packets</a>
+      <a href="#brand">Brand</a>
+      <a href="#case-study">First case study</a>
+      <a href="#controls">Controls</a>
+    </nav>
+
+    <section id="prototype">
+      <p class="eyebrow">Working product</p>
+      <h2>The smallest trustworthy career-decision loop is interactive</h2>
+      <p class="section-intro">The responsive prototype now connects Career Baseline, Opportunity Radar, Radar Brief, a seven-job collection, one-job Review, proof correction, user decisions, Pursuits, and an exact synthetic approval path. It performs no live model calls, uploads, job-board actions, messages, or submissions.</p>
+      <div class="grid">
+        <article class="card wide selected">
+          <h3>Run or inspect the prototype</h3>
+          <p>The code includes light, dark, and device themes; realistic ambiguity fixtures; loading, partial, capacity, error, conflict, no-action, and offline states; local persistence; and an approval state machine that never treats a click as a submission.</p>
+          <a class="action-link" href="../../prototypes/worthward-mobile/README.md">Open the prototype and run instructions</a>
+        </article>
+        <article class="card wide">
+          <h3>Acceptance and design QA</h3>
+          <p>The prototype passed type checking, lint, a production build, eight contract tests, responsive checks at 320, 390, 768, and 1280 pixels, three independent expert re-audits, and a same-canvas comparison with the selected design direction.</p>
+          <a class="action-link" href="mobile-prototype-brief-and-acceptance-contract-2026-07-17.md">Open the acceptance contract</a><br>
+          <a class="action-link" href="../../prototypes/worthward-mobile/design-qa.md">Open the design QA record</a>
+        </article>
+        <article class="card wide">
+          <h3>Job-description truth contract</h3>
+          <p>Required, preferred, bonus, anti-fit, AND, and OR statements remain inspectable. Employer requirements, candidate proof, application questions, compensation components, benefits, gates, and score status are separate objects.</p>
+          <a class="action-link" href="jd-interpretation-scoring-and-evaluation-contract-2026-07-17.md">Open the interpretation and scoring contract</a>
+        </article>
+        <article class="card wide">
+          <h3>Cost and provider strategy</h3>
+          <p>The architecture is provider-neutral and privacy-aware. Free access is a product entitlement, not a promise that third-party processing is free, private, reliable, or production-safe. Every route has quality thresholds, quotas, fallbacks, and a cost ledger.</p>
+          <a class="action-link" href="ai-model-routing-and-unit-economics-2026-07-17.md">Open model routing and unit economics</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="direction">
+      <p class="eyebrow">Selected experience</p>
+      <h2>A connected decision journey, not one overloaded screen</h2>
+      <p class="section-intro">The three concepts are not competing versions of one screen. Radar Setup defines the alert. A dated Radar Brief shows results. Selecting a job opens Opportunity Review. Choosing Pursue starts a native Pursuit, while external approval remains separate.</p>
+
+      <div class="grid">
+        <figure class="card">
+          <p class="kicker">Components only</p>
+          <h3>Decision Desk</h3>
+          <img src="visual-directions/option-1-decision-desk.png" alt="Dark Decision Desk product concept with a ranked Going opportunity and proof-state summary">
+          <figcaption>Do not build this as one page. Keep only its ranked-row and compact Decision Receipt components.</figcaption>
+        </figure>
+
+        <figure class="card selected">
+          <p class="kicker">Selected dated brief</p>
+          <h3>Radar Brief</h3>
+          <img src="visual-directions/option-2-radar-brief.png" alt="Dark Opportunity Radar concept with a short ranked list and detailed Going opportunity summary">
+          <figcaption>Use this as one dated result from the Radar, not as Radar Setup or the generic Jobs home.</figcaption>
+        </figure>
+
+        <figure class="card selected">
+          <p class="kicker">Selected opportunity detail</p>
+          <h3>Proof Lens</h3>
+          <img src="visual-directions/option-3-proof-lens.png" alt="Dark proof review concept showing requirements, evidence states, sources, recommendation, and risk">
+          <figcaption>Use this requirement-to-proof structure for the individual Opportunity Review.</figcaption>
+        </figure>
+      </div>
+
+      <div class="notice"><b>Concept warning:</b> the screenshots contain stale demonstration values and duplicated actions. The governed truth is Going `85/100`, compensation starting at `$175,000 plus equity` with no public upper bound, and `Investigate` until proof is validated. The user decision appears once as Pursue, Watch, or Pass. Fixed review-time promises must be removed.</div>
+
+      <div class="grid">
+        <div class="card wide">
+          <h3>Theme behavior</h3>
+          <p>Settings must offer System, Light, and Dark. System is the default. Both themes keep the same hierarchy, proof states, interaction states, accessibility, and content.</p>
+          <a class="action-link" href="radar-review-theme-and-accessibility-spec-2026-07-17.md">Open the theme and accessibility specification</a>
+        </div>
+        <div class="card wide">
+          <h3>Full selection logic</h3>
+          <p>The selection balances low-effort recurring monitoring with deep evidence inspection. No screenshot alone is implementation approval.</p>
+          <a class="action-link" href="visual-direction-selection.md">Open the visual-direction decision</a>
+        </div>
+        <div class="card wide">
+          <h3>Complete screen system</h3>
+          <p>The launch-ready product has 21 shared screen families. The current working prototype covers Radar Setup, Radar Brief, Opportunity Review, and Pursuit Application plus the supporting collection, profile, settings, and Pursuits routes.</p>
+          <a class="action-link" href="platform-screen-system-and-interaction-contract-2026-07-17.md">Open the screen map and action contract</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="packets">
+      <p class="eyebrow">Execution system</p>
+      <h2>The working packets</h2>
+      <p class="section-intro">These documents are now copied into this hub so they do not depend on the older Job Filter branch or prior chat links.</p>
+      <div class="grid">
+        <article class="card wide">
+          <h3>Product authority packet</h3>
+          <p>Defines the source hierarchy, Career Baseline, proof states, opportunity integrity, score boundaries, approval model, state machine, UX rules, and release gates.</p>
+          <a class="action-link" href="working-packets/product-authority-packet.md">Open product authority</a>
+        </article>
+        <article class="card wide">
+          <h3>Platform screen system</h3>
+          <p>Defines all 21 screen families, routes, Opportunity Radar objects, concept mapping, Pursuits model, responsive behavior, and the exact separation of recommendation, decision, workflow action, and external approval.</p>
+          <a class="action-link" href="platform-screen-system-and-interaction-contract-2026-07-17.md">Open screen system</a>
+        </article>
+        <article class="card wide">
+          <h3>Business launch and validation plan</h3>
+          <p>Sets the narrow beachhead, concierge-assisted beta, offer ladder, economics tests, outcome instrumentation, decision gates, and stop conditions.</p>
+          <a class="action-link" href="working-packets/business-launch-and-validation-plan.md">Open business and validation plan</a>
+        </article>
+        <article class="card wide">
+          <h3>Customer discovery and paid beta script</h3>
+          <p>Provides neutral discovery questions, the live decision test, willingness-to-pay contrast, no-opportunity-week test, beta invitation, and observation sheet.</p>
+          <a class="action-link" href="working-packets/customer-discovery-and-paid-beta-script.md">Open discovery and paid-beta script</a>
+        </article>
+        <article class="card wide">
+          <h3>Data, telemetry, and test contract</h3>
+          <p>Specifies the source-to-decision data model, events, metrics, corrections, calibration, uncertainty, approval boundaries, and acceptance tests.</p>
+          <a class="action-link" href="working-packets/data-telemetry-and-test-contract.md">Open telemetry and test contract</a>
+        </article>
+        <article class="card wide">
+          <h3>Personas and customer journey</h3>
+          <p>Locks the first paid beachhead around experienced professionals with multiple credible lanes, expensive decision complexity, and meaningful upside.</p>
+          <a class="action-link" href="personas-and-customer-journey-one-page-2026-07-17.md">Open personas and journey</a>
+        </article>
+        <article class="card wide">
+          <h3>Market and competition delta</h3>
+          <p>Shows why scanning, matching, job radar, career intelligence, and AI assets are table stakes. The moat must be the inspectable decision contract.</p>
+          <a class="action-link" href="market-competition-delta-2026-07-17.md">Open market and competition</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="brand">
+      <p class="eyebrow">Naming decision</p>
+      <h2>One candidate advances; two remain backups</h2>
+      <div class="decision">
+        <p><strong>Worthward</strong> remains the leader because it best expresses movement toward opportunities worth pursuing and had the cleanest preliminary collision profile. Matt's `Worthword` concern becomes a measurable spoken-name gate, not a reason to ignore the candidate or force it through.</p>
+      </div>
+      <table>
+        <thead><tr><th>Rank</th><th>Name</th><th>Status</th><th>Main risk</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Worthward</td><td>Advance to validation</td><td>Heard as Worthword; ward associations; personal-worth ambiguity</td></tr>
+          <tr><td>2</td><td>ConsiderNext</td><td>Functional backup</td><td>Generic, less ownable, and resembles an unfinished call to action</td></tr>
+          <tr><td>3</td><td>Nextworthy</td><td>Emotional-safety backup</td><td>Can sound like the person, rather than the opportunity, is being judged</td></tr>
+        </tbody>
+      </table>
+      <p class="small">Worthward must pass a hear-once spelling test, five-second category test, emotional-safety test, real-message test, delayed recall, and formal legal clearance. If it fails, run another round.</p>
+      <a class="action-link" href="brand-name-shortlist-2026-07-17.md">Open the full naming decision and test protocol</a>
+    </section>
+
+    <section id="case-study">
+      <p class="eyebrow">Matt as first user</p>
+      <h2>Going stays first; Tebra is the only close challenger</h2>
+      <div class="grid">
+        <article class="card wide selected">
+          <p class="kicker">Rank 1, 85/100 conditional</p>
+          <h3>Going, Director, Lifecycle Marketing</h3>
+          <p>Best current blend of lifecycle-system fit, remote logistics, compensation, benefits, and verified freshness. Open proof: Braze depth, mobile channels, lifecycle analytics, and exact leadership scope.</p>
+          <a class="action-link" href="../../applications/professional-lanes/going-director-lifecycle-marketing/proof-validation-prefill-2026-07-17.md">Open the Going proof prefill</a>
+        </article>
+        <article class="card wide">
+          <p class="kicker">Rank 2, 84/100 conditional</p>
+          <h3>Tebra, Director, GTM Technology</h3>
+          <p>Attractive Lane 1 mandate and published Zone 1 range. Open proof: high-velocity Sales/SDR accountability, pipeline cadence, Salesforce and GTM tools, and the required ops-team composition.</p>
+          <a class="action-link" href="../../applications/professional-lanes/tebra-director-gtm-technology/proof-audit-prefill-2026-07-17.md">Open the Tebra proof prefill</a>
+        </article>
+        <article class="card full">
+          <h3>Current ranked market</h3>
+          <p>The fresh screen retained eight roles. Pendulum ranks third; Lumeris and Zillow remain selective; Snappy and Finite State need more metadata; Babylist is economically attractive but specialized in media/ad revenue operations.</p>
+          <a class="action-link" href="fresh-opportunity-radar-2026-07-17.md">Open the complete fresh opportunity radar</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="controls">
+      <p class="eyebrow">Delivery controls</p>
+      <h2>What has and has not changed</h2>
+      <div class="grid">
+        <article class="card wide">
+          <h3>Job Filter repository</h3>
+          <p>The current branch is quarantined as evidence. Fetched origin/main is the clean base. Useful additive documents require reviewed promotion; the mixed 165-file commit must never be merged or cherry-picked wholesale.</p>
+          <a class="action-link" href="job-filter-repo-source-of-truth-and-cleanup-plan-2026-07-17.md">Open the cleanup and salvage plan</a>
+        </article>
+        <article class="card wide">
+          <h3>External-state boundary</h3>
+          <p>No Teal record, ClickUp task, application, outreach, or live employer form was changed. The implementation is a private local prototype, not a production deployment or efficacy claim. Production remains gated by source-of-truth, ownership, acceptance, privacy, security, and proof controls.</p>
+          <a class="action-link" href="working-packets/governance-and-repo-reset-packet.md">Open governance and repository reset</a>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>Last updated 2026-07-17. This pack separates verified facts, product decisions, inferences, missing evidence, and external-action approval. It is a working decision surface, not an efficacy claim, legal clearance, or application authorization.</p>
+    </footer>
+  </main>
+</body>
+</html>

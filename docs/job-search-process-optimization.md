@@ -172,6 +172,8 @@ Self-healing statuses:
 
 ## Productized Offer Blueprint
 
+This section extracts customer jobs and proof requirements from Matt's workflow. It does not carry Teal into the product architecture. The customer product owns its native opportunities, Radars, Reviews, Pursuits, materials, approvals, and outcomes; Teal remains Matt's temporary operating tool and competitor evidence only.
+
 ### Ideal Customer
 Mid-career to senior professionals with real proof, high opportunity cost, weak job-search operations, and a need for better-fit applications rather than more applications.
 
@@ -213,8 +215,8 @@ Avoid:
 
 ### Product Constraints
 
-- Keep Teal as an MVP pipeline layer, but design the schema so another tracker can replace it later.
-- Hide Chrome, Teal, and repo diagnostics from normal users behind operator health checks.
+- Use a minimal native Pursuit queue and provider-neutral employer-site execution package from the first customer MVP.
+- Keep Chrome, competitor-tool, repo, and external-surface diagnostics out of customer-facing concepts; expose only useful source health, readability, and verification states.
 - Treat claim safety, approval gates, and source lineage as product primitives, not optional QA.
 - Do not clone Matt-specific assets, account identifiers, reference data, or application artifacts into any demo or customer version.
 - Price and scope around Quick gating, because Standard and Deep workflows are expensive.

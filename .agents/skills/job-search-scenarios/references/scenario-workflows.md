@@ -1,104 +1,95 @@
 # Scenario Workflows
 
+## Controlling Rules
+
+- Way Ahead owns the member's profile evidence, Job Standard, job source versions, analyses, pursuits, assets, approvals, events, and outcomes.
+- Matt founder-dogfoods the same multi-user member journey as every other user. Do not create a separate Matt-only product, customer type, or efficacy claim.
+- Use canonical employer career sites and official ATS pages for current job truth.
+- Observe Teal only when Matt explicitly asks for a bounded, read-only competitor comparison. Never use it to find, save, score, stage, draft, export, or track Matt's pursuits.
+- Keep package approval, employer-form population, file upload, outreach, references, and submission as separate reserved actions.
+- Never take an external action without Matt's exact approval for that action and destination.
+
 ## Find Jobs
-1. Prove the browser surface with `job-search-chrome-teal-recovery` before Teal or logged-in job-board work.
-2. Refresh the Teal page once after claim/open and before trusting any visible Teal data.
-3. Open Google Chrome and use Teal Job Search, saved searches, or relevant job boards.
-4. Use the Teal Chrome extension to bookmark strong roles.
-5. Confirm each saved job has title, company, location, URL, compensation if listed, and full JD.
-6. Run quick lane and fit scoring.
-7. Set Excitement from score.
-8. Add notes with lane, score, compensation/logistics, risk, and next action.
-9. Return a shortlist with which roles deserve deeper research.
-10. Record run metrics: roles reviewed, roles saved, estimated tokens, elapsed time if known, main bottleneck, and one self-healing candidate.
 
-## Score Saved Jobs
-1. Prove the browser surface with `job-search-chrome-teal-recovery`.
-2. Open Teal Job Tracker in Chrome.
-3. Refresh Job Tracker before reading rows or trusting visible status, notes, or applied dates.
-4. Find jobs with no Excitement score or stale notes.
-5. Read the JD and source URL.
-6. Verify the posting is active when feasible.
-7. Score using the role-fit rubric.
-8. Set Excitement and add notes.
-9. Do not draft assets unless a role clears the pursue threshold or the user asks.
-10. Record run metrics: roles scored, roles advanced, stale or duplicate records found, estimated tokens, elapsed time if known, and one self-healing candidate.
+1. Read Matt's current Way Ahead Job Standard, approved Job Paths, exclusions, and profile evidence.
+2. Search direct employer career sites, official ATS pages, and other permitted current sources.
+3. Resolve the canonical employer and exact requisition before treating a listing as a candidate.
+4. Verify the posting is live and capture the source URL, checked time, posting date or first-published date when available, location, compensation, work mode, and full JD.
+5. Store a source-versioned job record in Way Ahead without overwriting prior evidence.
+6. Deduplicate employer wrappers and reposts against existing Way Ahead jobs and pursuits.
+7. Classify the role lane and mandate, calculate freshness risk, and run quick fit scoring.
+8. Return a source-verified shortlist grouped by approved Job Path plus one integrated next-best recommendation.
+9. Do not open, populate, or submit an employer application form during discovery.
+10. Record run metrics: roles reviewed, roles ingested, duplicates rejected, estimated tokens, elapsed time if known, main bottleneck, and one self-healing candidate.
 
-## Apply To A Specific Job
-1. Prove the browser surface with `job-search-chrome-teal-recovery`: Chrome extension backend listed, live user tabs visible, and Teal claimed or opened without Cloudflare/login.
-2. Refresh the Teal tab once after claim/open and before trusting any visible Teal data.
-3. If Chrome is proven but an existing Teal tab is locked, open a fresh Chrome-extension-backed Teal tab. If a Teal page is unreadable after slow scoped navigation and one fresh-tab attempt, stop and request a screenshot, direct Teal record URL, or pasted JD instead of guessing.
-4. Open the Teal job record in Chrome.
-5. Refresh the job detail page before trusting status, notes, applied date, or source data.
-6. Verify the role is not already applied, not in another terminal stage, and not a duplicate wrapper of an already-submitted canonical role.
-7. Verify source link is active. If source redirects or blocks, find the company-hosted posting once.
-8. If the Teal company, JD employer, and source employer do not clearly match, stop and resolve the canonical employer before asset work.
-9. Move the job to Applying when asset work starts.
-10. Research company, role, hiring manager/recruiter, market, competition, likely KPIs, and why the role exists.
-11. Finalize fit score and Excitement.
-12. Open Resumes from the Teal job record.
-13. Create a new tailored resume or open the attached role resume.
-14. Use Default to all content on when creating from the master profile.
-15. In Resume Builder, refresh once before trusting attached-job state, selected content, or analyzer/matcher state.
-16. In Resume Builder, use Job Matcher to identify missing truthful hard skills, soft skills, and role terms.
-17. In Content Editor, use checkboxes to include or exclude existing bullets and Skills & Interests for the current role resume.
-    - Keep Skills & Interests category-led and readable.
-    - Do not add duplicate flat skills when a categorized equivalent already exists.
-    - Never leave uncategorized top-level skills checked above category groups.
-    - Do not rename an existing shared skill category for an unrelated role lane; create a new role-specific category when a new lane needs one.
-18. Add a durable reusable bullet or skill only when the library is missing a truthful, role-relevant item.
-19. Leave `update in all resumes` or global-update options unchecked unless Matt explicitly approves a global library change.
-20. Do not delete skills, delete bullets, or clean the shared library during application work unless Matt explicitly asks for that cleanup.
-21. Update target title, professional summary, bullets, and Skills & Interests only as needed and without keyword stuffing.
-22. Keep the resume readable and two pages unless the role justifies otherwise. Use Teal preview/export to avoid page 3 and avoid leaving obvious high-value whitespace on page 2.
-23. Use Analyzer and Job Matcher until issues and match gaps are addressed without keyword stuffing. If these Teal tools are blocked, stop and report the blocker unless the user approves a local-only fallback.
-24. If the live application has a cover-letter upload or text slot, create a tailored one-page cover letter unless Matt explicitly opts out.
-25. Open Cover Letter, select medium or long based on role complexity, and use a custom prompt grounded in research. Use Teal Cover Letter as the default path when the application has a cover-letter slot. If Teal Cover Letter is blocked, stop and document the blocker unless Matt explicitly approves a local-only fallback.
-26. Export resume and cover letter as separate files.
-27. Enforce canonical filenames before upload: `{Company} - {Role} - Matt Dimock - Resume.pdf` and `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`. Do not upload files containing `Teal`, `final`, `draft`, `v2`, dates, source labels, or tool labels.
-28. If the application requires attachment upload, preflight the upload path before long final form entry. If `fileChooser.setFiles` fails with `Not allowed`, turn on `Allow access to file URLs` for the Codex Chrome extension at `chrome://extensions/?id=hehggadaopoacecdllhhajmbjkdcmajg`, restart Chrome or start the Chrome task again, and retry the visible upload control.
-29. Prepare application answers from the exact form questions.
-30. Create an interview pack for the role after it clears the pursue bar and before submission readiness.
-31. Present final assets, application answers, upload destination, and submit action for approval.
-32. Stop before submission and ask for approval with the exact destination and data involved.
-33. After approved submission is completed and confirmation is visible, update Teal status to Applied and add the application date plus submitted assets.
-34. Run post-submit hygiene: verify Teal Excitement from fit score, record submitted salary/comp answer, exact filenames, follow-up target, and update `docs/application-performance-ledger.md`.
-35. Complete run metrics or an application retrospective with estimated tokens, elapsed time, stage blockers, revision loops, and self-healing status.
+## Score Current Jobs
 
-## Chrome/Teal Failure Routing
-- Local bridge failure: run the forced repair script and retry the runtime probe once.
-- Thread binding failure: if local bridge checks are green but the thread lacks the Chrome extension backend, stop same-thread retries and route to Codex Desktop Chrome plugin reset/rebind/restart or support escalation.
-- Wrong browser surface: if Teal is in isolated Playwright or the in-app browser, stop and switch to Chrome extension backend.
-- Stale tab claim: if `browser.user.openTabs()` works but an old Teal tab cannot be claimed, open a fresh Chrome-extension-backed Teal tab.
-- Stale page data: if the page loads but visible status, notes, or applied state may be old, refresh the Teal tab once before trusting the page.
-- Teal readability/navigation failure: if Chrome-backed Teal loads but tracker/resume content is unreadable after slow scoped navigation and one fresh-tab attempt, ask for screenshot/direct record/JD rather than guessing.
+1. Read current jobs and pursuits from Way Ahead.
+2. Refresh each canonical employer source before trusting availability, compensation, location, or job requirements.
+3. Recalculate freshness, lane fit, evidence match, compensation, logistics, risks, and missing proof.
+4. Store a new analysis version and preserve the prior version.
+5. Hide or invalidate a score when its source version is stale, missing, superseded, or failed validation.
+6. Supersede any package approval bound to an older source, form, answer, or asset version.
+7. Do not draft assets unless the role clears the pursue threshold or Matt explicitly asks for a reviewable exception.
+8. Record roles scored, roles advanced, stale or duplicate records found, estimated tokens, elapsed time if known, and one self-healing candidate.
 
-## Teal UI Signals Observed
-Saved job records expose:
-- job list
-- salary range
-- Excitement star rating
-- stage controls
-- source link
-- Job Info
-- Notes
-- Resumes
-- Contacts
-- Email Templates
-- Check List
-- Practice Interview
+## Prepare A Specific Pursuit
 
-Resume Builder exposes:
-- resume title
-- Export PDF
-- Content Editor
-- Designer
-- Analyzer
-- Job Matcher
-- Cover Letter
-- missing hard skills and soft skills
-- existing bullets with inclusion checkboxes
-- Skills & Interests
-- skill inclusion checkboxes for per-job display
-- global update options that should stay unchecked unless approved
-- cover letter length, tone, job, custom prompt, model, write with AI, copy text
+1. Open the current Way Ahead job and pursuit records.
+2. Verify the role is not already submitted, closed, withdrawn, or a duplicate of a terminal pursuit.
+3. Refresh the canonical posting and capture a new source version if anything changed.
+4. Inspect the exact employer form read-only and capture its current questions, required fields, upload slots, destination, and checksum without entering member data.
+5. Research the company, role, hiring team, market, competition, likely KPIs, compensation, and why the role exists.
+6. Finalize the fit score, risks, missing evidence, and pursue recommendation before final asset work.
+7. Create or update the job-specific resume in Way Ahead Resume Studio using only approved profile facts and evidence-library items.
+8. Keep skills category-led and deduplicated. A job-specific selection must not mutate universal or Job Path variants without member approval.
+9. Use match-gap and asset checks to improve truthful coverage without keyword stuffing or turning missing evidence into a claim.
+10. Keep the resume readable and two pages unless the role justifies otherwise.
+11. Create a one-page cover letter only when the exact form has a slot, Matt requests it, or the pursuit records a justified exception.
+12. Prepare application answers from the exact captured form questions and label every answer's provenance and approval state.
+13. Export separate files with canonical names:
+    - `{Company} - {Role} - Matt Dimock - Resume.pdf`
+    - `{Company} - {Role} - Matt Dimock - Cover Letter.pdf`, when used
+14. Reject files containing draft, version, date, source, local-path, or tool labels.
+15. Run claim-safety, ATS, page-count, rendering, filename, and binary-hash checks.
+16. Create the role-specific interview pack before submission readiness for roles that clear the pursue bar.
+17. Bind the exact destination, source version, form version, answers, asset versions, outbound file hashes, unresolved blockers, and next reserved action into one Way Ahead package.
+18. Present every outbound value for review.
+19. Stop before employer-form population or file upload until Matt approves that exact staging action.
+20. Record run metrics, revision loops, blockers, and one product-learning note from the same member journey.
+
+## Stage Or Submit An Approved Pursuit
+
+1. Re-read the exact Way Ahead package and approval receipt.
+2. Recheck the canonical posting and employer form immediately before the approved action.
+3. Revoke or supersede approval if the source, questions, answers, destination, or files changed.
+4. Require exact approval before populating employer fields or uploading files.
+5. Show the fully staged form for review without submitting.
+6. Require a later, separate exact approval for the final submit action.
+7. Do not send outreach, share references, or negotiate compensation unless Matt separately approves that exact external action.
+8. After an approved submission is visibly confirmed by the employer, record the confirmation, submitted time, exact answers, file hashes, follow-up target, and pursuit event in Way Ahead.
+9. Never mark a pursuit submitted from an intent, click attempt, or unconfirmed browser state.
+
+## Browser And Source Failure Routing
+
+- Use the in-app Browser for Way Ahead product QA and public hosted checkpoints.
+- Use Chrome only when a canonical employer or other source requires Matt's signed-in profile.
+- If a canonical source is blocked, try one permitted official source path, then record `source unavailable`; do not substitute an aggregator's claims as current truth.
+- If a form changes after capture, supersede the form version and revoke any bound package approval.
+- If browser upload fails after exact staging approval, stop and report the visible blocker. Do not change browser permissions or use hidden automation as a workaround.
+- Never bypass CAPTCHA, Cloudflare, authentication, permissions, robots controls, paywalls, or platform restrictions.
+
+## Way Ahead Member Signals
+
+The same member contract should expose:
+
+- structured and reviewable profile facts with provenance
+- approved Job Standard and one or more approved Job Paths
+- source-versioned jobs and validation state
+- explainable fit, confidence, freshness, risks, and missing evidence
+- pursuit stage and event history
+- universal, Job Path, and job-specific resume variants
+- reusable evidence, bullet, skill, and asset libraries
+- current form questions and application-answer versions
+- reviewable package fingerprint and exact approval receipts
+- interview, offer, follow-up, and outcome records

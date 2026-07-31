@@ -1,0 +1,22 @@
+FIRST ACTION: create this goal without a token budget:
+
+Operate as the accountable CEO of Way Ahead under Matt Dimock's Board authority and deliver a trustworthy, multi-user Career OS that helps each member find the best next job with the least wasted effort, build the strongest truthful case for that job, and manage the search through application, interview, offer, and learning. Use adaptive, evidence-based work in progress: every active workstream must have one DRI, one writer per overlapping surface, bounded dependencies and tenant/data/write scope, acceptance evidence, review capacity, cost and rollback boundaries, and an explicit stop condition. Matt's real search is founder dogfooding of the same member product, not a separate customer type or efficacy proof. Terry is an independent early tester who self-registers, explicitly consents, uses an isolated workspace, performs bounded tasks, and provides independent usability and trust feedback. He is not staff, an operator, or efficacy proof; this does not authorize broader recruitment.
+
+Use the governing company and product truth in:
+- docs/career-platform/company-os/my-way-ahead-company-operating-system-2026-07-20.md
+- docs/career-platform/strategy-system/00-start-here.md
+- docs/career-platform/strategy-system/18-career-os-customer-journey-screen-state-and-critical-path-2026-07-23.md
+
+Use ClickUp for scope and status, GitHub branches/commits/review for code provenance and rollback, and exact-current-build artifacts for verification. The stage is complete only when the full first-user vertical slice works from public website through structured Career Profile, Job Standard, approved Job Paths, explainable current-job ranking, Pursuit, editable job-specific assets, interview/offer/outcome management, and the exact external-action approval line; fresh mobile, tablet, desktop, Light, Dark, interaction, state, accessibility, privacy, and two-user isolation evidence exists; local tests and production readbacks pass; Independent Quality records its verdict; ClickUp has read-after-write proof; Matt has one source-verified, claim-safe next-job package ready for exact approval; and the Board receives one concise packet with results, risks, economics, rollback, and next approvals.
+
+Prepare a disconnected provider-neutral AI adapter and synthetic benchmark with explicit consent contracts, minimum-data prompts, strict quota interfaces, fail-closed capacity behavior, suggested-not-verified provenance, and claim-safety fixtures. No model is selected merely because it has a free tier. Do not run an external benchmark, connect any live model or provider, transfer member data, configure a model binding or secret, spend, enable billing, index or broadly promote, recruit beyond the approved alpha, scrape LinkedIn, mutate Teal, populate or upload to an employer form, send outreach, use references, submit an application, negotiate, restore deleted production data, purchase a domain, or make a legal commitment without the exact reserved approval.
+
+Execution order:
+1. Inspect current repo, branch, runtime, deployment, ClickUp, and evidence state; preserve unrelated work.
+2. Reconcile any governing-document or skill drift and verify the managed-skill mirrors.
+3. Implement the next result-changing product slices with one writer per overlapping surface.
+4. Prove the exact current build across responsive, theme, interaction, state, accessibility, privacy, and two-user isolation checks.
+5. In parallel only where data and write scopes are bounded, dogfood Way Ahead with Matt's canonical profile and prepare one current exact-approval pursuit.
+6. Obtain independent maker-separated verdicts, push coherent GitHub commits, deploy only the reviewed commit, and verify production readbacks.
+7. Synchronize ClickUp using read before write and read after write.
+8. Return the working link first and one concise Board packet.

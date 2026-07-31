@@ -1,0 +1,304 @@
+.center {
+  display: grid;
+  gap: 28px;
+}
+
+.restartShell {
+  height: 100dvh;
+  overflow: auto;
+  background:
+    radial-gradient(circle at 14% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 32rem),
+    var(--canvas);
+  padding: clamp(44px, 8vw, 96px) max(20px, calc((100vw - 900px) / 2));
+}
+
+.back {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.hero {
+  display: grid;
+  max-width: 850px;
+  gap: 12px;
+}
+
+.hero > p,
+.actionCard > p:first-child,
+.stopCard > div > p {
+  margin: 0;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 820;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Source Serif 4 Variable", "Source Serif 4", Georgia, serif;
+  font-size: clamp(2.35rem, 6vw, 4.9rem);
+  font-weight: 570;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.hero > span {
+  color: var(--ink-tertiary);
+  font-size: 12px;
+}
+
+.contract {
+  display: grid;
+  gap: 10px;
+}
+
+.contract article {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 18px;
+  box-shadow: var(--shadow-small);
+}
+
+.contract article > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.contract article > div {
+  display: grid;
+  gap: 7px;
+}
+
+.contract h2,
+.actionCard h2,
+.stopCard h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 820;
+  letter-spacing: -0.015em;
+}
+
+.contract p,
+.actionCard p,
+.stopCard span {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.contract a {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.actionCard {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  padding: clamp(20px, 4vw, 30px);
+  box-shadow: var(--shadow-small);
+}
+
+.actionCard label {
+  display: grid;
+  gap: 7px;
+}
+
+.actionCard label span {
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.actionCard input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface-muted);
+  padding: 10px 12px;
+  color: var(--ink);
+}
+
+.dangerCard {
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border));
+}
+
+.primaryButton,
+.dangerButton {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.primaryButton {
+  background: var(--accent);
+  color: var(--accent-on);
+}
+
+.dangerButton {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.primaryButton:disabled,
+.dangerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px 15px;
+  color: var(--positive);
+  font-size: 13px;
+  font-weight: 720;
+}
+
+.notice[data-tone="error"] {
+  border-color: color-mix(in srgb, var(--danger) 42%, var(--border));
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.stopCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface-muted);
+  padding: 20px;
+}
+
+.stopCard > div:first-child {
+  display: grid;
+  max-width: 640px;
+  gap: 6px;
+}
+
+.stopActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.stopActions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.signOutLink {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+@media (max-width: 760px) {
+  .actionsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stopCard {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .stopActions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .center {
+    gap: 22px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.35rem, 11.5vw, 3.1rem);
+  }
+
+  .contract article {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .contract article > span {
+    width: 26px;
+    height: 26px;
+  }
+
+  .primaryButton,
+  .dangerButton,
+  .stopActions a {
+    width: 100%;
+  }
+}
