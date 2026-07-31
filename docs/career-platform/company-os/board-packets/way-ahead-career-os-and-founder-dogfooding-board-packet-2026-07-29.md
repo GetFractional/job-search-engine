@@ -6,14 +6,16 @@ Packet date: 2026-07-30
 Board and final authority: Matt Dimock
 Branch: `codex/way-ahead-p1-career-os`
 Current production before candidate release: Sites version 14
-Candidate: v15, validated locally and awaiting immutable Sites release
+Released candidate: Sites version 15
+Product source: `670d03065e42031be406ce73727f18b704361394`
+Sites source: `dedb9f1b24a1c24bba561752d19ff9f893b9894e`
 
 ## CEO recommendation
 
-Release v15 to the existing noindex alpha URL, complete hosted readback, and
-give Matt and Terry the same self-service member journey. Keep billing, paid
-models, email, indexing, broad recruitment, and every employer-facing action
-disabled.
+Keep v15 on the existing noindex alpha URL and run the short signed-in
+Matt-and-Terry smoke test through the same self-service member journey. Keep
+billing, paid models, email, indexing, broad recruitment, and every
+employer-facing action disabled.
 
 Treat Matt's real search as founder dogfooding, not a special product mode or
 efficacy claim. Going is the strongest current pursuit, but its application
@@ -69,7 +71,8 @@ the exact employer-form receipt is represented inside Way Ahead.
 | Responsive visual evidence | PASS at 390, 768, and 1280 CSS pixels |
 | Light, Dark, menu, keyboard, error, empty, privacy, and package-lock states | PASS |
 | Local two-member isolation | PASS |
-| Hosted v15 deployment and readback | Pending release |
+| Hosted v15 public, SSO, auth, and security readback | PASS |
+| Hosted signed-in member readback | Pending Matt sign-in |
 | Physical iPhone Safari and Android Chrome | Pending |
 | Real second-account hosted isolation | Pending Terry or another approved tester |
 
@@ -81,13 +84,16 @@ Fresh browser evidence:
 - [Complete new-member onboarding](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/19-new-member-onboarding-step1-390-light.png)
 - [Empty activated member Home](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/26-new-member-empty-home-390-light.png)
 - [Immutable package locked state](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/current-v15/31-app-package-locked-390-light.png)
+- [Hosted v15 production receipt](../../../../prototypes/worthward-mobile/qa/career-os-rebuild-2026-07-30/hosted-v15/README.md)
+- [ClickUp v15 readback receipt](../clickup-v15-readback-receipt-2026-07-30.md)
 
 Fresh QA found and corrected two visible defects:
 
 1. Onboarding preserved the previous step's mobile scroll position. The fixed
    flow now moves from 972 px to 0 px and focuses the next main region without
    hiding its heading.
-2. Mobile Home repeated the “Home” label. The duplicate eyebrow was removed.
+2. Mobile Home repeated the “Home” label. The duplicate eyebrow and shell
+   title were removed.
 
 ## Founder dogfooding recommendation
 
@@ -158,10 +164,10 @@ has no live model provider, credential, binding, request, or member-data route.
 
 ## Rollback
 
-Sites version 14 remains the immediate production rollback until v15 is
-successfully saved, deployed, and read back. The release branch and coherent
-commit preserve code provenance. Source, form, fact, asset, answer,
-destination, or consent changes invalidate the exact package approval.
+Sites version 14 is the immediate production rollback for the now-live version
+15. The release branch, product commit, Sites source commit, and saved archive
+preserve code provenance. Source, form, fact, asset, answer, destination, or
+consent changes invalidate the exact package approval.
 
 ## Exact next decisions
 

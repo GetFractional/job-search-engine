@@ -11,10 +11,12 @@ ChatGPT SSO and creates a private member workspace for a new account. Terry can
 register himself; Matt does not need to provide or allowlist Terry's email.
 Only `mattdim805@gmail.com` receives the configured owner role.
 
-Matt's production workspace is initialized with his provenance-backed career
-record, Job Standard, Job Paths, preserved Seso pursuit, and the current
-Wpromote review. A new member receives the six-step setup journey instead of
-Matt's data.
+Version 15 is live. Its public mobile and desktop routes, ChatGPT SSO boundary,
+protected app redirect, unauthenticated API rejection, noindex state, and
+security headers have current hosted readback proof. Matt's exact signed-in
+workspace contents must be read from the live account after sign-in; do not use
+an older Wpromote, Seso, or row-count receipt as current truth. A new member
+receives the six-step setup journey instead of another member's data.
 
 The same HTTPS URL is the supported route on phone, laptop, and the remote
 browser. It does not depend on the Mac staying awake, a shared Wi-Fi network,
@@ -27,12 +29,12 @@ Do not switch to an unauthenticated public tunnel; use the hosted URL above.
 1. Open the live domain while signed out and review the website and mobile
    menu.
 2. Select **Get started** and continue with Matt's ChatGPT account.
-3. Confirm Home ranks Wpromote first at 84% aligned and leaves Job Value and
-   Pursuit Readiness open.
-4. Open Profile and confirm the career record shows 10 roles and 20 tracked
-   skills.
-5. Open Plan and confirm the $150,000 minimum, $180,000 target, and multiple
-   Job Paths.
+3. Confirm Home uses the current Job Paths and saved evidence in Matt's live
+   workspace. Report any unexpected employer, role, score, or empty state
+   instead of assuming an older receipt is current.
+4. Open Profile and confirm Matt's visible roles and skills are accurate.
+5. Open Plan and confirm the visible compensation standard and Job Paths are
+   still correct.
 6. Open Resume Studio and Cover Letter Studio. Confirm the content and design
    controls are editable and no employer-facing action exists.
 7. Switch between Light and Dark in the account menu; Light is the default.
@@ -55,8 +57,8 @@ if any Matt data appears.
   completed, and retry **Get started**.
 - **Wrong workspace:** sign out from the account menu and sign back in with the
   intended ChatGPT account.
-- **Old content:** reload once and compare the Wpromote source-check time and
-  fit score.
+- **Old content:** reload once and compare the visible page with the current
+  v15 screenshots linked in the hosted release receipt.
 - **Phone layout issue:** record phone model, browser, orientation, theme,
   screen, and a screenshot.
 - **Custom-domain issue:** use the fallback host above and report the failing
@@ -69,3 +71,6 @@ generation, recurring job monitoring, production email, employer-form
 population or upload, outreach, references, and application submission are not
 enabled. Do not add those capabilities or publish prices or outcome claims
 without the reserved approval and a new verification receipt.
+
+Current release receipt:
+[hosted v15](qa/career-os-rebuild-2026-07-30/hosted-v15/README.md).
